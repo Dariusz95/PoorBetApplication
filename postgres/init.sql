@@ -1,0 +1,4 @@
+CREATE USER postgres WITH PASSWORD 'postgres';
+
+CREATE DATABASE poorbetdb;
+GRANT ALL PRIVILEGES ON DATABASE poorbetdb TO postgres;
