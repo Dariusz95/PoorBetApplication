@@ -1,4 +1,4 @@
-package com.example.backend;
+package com.example.poorBetApplication;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.CrossOrigin;
