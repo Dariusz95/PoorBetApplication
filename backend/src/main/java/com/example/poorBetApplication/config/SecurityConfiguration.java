@@ -1,9 +1,14 @@
 package com.example.poorBetApplication.config;
 
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -13,6 +18,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+@EnableConfigurationProperties(CorsProperties.class)
 @Configuration
 public class SecurityConfiguration {
 
@@ -26,11 +32,14 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(AbstractHttpConfigurer::disable)
-            .authorizeHttpRequests(req -> req.anyRequest().permitAll())
-            .cors(c -> c.configurationSource(corsConfigurationSource()));
+                .cors(Customizer.withDefaults()) // <--- pozwala na CORS globalnie
+                .csrf().disable()
+                .authorizeHttpRequests(authz -> authz
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // <--- ważne!
+                        .anyRequest().permitAll()
+                );
 
         return http.build();
     }
@@ -38,14 +47,14 @@ public class SecurityConfiguration {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(corsProperties.getAllowedOrigins());
+        configuration.setAllowedOriginPatterns(corsProperties.getAllowedOriginPatterns());
         configuration.setAllowedMethods(corsProperties.getAllowedMethods());
         configuration.setAllowCredentials(true);
-        configuration.setAllowedHeaders(corsProperties.getAllowedHeaders());
-        configuration.setExposedHeaders(corsProperties.getExposedHeaders());
-        configuration.setMaxAge(3600L);
+        configuration.setAllowedHeaders(configuration.getAllowedHeaders());
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
+
 }

@@ -7,10 +7,12 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-@ConfigurationProperties(prefix = "web.cors")
+@ConfigurationProperties(prefix = CorsProperties.PREFIX)
 @Data
 public class CorsProperties {
-    private List<String> allowedOrigins;
+    public static final String PREFIX = "web.cors";
+
+    private List<String> allowedOriginPatterns;
     private List<String> allowedMethods;
     private List<String> allowedHeaders;
     private List<String> exposedHeaders;

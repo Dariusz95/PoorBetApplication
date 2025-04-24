@@ -6,6 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.Console;
+
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -19,6 +21,9 @@ public class UserController {
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
     public void register(@Validated @RequestBody UserRegisterDto dto){
-        userService.register(dto);
+
+        System.out.print("Created");
+        userService.register(dto
+        );
     }
 }

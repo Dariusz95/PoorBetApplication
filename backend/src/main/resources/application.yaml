@@ -18,8 +18,10 @@ spring:
 
 web:
   cors:
-    allowedOrigins:
+    allowedOriginPatterns:
       - http://localhost:4200
+      - http://127.0.0.1:4200
+      - http://127.0.0.1:8080
     allowedMethods:
       - GET
       - POST
@@ -32,3 +34,6 @@ web:
       - Authorization
       - Requestor-Type
     exposedHeaders:
+      - Authorization
+      - Requestor-Type
+    maxAge: 3600
