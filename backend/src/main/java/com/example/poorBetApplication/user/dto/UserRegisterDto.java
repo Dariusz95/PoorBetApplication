@@ -2,14 +2,19 @@ package com.example.poorBetApplication.user.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public record UserRegisterDto(
-        @NotBlank(message = "Email cannot be blank")
-        @Email(message = "Invalid email")
+        @NotBlank(message = "error.email.required")
+        @Email(message = "error.email.invalid")
         String email,
 
-        @NotBlank(message = "Password cannot be blank")
-        @Size(min = 8, message = "Password must be at least 8 characters long")
+        @NotBlank(message = "error.password.required")
+        @Size(min = 8, message = "error.password.length")
+        @Pattern(
+                regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).*$",
+                message = "error.password.complexity"
+        )
         String password
 ) {}

@@ -1,37 +1,48 @@
 package com.example.poorBetApplication.user.service;
 
-import com.example.poorBetApplication.exception.UserAlreadyExistsException;
+import com.example.poorBetApplication.exception.ResourceAlreadyExistsException;
 import com.example.poorBetApplication.user.dto.UserRegisterDto;
-import com.example.poorBetApplication.user.model.Role;
+import com.example.poorBetApplication.user.dto.UserResponseDto;
+import com.example.poorBetApplication.user.mapper.UserMapper;
 import com.example.poorBetApplication.user.model.User;
 import com.example.poorBetApplication.user.repository.UserRepository;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 
 @Service
 public class UserServiceImpl implements UserService  {
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+    private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    private final UserRepository userRepository;
+    private final UserMapper userMapper;
+
+    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper) {
         this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
+        this.userMapper = userMapper;
     }
 
-    public void register(UserRegisterDto dto){
-        if(userRepository.existsByEmail(dto.email())){
-            throw new UserAlreadyExistsException("Email is already in use: " + dto.email());
+    @Override
+    @Transactional
+    public UserResponseDto register(UserRegisterDto registerDto) {
+        logger.debug("New user registration: {}", registerDto.email());
+
+        if (emailExists(registerDto.email())) {
+            logger.warn("Attempting to register with an existing email address: {}", registerDto.email());
+            throw new ResourceAlreadyExistsException("User with email address " + registerDto.email() + " already exists");
         }
 
-        User user = new User();
+        User user = userMapper.toEntity(registerDto);
+        User savedUser = userRepository.save(user);
 
-        user.setEmail(dto.email());
-        user.setPassword(passwordEncoder.encode(dto.password()));
-        user.setRole(Role.USER);
-        user.setCreatedAt(LocalDateTime.now());
+        logger.info("User successfully registered: {}", savedUser.getEmail());
+        return userMapper.toDto(savedUser);
+    }
 
-        userRepository.save(user);
+    @Override
+    public boolean emailExists(String email) {
+        return userRepository.existsByEmail(email);
     }
 }
