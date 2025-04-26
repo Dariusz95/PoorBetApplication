@@ -44,7 +44,6 @@ export class PbInputComponent implements ControlValueAccessor {
   label = input<string>();
   placeholder = input<string>();
   type = input<string>('text');
-
   disabled = signal<boolean>(false);
 
   value = '';

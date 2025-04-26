@@ -1,56 +1,72 @@
-<div class="container">
-  <h2 class="title">Rejestracja</h2>
-
-  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="form">
-    <app-pb-input
-      [label]="'Nazwa'"
-      [placeholder]="'Wpisz nazwę'"
-      formControlName="name"
-    ></app-pb-input>
-
-    <app-pb-input
-      [label]="'email'"
-      [placeholder]="'Wpisz email'"
-      formControlName="email"
-    ></app-pb-input>
-
-    <app-pb-input
-      label="Hasło"
-      type="password"
-      [placeholder]="'Wpisz hasło'"
-      formControlName="password"
-    ></app-pb-input>
-
-    <app-pb-input
-      label="powtorz hasło"
-      type="password"
-      placeholder="powtorz hasło"
-      formControlName="repeatPassword"
-    ></app-pb-input>
-
-    <!-- Hasło -->
-    <mat-form-field appearance="fill" class="form-field">
-      <mat-label>Hasło</mat-label>
-      <input
-        matInput
-        type="password"
-        formControlName="password"
-        placeholder="Wprowadź hasło"
-      />
-    </mat-form-field>
-
-    <div *ngIf="errorMessage" class="error">
-      {{ errorMessage }}
+<!-- registration.component.html -->
+<div class="registration-container">
+  <div class="card">
+    <div class="header">
+      <h2>Zarejestruj się</h2>
+      <app-theme-toggle></app-theme-toggle>
     </div>
 
-    <button
-      mat-raised-button
-      color="primary"
-      type="submit"
-      [disabled]="registerForm.invalid"
-      class="submit-button"
-    >
-      Zarejestruj się
-    </button>
-  </form>
+    <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()">
+      <div class="form-row">
+        <div class="form-group">
+          <app-pb-input label="Imię" formControlName="firstName">
+          </app-pb-input>
+        </div>
+
+        <div class="form-group">
+          <app-pb-input label="Nazwisko" formControlName="lastName">
+          </app-pb-input>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <app-pb-input label="Email" type="email" formControlName="email">
+        </app-pb-input>
+      </div>
+
+      <div class="form-group">
+        <app-pb-input label="Hasło" type="password" formControlName="password">
+        </app-pb-input>
+      </div>
+
+      <div class="form-group">
+        <app-pb-input
+          label="Potwierdź hasło"
+          type="password"
+          formControlName="confirmPassword"
+        >
+        </app-pb-input>
+      </div>
+
+      <div class="form-group terms-group">
+        <div class="checkbox-container">
+          <input type="checkbox" id="terms" formControlName="terms" />
+          <label for="terms"
+            >Akceptuję <a href="#">regulamin</a> i
+            <a href="#">politykę prywatności</a></label
+          >
+        </div>
+        <div
+          *ngIf="submitted && registrationForm.get('terms')?.invalid"
+          class="error-message"
+        >
+          Musisz zaakceptować regulamin i politykę prywatności
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="registrationForm.invalid"
+        >
+          Zarejestruj się
+        </button>
+      </div>
+
+      <div class="login-link">
+        Masz już konto? <a routerLink="/login">Zaloguj się</a>
+      </div>
+    </form>
+  </div>
 </div>
