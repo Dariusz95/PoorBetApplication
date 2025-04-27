@@ -1,0 +1,49 @@
+<div class="input-wrapper" [ngClass]="{ invalid: isInvalidAndTouched }">
+  @if(label()){
+  <label>{{ label() }}</label>
+  }
+
+  <input
+    [type]="type()"
+    [placeholder]="placeholder()"
+    [value]="value"
+    [disabled]="disabled()"
+    (input)="handleInput($event)"
+    (blur)="handleBlur()"
+  />
+  <div
+    class="error-message"
+    *ngIf="isInvalidAndTouched && control?.errors?.['required']"
+  >
+    Field is required.
+  </div>
+  <!-- TODO komponent obslugi bledow-->
+  <!--   
+  <div
+    class="error-message"
+    *ngIf="isInvalidAndTouched && control?.errors?.['email']"
+  >
+    Please enter a valid email address.
+  </div>
+  
+  <div
+    class="error-message"
+    *ngIf="isInvalidAndTouched && control?.errors?.['pattern']"
+  >
+    The input format is invalid.
+  </div>
+  
+  <div
+    class="error-message"
+    *ngIf="isInvalidAndTouched && control?.errors?.['minlength']"
+  >
+    Input must be at least {{ control?.errors?.['minlength']?.requiredLength }} characters.
+  </div>
+  
+  <div
+    class="error-message"
+    *ngIf="isInvalidAndTouched && control?.errors?.['passwordMismatch']"
+  >
+    Passwords do not match.
+  </div> -->
+</div>

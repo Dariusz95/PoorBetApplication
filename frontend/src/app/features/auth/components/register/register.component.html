@@ -1,0 +1,43 @@
+<div class="registration-container">
+  <div class="card">
+    <div class="header">
+      <h2>Zarejestruj się</h2>
+      <app-theme-toggle></app-theme-toggle>
+    </div>
+
+    <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <app-pb-input label="Email" type="email" formControlName="email">
+        </app-pb-input>
+      </div>
+
+      <div class="form-group">
+        <app-pb-input label="Hasło" type="password" formControlName="password">
+        </app-pb-input>
+      </div>
+
+      <div class="form-group">
+        <app-pb-input
+          label="Potwierdź hasło"
+          type="password"
+          formControlName="confirmPassword"
+        >
+        </app-pb-input>
+      </div>
+
+      <div class="form-actions">
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="!registrationForm.valid"
+        >
+          Zarejestruj się
+        </button>
+      </div>
+
+      <div class="login-link">
+        Masz już konto? <a routerLink="/login">Zaloguj się</a>
+      </div>
+    </form>
+  </div>
+</div>

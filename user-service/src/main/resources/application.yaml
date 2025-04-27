@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: poor-bet-application
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    generate-ddl: true
+
+web:
+  cors:
+    allowedOriginPatterns:
+      - http://localhost:4200
+      - http://127.0.0.1:4200
+      - http://127.0.0.1:8080
+    allowedMethods:
+      - GET
+      - POST
+      - PATCH
+      - PUT
+      - DELETE
+      - OPTIONS
+      - HEAD
+    allowedHeaders:
+      - Authorization
+      - Requestor-Type
+    exposedHeaders:
+      - Authorization
+      - Requestor-Type
+    maxAge: 3600

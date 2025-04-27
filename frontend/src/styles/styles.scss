@@ -1,0 +1,115 @@
+@use "./abstracts/index.scss" as *;
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --primary-color: #{$primary-color};
+  --primary-color-rgb: 63, 81, 181;
+  --primary-color-light: #{$primary-color-light};
+  --primary-color-dark: #{$primary-color-dark};
+
+  --secondary-color: #{$secondary-color};
+  --secondary-color-rgb: 255, 64, 129;
+
+  --success-color: #{$success-color};
+  --error-color: #{$error-color};
+  --warning-color: #{$warning-color};
+  --info-color: #{$info-color};
+}
+
+.light-theme {
+  --bg-color: #{map-get($light-theme, bg-color)};
+  --text-color: #{map-get($light-theme, text-color)};
+  --input-bg: #{map-get($light-theme, input-bg)};
+  --border-color: #{map-get($light-theme, border-color)};
+  --disabled-bg: #{map-get($light-theme, disabled-bg)};
+}
+
+.dark-theme {
+  --bg-color: #{map-get($dark-theme, bg-color)};
+  --text-color: #{map-get($dark-theme, text-color)};
+  --input-bg: #{map-get($dark-theme, input-bg)};
+  --border-color: #{map-get($dark-theme, border-color)};
+  --disabled-bg: #{map-get($dark-theme, disabled-bg)};
+}
+
+body {
+  font-family: "Roboto", sans-serif;
+  line-height: 1.6;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: color 0.3s ease;
+
+  &:hover {
+    color: var(--primary-color-dark);
+  }
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.btn {
+  @include button-base;
+
+  &.btn-primary {
+    @include themed-button($primary-color, white);
+  }
+
+  &.btn-secondary {
+    @include themed-button($secondary-color, white);
+  }
+
+  &.btn-success {
+    @include themed-button($success-color, white);
+  }
+
+  &.btn-error {
+    @include themed-button($error-color, white);
+  }
+
+  &.btn-outline {
+    background-color: transparent;
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+
+    &:hover:not(:disabled) {
+      background-color: var(--primary-color);
+      color: white;
+    }
+  }
+}
+
+.card {
+  background-color: var(--bg-color);
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
