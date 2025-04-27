@@ -1,5 +1,4 @@
-@use "../../../../styles/variables" as vars;
-@use "../../../../styles/mixins" as mix;
+@use "abstracts/variables" as vars;
 
 .input-wrapper {
   margin-bottom: 1rem;

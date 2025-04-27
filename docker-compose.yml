@@ -14,9 +14,9 @@ services:
     networks:
       - main_network
 
-  backend:
+  user-service:
     build:
-      context: ./backend
+      context: ./user-service
       dockerfile: Dockerfile
     ports:
       - "8080:8080"

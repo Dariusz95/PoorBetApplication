@@ -1,0 +1,26 @@
+@use "abstracts/mixins" as m;
+
+.theme-toggle {
+  @include m.flex-center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  color: var(--text-color);
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+
+    .dark-theme & {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+  }
+
+  .icon {
+    width: 24px;
+    height: 24px;
+  }
+}

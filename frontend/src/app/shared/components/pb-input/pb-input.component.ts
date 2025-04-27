@@ -42,7 +42,7 @@ export class PbInputComponent implements ControlValueAccessor {
   private readonly destroy = new Subject<void>();
 
   label = input<string>();
-  placeholder = input<string>();
+  placeholder = input<string>('');
   type = input<string>('text');
   disabled = signal<boolean>(false);
 
