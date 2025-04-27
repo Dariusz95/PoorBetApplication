@@ -1,0 +1,7 @@
+<app-pb-dropdown
+  [options]="availableLanguages"
+  optionLabelKey="label"
+  (optionSelected)="changeLanguage($event)"
+>
+  <span class="language-trigger"> {{ getActiveLanguageLabel() }} ▼ </span>
+</app-pb-dropdown>

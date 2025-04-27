@@ -1,0 +1,37 @@
+<div #trigger="cdkOverlayOrigin" cdkOverlayOrigin (click)="toggleDropdown()">
+  <ng-container *ngIf="triggerTemplate; else defaultTrigger">
+    <ng-container *ngTemplateOutlet="triggerTemplate"></ng-container>
+  </ng-container>
+  <ng-template #defaultTrigger>
+    <ng-content></ng-content>
+  </ng-template>
+</div>
+
+<ng-template
+  cdkConnectedOverlay
+  [cdkConnectedOverlayOrigin]="origin || trigger"
+  [cdkConnectedOverlayOpen]="isOpen"
+  [cdkConnectedOverlayPositions]="positions"
+  (backdropClick)="closeDropdown()"
+  (detach)="closeDropdown()"
+  [@dropdownAnimation]
+>
+  <div class="dropdown-panel">
+    <ul class="dropdown-list">
+      <li
+        *ngFor="let option of options"
+        (click)="selectOption(option)"
+        class="dropdown-list-item"
+      >
+        <ng-container *ngIf="optionTemplate; else defaultOption">
+          <ng-container
+            *ngTemplateOutlet="optionTemplate; context: { $implicit: option }"
+          ></ng-container>
+        </ng-container>
+        <ng-template #defaultOption>
+          {{ option[optionLabelKey] }}
+        </ng-template>
+      </li>
+    </ul>
+  </div>
+</ng-template>

@@ -1,43 +1,51 @@
-<div class="registration-container">
-  <div class="card">
-    <div class="header">
-      <h2>Zarejestruj się</h2>
-      <app-theme-toggle></app-theme-toggle>
+<ng-container *transloco="let t; prefix: 'auth.register'">
+  <div class="registration-container">
+    <div class="card">
+      <div class="header">
+        <h2>{{ t("title") }}</h2>
+        <app-theme-toggle />
+        <app-language-switcher />
+      </div>
+
+      <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <pb-input [label]="t('email')" type="email" formControlName="email">
+          </pb-input>
+        </div>
+
+        <div class="form-group">
+          <pb-input
+            [label]="t('password')"
+            type="password"
+            formControlName="password"
+          >
+          </pb-input>
+        </div>
+
+        <div class="form-group">
+          <pb-input
+            [label]="t('confirmPassword')"
+            type="password"
+            formControlName="confirmPassword"
+          >
+          </pb-input>
+        </div>
+
+        <div class="form-actions">
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="!registrationForm.valid"
+          >
+            {{ t("register") }}
+          </button>
+        </div>
+
+        <div class="login-link">
+          {{ t("alreadyHaveAccount") }}
+          <a routerLink="/login">{{ t("login") }}</a>
+        </div>
+      </form>
     </div>
-
-    <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()">
-      <div class="form-group">
-        <app-pb-input label="Email" type="email" formControlName="email">
-        </app-pb-input>
-      </div>
-
-      <div class="form-group">
-        <app-pb-input label="Hasło" type="password" formControlName="password">
-        </app-pb-input>
-      </div>
-
-      <div class="form-group">
-        <app-pb-input
-          label="Potwierdź hasło"
-          type="password"
-          formControlName="confirmPassword"
-        >
-        </app-pb-input>
-      </div>
-
-      <div class="form-actions">
-        <button
-          type="submit"
-          class="btn btn-primary"
-          [disabled]="!registrationForm.valid"
-        >
-          Zarejestruj się
-        </button>
-      </div>
-
-      <div class="login-link">
-        Masz już konto? <a routerLink="/login">Zaloguj się</a>
-      </div>
-    </form>
   </div>
-</div>
+</ng-container>

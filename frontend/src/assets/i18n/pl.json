@@ -1,0 +1,21 @@
+{
+    "auth":{
+        "register":{
+            "title":"Rejestracja",
+            "email":"E-mail",
+            "password":"Hasło",
+            "confirmPassword":"Potwierdź hasło",
+            "register":"Zarejestruj się",
+            "alreadyHaveAccount":"Masz już konto?",
+            "login":"Zaloguj się"
+        },
+        "login":{
+            "title":"Logowanie",
+            "email":"E-mail",
+            "password":"Hasło",
+            "login":"Zaloguj się",
+            "forgotPassword":"Nie pamiętasz hasła?",
+            "register":"Zarejestruj się"
+        }
+    }
+}

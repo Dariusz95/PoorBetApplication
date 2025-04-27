@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../../../environments/environment';
 import { RegisterRequest } from '../types/register-request';
 
 @Injectable({
@@ -9,7 +10,11 @@ import { RegisterRequest } from '../types/register-request';
 export class AuthService {
   constructor(private http: HttpClient) {}
 
+  private apiBaseUrl = `${environment.backend.baseURL}/api/users`;
+
   register(request: RegisterRequest): Observable<any> {
-    return this.http.post('users/register', request);
+    const url = `${this.apiBaseUrl}/register`;
+
+    return this.http.post(url, request);
   }
 }

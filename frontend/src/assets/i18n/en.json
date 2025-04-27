@@ -1,0 +1,21 @@
+{
+  "auth": {
+    "register": {
+      "title": "Register",
+      "email": "E-mail",
+      "password": "Password",
+      "confirmPassword": "Confirm password",
+      "register": "Register",
+      "alreadyHaveAccount": "Already have an account?",
+      "login": "Log in"
+    },
+    "login": {
+      "title": "Login",
+      "email": "E-mail",
+      "password": "Password",
+      "login": "Log in",
+      "forgotPassword": "Forgot password?",
+      "register": "Register"
+    }
+  }
+}

@@ -23,7 +23,7 @@ import {
 import { Subject, takeUntil, tap } from 'rxjs';
 
 @Component({
-  selector: 'app-pb-input',
+  selector: 'pb-input',
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
   standalone: true,
   templateUrl: './pb-input.component.html',
