@@ -7,11 +7,13 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { TranslocoDirective } from '@jsverse/transloco';
 import { PbInputComponent } from '../../../../shared/components/pb-input/pb-input.component';
 import { ThemeToggleComponent } from '../../../../shared/components/theme-toggle/theme-toggle.component';
 import { AuthService } from '../../services/auth.service';
 import { RegisterRequest } from '../../types/register-request';
 import { passwordMatchValidator } from '../../utils/password-match-validator';
+import { LanguageSwitcherComponent } from '../../../../shared/components/language-switcher/language-switcher.component';
 
 @Component({
   selector: 'app-register',
@@ -24,6 +26,8 @@ import { passwordMatchValidator } from '../../utils/password-match-validator';
     ReactiveFormsModule,
     CommonModule,
     PbInputComponent,
+    TranslocoDirective,
+    LanguageSwitcherComponent
   ],
 })
 export class RegisterComponent implements OnInit {
