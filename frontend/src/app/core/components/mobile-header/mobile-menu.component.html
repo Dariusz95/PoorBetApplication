@@ -1,0 +1,15 @@
+<nav class="mobile-bottom-menu">
+    <ul class="mobile-menu-list">
+      @for (item of menuItems; track item.link) {
+        <li class="mobile-menu-item">
+          <a [routerLink]="item.link" class="mobile-menu-link">
+            <span class="material-icons">{{ item.iconName }}</span>
+            <span>{{ item.labelKey | transloco }}</span>
+          </a>
+        </li>
+      }
+      @empty {
+        <li class="mobile-menu-item">Brak elementów menu.</li>
+      }
+    </ul>
+  </nav>

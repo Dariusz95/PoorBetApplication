@@ -113,3 +113,18 @@ a {
 .form-group {
   margin-bottom: 1.5rem;
 }
+
+
+@media (min-width: 768px) { /* Na desktopie */
+  body {
+      padding-top: 60px; /* Padding na górze dla headera */
+      padding-bottom: 0; /* Brak paddingu na dole */
+  }
+}
+
+@media (max-width: 767.98px) { /* Na mobile */
+  body {
+      padding-top: 60px; /* Padding na górze dla headera */
+      padding-bottom: 60px; /* Padding na dole dla mobilnego menu */
+  }
+}

@@ -1,0 +1,43 @@
+<header class="app-header">
+  <div class="header-content">
+    <div class="header-left">
+      <a routerLink="/" class="logo-link">
+        <img src="assets/logo.png" alt="Logo Aplikacji" class="app-logo" />
+      </a>
+
+      @if (true) {
+      <nav class="header-nav-desktop">
+        <ul>
+          @for (item of menuItems; track item.link) {
+          <li>
+            <a [routerLink]="item.link">{{ item.labelKey | transloco }}</a>
+          </li>
+          } @empty {
+          <li>Brak elementów menu.</li>
+          }
+        </ul>
+      </nav>
+      }
+    </div>
+
+    <div class="header-right">
+      <app-theme-toggle />
+      <app-language-switcher />
+      <pb-button
+        [routerLink]="['/auth/login']"
+        type="secondary"
+        [text]="'auth.register.login'"
+      >
+        <!-- {{ "auth.register.login" | transloco }} -->
+      </pb-button>
+
+      <pb-button
+        [routerLink]="['/auth/register']"
+        type="primary"
+        [text]="'auth.register.title'"
+      >
+        <!-- {{ "auth.register.title" | transloco }} -->
+      </pb-button>
+    </div>
+  </div>
+</header>
