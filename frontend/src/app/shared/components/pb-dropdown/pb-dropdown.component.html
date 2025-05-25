@@ -14,9 +14,8 @@
   [cdkConnectedOverlayPositions]="positions"
   (backdropClick)="closeDropdown()"
   (detach)="closeDropdown()"
-  [@dropdownAnimation]
 >
-  <div class="dropdown-panel">
+  <div class="dropdown-panel" [@dropdownAnimation]>
     <ul class="dropdown-list">
       <li
         *ngFor="let option of options"

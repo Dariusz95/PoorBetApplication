@@ -12,8 +12,6 @@
           <li>
             <a [routerLink]="item.link">{{ item.labelKey | transloco }}</a>
           </li>
-          } @empty {
-          <li>Brak elementów menu.</li>
           }
         </ul>
       </nav>
@@ -28,7 +26,6 @@
         type="secondary"
         [text]="'auth.register.login'"
       >
-        <!-- {{ "auth.register.login" | transloco }} -->
       </pb-button>
 
       <pb-button
@@ -36,7 +33,6 @@
         type="primary"
         [text]="'auth.register.title'"
       >
-        <!-- {{ "auth.register.title" | transloco }} -->
       </pb-button>
     </div>
   </div>
