@@ -1,32 +1,27 @@
 <ng-container *transloco="let t; prefix: 'auth.register'">
   <div class="registration-container">
-    <div class="card">
+    <app-pb-card>
       <div class="header">
         <h2>{{ t("title") }}</h2>
       </div>
 
       <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()">
         <div class="form-group">
-          <pb-input [label]="t('email')" type="email" formControlName="email">
-          </pb-input>
+          <pb-form-field type="email" formControlName="email">
+            <pb-label> {{ "email" | transloco }}</pb-label>
+          </pb-form-field>
         </div>
 
         <div class="form-group">
-          <pb-input
-            [label]="t('password')"
-            type="password"
-            formControlName="password"
-          >
-          </pb-input>
+          <pb-form-field type="password" formControlName="password">
+            <pb-label> {{ "password" | transloco }}</pb-label>
+          </pb-form-field>
         </div>
 
         <div class="form-group">
-          <pb-input
-            [label]="t('confirmPassword')"
-            type="password"
-            formControlName="confirmPassword"
-          >
-          </pb-input>
+          <pb-form-field type="password" formControlName="confirmPassword">
+            <pb-label> {{ "confirmPassword" | transloco }}</pb-label>
+          </pb-form-field>
         </div>
 
         <div class="form-actions">
@@ -44,6 +39,6 @@
           <a routerLink="/login">{{ t("login") }}</a>
         </div>
       </form>
-    </div>
+    </app-pb-card>
   </div>
 </ng-container>

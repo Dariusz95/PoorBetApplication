@@ -45,7 +45,7 @@ export class PbDropdownComponent {
 
   @Output() optionSelected = new EventEmitter<any>();
 
-  isOpen = false; 
+  isOpen = false;
 
   @Input() optionTemplate?: TemplateRef<any>;
 
@@ -70,11 +70,9 @@ export class PbDropdownComponent {
     }
   }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
-  ngOnChanges(changes: SimpleChanges): void {
-  }
+  ngOnChanges(changes: SimpleChanges): void {}
 
   toggleDropdown(): void {
     this.isOpen = !this.isOpen;

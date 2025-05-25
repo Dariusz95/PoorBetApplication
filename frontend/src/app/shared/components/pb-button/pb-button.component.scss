@@ -1,72 +1,41 @@
-@use "abstracts/variables" as vars;
-
 .pb-button {
-  padding: 8px 15px;
-  border-radius: vars.$border-radius;
-  font-weight: bold;
-  text-align: center;
-  cursor: pointer;
-  display: inline-block;
-  line-height: normal;
-  user-select: none;
-  transition: all 0.2s ease-in-out;
-
-  background-color: transparent;
-  border: none;
-  color: inherit;
-  font-family: inherit;
-  margin: 0;
-}
-
-.pb-button.pb-button {
-  //   text-decoration: none;
+  @apply px-[15px] py-2 rounded font-bold text-center cursor-pointer inline-block leading-normal select-none transition-all duration-200 ease-in-out bg-transparent border-none text-inherit m-0;
 }
 
 .pb-button-primary {
-  background-color: vars.$primary-color;
-  color: white;
-  border: 1px solid vars.$primary-color;
+  @apply bg-primary-700 text-white border border-primary-700;
 }
 
 .pb-button-secondary {
-  background-color: transparent;
-  color: #6c757d;
-  border: 1px solid #6c757d;
+  @apply bg-transparent text-[#6c757d] border border-[#6c757d];
 }
 
 .pb-button:disabled,
 .pb-button.disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  pointer-events: none;
+  @apply opacity-60 cursor-not-allowed pointer-events-none;
 }
 
 .pb-button:not(:disabled):hover {
-  opacity: 0.9;
+  @apply opacity-90;
 }
 
 .pb-button-primary:not(:disabled):hover,
 .pb-button-register:not(:disabled):hover {
   opacity: 1;
-  background-color: mix(vars.$primary-color, black, 90%);
 }
 
 .pb-button-secondary:not(:disabled):hover {
-  background-color: #f8f9fa;
-  color: #545b62;
-  border-color: #545b62;
-  opacity: 1;
+  @apply bg-[#f8f9fa] text-[#545b62] border-[#545b62] opacity-100;
 }
 
 .pb-button-login:not(:disabled):hover {
-  opacity: 1;
+  @apply opacity-100;
 }
 
 .pb-button:not(:disabled):active {
-  transform: translateY(1px);
+  @apply translate-y-[1px];
 }
 
 .pb-button:focus {
-  outline: none;
-  box-shadow: 0 0 0 0.2rem rgba(vars.$primary-color, 0.25);
+  @apply outline-none ring-2 ring-primary-700/25;
 }

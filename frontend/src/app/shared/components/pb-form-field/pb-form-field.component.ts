@@ -2,12 +2,15 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  contentChild,
+  DestroyRef,
   forwardRef,
   inject,
   Injector,
   input,
   signal,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   ControlValueAccessor,
   FormControl,
@@ -20,35 +23,39 @@ import {
   NgModel,
   ReactiveFormsModule,
 } from '@angular/forms';
-import { Subject, takeUntil, tap } from 'rxjs';
+import { tap } from 'rxjs';
+import { PbErrorsComponent } from '../pb-errors/pb-errors.component';
+import { PbLabel } from './directives/pb-label';
 
 @Component({
-  selector: 'pb-input',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  selector: 'pb-form-field',
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, PbErrorsComponent],
   standalone: true,
-  templateUrl: './pb-input.component.html',
-  styleUrl: './pb-input.component.scss',
+  templateUrl: './pb-form-field.component.html',
+  styleUrl: './pb-form-field.component.scss',
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => PbInputComponent),
+      useExisting: forwardRef(() => PbFormFieldComponent),
       multi: true,
     },
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PbInputComponent implements ControlValueAccessor {
+export class PbFormFieldComponent implements ControlValueAccessor {
   private readonly injector = inject(Injector);
-  private readonly destroy = new Subject<void>();
+  private readonly destroyRef = inject(DestroyRef);
 
-  label = input<string>();
+  readonly labelRef = contentChild(PbLabel);
+
   placeholder = input<string>('');
   type = input<string>('text');
   disabled = signal<boolean>(false);
 
-  value = '';
-  touched = false;
-  control!: FormControl;
+  value = signal<string>('');
+  touched = signal<boolean>(false);
+  focused = signal<boolean>(false);
+  control: FormControl | null = null;
 
   ngOnInit() {
     this.setComponentControl();
@@ -57,8 +64,8 @@ export class PbInputComponent implements ControlValueAccessor {
   onChange = (_: any) => {};
   onTouched = () => {};
 
-  writeValue(obj: any): void {
-    this.value = obj;
+  writeValue(value: any): void {
+    this.value.set(value || '');
   }
 
   registerOnChange(fn: any): void {
@@ -75,17 +82,18 @@ export class PbInputComponent implements ControlValueAccessor {
 
   handleInput(event: Event): void {
     const val = (event.target as HTMLInputElement).value;
-    this.value = val;
+    this.value.set(val);
     this.onChange(val);
+  }
+
+  handleFocus(): void {
+    this.focused.set(true);
   }
 
   handleBlur(): void {
     this.onTouched();
-    this.touched = true;
-  }
-
-  get isInvalidAndTouched(): boolean {
-    return this.control?.invalid && this.control?.touched;
+    this.touched.set(true);
+    this.focused.set(false);
   }
 
   private setComponentControl<T>(): void {
@@ -100,7 +108,7 @@ export class PbInputComponent implements ControlValueAccessor {
         this.control.valueChanges
           .pipe(
             tap((value: T) => update.emit(value)),
-            takeUntil(this.destroy)
+            takeUntilDestroyed(this.destroyRef)
           )
           .subscribe();
         break;

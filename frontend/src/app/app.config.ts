@@ -6,6 +6,7 @@ import {
 import { provideRouter } from '@angular/router';
 
 import { provideHttpClient } from '@angular/common/http';
+import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideTransloco } from '@jsverse/transloco';
 import { routes } from './app.routes';
 import { TranslocoHttpLoader } from './transloco-loader';
@@ -16,6 +17,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideHttpClient(),
     provideHttpClient(),
+    provideAnimations(),
     provideTransloco({
       config: {
         availableLangs: ['en', 'pl'],

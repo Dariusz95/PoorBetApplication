@@ -17,5 +17,12 @@
       "forgotPassword": "Forgot password?",
       "register": "Register"
     }
+  },
+  "validation": {
+    "required": "This field is required",
+    "minlength": "This field must be at least {{minLength}} characters long",
+    "email": "Please enter a valid email address",
+    "password": "Password must be at least 6 characters long",
+    "confirmPassword": "Passwords must match"
   }
 }

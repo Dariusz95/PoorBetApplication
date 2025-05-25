@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PbInputComponent } from './pb-input.component';
+import { PbCardComponent } from './pb-card.component';
 
-describe('PbInputComponent', () => {
-  let component: PbInputComponent;
-  let fixture: ComponentFixture<PbInputComponent>;
+describe('PbCardComponent', () => {
+  let component: PbCardComponent;
+  let fixture: ComponentFixture<PbCardComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PbInputComponent]
+      imports: [PbCardComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(PbInputComponent);
+    fixture = TestBed.createComponent(PbCardComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
