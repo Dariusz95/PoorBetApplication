@@ -14,6 +14,7 @@ import { AuthService } from '../../services/auth.service';
 import { RegisterRequest } from '../../types/register-request';
 import { passwordMatchValidator } from '../../utils/password-match-validator';
 import { PbLabel } from "../../../../shared/components/pb-form-field/directives/pb-label";
+import { PbButtonComponent } from "../../../../shared/components/pb-button/pb-button.component";
 
 @Component({
   selector: 'app-register',
@@ -28,12 +29,14 @@ import { PbLabel } from "../../../../shared/components/pb-form-field/directives/
     TranslocoDirective,
     TranslocoPipe,
     PbCardComponent,
-    PbLabel
+    PbLabel,
+    PbButtonComponent
 ],
 })
 export class RegisterComponent implements OnInit {
   private readonly formBuilder = inject(FormBuilder);
   private readonly authService = inject(AuthService);
+  
   registrationForm: FormGroup;
   submitted = false;
 

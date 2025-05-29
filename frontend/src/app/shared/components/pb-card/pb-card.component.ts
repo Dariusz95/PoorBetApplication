@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostBinding, input } from '@angular/core';
 
 @Component({
   selector: 'app-pb-card',
@@ -6,4 +6,10 @@ import { Component } from '@angular/core';
   template: `<ng-content></ng-content>`,
   styleUrl: './pb-card.component.scss',
 })
-export class PbCardComponent {}
+export class PbCardComponent {
+  stylesCss = input<string | null>(null);
+
+  @HostBinding('class') get class() {
+    return this.stylesCss();
+  }
+}
