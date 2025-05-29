@@ -1,0 +1,109 @@
+/* --- Global Header Styles --- */
+.app-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: #fff; /* Białe tło jak na obrazku */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08); /* Delikatniejszy cień */
+    padding: 10px 20px;
+    z-index: 1000;
+    height: 60px; /* Stała wysokość nagłówka */
+    box-sizing: border-box; /* Upewnij się, że padding nie zwiększa wysokości */
+  }
+  
+  .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    height: 100%; /* Zawartość zajmuje całą wysokość headera */
+  }
+  
+  .header-left,
+  .header-right {
+    display: flex;
+    align-items: center;
+    height: 100%;
+  }
+  
+  .logo-link img.app-logo {
+    height: 40px; /* Rozmiar logo */
+  }
+  
+  
+  /* --- Desktop Styles (min-width) --- */
+  @media (min-width: 768px) {
+    .header-left {
+       gap: 20px;
+    }
+  
+    .header-nav-desktop {
+      display: block;
+    }
+  
+    .header-nav-desktop ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      gap: 15px;
+    }
+  
+    .header-nav-desktop a {
+      text-decoration: none;
+      color: #333;
+      font-weight: bold;
+      padding: 5px 0; /* Dodaj padding dla klikalności */
+    }
+  
+    .header-right {
+       gap: 10px;
+    }
+  
+    .header-button {
+      padding: 8px 15px;
+      border-radius: 4px;
+      text-decoration: none;
+      font-weight: bold;
+      text-align: center;
+      cursor: pointer;
+    }
+  
+    .login-button {
+      border: 1px solid #007bff;
+      color: #007bff;
+      background-color: transparent;
+    }
+  
+    .register-button {
+      background-color: #007bff;
+      color: white;
+      border: 1px solid #007bff;
+    }
+  }
+  
+  /* --- Mobile Styles (max-width) --- */
+  @media (max-width: 767.98px) {
+     .header-nav-desktop,
+     .header-right {
+       display: none;
+     }
+  
+     /* Na małym ekranie lewa sekcja zawiera tylko logo i może być wyśrodkowana */
+      .header-left {
+        width: 100%;
+        justify-content: center; /* Wyśrodkuj logo na małym ekranie */
+      }
+       .logo-link img.app-logo {
+         /* Brak marginesu po prawej, jeśli logo jest wyśrodkowane */
+         margin: 0 auto;
+      }
+  
+      /* Header na małym ekranie ma stałą wysokość */
+      .app-header {
+        padding: 0 15px; /* Mniejszy padding boczny */
+      }
+  }

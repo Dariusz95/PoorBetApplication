@@ -7,32 +7,36 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { TranslocoDirective } from '@jsverse/transloco';
-import { PbInputComponent } from '../../../../shared/components/pb-input/pb-input.component';
-import { ThemeToggleComponent } from '../../../../shared/components/theme-toggle/theme-toggle.component';
+import { TranslocoDirective, TranslocoPipe } from '@jsverse/transloco';
+import { PbCardComponent } from '../../../../shared/components/pb-card/pb-card.component';
+import { PbFormFieldComponent } from '../../../../shared/components/pb-form-field/pb-form-field.component';
 import { AuthService } from '../../services/auth.service';
 import { RegisterRequest } from '../../types/register-request';
 import { passwordMatchValidator } from '../../utils/password-match-validator';
-import { LanguageSwitcherComponent } from '../../../../shared/components/language-switcher/language-switcher.component';
+import { PbLabel } from "../../../../shared/components/pb-form-field/directives/pb-label";
+import { PbButtonComponent } from "../../../../shared/components/pb-button/pb-button.component";
 
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss'],
   imports: [
-    PbInputComponent,
-    ThemeToggleComponent,
+    PbFormFieldComponent,
     FormsModule,
     ReactiveFormsModule,
     CommonModule,
-    PbInputComponent,
+    PbFormFieldComponent,
     TranslocoDirective,
-    LanguageSwitcherComponent
-  ],
+    TranslocoPipe,
+    PbCardComponent,
+    PbLabel,
+    PbButtonComponent
+],
 })
 export class RegisterComponent implements OnInit {
   private readonly formBuilder = inject(FormBuilder);
   private readonly authService = inject(AuthService);
+  
   registrationForm: FormGroup;
   submitted = false;
 
@@ -87,38 +91,4 @@ export class RegisterComponent implements OnInit {
     this.submitted = false;
   }
 
-  getErrorMessage(controlName: string): string {
-    const control = this.registrationForm.get(controlName);
-
-    if (!control || !control.errors || !control.touched) {
-      return '';
-    }
-
-    if (control.errors['required']) {
-      return 'To pole jest wymagane';
-    }
-
-    if (control.errors['email']) {
-      return 'Podaj prawidłowy adres email';
-    }
-
-    if (control.errors['minlength']) {
-      return `Minimalna długość to ${control.errors['minlength'].requiredLength} znaków`;
-    }
-
-    if (control.errors['pattern']) {
-      return 'Hasło musi zawierać dużą literę, małą literę, cyfrę i znak specjalny';
-    }
-
-    if (control.errors['passwordMismatch']) {
-      return 'Hasła nie są identyczne';
-    }
-
-    return 'Nieprawidłowa wartość';
-  }
-
-  hasError(controlName: string): boolean {
-    const control = this.registrationForm.get(controlName);
-    return !!control && control.touched && control.invalid;
-  }
 }

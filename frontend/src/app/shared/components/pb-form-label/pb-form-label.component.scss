@@ -1,0 +1,11 @@
+:host {
+  @apply py-2 md:py-4 lg:py-6;
+}
+
+:host(.focused) {
+  @apply text-blue-500;
+}
+
+:host(.invalid) {
+  @apply dark:text-red-300 text-red-500;
+}

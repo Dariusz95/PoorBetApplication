@@ -1,44 +1,31 @@
 <ng-container *transloco="let t; prefix: 'auth.register'">
   <div class="registration-container">
-    <div class="card">
+    <app-pb-card stylesCss="w-96">
       <div class="header">
         <h2>{{ t("title") }}</h2>
-        <app-theme-toggle />
-        <app-language-switcher />
       </div>
 
       <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()">
-        <div class="form-group">
-          <pb-input [label]="t('email')" type="email" formControlName="email">
-          </pb-input>
-        </div>
+        <pb-form-field type="email" formControlName="email">
+          <pb-label> {{ t("email") | transloco }}</pb-label>
+        </pb-form-field>
 
-        <div class="form-group">
-          <pb-input
-            [label]="t('password')"
-            type="password"
-            formControlName="password"
-          >
-          </pb-input>
-        </div>
+        <pb-form-field type="password" formControlName="password">
+          <pb-label> {{  t("password") | transloco }}</pb-label>
+        </pb-form-field>
 
-        <div class="form-group">
-          <pb-input
-            [label]="t('confirmPassword')"
-            type="password"
-            formControlName="confirmPassword"
-          >
-          </pb-input>
-        </div>
+        <pb-form-field type="password" formControlName="confirmPassword">
+          <pb-label> {{ t("confirmPassword") | transloco }}</pb-label>
+        </pb-form-field>
 
         <div class="form-actions">
-          <button
+          <pb-button
             type="submit"
             class="btn btn-primary"
             [disabled]="!registrationForm.valid"
           >
             {{ t("register") }}
-          </button>
+          </pb-button>
         </div>
 
         <div class="login-link">
@@ -46,6 +33,6 @@
           <a routerLink="/login">{{ t("login") }}</a>
         </div>
       </form>
-    </div>
+    </app-pb-card>
   </div>
 </ng-container>

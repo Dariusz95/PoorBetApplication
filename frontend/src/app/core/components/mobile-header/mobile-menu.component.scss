@@ -1,0 +1,62 @@
+/* --- Style dla Paska Menu na Dole (Mobile) --- */
+.mobile-bottom-menu {
+    display: none; /* Domyślnie ukryte na dużych ekranach */
+    position: fixed; /* Przypięte na dole */
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #fff; /* Białe tło */
+    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.08); /* Cień w górę */
+    z-index: 1000; /* Nad innymi elementami */
+    height: 60px; /* Stała wysokość paska */
+    box-sizing: border-box;
+    padding: 0 10px; /* Delikatny padding boczny */
+  }
+  
+  .mobile-menu-list {
+    display: flex;
+    justify-content: space-around; /* Równomiernie rozłóż elementy */
+    align-items: center;
+    height: 100%; /* Lista zajmuje całą wysokość kontenera */
+  }
+  
+  .mobile-menu-item {
+    flex-grow: 1; /* Pozwól elementom rosnąć */
+    text-align: center; /* Wyśrodkuj zawartość (ikonę i tekst) */
+    height: 100%; /* Element listy zajmuje całą wysokość */
+    display: flex; /* Użyj flexbox do centrowania zawartości */
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .mobile-menu-link {
+    display: flex;
+    flex-direction: column; /* Ikona nad tekstem */
+    align-items: center; /* Wyśrodkuj w poziomie */
+    color: #555; /* Domyslny kolor ikon/tekstu */
+    font-size: 0.7em; /* Mniejszy tekst */
+    font-weight: bold;
+    transition: color 0.2s ease; /* Płynna zmiana koloru */
+  }
+  
+  /* Kolor aktywny (opcjonalnie, jeśli zaimplementujesz) */
+  /* .mobile-menu-link.active {
+      color: #007bff;
+  } */
+  
+  .mobile-menu-link i { /* Styl dla ikony Material Icons */
+    font-size: 24px; /* Rozmiar ikony */
+    margin-bottom: 2px; /* Odstęp między ikoną a tekstem */
+  }
+  
+  .mobile-menu-link:hover {
+      color: #007bff; /* Kolor po najechaniu */
+  }
+  
+  
+  /* --- Media Query dla Małych Ekranów --- */
+  @media (max-width: 767.98px) {
+    .mobile-bottom-menu {
+      display: block; /* Pokaż blok na małych ekranach */
+    }
+  }

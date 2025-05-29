@@ -1,0 +1,41 @@
+.pb-button {
+  @apply px-[15px] py-2 rounded font-bold text-center cursor-pointer inline-block leading-normal select-none transition-all duration-200 ease-in-out bg-transparent border-none text-inherit m-0;
+}
+
+.pb-button-primary {
+  @apply bg-primary-700 text-white border border-primary-700;
+}
+
+.pb-button-secondary {
+  @apply bg-transparent text-[#6c757d] border border-[#6c757d];
+}
+
+.pb-button:disabled,
+.pb-button.disabled {
+  @apply opacity-60 cursor-not-allowed pointer-events-none;
+}
+
+.pb-button:not(:disabled):hover {
+  @apply opacity-90;
+}
+
+.pb-button-primary:not(:disabled):hover,
+.pb-button-register:not(:disabled):hover {
+  opacity: 1;
+}
+
+.pb-button-secondary:not(:disabled):hover {
+  @apply bg-[#f8f9fa] text-[#545b62] border-[#545b62] opacity-100;
+}
+
+.pb-button-login:not(:disabled):hover {
+  @apply opacity-100;
+}
+
+.pb-button:not(:disabled):active {
+  @apply translate-y-[1px];
+}
+
+.pb-button:focus {
+  @apply outline-none ring-2 ring-primary-700/25;
+}
