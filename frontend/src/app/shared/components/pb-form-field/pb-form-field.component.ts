@@ -1,30 +1,20 @@
 import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
+  ContentChild,
   contentChild,
-  DestroyRef,
-  forwardRef,
   inject,
-  Injector,
-  input,
   signal,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import {
-  ControlValueAccessor,
-  FormControl,
-  FormControlDirective,
-  FormControlName,
-  FormGroupDirective,
-  FormsModule,
-  NG_VALUE_ACCESSOR,
-  NgControl,
-  NgModel,
-  ReactiveFormsModule,
-} from '@angular/forms';
-import { tap } from 'rxjs';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PbErrorsComponent } from '../pb-errors/pb-errors.component';
+import { ErrorValueMap } from '../pb-errors/types/error-value-map';
+import {
+  FORM_FIELD_CONTROL,
+  FormFieldControl,
+} from './directives/pb-form-field-control';
 import { PbLabel } from './directives/pb-label';
 
 @Component({
@@ -33,97 +23,59 @@ import { PbLabel } from './directives/pb-label';
   standalone: true,
   templateUrl: './pb-form-field.component.html',
   styleUrl: './pb-form-field.component.scss',
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => PbFormFieldComponent),
-      multi: true,
-    },
-  ],
+
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PbFormFieldComponent implements ControlValueAccessor {
-  private readonly injector = inject(Injector);
-  private readonly destroyRef = inject(DestroyRef);
+export class PbFormFieldComponent {
+  private readonly _changeDetectorRef = inject(ChangeDetectorRef);
 
-  readonly labelRef = contentChild(PbLabel);
+  @ContentChild(FORM_FIELD_CONTROL) control!: FormFieldControl;
 
-  placeholder = input<string>('');
-  type = input<string>('text');
-  disabled = signal<boolean>(false);
+  labelRef = contentChild(PbLabel);
 
+  disabled = signal(false);
+  focused = signal(false);
+  errors = signal<ErrorValueMap | null>(null);
   value = signal<string>('');
-  touched = signal<boolean>(false);
-  focused = signal<boolean>(false);
-  control: FormControl | null = null;
+  touched = signal(false);
+  invalid = signal(false);
+  _labelId ='';
 
-  ngOnInit() {
-    this.setComponentControl();
+  ngAfterContentInit() {
+    this.control.stateChanges.subscribe(() => {
+      this._updateFocusState();
+      this._updateErrorsState();
+      this._updateTouchedState();
+      this._updateInvalidState();
+      console.log(this.control.errors());
+
+      this._changeDetectorRef.markForCheck();
+    });
   }
 
-  onChange = (_: any) => {};
-  onTouched = () => {};
-
-  writeValue(value: any): void {
-    this.value.set(value || '');
+  private _updateInvalidState() {
+    this.invalid.set(!!this.control.errors());
   }
 
-  registerOnChange(fn: any): void {
-    this.onChange = fn;
+  private _updateFocusState() {
+    this.focused.set(this.control.focused());
   }
 
-  registerOnTouched(fn: any): void {
-    this.onTouched = fn;
-  }
-
-  setDisabledState(isDisabled: boolean): void {
-    this.disabled.set(isDisabled);
-  }
-
-  handleInput(event: Event): void {
-    const val = (event.target as HTMLInputElement).value;
-    this.value.set(val);
-    this.onChange(val);
-  }
-
-  handleFocus(): void {
-    this.focused.set(true);
-  }
-
-  handleBlur(): void {
-    this.onTouched();
-    this.touched.set(true);
-    this.focused.set(false);
-  }
-
-  private setComponentControl<T>(): void {
-    const injectedControl = this.injector.get(NgControl);
-
-    switch (injectedControl.constructor) {
-      case NgModel: {
-        const { control, update } = injectedControl as NgModel;
-
-        this.control = control;
-
-        this.control.valueChanges
-          .pipe(
-            tap((value: T) => update.emit(value)),
-            takeUntilDestroyed(this.destroyRef)
-          )
-          .subscribe();
-        break;
-      }
-      case FormControlName: {
-        this.control = this.injector
-          .get(FormGroupDirective)
-          .getControl(injectedControl as FormControlName);
-        break;
-      }
-      default: {
-        this.control = (injectedControl as FormControlDirective)
-          .form as FormControl;
-        break;
-      }
+  private _updateTouchedState() {
+    this.touched.set(this.control.touched());
+    if (this.control.touched()) {
+      this.touched.set(true);
     }
+  }
+
+  private _updateErrorsState() {
+    const errors = this.control.errors();
+    console.log('Errors:', errors);
+    if (!errors) {
+      this.errors.set(null);
+      return;
+    }
+
+    this.errors.set(errors as ErrorValueMap);
   }
 }

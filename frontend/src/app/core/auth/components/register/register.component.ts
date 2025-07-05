@@ -1,20 +1,29 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnInit,
+} from '@angular/core';
 import {
   FormBuilder,
-  FormGroup,
   FormsModule,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { TranslocoDirective, TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoDirective } from '@jsverse/transloco';
+import { PbButtonComponent } from '../../../../shared/components/pb-button/pb-button.component';
 import { PbCardComponent } from '../../../../shared/components/pb-card/pb-card.component';
+import { PbLabel } from '../../../../shared/components/pb-form-field/directives/pb-label';
 import { PbFormFieldComponent } from '../../../../shared/components/pb-form-field/pb-form-field.component';
+import { IconType } from '../../../../shared/components/pb-icon/pb-icon.model';
+import { PbInputComponent } from '../../../../shared/components/pb-input/pb-input.component';
+import { RoutePath } from '../../../routing/route-path';
 import { AuthService } from '../../services/auth.service';
 import { RegisterRequest } from '../../types/register-request';
 import { passwordMatchValidator } from '../../utils/password-match-validator';
-import { PbLabel } from "../../../../shared/components/pb-form-field/directives/pb-label";
-import { PbButtonComponent } from "../../../../shared/components/pb-button/pb-button.component";
+import { RegistrationFormGroup } from './types/registration-form-group';
+import { RegistrationFormValue } from './types/registration-form-value';
 
 @Component({
   selector: 'app-register',
@@ -27,21 +36,26 @@ import { PbButtonComponent } from "../../../../shared/components/pb-button/pb-bu
     CommonModule,
     PbFormFieldComponent,
     TranslocoDirective,
-    TranslocoPipe,
     PbCardComponent,
     PbLabel,
-    PbButtonComponent
-],
+    PbInputComponent,
+    PbButtonComponent,
+  ],
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RegisterComponent implements OnInit {
   private readonly formBuilder = inject(FormBuilder);
   private readonly authService = inject(AuthService);
-  
-  registrationForm: FormGroup;
+
+  readonly IconType = IconType;
+  readonly RoutePath = RoutePath;
+
+  form: RegistrationFormGroup;
   submitted = false;
 
   constructor() {
-    this.registrationForm = this.formBuilder.group(
+    this.form = this.formBuilder.group(
       {
         email: ['', [Validators.required, Validators.email]],
         password: [
@@ -67,11 +81,12 @@ export class RegisterComponent implements OnInit {
   onSubmit(): void {
     this.submitted = true;
 
-    if (this.registrationForm.invalid) {
+    if (this.form.invalid) {
       return;
     }
 
-    const { email, password } = this.registrationForm.value;
+    const formValue: RegistrationFormValue = this.form.getRawValue();
+    const { email, password } = formValue;
 
     const request: RegisterRequest = {
       email,
@@ -87,8 +102,7 @@ export class RegisterComponent implements OnInit {
       },
     });
 
-    this.registrationForm.reset();
+    this.form.reset();
     this.submitted = false;
   }
-
 }

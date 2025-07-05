@@ -1,10 +1,11 @@
 import { Routes } from '@angular/router';
+import { RouteFragment } from './core/routing/route-fragment';
 
 export const routes: Routes = [
   {
-    path: 'auth',
+    path: RouteFragment.Auth,
     loadChildren: () =>
-      import('./features/auth/auth.routes').then((m) => m.AUTH_ROUTES),
+      import('./core/auth/auth.routes').then((m) => m.AUTH_ROUTES),
   },
   { path: '**', redirectTo: 'auth/register' },
 ];

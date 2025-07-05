@@ -1,41 +1,82 @@
 .pb-button {
-  @apply px-[15px] py-2 rounded font-bold text-center cursor-pointer inline-block leading-normal select-none transition-all duration-200 ease-in-out bg-transparent border-none text-inherit m-0;
-}
+  @apply inline-flex items-center justify-center font-medium transition-all duration-200 ease-in-out;
+  @apply focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed select-none relative;
 
-.pb-button-primary {
-  @apply bg-primary-700 text-white border border-primary-700;
-}
+  &--sm {
+    @apply px-3 py-1.5 text-sm rounded-md min-h-[32px];
+  }
 
-.pb-button-secondary {
-  @apply bg-transparent text-[#6c757d] border border-[#6c757d];
-}
+  &--md {
+    @apply px-4 py-2 text-sm rounded-md min-h-[40px];
+  }
 
-.pb-button:disabled,
-.pb-button.disabled {
-  @apply opacity-60 cursor-not-allowed pointer-events-none;
-}
+  &--lg {
+    @apply px-6 py-3 text-base rounded-lg min-h-[48px];
+  }
 
-.pb-button:not(:disabled):hover {
-  @apply opacity-90;
-}
+  &--responsive {
+    @apply px-3 sm:px-4 lg:px-6 py-1.5 sm:py-2 lg:py-3;
+    @apply text-sm lg:text-base rounded-md lg:rounded-lg;
+    @apply min-h-[32px] sm:min-h-[40px] lg:min-h-[48px];
+  }
 
-.pb-button-primary:not(:disabled):hover,
-.pb-button-register:not(:disabled):hover {
-  opacity: 1;
-}
+  &--primary {
+    @apply bg-blue-600 text-white border border-blue-600;
+    @apply hover:bg-blue-700 hover:border-blue-700 focus:ring-blue-500;
+    @apply active:bg-blue-800 disabled:bg-blue-300 disabled:border-blue-300;
+    @apply shadow-sm hover:shadow-md;
+  }
 
-.pb-button-secondary:not(:disabled):hover {
-  @apply bg-[#f8f9fa] text-[#545b62] border-[#545b62] opacity-100;
-}
+  &--secondary {
+    @apply bg-gray-100 text-gray-900 border border-gray-300;
+    @apply hover:bg-gray-200 hover:border-gray-400 focus:ring-gray-500;
+    @apply active:bg-gray-300 disabled:bg-gray-50 disabled:text-gray-400 disabled:border-gray-200;
+    @apply shadow-sm hover:shadow-md;
+  }
 
-.pb-button-login:not(:disabled):hover {
-  @apply opacity-100;
-}
+  &--outline {
+    @apply bg-transparent text-blue-600 border-2 border-blue-600;
+    @apply hover:bg-blue-50 hover:text-blue-700 focus:ring-blue-500;
+    @apply active:bg-blue-100 disabled:text-blue-300 disabled:border-blue-300 disabled:bg-transparent;
+  }
 
-.pb-button:not(:disabled):active {
-  @apply translate-y-[1px];
-}
+  &--ghost {
+    @apply bg-transparent text-gray-700 border border-transparent;
+    @apply hover:bg-gray-100 hover:text-gray-900 focus:ring-gray-500;
+    @apply active:bg-gray-200 disabled:text-gray-400 disabled:bg-transparent;
+  }
 
-.pb-button:focus {
-  @apply outline-none ring-2 ring-primary-700/25;
+  &--danger {
+    @apply bg-red-600 text-white border border-red-600;
+    @apply hover:bg-red-700 hover:border-red-700 focus:ring-red-500;
+    @apply active:bg-red-800 disabled:bg-red-300 disabled:border-red-300;
+    @apply shadow-sm hover:shadow-md;
+  }
+
+  &--success {
+    @apply bg-green-600 text-white border border-green-600;
+    @apply hover:bg-green-700 hover:border-green-700 focus:ring-green-500;
+    @apply active:bg-green-800 disabled:bg-green-300 disabled:border-green-300;
+    @apply shadow-sm hover:shadow-md;
+  }
+
+  &--full-width {
+    @apply w-full;
+  }
+
+  &--loading {
+    @apply cursor-wait;
+  }
+
+  &__content {
+    @apply flex items-center justify-center gap-2;
+  }
+
+  &__text {
+    @apply truncate;
+    
+    &--loading {
+      @apply opacity-70;
+    }
+  }
 }

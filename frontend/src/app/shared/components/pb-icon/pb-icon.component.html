@@ -1,0 +1,7 @@
+<img
+  [src]="type() | iconPath"
+  [ngClass]="sizeClasses()"
+  [alt]="alt() ?? ''"
+  [attr.aria-hidden]="alt() ? null : 'true'"
+  class="shrink-0"
+/>
