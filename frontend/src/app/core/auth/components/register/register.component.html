@@ -5,7 +5,7 @@
         <h2 class="base-clamp font-bold">{{ t("title") }}</h2>
       </div>
 
-      <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()">
+      <form [formGroup]="form">
         <pb-form-field>
           <pb-label> {{ t("email") }}</pb-label>
           <pb-input formControlName="email"></pb-input>
@@ -23,10 +23,11 @@
 
         <div class="form-actions">
           <pb-button
-            [disabled]="!registrationForm.valid"
+            [disabled]="!form.valid"
             variant="primary"
             size="md"
             [fullWidth]="true"
+            (click)="onSubmit()"
           >
             {{ t("register") }}
           </pb-button>

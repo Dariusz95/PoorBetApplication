@@ -36,3 +36,8 @@ web:
       - Authorization
       - Requestor-Type
     maxAge: 3600
+
+jwt:
+  secret: your_very_secret_key
+  access-token-expiration: 900000
+  refresh-token-expiration: 604800000

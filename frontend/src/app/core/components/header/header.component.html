@@ -25,6 +25,7 @@
         <app-theme-toggle />
         <app-language-switcher />
 
+        @if(isLoggedIn$ | async) { Zalogowany }@else {
         <pb-button variant="outline" [routerLink]="RoutePath.Login">
           {{ t("auth.register.login") }}
         </pb-button>
@@ -32,6 +33,7 @@
         <pb-button variant="primary" [routerLink]="RoutePath.Register">
           {{ t("auth.register.title") }}
         </pb-button>
+        }
       </div>
     </div>
   </header>
