@@ -5,7 +5,6 @@ import { TranslocoDirective } from '@jsverse/transloco';
 import { Observable } from 'rxjs';
 import { LanguageSwitcherComponent } from '../../../shared/components/language-switcher/language-switcher.component';
 import { PbButtonComponent } from '../../../shared/components/pb-button/pb-button.component';
-import { ThemeToggleComponent } from '../../../shared/components/theme-toggle/theme-toggle.component';
 import { AuthService } from '../../auth/services/auth.service';
 import { RoutePath } from '../../routing/route-path';
 import { MENU_ITEMS } from './models/menu-items';
@@ -17,7 +16,6 @@ import { MENU_ITEMS } from './models/menu-items';
     CommonModule,
     RouterLink,
     PbButtonComponent,
-    ThemeToggleComponent,
     LanguageSwitcherComponent,
     TranslocoDirective,
     PbButtonComponent,

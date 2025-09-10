@@ -1,7 +1,7 @@
-import { Component, computed, input } from '@angular/core';
-import { IconSize, IconType } from './pb-icon.model';
-import { IconPathPipe } from "../../pipes/icon-path.pipe";
 import { CommonModule } from '@angular/common';
+import { Component, computed, input } from '@angular/core';
+import { IconPathPipe } from '../../pipes/icon-path.pipe';
+import { IconSize, IconType } from './pb-icon.model';
 
 @Component({
   selector: 'pb-icon',
@@ -19,7 +19,6 @@ export class PbIconComponent {
   IconType = IconType;
   IconSize = IconSize;
 
-  // Zamiast getSizeClasses – użyjemy reactive computed
   sizeClasses = computed(() => {
     const sizeMap: Record<IconSize, string> = {
       xs: 'w-3 h-3',

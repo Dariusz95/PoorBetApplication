@@ -4,7 +4,6 @@ import { ErrorValueMap } from '../../pb-errors/types/error-value-map';
 
 export interface FormFieldControl {
   stateChanges: Observable<void>;
-  // id: string;
   focused: WritableSignal<boolean>;
   touched: WritableSignal<boolean>;
   disabled: WritableSignal<boolean>;

@@ -1,4 +1,8 @@
 {
+  "lang": {
+    "pl": "Polish",
+    "en": "English"
+  },
   "auth": {
     "register": {
       "title": "Register",

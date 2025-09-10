@@ -38,6 +38,8 @@ web:
     maxAge: 3600
 
 jwt:
-  secret: your_very_secret_key
+  secret: ${JWT_SECRET}
   access-token-expiration: 900000
   refresh-token-expiration: 604800000
+
+apiKey: ${API_KEY}

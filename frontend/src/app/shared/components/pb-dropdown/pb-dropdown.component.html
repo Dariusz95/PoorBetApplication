@@ -1,35 +1,30 @@
 <div #trigger="cdkOverlayOrigin" cdkOverlayOrigin (click)="toggleDropdown()">
-  <ng-container *ngIf="triggerTemplate; else defaultTrigger">
-    <ng-container *ngTemplateOutlet="triggerTemplate"></ng-container>
-  </ng-container>
-  <ng-template #defaultTrigger>
-    <ng-content></ng-content>
-  </ng-template>
+  <ng-content select="[dropdownLabel]"></ng-content>
+  <i [class.rotate]="isOpen()" class="bi bi-caret-down-fill"></i>
 </div>
 
 <ng-template
   cdkConnectedOverlay
-  [cdkConnectedOverlayOrigin]="origin || trigger"
-  [cdkConnectedOverlayOpen]="isOpen"
-  [cdkConnectedOverlayPositions]="positions"
+  [cdkConnectedOverlayOrigin]="origin() || trigger"
+  [cdkConnectedOverlayOpen]="isOpen()"
+  [cdkConnectedOverlayPositions]="positions()"
   (backdropClick)="closeDropdown()"
   (detach)="closeDropdown()"
 >
   <div class="dropdown-panel" [@dropdownAnimation]>
     <ul class="dropdown-list">
       <li
-        *ngFor="let option of options"
+        *ngFor="let option of options()"
         (click)="selectOption(option)"
         class="dropdown-list-item"
       >
-        <ng-container *ngIf="optionTemplate; else defaultOption">
-          <ng-container
-            *ngTemplateOutlet="optionTemplate; context: { $implicit: option }"
-          ></ng-container>
-        </ng-container>
-        <ng-template #defaultOption>
-          {{ option[optionLabelKey] }}
-        </ng-template>
+        @if(optionTemplate()) {
+        <ng-container
+          *ngTemplateOutlet="optionTemplate()!; context: { $implicit: option }"
+        ></ng-container>
+        }@else {
+        {{ option.label | transloco }}
+        }
       </li>
     </ul>
   </div>

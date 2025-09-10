@@ -1,7 +1,15 @@
 <app-pb-dropdown
   [options]="availableLanguages"
   optionLabelKey="label"
-  (optionSelected)="changeLanguage($event)"
+  [formControl]="activeLanguageControl"
+  [optionTemplate]="languageTpl"
 >
-  <span class="language-trigger"> {{ getActiveLanguageLabel() }} ▼ </span>
+  <span dropdownLabel class="language-trigger">
+    {{ "lang." + activeLanguageControl.value | transloco }}
+  </span>
 </app-pb-dropdown>
+
+<ng-template #languageTpl let-option>
+  <span class="flag-icon flag-{{ option.value }}"></span>
+  <span>{{ option.label | transloco }}</span>
+</ng-template>

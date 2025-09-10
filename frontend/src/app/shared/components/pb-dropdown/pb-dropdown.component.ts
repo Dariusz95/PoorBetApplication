@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  forwardRef,
+  input,
+  signal,
+} from '@angular/core';
 
 import {
   animate,
@@ -13,13 +19,10 @@ import {
   OverlayModule,
 } from '@angular/cdk/overlay';
 import { CommonModule } from '@angular/common';
-import {
-  EventEmitter,
-  Input,
-  Output,
-  SimpleChanges,
-  TemplateRef,
-} from '@angular/core';
+import { TemplateRef } from '@angular/core';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { TranslocoPipe } from '@jsverse/transloco';
+import { DropdownOption } from './dropdown-option';
 
 const dropdownAnimation = trigger('dropdownAnimation', [
   state('void', style({ opacity: 0, transform: 'scale(0.95)' })),
@@ -30,60 +33,64 @@ const dropdownAnimation = trigger('dropdownAnimation', [
 
 @Component({
   selector: 'app-pb-dropdown',
-  imports: [OverlayModule, CommonModule],
+  imports: [OverlayModule, CommonModule, TranslocoPipe],
   templateUrl: './pb-dropdown.component.html',
   styleUrl: './pb-dropdown.component.scss',
   standalone: true,
   animations: [dropdownAnimation],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => PbDropdownComponent),
+      multi: true,
+    },
+  ],
 })
-export class PbDropdownComponent {
-  @Input() options: any[] = [];
-  @Input() optionLabelKey: string = 'label';
-  @Input() origin?: CdkOverlayOrigin;
-  @Input() positions: ConnectedPosition[] = [];
+export class PbDropdownComponent<T extends DropdownOption>
+  implements ControlValueAccessor
+{
+  options = input<T[]>([]);
+  origin = input<CdkOverlayOrigin | undefined>(undefined);
+  positions = input<ConnectedPosition[]>([
+    { originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top' },
+    { originX: 'start', originY: 'top', overlayX: 'start', overlayY: 'bottom' },
+  ]);
+  optionTemplate = input<TemplateRef<{ $implicit: T }> | undefined>(undefined);
+  closeOnSelect = input(true);
 
-  @Output() optionSelected = new EventEmitter<any>();
+  isOpen = signal(false);
+  value = signal<string | null>(null);
 
-  isOpen = false;
+  private onChange: (value: string | null) => void = () => {};
+  private onTouched: () => void = () => {};
 
-  @Input() optionTemplate?: TemplateRef<any>;
-
-  @Input() triggerTemplate?: TemplateRef<any>;
-
-  constructor() {
-    if (this.positions.length === 0) {
-      this.positions = [
-        {
-          originX: 'start',
-          originY: 'bottom',
-          overlayX: 'start',
-          overlayY: 'top',
-        },
-        {
-          originX: 'start',
-          originY: 'top',
-          overlayX: 'start',
-          overlayY: 'bottom',
-        },
-      ];
-    }
+  writeValue(value: string | null): void {
+    this.value.set(value);
+  }
+  registerOnChange(fn: (value: string | null) => void): void {
+    this.onChange = fn;
+  }
+  registerOnTouched(fn: () => void): void {
+    this.onTouched = fn;
   }
 
-  ngOnInit(): void {}
-
-  ngOnChanges(changes: SimpleChanges): void {}
-
   toggleDropdown(): void {
-    this.isOpen = !this.isOpen;
+    this.isOpen.update((open) => !open);
   }
 
   closeDropdown(): void {
-    this.isOpen = false;
+    this.isOpen.set(false);
+    this.onTouched();
   }
 
-  selectOption(option: any): void {
-    this.optionSelected.emit(option);
-    this.closeDropdown();
+  selectOption(option: T): void {
+    this.value.set(option.value);
+    this.onChange(option.value);
+    if (this.closeOnSelect()) this.closeDropdown();
+  }
+
+  selectedOption(): T | undefined {
+    return this.options().find((o) => o.value === this.value());
   }
 }
