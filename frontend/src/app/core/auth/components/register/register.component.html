@@ -1,0 +1,46 @@
+<ng-container *transloco="let t; prefix: 'auth.register'">
+  <div class="registration-container">
+    <app-pb-card stylesCss="w-96">
+      <div class="header">
+        <h2 class="base-clamp font-bold">{{ t("title") }}</h2>
+      </div>
+
+      <form [formGroup]="form">
+        <pb-form-field>
+          <pb-label> {{ t("email") }}</pb-label>
+          <pb-input formControlName="email"></pb-input>
+        </pb-form-field>
+
+        <pb-form-field>
+          <pb-label> {{ t("password") }}</pb-label>
+          <pb-input formControlName="password"></pb-input>
+        </pb-form-field>
+
+        <pb-form-field>
+          <pb-label> {{ t("confirmPassword") }}</pb-label>
+          <pb-input formControlName="confirmPassword"></pb-input>
+        </pb-form-field>
+
+        <div class="form-actions">
+          <pb-button
+            [disabled]="!form.valid"
+            variant="primary"
+            size="md"
+            [fullWidth]="true"
+            (click)="onSubmit()"
+          >
+            {{ t("register") }}
+          </pb-button>
+        </div>
+
+        <div class="login-link">
+          {{ t("alreadyHaveAccount") }}
+
+          <pb-button variant="outline" size="sm" [routerLink]="RoutePath.Login">
+            {{ t("login") }}
+          </pb-button>
+        </div>
+      </form>
+    </app-pb-card>
+  </div>
+</ng-container>

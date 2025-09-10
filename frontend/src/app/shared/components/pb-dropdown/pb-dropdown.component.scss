@@ -1,3 +1,22 @@
+div[cdkOverlayOrigin] {
+  @apply flex justify-between;
+  cursor: pointer;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  user-select: none;
+  min-width: 100px;
+
+  .arrow-icon {
+    @apply ml-2;
+  }
+}
+
+.rotate {
+  transform: rotate(180deg);
+  transition: transform 0.2s;
+}
+
 .dropdown-panel {
   border: 1px solid #ccc;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
@@ -22,14 +41,4 @@
 
 .dropdown-list-item:hover {
   background-color: #f0f0f0;
-}
-
-div[cdkOverlayOrigin] {
-  display: inline-block;
-  cursor: pointer;
-  padding: 8px 12px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: #eee;
-  user-select: none;
 }

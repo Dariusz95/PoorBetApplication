@@ -2,6 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/gateway/gateway.iml" filepath="$PROJECT_DIR$/gateway/gateway.iml" />
+      <module fileurl="file://$PROJECT_DIR$/user-service/poor-bet-user-service.iml" filepath="$PROJECT_DIR$/user-service/poor-bet-user-service.iml" />
       <module fileurl="file://$PROJECT_DIR$/backend/user-service.iml" filepath="$PROJECT_DIR$/backend/user-service.iml" />
     </modules>
   </component>

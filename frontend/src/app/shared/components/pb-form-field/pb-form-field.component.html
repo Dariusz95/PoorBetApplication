@@ -1,42 +1,19 @@
 <div
   class="form-field-container"
+  [class.invalid]="touched() && invalid()"
   [class.focused]="focused()"
-  [class.has-value]="value() !== ''"
-  [class.invalid]="!!this.control?.invalid && this.touched()"
 >
   @if(labelRef()) {
-  <label class="form-field-label" for="">
+  <label class="form-field-label" [id]="_labelId">
     <ng-content select="pb-label"></ng-content>
   </label>
   }
 
   <div class="input-wrapper">
-    <div class="prefix">
-      <ng-content select="[prefix]"></ng-content>
-    </div>
-
-    <input
-      class="form-field-input"
-      [type]="type()"
-      [placeholder]="placeholder()"
-      [value]="value()"
-      [disabled]="disabled()"
-      (input)="handleInput($event)"
-      (focus)="handleFocus()"
-      (blur)="handleBlur()"
-    />
-
-    <div class="suffix">
-      <ng-content select="[suffix]"></ng-content>
-    </div>
+    <ng-content></ng-content>
   </div>
 
-  <div class="underline">
-    <div class="base-line"></div>
-    <div class="focus-line"></div>
-  </div>
-
-  @if(control?.errors; as errors) {
-  <pb-errors [errors]="$any(errors)"></pb-errors>
+  @if(touched() && invalid()) {
+  <pb-errors [errors]="$any(errors())"></pb-errors>
   }
 </div>

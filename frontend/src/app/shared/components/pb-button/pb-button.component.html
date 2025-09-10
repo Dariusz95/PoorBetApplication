@@ -1,25 +1,39 @@
-@switch (renderAs) { @case ('link') {
-<a
-  [routerLink]="routerLink()!"
-  [href]="href()!"
-  [attr.aria-label]="ariaLabel()"
-  [class.disabled]="disabled()"
-  [ngClass]="['pb-button', 'pb-button-' + type()]"
-  (click)="onClick($event)"
->
-  <ng-content />
-  {{ text() | transloco }}
-</a>
-} @case ('button') {
-<button
-  [type]="htmlType()"
-  [disabled]="disabled()"
-  [attr.aria-label]="ariaLabel()"
-  [ngClass]="['pb-button', 'pb-button-' + type()]"
-  (click)="onClick($event)"
->
-  {{ text() | transloco }}
-</button>
-} @default {
-<ng-content />
-} }
+<ng-container *ngIf="routerLink(); else regularButton">
+  <a
+    [routerLink]="routePath()"
+    [ngClass]="getButtonClasses()"
+    [attr.aria-disabled]="disabled()"
+    [class.pointer-events-none]="disabled()"
+    [class.opacity-50]="disabled()"
+    role="button"
+    [attr.aria-label]="ariaLabel()"
+  >
+    <ng-container *ngTemplateOutlet="buttonContent"></ng-container>
+  </a>
+</ng-container>
+
+<ng-template #regularButton>
+  <button
+    [type]="type()"
+    [ngClass]="getButtonClasses()"
+    [disabled]="disabled()"
+    (click)="onClick($event)"
+    [attr.aria-label]="ariaLabel()"
+  >
+    <ng-container *ngTemplateOutlet="buttonContent"></ng-container>
+  </button>
+</ng-template>
+
+<ng-template #buttonContent>
+  <span class="pb-button__content">
+    @if(iconTemplate()){
+    <ng-content select="pb-icon"></ng-content>
+    }
+    <span
+      class="button__text"
+      [ngClass]="{ 'pb-button__text--loading': loading() }"
+    >
+      <ng-content></ng-content>
+    </span>
+  </span>
+</ng-template>

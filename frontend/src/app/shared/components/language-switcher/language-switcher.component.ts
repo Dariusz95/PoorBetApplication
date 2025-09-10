@@ -1,48 +1,49 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
-import { TranslocoService } from '@jsverse/transloco'; // Importuj TranslocoService
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import {
+  LangDefinition,
+  TranslocoPipe,
+  TranslocoService,
+} from '@jsverse/transloco'; // Importuj TranslocoService
+import { DropdownOption } from '../pb-dropdown/dropdown-option';
 import { PbDropdownComponent } from '../pb-dropdown/pb-dropdown.component';
 
 @Component({
   selector: 'app-language-switcher',
-  standalone: true,
-  imports: [CommonModule, PbDropdownComponent],
+  imports: [
+    CommonModule,
+    PbDropdownComponent,
+    ReactiveFormsModule,
+    TranslocoPipe,
+  ],
   templateUrl: './language-switcher.component.html',
   styleUrls: ['./language-switcher.component.scss'],
 })
 export class LanguageSwitcherComponent implements OnInit {
   private readonly translocoService = inject(TranslocoService);
-  availableLanguages: { code: string; label: string }[] = [];
-  activeLanguage!: string;
+
+  availableLanguages: DropdownOption[] = [];
+  activeLanguageControl = new FormControl<string>('');
 
   ngOnInit(): void {
     this.availableLanguages = this.translocoService
       .getAvailableLangs()
-      .map((lang) => {
-        const code = typeof lang === 'string' ? lang : lang.label;
-        const label = code.toUpperCase();
-        return { code, label };
-      });
+      .map((lang) => this.mapToDropdownOption(lang));
 
     this.translocoService.langChanges$.subscribe((lang) => {
-      this.activeLanguage = lang;
+      this.activeLanguageControl.setValue(lang, { emitEvent: false });
     });
 
-    this.activeLanguage = this.translocoService.getActiveLang();
+    this.activeLanguageControl.valueChanges.subscribe((lang) => {
+      this.translocoService.setActiveLang(lang!);
+    });
   }
 
-  changeLanguage(selectedOption: { code: string; label: string }): void {
-    if (this.activeLanguage !== selectedOption.code) {
-      this.translocoService.setActiveLang(selectedOption.code);
-    }
-  }
+  private mapToDropdownOption(lang: string | LangDefinition): DropdownOption {
+    const code = typeof lang === 'string' ? lang : lang.label;
+    const label = `lang.${code}`;
 
-  getActiveLanguageLabel(): string {
-    const activeLangObj = this.availableLanguages.find(
-      (lang) => lang.code === this.activeLanguage
-    );
-    return activeLangObj
-      ? activeLangObj.label
-      : this.activeLanguage.toUpperCase();
+    return { value: code, label };
   }
 }

@@ -1,4 +1,8 @@
 {
+  "lang":{
+    "pl": "Polski",
+    "en": "Angielski"
+  },
   "auth": {
     "register": {
       "title": "Rejestracja",

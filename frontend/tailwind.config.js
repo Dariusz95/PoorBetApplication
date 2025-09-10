@@ -34,6 +34,15 @@ module.exports = {
       boxShadow: {
         neon: "0 0 5px theme('colors.primary.500'), 0 0 20px theme('colors.purple.500')",
       },
+      fontSize: {
+        "xs-clamp": "clamp(0.75rem, 1.5vw, 0.875rem)",
+        "sm-clamp": "clamp(0.875rem, 1.8vw, 1rem)",
+        "base-clamp": "clamp(1rem, 2vw, 1.125rem)",
+        "lg-clamp": "clamp(1.25rem, 2.5vw, 1.5rem)",
+        "xl-clamp": "clamp(1.5rem, 4vw, 2rem)",
+        "2xl-clamp": "clamp(2rem, 5vw, 2.5rem)",
+        "3xl-clamp": "clamp(2.5rem, 6vw, 3rem)",
+      },
     },
   },
   plugins: [],

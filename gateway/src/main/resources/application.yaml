@@ -1,0 +1,25 @@
+server:
+  port: 8081
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: public-user-service
+          uri: http://user-service:8080
+          predicates:
+            - Path=/api/users/login, /api/users/register
+          filters:
+            - StripPrefix=0
+
+        - id: protected-user-service
+          uri: http://user-service:8080
+          predicates:
+            - Path=/api/users/**
+          filters:
+            - StripPrefix=0
+            - JwtAuthFilter
+            - AddRequestHeader=X-API-KEY, ${API_KEY}
+
+jwt:
+  secret: ${JWT_SECRET}
