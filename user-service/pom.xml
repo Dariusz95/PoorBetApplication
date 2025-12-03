@@ -8,11 +8,10 @@
 		<version>3.4.1</version>
 		<relativePath/>
 	</parent>
-	<groupId>com.example</groupId>
-	<artifactId>poor-bet-user-service</artifactId>
+	<groupId>com.poorbet.userService</groupId>
+	<artifactId>user-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>backend</name>
-	<description>Demo project for Spring Boot</description>
+	<name>user-service</name>
 	<url/>
 	<licenses>
 		<license/>
