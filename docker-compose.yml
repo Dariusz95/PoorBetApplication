@@ -5,6 +5,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile.dev
+    container_name: frontend
     ports:
       - "4200:4200"
     volumes:
@@ -18,6 +19,7 @@ services:
     build:
       context: ./gateway
       dockerfile: Dockerfile
+    container_name: gateway
     ports:
       - "8081:8081"
     environment:
@@ -33,9 +35,9 @@ services:
     build:
       context: ./user-service
       dockerfile: Dockerfile
-    # ports:
-    #   - "8080:8080"
+    container_name: user-service
     environment:
+      - SPRING_PROFILES_ACTIVE=dev
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
@@ -46,11 +48,33 @@ services:
     networks:
       - main_network
 
+  redis:
+    image: redis:7
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+  teams-service:
+    build:
+      context: ./teams-service
+      dockerfile: Dockerfile
+    container_name: teams-service-db
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://teams-db:5432/${POSTGRES_TEAMS_DB}
+      - POSTGRES_USER=${POSTGRES_TEAMS_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_TEAMS_PASSWORD}
+    depends_on:
+      - redis
+      - teams-db
+    networks:
+      - main_network
+
   db:
     build:
-      context: ./postgres
+      context: ./user-db
       dockerfile: Dockerfile
-    container_name: db
+    container_name: user-db
     restart: always
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
@@ -59,7 +83,24 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - user_data:/var/lib/postgresql/data
+    networks:
+      - main_network
+
+  teams-db:
+    build:
+      context: ./teams-db
+      dockerfile: Dockerfile
+    container_name: teams-db
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_TEAMS_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_TEAMS_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_TEAMS_DB}
+    ports:
+      - "5433:5432"
+    volumes:
+      - teams_data:/var/lib/postgresql/data
     networks:
       - main_network
 
@@ -68,4 +109,5 @@ networks:
     driver: bridge
 
 volumes:
-  postgres_data:
+  user_data:
+  teams_data:

@@ -1,4 +1,4 @@
-FROM maven:3.9.9-eclipse-temurin-21-jammy AS build
+FROM eclipse-temurin:21-jdk-alpine as build
 
 WORKDIR /app
 COPY pom.xml mvnw ./
@@ -7,8 +7,7 @@ COPY src src
 RUN chmod +x ./mvnw
 RUN ./mvnw -DskipTests package -q
 
-FROM amazoncorretto:21-alpine3.20
+FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
-EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java","-jar","/app/app.jar"]
