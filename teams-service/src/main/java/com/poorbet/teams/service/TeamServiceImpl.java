@@ -1,5 +1,6 @@
 package com.poorbet.teams.service;
 
+import com.poorbet.teams.dto.TeamStatsDto;
 import com.poorbet.teams.exception.TeamNotFoundException;
 import com.poorbet.teams.model.Team;
 import com.poorbet.teams.repository.TeamRepository;
@@ -14,12 +15,16 @@ import java.util.UUID;
 public class TeamServiceImpl implements TeamService {
     private final TeamRepository teamRepository;
 
-    public List<Team> findAll() {
-        return teamRepository.findAll();
-    }
 
-    public Team findById(UUID id) {
-        return teamRepository.findById(id)
+    public TeamStatsDto getStats(UUID id) {
+        Team team = teamRepository.findById(id)
                 .orElseThrow(() -> new TeamNotFoundException(id));
+
+        return new TeamStatsDto(
+                team.getId(),
+                team.getName(),
+                team.getAttackPower(),
+                team.getDefencePower()
+        );
     }
 }

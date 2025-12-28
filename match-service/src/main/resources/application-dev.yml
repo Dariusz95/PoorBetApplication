@@ -1,0 +1,6 @@
+teams:
+  service:
+    url: http://teams-service:8080
+    timeout:
+      connect: 2s
+      read: 3s

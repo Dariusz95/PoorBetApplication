@@ -1,5 +1,6 @@
 package com.poorbet.teams.controller;
 
+import com.poorbet.teams.dto.TeamStatsDto;
 import com.poorbet.teams.model.Team;
 import com.poorbet.teams.service.TeamService;
 import lombok.RequiredArgsConstructor;
@@ -16,14 +17,11 @@ public class TeamController {
 
     private final TeamService service;
 
-    @GetMapping
-    public List<Team> all() {
-        return service.findAll();
-    }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Team> get(@PathVariable UUID id) {
-        Team team = service.findById(id);
+    @GetMapping("/{id}/stats")
+    public ResponseEntity<TeamStatsDto> get(@PathVariable UUID id) {
+        TeamStatsDto team = service.getStats(id);
+
         return ResponseEntity.ok(team);
     }
 }
