@@ -17,7 +17,6 @@ public class TeamController {
 
     private final TeamService service;
 
-
     @GetMapping("/{id}/stats")
     public ResponseEntity<TeamStatsDto> get(@PathVariable UUID id) {
         TeamStatsDto team = service.getStats(id);

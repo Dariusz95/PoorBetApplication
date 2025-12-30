@@ -29,7 +29,7 @@ services:
       - main_network
     depends_on:
       - user-service
-      - db
+      - user-db
 
   user-service:
     build:
@@ -44,7 +44,7 @@ services:
       - JWT_SECRET=${JWT_SECRET}
       - API_KEY=${API_KEY}
     depends_on:
-      - db
+      - user-db
     networks:
       - main_network
 
@@ -75,21 +75,27 @@ services:
   match-service:
     build:
       context: ./match-service
-      dockerfile: Dockerfile.debug
-#      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     container_name: match-service
     environment:
       - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://match-db:5432/${POSTGRES_MATCH_DB}
+      - POSTGRES_USER=${POSTGRES_MATCH_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_MATCH_PASSWORD}
+    volumes:
+      - ./match-service:/app
+      - ~/.m2:/root/.m2
     ports:
       - "8083:8080"
-      - "5005:5005"
+      - "5070:5070"
     depends_on:
       - redis
       - teams-db
+      - match-db
     networks:
       - main_network
 
-  db:
+  user-db:
     build:
       context: ./user-db
       dockerfile: Dockerfile
@@ -103,6 +109,23 @@ services:
       - "5432:5432"
     volumes:
       - user_data:/var/lib/postgresql/data
+    networks:
+      - main_network
+
+  match-db:
+    build:
+      context: ./match-db
+      dockerfile: Dockerfile
+    container_name: match-db
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_MATCH_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_MATCH_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_MATCH_DB}
+    ports:
+      - "5434:5432"
+    volumes:
+      - match_data:/var/lib/postgresql/data
     networks:
       - main_network
 
@@ -130,3 +153,4 @@ networks:
 volumes:
   user_data:
   teams_data:
+  match_data:

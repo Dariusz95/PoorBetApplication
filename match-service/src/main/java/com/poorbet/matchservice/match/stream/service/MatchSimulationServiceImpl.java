@@ -1,16 +1,19 @@
 package com.poorbet.matchservice.match.stream.service;
 
 import com.poorbet.matchservice.match.stream.client.TeamsClient;
-import com.poorbet.matchservice.match.stream.dto.LiveMatchEvent;
-import com.poorbet.matchservice.match.stream.dto.SimulateMatchRequest;
 import com.poorbet.matchservice.match.stream.dto.TeamStatsDto;
+import com.poorbet.matchservice.match.stream.model.LiveMatchEvent;
+import com.poorbet.matchservice.match.stream.model.Match;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
 import java.time.Duration;
 import java.util.Random;
+import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MatchSimulationServiceImpl implements MatchSimulationService {
@@ -19,10 +22,13 @@ public class MatchSimulationServiceImpl implements MatchSimulationService {
     private final TeamsClient teamsClient;
 
     @Override
-    public Flux<LiveMatchEvent> simulateMatchLive(SimulateMatchRequest request) {
+    public Flux<LiveMatchEvent> simulateMatchLive(Match match) {
+        log.info("🚀 === simulateMatchLive");
+//        TeamStatsDto home = teamsClient.getTeamStats(match.getHomeTeamId());
+//        TeamStatsDto away = teamsClient.getTeamStats(match.getAwayTeamId());
 
-        TeamStatsDto home = teamsClient.getTeamStats(request.getHomeTeamId());
-        TeamStatsDto away = teamsClient.getTeamStats(request.getAwayTeamId());
+        TeamStatsDto home = new TeamStatsDto(match.getHomeTeamId(), 20, 30);
+        TeamStatsDto away = new TeamStatsDto(match.getAwayTeamId(), 20, 30);
 
         int totalMinutes = 90;
 
@@ -30,8 +36,13 @@ public class MatchSimulationServiceImpl implements MatchSimulationService {
                 .interval(Duration.ofSeconds(1))
                 .take(totalMinutes)
                 .scan(
-                        new LiveMatchEvent(0, 0, 0),
-                        (prev, tick) -> simulateMinute(prev, tick.intValue() + 1, home, away)
+                        new LiveMatchEvent(match.getMatchId(),
+                                match.getHomeTeamId(),
+                                match.getAwayTeamId(),
+                                0,
+                                0,
+                                0),
+                        (prev, tick) -> simulateMinute(prev, tick.intValue() + 1, home, away, match)
                 );
     }
 
@@ -39,14 +50,15 @@ public class MatchSimulationServiceImpl implements MatchSimulationService {
             LiveMatchEvent prev,
             int minute,
             TeamStatsDto home,
-            TeamStatsDto away
+            TeamStatsDto away,
+            Match match
     ) {
         boolean homeHasBall = random.nextBoolean();
 
         boolean goal = random.nextDouble() < calculateGoalChance(home, away, homeHasBall);
 
-        int homeGoals = prev.getHomeGoals();
-        int awayGoals = prev.getAwayGoals();
+        int homeGoals = prev.getHomeScore();
+        int awayGoals = prev.getAwayScore();
 
         if (goal) {
             if (homeHasBall) {
@@ -56,7 +68,9 @@ public class MatchSimulationServiceImpl implements MatchSimulationService {
             }
         }
 
-        return new LiveMatchEvent(minute, homeGoals, awayGoals);
+        return new LiveMatchEvent(match.getMatchId(),
+                match.getHomeTeamId(),
+                match.getAwayTeamId(),minute, homeGoals, awayGoals);
     }
 
     private double calculateGoalChance(TeamStatsDto home, TeamStatsDto away, boolean homeHasBall) {

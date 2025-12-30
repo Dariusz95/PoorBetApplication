@@ -1,0 +1,33 @@
+# FROM eclipse-temurin:21-jdk-alpine as build
+
+# WORKDIR /app
+# COPY pom.xml mvnw ./
+# COPY .mvn .mvn
+# COPY src src
+# RUN chmod +x ./mvnw
+# RUN ./mvnw -DskipTests package -q
+
+# FROM eclipse-temurin:21-jre-alpine
+# WORKDIR /app
+# COPY --from=build /app/target/*.jar app.jar
+
+# EXPOSE 8080 5005
+
+# ENTRYPOINT ["java","-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005","-jar","/app/app.jar"]
+
+
+FROM eclipse-temurin:21-jdk-alpine
+
+WORKDIR /app
+
+RUN apk add --no-cache bash
+
+# NIE kopiujemy kodu – będzie montowany jako volume
+# Zostawiamy tylko punkt wejścia
+# EXPOSE 8080
+EXPOSE 8080 5070
+
+# ENV JAVA_TOOL_OPTIONS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5070"
+
+# CMD ["./mvnw", "spring-boot:run"]
+CMD ["./mvnw", "spring-boot:run", "-Dspring-boot.run.jvmArguments=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5070"]

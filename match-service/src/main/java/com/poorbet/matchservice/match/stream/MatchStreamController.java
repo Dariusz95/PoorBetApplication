@@ -1,25 +1,28 @@
 package com.poorbet.matchservice.match.stream;
 
-import com.poorbet.matchservice.match.stream.dto.LiveMatchEvent;
-import com.poorbet.matchservice.match.stream.dto.SimulateMatchRequest;
-import com.poorbet.matchservice.match.stream.service.MatchSimulationService;
+import com.poorbet.matchservice.match.stream.model.LiveMatchEvent;
+import com.poorbet.matchservice.match.stream.service.LiveMatchSimulationManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
+
+import java.time.Duration;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/match")
 public class MatchStreamController {
 
-    private final MatchSimulationService simulationService;
+    private final LiveMatchSimulationManager manager;
 
-    @PostMapping(value = "/simulate/live", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<LiveMatchEvent> simulateMatchLive(@RequestBody SimulateMatchRequest request) {
-        return simulationService.simulateMatchLive(request);
+    @GetMapping(
+            produces = MediaType.TEXT_EVENT_STREAM_VALUE
+    )
+    public Flux<LiveMatchEvent> streamAll() {
+        Flux<LiveMatchEvent> heartbeat = Flux.interval(Duration.ofSeconds(5))
+                .map(tick -> LiveMatchEvent.heartbeat());
+
+        return Flux.merge(manager.streamAll(), heartbeat);
     }
 }
