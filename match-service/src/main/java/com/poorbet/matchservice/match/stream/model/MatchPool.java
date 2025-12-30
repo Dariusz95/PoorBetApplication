@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -25,12 +26,13 @@ public class MatchPool {
     private PoolStatus status;
 
     @Column(name = "scheduled_start_time", nullable = false)
-    private LocalDateTime scheduledStartTime;
+    private OffsetDateTime scheduledStartTime;
 
     @OneToMany(
             mappedBy = "pool",
             cascade = CascadeType.ALL,
-            orphanRemoval = true
+            orphanRemoval = true,
+            fetch = FetchType.EAGER
     )
     @Builder.Default
     private List<Match> matches = new ArrayList<>();

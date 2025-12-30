@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.Comparator;
 import java.util.List;
@@ -42,7 +43,7 @@ public class MatchPoolScheduler {
         int poolsInAdvance = properties.getPoolsInAdvance();
         int intervalMinutes = properties.getPoolIntervalMinutes();
 
-        LocalDateTime now = LocalDateTime.now();
+        OffsetDateTime now = OffsetDateTime.now();
 
         List<MatchPool> futurePools = matchPoolRepository.findAll()
                 .stream()
@@ -51,9 +52,9 @@ public class MatchPoolScheduler {
                 .sorted(Comparator.comparing(MatchPool::getScheduledStartTime))
                 .toList();
 
-        LocalDateTime nextStartTime = now.plusMinutes(intervalMinutes);
+        OffsetDateTime nextStartTime = now.plusMinutes(intervalMinutes);
         if (!futurePools.isEmpty()) {
-            LocalDateTime lastTime = futurePools.get(futurePools.size() - 1).getScheduledStartTime();
+            OffsetDateTime lastTime = futurePools.get(futurePools.size() - 1).getScheduledStartTime();
             if (lastTime.isAfter(nextStartTime)) {
                 nextStartTime = lastTime.plusMinutes(intervalMinutes);
             }
@@ -67,27 +68,7 @@ public class MatchPoolScheduler {
             return;
         }
 
-
         for (int i = 0; i < missingPools; i++) {
-//            PoolStatus status;
-//            if (i == 0 && futurePools.isEmpty()) status = PoolStatus.BETTABLE;
-//            else if (i < missingPools - 1) status = PoolStatus.BETTABLE;
-//            else status = PoolStatus.HIDDEN;
-
-//            MatchPool pool = MatchPool.builder()
-//                    .status(PoolStatus.BETTABLE)
-//                    .scheduledStartTime(nextStartTime)
-//                    .matches(generateMatches(matchesPerPool))
-//                    .build();
-//
-//            try {
-//                matchPoolRepository.save(pool);
-//            } catch (Exception e) {
-//                log.error("❌ Błąd przy save: {}", e);
-//            }
-
-            log.info("📊 nextStartTime -> {}", nextStartTime);
-
             MatchPool pool = MatchPool.builder()
                     .status(PoolStatus.BETTABLE)
                     .scheduledStartTime(nextStartTime)
@@ -98,12 +79,7 @@ public class MatchPoolScheduler {
 
             matchPoolRepository.save(pool);
 
-            try {
-                schedulePool(pool);
-                log.error("❌ ❌❌❌❌❌schedulePool");
-            } catch (Exception e) {
-                log.error("❌ Błąd przy planowaniu puli: {}", pool.getId(), e);
-            }
+            schedulePool(pool);
 
             nextStartTime = nextStartTime.plusMinutes(intervalMinutes);
         }
@@ -111,7 +87,7 @@ public class MatchPoolScheduler {
     private void schedulePool(MatchPool pool) {
         taskScheduler.schedule(
                 () -> startPool(pool.getId()),
-                pool.getScheduledStartTime().atZone(ZoneId.systemDefault()).toInstant()
+                pool.getScheduledStartTime().toInstant()
         );
         log.info("⏱ Zaplanowano pulę {} na {}", pool.getId(), pool.getScheduledStartTime());
     }
@@ -127,25 +103,10 @@ public class MatchPoolScheduler {
         pool.getMatches().forEach(m -> m.setStatus(MatchStatus.LIVE));
         matchPoolRepository.save(pool);
 
-        // uruchom symulacje wszystkich meczów
         simulationService.startPoolSimulation(pool);
 
-        // po starcie sprawdzamy, czy trzeba uzupełnić pule w przyszłości
         scheduleMissingPools();
     }
-
-//    private List<Match> generateMatches(int count) {
-//        return IntStream.range(0, count)
-//                .mapToObj(i -> Match.builder()
-//                        .homeTeamId(UUID.randomUUID())
-//                        .awayTeamId(UUID.randomUUID())
-//                        .homeGoals(0)
-//                        .awayGoals(0)
-//                        .currentMinute(0)
-//                        .status(MatchStatus.SCHEDULED)
-//                        .build())
-//                .toList();
-//    }
 
     private List<Match> generateMatches(MatchPool pool, int count) {
         return IntStream.range(0, count)

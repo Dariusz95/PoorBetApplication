@@ -10,11 +10,6 @@ public class LiveMatchSimulation {
     private final UUID matchId;
     private final Sinks.Many<LiveMatchEvent> sink;
 
-
-//    public LiveMatchSimulation(UUID matchId){
-//        this.matchId = matchId;
-//    }
-
     public LiveMatchSimulation(UUID matchId, Sinks.Many<LiveMatchEvent> sink){
         this.matchId = matchId;
         this.sink = sink;

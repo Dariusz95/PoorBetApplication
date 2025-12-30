@@ -41,7 +41,8 @@ public class MatchSimulationServiceImpl implements MatchSimulationService {
                                 match.getAwayTeamId(),
                                 0,
                                 0,
-                                0),
+                                0,
+                                false),
                         (prev, tick) -> simulateMinute(prev, tick.intValue() + 1, home, away, match)
                 );
     }
@@ -70,7 +71,7 @@ public class MatchSimulationServiceImpl implements MatchSimulationService {
 
         return new LiveMatchEvent(match.getMatchId(),
                 match.getHomeTeamId(),
-                match.getAwayTeamId(),minute, homeGoals, awayGoals);
+                match.getAwayTeamId(),minute, homeGoals, awayGoals, minute == 90);
     }
 
     private double calculateGoalChance(TeamStatsDto home, TeamStatsDto away, boolean homeHasBall) {

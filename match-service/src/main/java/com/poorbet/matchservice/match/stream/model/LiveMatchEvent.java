@@ -14,8 +14,13 @@ public class LiveMatchEvent {
     private int homeScore;
     private int awayScore;
     private int minute;
+    private boolean isFinished;
 
     public static LiveMatchEvent heartbeat() {
-        return new LiveMatchEvent(null, null, null, 0, 0, 0);
+        return new LiveMatchEvent(null, null, null, 0, 0, 0, false);
+    }
+
+    public boolean isFinished() {
+        return isFinished;
     }
 }
