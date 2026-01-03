@@ -24,8 +24,12 @@ spring:
       poll-interval: 1000
     livereload:
       enabled: true
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
 
 match-pool:
   matches-per-pool: 5
   pools-in-advance: 5
   pool-interval-minutes: 3
+  schedule-rate-ms: 60000

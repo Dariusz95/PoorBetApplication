@@ -82,6 +82,7 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://match-db:5432/${POSTGRES_MATCH_DB}
       - POSTGRES_USER=${POSTGRES_MATCH_USER}
       - POSTGRES_PASSWORD=${POSTGRES_MATCH_PASSWORD}
+      - INSTANCE_ID=match-1
     volumes:
       - ./match-service:/app
       - ~/.m2:/root/.m2

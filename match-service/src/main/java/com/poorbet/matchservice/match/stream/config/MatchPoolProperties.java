@@ -20,4 +20,6 @@ public class MatchPoolProperties {
 
     @Min(1)
     private int poolIntervalMinutes;
+
+    private long scheduleRateMs;
 }

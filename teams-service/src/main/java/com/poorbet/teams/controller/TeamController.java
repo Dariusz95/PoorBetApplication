@@ -22,6 +22,8 @@ public class TeamController {
     private final TeamService teamService;
     private final MatchesProperties matchesProperties;
 
+
+
     @GetMapping("/random")
     public ResponseEntity<List<TeamStatsDto>> getRandomTeams(
             @RequestParam(defaultValue = "2") Integer count
