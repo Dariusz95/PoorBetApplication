@@ -5,18 +5,19 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.UUID;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
 public class TeamsClient {
     private final WebClient teamsWebClient;
 
-    public TeamStatsDto getTeamStats(UUID id) {
+    public List<TeamStatsDto> randomTeams() {
         return teamsWebClient.get()
-                .uri("/api/teams/{id}/stats", id)
+                .uri("/api/teams/random")
                 .retrieve()
-                .bodyToMono(TeamStatsDto.class)
+                .bodyToFlux(TeamStatsDto.class)
+                .collectList()
                 .block();
     }
 }

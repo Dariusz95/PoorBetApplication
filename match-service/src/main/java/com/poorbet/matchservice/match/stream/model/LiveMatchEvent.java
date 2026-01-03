@@ -23,4 +23,8 @@ public class LiveMatchEvent {
     public boolean isFinished() {
         return isFinished;
     }
+
+    public LiveMatchEvent withUpdatedState(int minute, int homeScore, int awayScore, boolean finished) {
+        return new LiveMatchEvent(this.id, this.homeTeamId, this.awayTeamId, minute, homeScore, awayScore, finished);
+    }
 }

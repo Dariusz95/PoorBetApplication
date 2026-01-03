@@ -11,6 +11,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class TeamStatsDto {
     private UUID id;
-    private int attack;
-    private int defence;
+    private String name;
+    private int attackPower;
+    private int defencePower;
 }

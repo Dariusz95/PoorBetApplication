@@ -1,8 +1,12 @@
 package com.poorbet.teams.controller;
 
+import ch.qos.logback.core.joran.sanity.Pair;
+import com.poorbet.teams.config.MatchesProperties;
+import com.poorbet.teams.dto.MatchDto;
 import com.poorbet.teams.dto.TeamStatsDto;
 import com.poorbet.teams.model.Team;
 import com.poorbet.teams.service.TeamService;
+import jakarta.persistence.Tuple;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,12 +19,16 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class TeamController {
 
-    private final TeamService service;
+    private final TeamService teamService;
+    private final MatchesProperties matchesProperties;
 
-    @GetMapping("/{id}/stats")
-    public ResponseEntity<TeamStatsDto> get(@PathVariable UUID id) {
-        TeamStatsDto team = service.getStats(id);
+    @GetMapping("/random")
+    public ResponseEntity<List<TeamStatsDto>> getRandomTeams(
+            @RequestParam(defaultValue = "2") Integer count
+    ) {
+        int matchesInBatch = (count != null) ? count : matchesProperties.getInBatch();
 
-        return ResponseEntity.ok(team);
+        List<TeamStatsDto> teams = teamService.findRandomTeams(matchesInBatch);
+        return ResponseEntity.ok(teams);
     }
 }

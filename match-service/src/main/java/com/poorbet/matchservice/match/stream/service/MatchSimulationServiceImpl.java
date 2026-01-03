@@ -1,6 +1,5 @@
 package com.poorbet.matchservice.match.stream.service;
 
-import com.poorbet.matchservice.match.stream.client.TeamsClient;
 import com.poorbet.matchservice.match.stream.dto.TeamStatsDto;
 import com.poorbet.matchservice.match.stream.model.LiveMatchEvent;
 import com.poorbet.matchservice.match.stream.model.Match;
@@ -10,6 +9,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
@@ -19,16 +19,10 @@ import java.util.UUID;
 public class MatchSimulationServiceImpl implements MatchSimulationService {
 
     private final Random random = new Random();
-    private final TeamsClient teamsClient;
 
     @Override
     public Flux<LiveMatchEvent> simulateMatchLive(Match match) {
         log.info("🚀 === simulateMatchLive");
-//        TeamStatsDto home = teamsClient.getTeamStats(match.getHomeTeamId());
-//        TeamStatsDto away = teamsClient.getTeamStats(match.getAwayTeamId());
-
-        TeamStatsDto home = new TeamStatsDto(match.getHomeTeamId(), 20, 30);
-        TeamStatsDto away = new TeamStatsDto(match.getAwayTeamId(), 20, 30);
 
         int totalMinutes = 90;
 
@@ -43,7 +37,7 @@ public class MatchSimulationServiceImpl implements MatchSimulationService {
                                 0,
                                 0,
                                 false),
-                        (prev, tick) -> simulateMinute(prev, tick.intValue() + 1, home, away, match)
+                        (prev, tick) -> simulateMinute(prev, tick.intValue() + 1, match.getHomeTeam(), match.getAwayTeam(), match)
                 );
     }
 
@@ -76,8 +70,8 @@ public class MatchSimulationServiceImpl implements MatchSimulationService {
 
     private double calculateGoalChance(TeamStatsDto home, TeamStatsDto away, boolean homeHasBall) {
 
-        double attack = homeHasBall ? home.getAttack() : away.getAttack();
-        double defence = homeHasBall ? away.getDefence() : home.getDefence();
+        double attack = homeHasBall ? home.getAttackPower() : away.getAttackPower();
+        double defence = homeHasBall ? away.getDefencePower() : home.getDefencePower();
 
         double ratio = attack / (attack + defence);
 
