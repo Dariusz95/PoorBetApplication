@@ -18,11 +18,11 @@ import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
+import reactor.core.publisher.Mono;
 
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -30,18 +30,27 @@ import java.util.List;
 public class MatchPoolService {
     private final MatchPoolRepository matchPoolRepository;
     private final MatchPoolSimulationService matchPoolSimulationService;
-    @Lazy
-    @Autowired
-    private MatchPoolSchedulingService matchPoolSchedulingService;
+    private final TeamsClient teamsClient;
 
     @Transactional
-    public void startPool(MatchPool pool) {
+    public void startPool(UUID poolId) {
+        MatchPool pool = matchPoolRepository.findById(poolId)
+                .orElseThrow();
+
         if (pool.getStatus() != PoolStatus.BETTABLE) return;
+
+        List<UUID> teamIds = pool.getMatches().stream()
+                        .flatMap(match -> Stream.of(match.getHomeTeamId(), match.getAwayTeamId()))
+                        .distinct()
+                        .toList();
+
+        List<TeamStatsDto> teamStats = teamsClient.getStatsByIds(teamIds);
 
         pool.setStatus(PoolStatus.LIVE);
         pool.getMatches().forEach(m -> m.setStatus(MatchStatus.LIVE));
+
         matchPoolRepository.save(pool);
 
-        matchPoolSimulationService.startPoolSimulation(pool);
+        matchPoolSimulationService.startPoolSimulation(pool.getId(), teamStats);
     }
 }

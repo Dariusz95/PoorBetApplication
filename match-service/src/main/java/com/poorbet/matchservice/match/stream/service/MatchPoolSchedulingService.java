@@ -104,7 +104,7 @@ public class MatchPoolSchedulingService  {
         }
 
         taskScheduler.schedule(
-                () -> matchPoolService.startPool(pool),
+                () -> matchPoolService.startPool(pool.getId()),
                 pool.getScheduledStartTime().toInstant()
         );
 

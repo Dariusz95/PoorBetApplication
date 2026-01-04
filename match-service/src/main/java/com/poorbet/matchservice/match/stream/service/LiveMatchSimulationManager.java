@@ -20,10 +20,10 @@ public class LiveMatchSimulationManager {
 
     private final Sinks.Many<LiveMatchEvent> sink = Sinks.many().replay().all();
 
-    public LiveMatchSimulation startIfNotRunning(Match match) {
+    public LiveMatchSimulation startIfNotRunning(UUID matchId) {
         return simulations.computeIfAbsent(
-                match.getMatchId(),
-                id -> new LiveMatchSimulation(match.getMatchId(), sink)
+                matchId,
+                id -> new LiveMatchSimulation(id, sink)
         );
     }
 

@@ -1,6 +1,7 @@
 package com.poorbet.matchservice.match.stream.client;
 
 import com.poorbet.matchservice.match.stream.dto.TeamStatsDto;
+import com.poorbet.matchservice.match.stream.request.TeamStatsRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
@@ -10,12 +11,22 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class TeamsClient {
     private final WebClient teamsWebClient;
+
+    public List<TeamStatsDto> getStatsByIds(List<UUID> teamIds) {
+        return teamsWebClient.post()
+                .uri("/api/teams/stats")
+                .bodyValue(new TeamStatsRequest(teamIds))
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<List<TeamStatsDto>>() {})
+                .block();
+    }
 
     public List<TeamStatsDto> randomTeams() {
         ParameterizedTypeReference<List<TeamStatsDto>> typeRef = new ParameterizedTypeReference<List<TeamStatsDto>>() {};

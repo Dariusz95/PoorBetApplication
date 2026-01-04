@@ -3,15 +3,14 @@ package com.poorbet.matchservice.match.stream.service;
 import com.poorbet.matchservice.match.stream.dto.TeamStatsDto;
 import com.poorbet.matchservice.match.stream.model.LiveMatchEvent;
 import com.poorbet.matchservice.match.stream.model.Match;
+import com.poorbet.matchservice.match.stream.service.helper.MatchContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
 import java.time.Duration;
-import java.util.List;
 import java.util.Random;
-import java.util.UUID;
 
 @Slf4j
 @Service
@@ -21,29 +20,15 @@ public class MatchSimulationServiceImpl implements MatchSimulationService {
     private final Random random = new Random();
 
     @Override
-    public Flux<LiveMatchEvent> simulateMatchLive(Match match) {
+    public Flux<LiveMatchEvent> simulateMatchLive(MatchContext context) {
         log.info("🚀 === simulateMatchLive");
 
         int totalMinutes = 90;
 
-//        return Flux
-//                .interval(Duration.ofSeconds(1))
-//                .take(totalMinutes)
-//                .scan(
-//                        new LiveMatchEvent(match.getMatchId(),
-//                                match.getHomeTeamId(),
-//                                match.getAwayTeamId(),
-//                                0,
-//                                0,
-//                                0,
-//                                false),
-//                        (prev, tick) -> simulateMinute(prev, tick.intValue() + 1, match.getHomeTeam(), match.getAwayTeam(), match)
-//                );
-
         LiveMatchEvent initial = new LiveMatchEvent(
-                match.getMatchId(),
-                match.getHomeTeamId(),
-                match.getAwayTeamId(),
+                context.matchId(),
+                context.home().getId(),
+                context.away().getId(),
                 0,
                 0,
                 0,
@@ -53,20 +38,22 @@ public class MatchSimulationServiceImpl implements MatchSimulationService {
         return Flux
                 .interval(Duration.ofSeconds(1))
                 .take(totalMinutes)
-                .scan(initial, (prev, tick) -> simulateMinute(prev, tick.intValue() + 1, match));
+                .scan(initial, (prev, tick) -> simulateMinute(prev, tick.intValue() + 1, context));
     }
 
     private LiveMatchEvent simulateMinute(
             LiveMatchEvent prev,
             int minute,
-            Match match
+            MatchContext context
     ) {
-        TeamStatsDto home = match.getHomeTeam();
-        TeamStatsDto away = match.getAwayTeam();
+        log.debug("⏱ minute={} home={} away={}", minute,
+                prev.getHomeScore(),
+                prev.getAwayScore());
 
         boolean homeHasBall = random.nextBoolean();
 
-        boolean goal = random.nextDouble() < calculateGoalChance(home, away, homeHasBall);
+        boolean goal = random.nextDouble() < calculateGoalChancee(context.home(), context.away(), homeHasBall);
+//        boolean goal = random.nextDouble() < calculateGoalChance(context.home(), context.away(), homeHasBall);
 
         int homeGoals = prev.getHomeScore();
         int awayGoals = prev.getAwayScore();
@@ -79,11 +66,12 @@ public class MatchSimulationServiceImpl implements MatchSimulationService {
             }
         }
 
-        return new LiveMatchEvent(match.getMatchId(),
-                match.getHomeTeamId(),
-                match.getAwayTeamId(),minute,
+        return new LiveMatchEvent(prev.getId(),
+                context.home().getId(),
+                context.away().getId(),
                 homeGoals,
                 awayGoals,
+                minute,
                 minute == 90);
     }
 
@@ -95,5 +83,21 @@ public class MatchSimulationServiceImpl implements MatchSimulationService {
         double ratio = attack / (attack + defence);
 
         return 0.005 + (ratio - 0.5) * 0.02;
+    }
+
+    private double calculateGoalChancee(
+            TeamStatsDto home,
+            TeamStatsDto away,
+            boolean homeHasBall
+    ) {
+        double attack = homeHasBall ? home.getAttackPower() : away.getAttackPower();
+        double defence = homeHasBall ? away.getDefencePower() : home.getDefencePower();
+
+        double strength = attack / (attack + defence);
+
+        double base = 0.02;
+        double advantage = homeHasBall ? 0.005 : 0.0;
+
+        return base + strength * 0.02 + advantage;
     }
 }

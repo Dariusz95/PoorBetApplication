@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -21,14 +22,24 @@ public class TeamServiceImpl implements TeamService {
     private final MatchesProperties matchesProperties;
 
     @Override
+    public List<TeamStatsDto> getStatsByIds(List<UUID> ids) {
+        return teamRepository.findAllById(ids)
+                .stream()
+                .map(team -> new TeamStatsDto(
+                        team.getId(),
+                        team.getName(),
+                        team.getAttackPower(),
+                        team.getDefencePower()
+                ))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public List<TeamStatsDto> findRandomTeams(Integer count) {
         int matchesInBatch = Optional.ofNullable(count)
                 .orElse(matchesProperties.getInBatch());
-
-        log.info("xxxx in batch - {}", matchesInBatch);
-        log.info("xxxxaayuuu count - {}", matchesInBatch);
         int teamsToFetch = matchesInBatch * 2;
-        log.info("xxxx teamsToFetch - {}", teamsToFetch);
+
         List<TeamStatsDto> teams = teamRepository.findRandomTeams(teamsToFetch);
 
         if (teams.size() < teamsToFetch) {
