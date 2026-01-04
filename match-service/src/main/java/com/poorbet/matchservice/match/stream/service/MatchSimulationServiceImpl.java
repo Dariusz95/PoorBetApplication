@@ -2,7 +2,6 @@ package com.poorbet.matchservice.match.stream.service;
 
 import com.poorbet.matchservice.match.stream.dto.TeamStatsDto;
 import com.poorbet.matchservice.match.stream.model.LiveMatchEvent;
-import com.poorbet.matchservice.match.stream.model.Match;
 import com.poorbet.matchservice.match.stream.service.helper.MatchContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +28,8 @@ public class MatchSimulationServiceImpl implements MatchSimulationService {
                 context.matchId(),
                 context.home().getId(),
                 context.away().getId(),
+                context.away().getName(),
+                context.away().getName(),
                 0,
                 0,
                 0,
@@ -53,7 +54,6 @@ public class MatchSimulationServiceImpl implements MatchSimulationService {
         boolean homeHasBall = random.nextBoolean();
 
         boolean goal = random.nextDouble() < calculateGoalChancee(context.home(), context.away(), homeHasBall);
-//        boolean goal = random.nextDouble() < calculateGoalChance(context.home(), context.away(), homeHasBall);
 
         int homeGoals = prev.getHomeScore();
         int awayGoals = prev.getAwayScore();
@@ -69,6 +69,8 @@ public class MatchSimulationServiceImpl implements MatchSimulationService {
         return new LiveMatchEvent(prev.getId(),
                 context.home().getId(),
                 context.away().getId(),
+                context.home().getName(),
+                context.away().getName(),
                 homeGoals,
                 awayGoals,
                 minute,

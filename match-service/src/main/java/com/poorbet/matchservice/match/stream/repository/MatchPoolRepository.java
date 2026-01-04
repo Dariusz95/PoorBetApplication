@@ -1,7 +1,7 @@
 package com.poorbet.matchservice.match.stream.repository;
 
 import com.poorbet.matchservice.match.stream.model.MatchPool;
-import com.poorbet.matchservice.match.stream.model.PoolStatus;
+import com.poorbet.matchservice.match.stream.model.enums.PoolStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

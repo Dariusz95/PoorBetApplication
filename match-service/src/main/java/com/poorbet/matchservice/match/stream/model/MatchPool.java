@@ -1,9 +1,9 @@
 package com.poorbet.matchservice.match.stream.model;
 
+import com.poorbet.matchservice.match.stream.model.enums.PoolStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +32,7 @@ public class MatchPool {
             mappedBy = "pool",
             cascade = CascadeType.ALL,
             orphanRemoval = true,
-            fetch = FetchType.EAGER
+            fetch = FetchType.LAZY
     )
     @Builder.Default
     private List<Match> matches = new ArrayList<>();

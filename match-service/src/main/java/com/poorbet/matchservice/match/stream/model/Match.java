@@ -3,6 +3,7 @@ package com.poorbet.matchservice.match.stream.model;
 import java.util.UUID;
 
 import com.poorbet.matchservice.match.stream.dto.TeamStatsDto;
+import com.poorbet.matchservice.match.stream.model.enums.MatchStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,20 +34,11 @@ public class Match {
     @Column(name = "away_goals")
     private int awayGoals;
     
-    @Column(name = "current_minute")
-    private int currentMinute;
-    
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private MatchStatus status;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "match_pool_id", nullable = false)
     private MatchPool pool;
-
-    @Transient
-    private TeamStatsDto homeTeam;
-
-    @Transient
-    private TeamStatsDto awayTeam;
 }

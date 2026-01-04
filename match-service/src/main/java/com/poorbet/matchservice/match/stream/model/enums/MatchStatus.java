@@ -1,4 +1,4 @@
-package com.poorbet.matchservice.match.stream.model;
+package com.poorbet.matchservice.match.stream.model.enums;
 
 public enum MatchStatus {
     SCHEDULED,

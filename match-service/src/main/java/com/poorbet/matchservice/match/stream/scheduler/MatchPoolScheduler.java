@@ -2,6 +2,7 @@ package com.poorbet.matchservice.match.stream.scheduler;
 
 import com.poorbet.matchservice.match.stream.config.MatchPoolProperties;
 import com.poorbet.matchservice.match.stream.service.MatchPoolSchedulingService;
+import com.poorbet.matchservice.match.stream.service.MatchPoolSchedulingServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
