@@ -8,7 +8,7 @@
 		<version>3.4.1</version>
 		<relativePath/>
 	</parent>
-	<groupId>com.poorbet.userService</groupId>
+	<groupId>com.poorbet</groupId>
 	<artifactId>user-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>user-service</name>

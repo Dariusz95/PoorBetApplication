@@ -1,14 +1,11 @@
 package com.poorbet.teams.service;
 
-import com.poorbet.teams.model.Team;
+import com.poorbet.teams.dto.TeamStatsDto;
 
 import java.util.List;
 import java.util.UUID;
 
 public interface TeamService {
-
-    List<Team> findAll();
-
-    Team findById(UUID id);
-
+    List<TeamStatsDto> findRandomTeams(Integer count);
+    List<TeamStatsDto> getStatsByIds(List<UUID> ids);
 }
