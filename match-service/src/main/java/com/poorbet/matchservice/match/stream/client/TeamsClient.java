@@ -4,6 +4,7 @@ import com.poorbet.matchservice.match.stream.dto.TeamStatsDto;
 import com.poorbet.matchservice.match.stream.request.TeamStatsRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -15,9 +16,12 @@ import java.util.UUID;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class TeamsClient {
     private final WebClient teamsWebClient;
+
+    public TeamsClient(@Qualifier("teamsWebClient") WebClient teamsWebClient) {
+        this.teamsWebClient = teamsWebClient;
+    }
 
     public List<TeamStatsDto> getStatsByIds(List<UUID> teamIds) {
         return teamsWebClient.post()

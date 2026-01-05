@@ -1,7 +1,6 @@
 package com.poorbet.matchservice.match.stream.service;
 
-import com.poorbet.matchservice.match.stream.model.LiveMatchEvent;
-import com.poorbet.matchservice.match.stream.model.Match;
+import com.poorbet.matchservice.match.stream.model.LiveMatchEventDto;
 import com.poorbet.matchservice.match.stream.simulation.LiveMatchSimulation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,7 +17,7 @@ public class LiveMatchSimulationManager {
 
     private final Map<UUID, LiveMatchSimulation> simulations = new ConcurrentHashMap<>();
 
-    private final Sinks.Many<LiveMatchEvent> sink = Sinks.many().replay().all();
+    private final Sinks.Many<LiveMatchEventDto> sink = Sinks.many().replay().all();
 
     public LiveMatchSimulation startIfNotRunning(UUID matchId) {
         return simulations.computeIfAbsent(
@@ -27,7 +26,7 @@ public class LiveMatchSimulationManager {
         );
     }
 
-    public Flux<LiveMatchEvent> streamAll() {
+    public Flux<LiveMatchEventDto> streamAll() {
         return sink.asFlux();
     }
 }

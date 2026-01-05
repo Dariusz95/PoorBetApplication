@@ -5,6 +5,13 @@ teams:
       connect: 2s
       read: 3s
 
+simulation:
+  service:
+    url: http://simulation-service:8080
+    timeout:
+      connect: 2s
+      read: 3s
+
 spring:
   datasource:
     url: ${SPRING_DATASOURCE_URL}

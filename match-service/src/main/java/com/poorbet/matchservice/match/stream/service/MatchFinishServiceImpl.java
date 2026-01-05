@@ -1,6 +1,6 @@
 package com.poorbet.matchservice.match.stream.service;
 
-import com.poorbet.matchservice.match.stream.model.LiveMatchEvent;
+import com.poorbet.matchservice.match.stream.model.LiveMatchEventDto;
 import com.poorbet.matchservice.match.stream.model.Match;
 import com.poorbet.matchservice.match.stream.repository.MatchRepository;
 import jakarta.transaction.Transactional;
@@ -18,7 +18,7 @@ public class MatchFinishServiceImpl implements MatchFinishService {
     private final MatchRepository matchRepository;
 
     @Transactional
-    public void finishMatch(LiveMatchEvent event) {
+    public void finishMatch(LiveMatchEventDto event) {
         log.info("🚀 finishMatch {}", event);
 
         Match match = matchRepository
