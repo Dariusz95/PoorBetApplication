@@ -37,6 +37,31 @@ public class MatchSimulationServiceImpl implements MatchSimulationService {
                 .scan(initial, (prev, tick) -> simulateMinute(prev, tick.intValue() + 1, context));
     }
 
+    public LiveMatchEvent simulateMatchFinal(MatchContext context) {
+
+        int totalMinutes = 90;
+
+        LiveMatchEvent prev = new LiveMatchEvent(
+                context.matchId(),
+                0,
+                0,
+                0,
+                false
+        );
+
+        for (int minute = 1; minute <= totalMinutes; minute++) {
+            prev = simulateMinute(prev, minute, context);
+        }
+
+        return new LiveMatchEvent(
+                prev.matchId(),
+                totalMinutes,
+                prev.homeGoals(),
+                prev.awayGoals(),
+                true
+        );
+    }
+
     private LiveMatchEvent simulateMinute(
             LiveMatchEvent prev,
             int minute,

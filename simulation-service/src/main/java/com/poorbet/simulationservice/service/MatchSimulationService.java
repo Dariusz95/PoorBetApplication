@@ -7,4 +7,5 @@ import reactor.core.publisher.Flux;
 public interface MatchSimulationService {
     Flux<LiveMatchEvent> simulateMatchLive(MatchContext context);
 
+    LiveMatchEvent simulateMatchFinal(MatchContext context);
 }
