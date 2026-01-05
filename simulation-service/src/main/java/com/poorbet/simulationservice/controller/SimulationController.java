@@ -31,4 +31,15 @@ public class SimulationController {
 
         return simulationService.simulateMatchLive(context);
     }
+
+    @PostMapping(
+            value = "/instant"
+    )
+    public LiveMatchEvent simulateMatchInstant(
+            @Valid @RequestBody SimulationRequest request
+    ) {
+        MatchContext context = new MatchContext(request.matchId(), request.home(), request.away());
+
+        return simulationService.simulateMatchFinal(context);
+    }
 }
