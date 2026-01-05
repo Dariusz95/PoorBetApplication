@@ -1,6 +1,5 @@
-package com.poorbet.matchservice.match.stream.model;
+package com.poorbet.matchservice.match.stream.dto;
 
-import com.poorbet.matchservice.match.stream.dto.TeamStatsDto;
 import com.poorbet.matchservice.match.stream.response.LiveMatchEvent;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,17 +10,13 @@ import java.util.UUID;
 @AllArgsConstructor
 public class LiveMatchEventDto {
     private UUID id;
-    private UUID homeTeamId;
-    private UUID awayTeamId;
-    private String homeTeamName;
-    private String awayTeamName;
-    private int homeScore;
-    private int awayScore;
+    private TeamScoreDto homeTeam;
+    private TeamScoreDto awayTeam;
     private int minute;
     private boolean isFinished;
 
     public static LiveMatchEventDto heartbeat() {
-        return new LiveMatchEventDto(null, null, null,null,null, 0, 0, 0, false);
+        return new LiveMatchEventDto(null, null, null, 0, false);
     }
 
     public static LiveMatchEventDto fromEvent(
@@ -31,12 +26,8 @@ public class LiveMatchEventDto {
     ) {
         return new LiveMatchEventDto(
                 event.getMatchId(),
-                home.getId(),
-                away.getId(),
-                home.getName(),
-                away.getName(),
-                event.getHomeGoals(),
-                event.getAwayGoals(),
+                new TeamScoreDto(home.getId(), home.getName(), event.getHomeGoals()),
+                new TeamScoreDto(away.getId(), away.getName(), event.getAwayGoals()),
                 event.getMinute(),
                 event.isFinished()
         );

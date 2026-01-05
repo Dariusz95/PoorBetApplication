@@ -1,6 +1,6 @@
 package com.poorbet.matchservice.match.stream;
 
-import com.poorbet.matchservice.match.stream.model.LiveMatchEventDto;
+import com.poorbet.matchservice.match.stream.dto.LiveMatchEventDto;
 import com.poorbet.matchservice.match.stream.service.LiveMatchSimulationManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;

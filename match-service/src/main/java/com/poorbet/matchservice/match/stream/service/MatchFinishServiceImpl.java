@@ -1,6 +1,6 @@
 package com.poorbet.matchservice.match.stream.service;
 
-import com.poorbet.matchservice.match.stream.model.LiveMatchEventDto;
+import com.poorbet.matchservice.match.stream.dto.LiveMatchEventDto;
 import com.poorbet.matchservice.match.stream.model.Match;
 import com.poorbet.matchservice.match.stream.repository.MatchRepository;
 import jakarta.transaction.Transactional;

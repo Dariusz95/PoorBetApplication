@@ -1,6 +1,6 @@
 package com.poorbet.matchservice.match.stream.simulation;
 
-import com.poorbet.matchservice.match.stream.model.LiveMatchEventDto;
+import com.poorbet.matchservice.match.stream.dto.LiveMatchEventDto;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Sinks;
 
