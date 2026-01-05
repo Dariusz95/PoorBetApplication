@@ -1,10 +1,12 @@
 package com.poorbet.matchservice.match.stream.service;
 
+import com.poorbet.matchservice.match.stream.client.SimulationClient;
 import com.poorbet.matchservice.match.stream.dto.TeamStatsDto;
-import com.poorbet.matchservice.match.stream.model.LiveMatchEvent;
+import com.poorbet.matchservice.match.stream.dto.LiveMatchEventDto;
 import com.poorbet.matchservice.match.stream.model.Match;
 import com.poorbet.matchservice.match.stream.repository.MatchRepository;
-import com.poorbet.matchservice.match.stream.service.helper.MatchContext;
+import com.poorbet.matchservice.match.stream.request.SimulationRequest;
+import com.poorbet.matchservice.match.stream.request.SimulationTeamStats;
 import com.poorbet.matchservice.match.stream.simulation.LiveMatchSimulation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,10 +24,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MatchPoolSimulationServiceImpl implements MatchPoolSimulationService {
 
-    private final MatchSimulationService matchSimulationService;
     private final LiveMatchSimulationManager liveManager;
     private final MatchRepository matchRepository;
     private final MatchFinishService matchFinishService;
+    private final SimulationClient simulationClient;
 
     public void startPoolSimulation(UUID poolId, List<TeamStatsDto> teamStats) {
         List<Match> matches = matchRepository.findByPoolId(poolId);
@@ -53,13 +55,16 @@ public class MatchPoolSimulationServiceImpl implements MatchPoolSimulationServic
         LiveMatchSimulation liveSimulation =
                 liveManager.startIfNotRunning(matchId);
 
-        return matchSimulationService.simulateMatchLive(new MatchContext(matchId, home, away))
+        SimulationRequest request = buildSimulationRequest(matchId, home, away);
+
+        return simulationClient.simulateMatch(request)
+                .map(event -> LiveMatchEventDto.fromEvent(event, home, away))
                 .doOnNext(event -> handleEvent(event, liveSimulation))
                 .then();
     }
 
     private void handleEvent(
-            LiveMatchEvent event,
+            LiveMatchEventDto event,
             LiveMatchSimulation liveSimulation
     ) {
         liveSimulation.publish(event);
@@ -67,6 +72,13 @@ public class MatchPoolSimulationServiceImpl implements MatchPoolSimulationServic
         if (event.isFinished()) {
             matchFinishService.finishMatch(event);
         }
+    }
+
+    private SimulationRequest buildSimulationRequest(UUID matchId, TeamStatsDto home, TeamStatsDto away) {
+        SimulationTeamStats homeStats = new SimulationTeamStats(home.getAttackPower(), home.getDefencePower());
+        SimulationTeamStats awayStats = new SimulationTeamStats(away.getAttackPower(), away.getDefencePower());
+
+        return new SimulationRequest(matchId, homeStats, awayStats);
     }
 }
 

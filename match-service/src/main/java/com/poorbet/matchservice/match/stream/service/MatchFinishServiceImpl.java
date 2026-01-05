@@ -1,6 +1,6 @@
 package com.poorbet.matchservice.match.stream.service;
 
-import com.poorbet.matchservice.match.stream.model.LiveMatchEvent;
+import com.poorbet.matchservice.match.stream.dto.LiveMatchEventDto;
 import com.poorbet.matchservice.match.stream.model.Match;
 import com.poorbet.matchservice.match.stream.repository.MatchRepository;
 import jakarta.transaction.Transactional;
@@ -18,7 +18,7 @@ public class MatchFinishServiceImpl implements MatchFinishService {
     private final MatchRepository matchRepository;
 
     @Transactional
-    public void finishMatch(LiveMatchEvent event) {
+    public void finishMatch(LiveMatchEventDto event) {
         log.info("🚀 finishMatch {}", event);
 
         Match match = matchRepository
@@ -26,8 +26,8 @@ public class MatchFinishServiceImpl implements MatchFinishService {
                 .orElseThrow(() -> new IllegalStateException("Match not found: " + event.getId()));
 
         match.setStatus(FINISHED);
-        match.setHomeGoals(event.getHomeScore());
-        match.setAwayGoals(event.getAwayScore());
+        match.setHomeGoals(event.getHomeTeam().getScore());
+        match.setHomeGoals(event.getAwayTeam().getScore());
 
         matchRepository.save(match);
     }

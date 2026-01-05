@@ -31,6 +31,20 @@ services:
       - user-service
       - user-db
 
+  simulation-service:
+    build:
+      context: ./simulation-service
+      dockerfile: Dockerfile.dev
+    container_name: simulation-service
+    volumes:
+      - ./simulation-service:/app
+      - ~/.m2:/root/.m2
+    ports:
+      - "8084:8080"
+      - "5073:5073"
+    networks:
+      - main_network
+
   user-service:
     build:
       context: ./user-service
