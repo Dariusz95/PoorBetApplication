@@ -1,0 +1,39 @@
+simulation:
+  service:
+    url: http://simulation-service:8080
+    timeout:
+      connect: 2s
+      read: 3s
+
+training:
+  teams: 50
+  simulations-per-match: 50
+  output:
+    dataset: data/training.csv
+    model: data/model.bin
+
+team-power:
+  tiers:
+    WEAK:
+      attack:
+        min: 30
+        max: 50
+      defence:
+        min: 30
+        max: 50
+
+    AVERAGE:
+      attack:
+        min: 50
+        max: 70
+      defence:
+        min: 50
+        max: 70
+
+    STRONG:
+      attack:
+        min: 70
+        max: 90
+      defence:
+        min: 70
+        max: 90
