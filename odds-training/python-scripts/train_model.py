@@ -20,7 +20,8 @@ df[TARGET] = le.fit_transform(df[TARGET])  # H=0, D=1, A=2
 X = df[FEATURES].values
 y = df[TARGET].values
 
-model = LogisticRegression(max_iter=500)
+#model = LogisticRegression(max_iter=500)
+model = LogisticRegression(multi_class='multinomial', solver='lbfgs', max_iter=500)
 
 model.fit(X, y)
 

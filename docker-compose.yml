@@ -34,18 +34,27 @@ services:
   python-trainer:
     build: ./odds-training/python-scripts
     volumes:
-      - ./data/models:/app/data/models
+      - ./data:/app/data
     networks:
       - main_network
 
-#  odds-service:
-#    build: ./odds-service
-#    volumes:
-#      - ./data/models:/app/data/models
-#    ports:
-#      - "8081:8080"
-#    networks:
-#      - main_network
+  odds-service:
+    build:
+      context: ./odds-service
+      dockerfile: Dockerfile.dev
+    container_name: odds-service
+    volumes:
+      - ./odds-service:/app
+      - ./data/models:/app/data/models
+      - ~/.m2:/root/.m2
+    ports:
+      - "8085:8085"
+      - "5072:5072"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - MODEL_PATH=/app/data/models/match_predictor.onnx
+    networks:
+      - main_network
 
   simulation-service:
     build:

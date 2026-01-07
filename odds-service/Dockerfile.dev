@@ -1,0 +1,10 @@
+FROM eclipse-temurin:21-jdk
+
+WORKDIR /app
+
+COPY . .
+
+EXPOSE 8085
+EXPOSE 5072
+
+ENTRYPOINT ["./mvnw", "spring-boot:run"]
