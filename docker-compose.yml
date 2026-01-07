@@ -31,6 +31,22 @@ services:
       - user-service
       - user-db
 
+  python-trainer:
+    build: ./odds-training/python-scripts
+    volumes:
+      - ./data/models:/app/data/models
+    networks:
+      - main_network
+
+#  odds-service:
+#    build: ./odds-service
+#    volumes:
+#      - ./data/models:/app/data/models
+#    ports:
+#      - "8081:8080"
+#    networks:
+#      - main_network
+
   simulation-service:
     build:
       context: ./simulation-service

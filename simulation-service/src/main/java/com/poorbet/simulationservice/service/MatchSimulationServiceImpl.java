@@ -3,12 +3,16 @@ package com.poorbet.simulationservice.service;
 import com.poorbet.simulationservice.dto.LiveMatchEvent;
 import com.poorbet.simulationservice.dto.TeamStatsDto;
 import com.poorbet.simulationservice.model.MatchContext;
+import com.poorbet.simulationservice.request.SimulationBatchRequest;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -61,6 +65,18 @@ public class MatchSimulationServiceImpl implements MatchSimulationService {
                 true
         );
     }
+
+    @Override
+    public List<LiveMatchEvent> simulateBatch(SimulationBatchRequest request) {
+        return request.matches().parallelStream()
+                .map(match -> {
+                    UUID matchId = (match.matchId() != null) ? match.matchId() :  UUID.randomUUID();
+                    MatchContext context = new MatchContext(matchId, match.home(), match.away());
+                    return simulateMatchFinal(context);
+                })
+                .toList();
+    }
+
 
     private LiveMatchEvent simulateMinute(
             LiveMatchEvent prev,

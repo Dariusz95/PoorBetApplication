@@ -18,13 +18,7 @@ public class TeamGenerator {
     private final TeamPowerProperties properties;
     private final Random random = new Random();
 
-    public List<TeamPower> generate(int countPerTier){
-        return Arrays.stream(TeamTier.values())
-                .flatMap(tier->generateForTier(tier, countPerTier).stream())
-                .toList();
-    }
-
-    private List<TeamPower> generateForTier(TeamTier tier, int count){
+    public List<TeamPower> generateForTier(TeamTier tier, int count){
         TeamPowerProperties.TierPower power = properties.getTiers().get(tier);
 
         return IntStream.range(0, count)
@@ -35,7 +29,8 @@ public class TeamGenerator {
                 .toList();
     }
 
-    private double randomBetween(TeamPowerProperties.Range range) {
-        return range.min() + random.nextDouble() * (range.max() - range.min());
+    private int randomBetween(TeamPowerProperties.Range range) {
+        double value = range.min() + random.nextDouble() * (range.max() - range.min());
+        return (int) Math.round(value);
     }
 }

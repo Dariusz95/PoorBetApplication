@@ -1,6 +1,6 @@
 simulation:
   service:
-    url: http://simulation-service:8080
+    url: http://localhost:8084
     timeout:
       connect: 2s
       read: 3s
@@ -9,8 +9,12 @@ training:
   teams: 50
   simulations-per-match: 50
   output:
-    dataset: data/training.csv
-    model: data/model.bin
+    dataset: ../data/matches.csv
+    model: ../data/model.bin
+
+dataset:
+  output-path: "../data/matches.csv"
+  delimiter: ","
 
 team-power:
   tiers:

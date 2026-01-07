@@ -1,13 +1,15 @@
 package com.poorbet.oddstraining.config;
 
 import io.netty.channel.ChannelOption;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
-import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.netty.http.client.HttpClient;
 
-@Component
+@Configuration
+@EnableConfigurationProperties({SimulationServiceProperties.class})
 public class WebClientConfig {
 
     @Bean
