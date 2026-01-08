@@ -12,6 +12,13 @@ simulation:
       connect: 2s
       read: 3s
 
+odds:
+  service:
+    url: http://odds-service:8080
+    timeout:
+      connect: 2s
+      read: 3s
+
 spring:
   application:
     name: match-service

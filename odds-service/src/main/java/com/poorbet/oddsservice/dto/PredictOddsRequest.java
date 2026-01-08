@@ -2,6 +2,8 @@ package com.poorbet.oddsservice.dto;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 public record PredictOddsRequest(
     @NotNull(message = "Home team attack is required")

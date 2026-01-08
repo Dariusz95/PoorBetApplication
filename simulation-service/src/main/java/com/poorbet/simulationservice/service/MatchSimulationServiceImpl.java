@@ -113,11 +113,33 @@ public class MatchSimulationServiceImpl implements MatchSimulationService {
         double attack = homeHasBall ? home.attackPower() : away.attackPower();
         double defence = homeHasBall ? away.defencePower() : home.defencePower();
 
-        double strength = attack / (attack + defence);
+        // parametr do tuningu
+        double k = 0.05;
 
-        double base = 0.02;
+        // sigmoidalne mapowanie siły
+        double strength = 1.0 / (1.0 + Math.exp(-k * (attack - defence)));
+
+        // minimalna szansa na gola + domowa przewaga
+        double base = 0.01;  // minimalna szansa
         double advantage = homeHasBall ? 0.005 : 0.0;
 
-        return base + strength * 0.02 + advantage;
+        log.info("CALCUATE GOAL CHANCE -> {}", base + strength * 0.04 + advantage);
+        return base + strength * 0.04 + advantage;  // 0.04 → maksymalna korekta
     }
+
+//    private double calculateGoalChance(
+//            TeamStatsDto home,
+//            TeamStatsDto away,
+//            boolean homeHasBall
+//    ) {
+//        double attack = homeHasBall ? home.attackPower() : away.attackPower();
+//        double defence = homeHasBall ? away.defencePower() : home.defencePower();
+//
+//        double strength = attack / (attack + defence);
+//
+//        double base = 0.02;
+//        double advantage = homeHasBall ? 0.005 : 0.0;
+//
+//        return base + strength * 0.02 + advantage;
+//    }
 }

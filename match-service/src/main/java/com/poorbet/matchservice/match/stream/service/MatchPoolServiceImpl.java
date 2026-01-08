@@ -20,7 +20,7 @@ import java.util.stream.Stream;
 public class MatchPoolServiceImpl implements MatchPoolService{
     private final MatchPoolRepository matchPoolRepository;
     private final MatchPoolSimulationService matchPoolSimulationService;
-    private final TeamsClient teamsClient;
+//    private final TeamsClient teamsClient;
 
     @Transactional
     public void startPool(UUID poolId) {
@@ -29,18 +29,18 @@ public class MatchPoolServiceImpl implements MatchPoolService{
 
         if (pool.getStatus() != PoolStatus.BETTABLE) return;
 
-        List<UUID> teamIds = pool.getMatches().stream()
-                        .flatMap(match -> Stream.of(match.getHomeTeamId(), match.getAwayTeamId()))
-                        .distinct()
-                        .toList();
+//        List<UUID> teamIds = pool.getMatches().stream()
+//                        .flatMap(match -> Stream.of(match.getHomeTeamId(), match.getAwayTeamId()))
+//                        .distinct()
+//                        .toList();
 
-        List<TeamStatsDto> teamStats = teamsClient.getStatsByIds(teamIds);
+//        List<TeamStatsDto> teamStats = teamsClient.getStatsByIds(teamIds);
 
         pool.setStatus(PoolStatus.STARTED);
         pool.getMatches().forEach(m -> m.setStatus(MatchStatus.LIVE));
 
         matchPoolRepository.save(pool);
 
-        matchPoolSimulationService.startPoolSimulation(pool.getId(), teamStats);
+        matchPoolSimulationService.startPoolSimulation(pool.getId());
     }
 }

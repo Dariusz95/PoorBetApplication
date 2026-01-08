@@ -21,5 +21,10 @@ spring:
             - JwtAuthFilter
             - AddRequestHeader=X-API-KEY, ${API_KEY}
 
+        - id: match-service
+          uri: http://match-service:8080
+          predicates:
+            - Path=/api/match/**
+
 jwt:
   secret: ${JWT_SECRET}

@@ -1,0 +1,13 @@
+@for (entry of liveMatches | keyvalue; track entry.key) { @let homeTeam =
+entry?.value?.homeTeam; @let awayTeam = entry?.value?.awayTeam;
+
+<div>
+  <strong>{{ homeTeam?.teamName + " " }} </strong>
+  <span>{{ homeTeam?.score }} - {{ awayTeam?.score }}</span>
+  <strong>{{ " " + awayTeam?.teamName }} </strong>
+  <span>Minuta: {{ entry?.value?.minute }}</span>
+  @if (entry?.value?.finished) {
+  <span>(Koniec)</span>
+  }
+</div>
+} xxxxxxxxxxxxxxxxxx

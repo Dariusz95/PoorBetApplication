@@ -2,6 +2,9 @@ FROM eclipse-temurin:21-jdk-alpine
 
 WORKDIR /app
 
+COPY mvnw .
+RUN chmod +x mvnw
+
 RUN apk add --no-cache bash
 
 EXPOSE 8080 5071

@@ -1,4 +1,4 @@
-package com.poorbet.matchservice.match.stream.request;
+package com.poorbet.matchservice.match.stream.dto.request;
 
 
 import jakarta.validation.constraints.NotNull;
