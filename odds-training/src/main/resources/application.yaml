@@ -1,0 +1,40 @@
+simulation:
+  service:
+    url: http://localhost:8084
+    timeout:
+      connect: 2s
+      read: 3s
+
+training:
+  count-per-tier: 7
+  repetitions: 5
+
+dataset:
+  output-path: "../data/matches.csv"
+  delimiter: ","
+
+team-power:
+  tiers:
+    WEAK:
+      attack:
+        min: 30
+        max: 50
+      defence:
+        min: 30
+        max: 50
+
+    AVERAGE:
+      attack:
+        min: 50
+        max: 70
+      defence:
+        min: 50
+        max: 70
+
+    STRONG:
+      attack:
+        min: 70
+        max: 90
+      defence:
+        min: 70
+        max: 90

@@ -2,6 +2,7 @@ package com.poorbet.simulationservice.controller;
 
 import com.poorbet.simulationservice.dto.LiveMatchEvent;
 import com.poorbet.simulationservice.model.MatchContext;
+import com.poorbet.simulationservice.request.SimulationBatchRequest;
 import com.poorbet.simulationservice.request.SimulationRequest;
 import com.poorbet.simulationservice.service.MatchSimulationService;
 import jakarta.validation.Valid;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/simulation")
@@ -41,5 +44,14 @@ public class SimulationController {
         MatchContext context = new MatchContext(request.matchId(), request.home(), request.away());
 
         return simulationService.simulateMatchFinal(context);
+    }
+
+    @PostMapping(
+            value = "/batch-result"
+    )
+    public List<LiveMatchEvent> simulateBatch(
+            @Valid @RequestBody SimulationBatchRequest request
+    ) {
+        return simulationService.simulateBatch(request);
     }
 }

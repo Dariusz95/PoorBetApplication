@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: odds-service
+
+logging:
+  level:
+    root: INFO
+    com.poorbet: DEBUG
