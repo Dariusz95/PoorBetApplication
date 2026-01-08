@@ -13,6 +13,8 @@ simulation:
       read: 3s
 
 spring:
+  application:
+    name: match-service
   datasource:
     url: ${SPRING_DATASOURCE_URL}
     username: ${POSTGRES_USER}

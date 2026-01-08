@@ -2,8 +2,8 @@ package com.poorbet.oddstraining.generator;
 
 import com.poorbet.oddstraining.domain.team.TeamTier;
 import com.poorbet.oddstraining.generator.config.TierPairConfig;
-import com.poorbet.oddstraining.model.Match;
 import com.poorbet.oddstraining.model.TeamPower;
+import com.poorbet.oddstraining.properties.TrainingProperties;
 import com.poorbet.oddstraining.request.SimulationRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -17,11 +17,14 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class MatchGenerator {
     private final TeamGenerator teamGenerator;
+    private final TrainingProperties trainingProperties;
 
     public List<SimulationRequestDto> getMatches(){
-        List<TeamPower> weakTeams = teamGenerator.generateForTier(TeamTier.WEAK, 5);
-        List<TeamPower> averageTeams = teamGenerator.generateForTier(TeamTier.AVERAGE, 5);
-        List<TeamPower> strongTeams = teamGenerator.generateForTier(TeamTier.STRONG, 5);
+        int countPerTier = trainingProperties.countPerTier();
+
+        List<TeamPower> weakTeams = teamGenerator.generateForTier(TeamTier.WEAK, countPerTier);
+        List<TeamPower> averageTeams = teamGenerator.generateForTier(TeamTier.AVERAGE, countPerTier);
+        List<TeamPower> strongTeams = teamGenerator.generateForTier(TeamTier.STRONG, countPerTier);
 
         Map<TeamTier, List<TeamPower>> teamsByTier = Map.of(
                 TeamTier.WEAK, weakTeams,
@@ -50,7 +53,14 @@ public class MatchGenerator {
                 if (!includeSameTeam && list1 == list2 && i == j) {
                     continue;
                 }
-                pairs.add(new SimulationRequestDto(UUID.randomUUID(), list1.get(i), list2.get(j)));
+
+                for (int r = 0; r < trainingProperties.repetitions(); r++) {
+                    pairs.add(new SimulationRequestDto(
+                            UUID.randomUUID(),
+                            list1.get(i),
+                            list2.get(j)
+                    ));
+                }
             }
         }
         return pairs;

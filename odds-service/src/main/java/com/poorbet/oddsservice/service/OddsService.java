@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
-import java.util.Map;
 
 @Slf4j
 @Service
@@ -31,52 +30,35 @@ public class OddsService {
         }
     }
 
-    public OddsResponse predictOdds(int homeTeamAttack, int homeTeamDefense, int awayTeamAttack, int awayTeamDefense) {
-        float[][] inputData = {{
-                (float) homeTeamAttack,
-                (float) homeTeamDefense,
-                (float) awayTeamAttack,
-                (float) awayTeamDefense
+
+    public OddsResponse predictOdds(
+            int homeAttack,
+            int homeDefence,
+            int awayAttack,
+            int awayDefence
+    ) {
+        float[][] input = new float[][]{{
+                homeAttack,
+                homeDefence,
+                awayAttack,
+                awayDefence
         }};
 
-        try (OnnxTensor tensor = OnnxTensor.createTensor(ortEnvironment, inputData);
-             OrtSession.Result outputs = session.run(Collections.singletonMap("float_input", tensor))) {
+        try (OnnxTensor tensor = OnnxTensor.createTensor(ortEnvironment, input);
+             OrtSession.Result result = session.run(
+                     Collections.singletonMap("float_input", tensor)
+             )) {
 
-//            float[] probabilities = ((float[][]) outputs.get(0).getValue())[0];
-
-            float[] probabilities;
-            Object rawOutput = outputs.get(0).getValue();
-            log.info("aaaaaaaaaaaaaa {}", rawOutput);
-            if (rawOutput instanceof float[][] floatArray2D) {
-                probabilities = floatArray2D[0];
-            } else if (rawOutput instanceof double[][] doubleArray2D) {
-                probabilities = new float[doubleArray2D[0].length];
-                for (int i = 0; i < doubleArray2D[0].length; i++) {
-                    probabilities[i] = (float) doubleArray2D[0][i];
-                }
-            } else if (rawOutput instanceof long[][] longArray2D) {
-                probabilities = new float[longArray2D[0].length];
-                for (int i = 0; i < longArray2D[0].length; i++) {
-                    probabilities[i] = longArray2D[0][i];
-                }
-            } else {
-                throw new RuntimeException("Unexpected ONNX output type: " + rawOutput.getClass());
-            }
-
-
-            if (probabilities.length < 3) {
-                throw new RuntimeException("Model output does not contain 3 probabilities");
-            }
+            float[] probs = ((float[][]) result.get(1).getValue())[0];
 
             return new OddsResponse(
-                    probabilities[0],  // Win probability
-                    probabilities[1],  // Draw probability
-                    probabilities[2]   // Loss probability
+                    probs[0], // H
+                    probs[1], // X
+                    probs[2]  // A
             );
 
         } catch (OrtException e) {
-            log.error("Error during ONNX model inference", e);
-            throw new RuntimeException("Failed to predict odds", e);
+            throw new RuntimeException("ONNX inference failed", e);
         }
     }
 }

@@ -1,39 +1,50 @@
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
-from sklearn.preprocessing import LabelEncoder
-import joblib
 from skl2onnx import convert_sklearn
 from skl2onnx.common.data_types import FloatTensorType
+import joblib
 import os
 
 CSV_PATH = "/app/data/matches.csv"
 MODEL_ONNX_PATH = "/app/data/models/match_predictor.onnx"
 MODEL_PKL_PATH = "/app/data/models/match_predictor.pkl"
+
 FEATURES = ["home_attack", "home_defence", "away_attack", "away_defence"]
-TARGET = "result"  # H/D/A
+TARGET = "result"  # H / X / A
 
-df = pd.read_csv(CSV_PATH, delimiter=",")
+df = pd.read_csv(CSV_PATH)
 
-le = LabelEncoder()
-df[TARGET] = le.fit_transform(df[TARGET])  # H=0, D=1, A=2
+df[TARGET] = df[TARGET].map({
+    "H": 0,
+    "X": 1,
+    "A": 2
+})
 
-X = df[FEATURES].values
+X = df[FEATURES].astype("float32").values
 y = df[TARGET].values
 
-#model = LogisticRegression(max_iter=500)
-model = LogisticRegression(multi_class='multinomial', solver='lbfgs', max_iter=500)
+model = LogisticRegression(
+    max_iter=1000,
+    solver="lbfgs",
+    multi_class="multinomial"
+)
 
 model.fit(X, y)
 
 os.makedirs(os.path.dirname(MODEL_PKL_PATH), exist_ok=True)
 joblib.dump(model, MODEL_PKL_PATH)
 
-initial_type = [('float_input', FloatTensorType([None, len(FEATURES)]))]
-onnx_model = convert_sklearn(model, initial_types=initial_type)
+initial_type = [("float_input", FloatTensorType([None, len(FEATURES)]))]
+
+onnx_model = convert_sklearn(
+    model,
+    initial_types=initial_type,
+    options={id(model): {"zipmap": False}}
+)
 
 os.makedirs(os.path.dirname(MODEL_ONNX_PATH), exist_ok=True)
 with open(MODEL_ONNX_PATH, "wb") as f:
     f.write(onnx_model.SerializeToString())
 
-print(f"Model zapisany do ONNX: {MODEL_ONNX_PATH}")
-print(f"Model zapisany do Pickle: {MODEL_PKL_PATH}")
+print("✅ Model trained")
+print("ONNX:", MODEL_ONNX_PATH)

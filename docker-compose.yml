@@ -35,8 +35,6 @@ services:
     build: ./odds-training/python-scripts
     volumes:
       - ./data:/app/data
-    networks:
-      - main_network
 
   odds-service:
     build:
@@ -48,7 +46,7 @@ services:
       - ./data/models:/app/data/models
       - ~/.m2:/root/.m2
     ports:
-      - "8085:8085"
+      - "8085:8080"
       - "5072:5072"
     environment:
       - SPRING_PROFILES_ACTIVE=dev

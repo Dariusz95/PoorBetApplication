@@ -10,7 +10,7 @@ import java.util.List;
 public record SimulationBatchRequest(
         @NotNull
         @Valid
-        @Size(max = 1000)
+        @Size(max = 100000)
         List<SimulationRequest> matches
         ) {
 }

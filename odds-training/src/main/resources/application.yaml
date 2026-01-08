@@ -6,11 +6,8 @@ simulation:
       read: 3s
 
 training:
-  teams: 50
-  simulations-per-match: 50
-  output:
-    dataset: ../data/matches.csv
-    model: ../data/model.bin
+  count-per-tier: 7
+  repetitions: 5
 
 dataset:
   output-path: "../data/matches.csv"

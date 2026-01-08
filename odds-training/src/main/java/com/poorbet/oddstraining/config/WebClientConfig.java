@@ -1,5 +1,6 @@
 package com.poorbet.oddstraining.config;
 
+import com.poorbet.oddstraining.properties.SimulationServiceProperties;
 import io.netty.channel.ChannelOption;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;

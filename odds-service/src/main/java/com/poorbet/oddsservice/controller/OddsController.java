@@ -14,13 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
-@RequestMapping("/predict")
+@RequestMapping("/api/odds")
 @RequiredArgsConstructor
 public class OddsController {
 
     private final OddsService oddsService;
 
-    @PostMapping
+    @PostMapping("/predict")
     public ResponseEntity<OddsResponse> predictOdds(@Valid @RequestBody PredictOddsRequest request) {
         log.debug("Predicting odds for match - Home Attack: {}, Home Defense: {}, Away Attack: {}, Away Defense: {}",
             request.homeTeamAttack(), request.homeTeamDefense(),

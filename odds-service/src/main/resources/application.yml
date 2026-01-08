@@ -2,11 +2,6 @@ spring:
   application:
     name: odds-service
 
-server:
-  port: 8085
-  servlet:
-    context-path: /api/odds
-
 logging:
   level:
     root: INFO
