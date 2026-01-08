@@ -1,7 +1,7 @@
 package com.poorbet.matchservice.match.stream.client;
 
-import com.poorbet.matchservice.match.stream.request.SimulationRequest;
-import com.poorbet.matchservice.match.stream.response.LiveMatchEvent;
+import com.poorbet.matchservice.match.stream.dto.request.SimulationRequest;
+import com.poorbet.matchservice.match.stream.dto.response.LiveMatchEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;

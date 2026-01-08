@@ -35,6 +35,8 @@ services:
     build: ./odds-training/python-scripts
     volumes:
       - ./data:/app/data
+    networks:
+      - main_network
 
   odds-service:
     build:

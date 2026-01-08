@@ -1,4 +1,4 @@
-package com.poorbet.matchservice.match.stream.response;
+package com.poorbet.matchservice.match.stream.dto.response;
 
 import lombok.Getter;
 import lombok.Setter;

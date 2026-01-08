@@ -1,11 +1,17 @@
 package com.poorbet.matchservice.match.stream.service;
 
 
+import com.poorbet.matchservice.match.stream.client.OddsClient;
 import com.poorbet.matchservice.match.stream.client.TeamsClient;
 import com.poorbet.matchservice.match.stream.config.MatchPoolProperties;
+import com.poorbet.matchservice.match.stream.dto.OddsDto;
+import com.poorbet.matchservice.match.stream.dto.request.PreMatchDto;
+import com.poorbet.matchservice.match.stream.dto.request.PredictionBatchRequestDto;
 import com.poorbet.matchservice.match.stream.dto.TeamStatsDto;
+import com.poorbet.matchservice.match.stream.dto.response.BatchOddsResponse;
 import com.poorbet.matchservice.match.stream.model.Match;
 import com.poorbet.matchservice.match.stream.model.MatchPool;
+import com.poorbet.matchservice.match.stream.model.Odds;
 import com.poorbet.matchservice.match.stream.model.enums.MatchStatus;
 import com.poorbet.matchservice.match.stream.model.enums.PoolStatus;
 import com.poorbet.matchservice.match.stream.repository.MatchPoolRepository;
@@ -20,9 +26,10 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 
 @Slf4j
 @Service
@@ -34,6 +41,7 @@ public class MatchPoolSchedulingServiceImpl implements MatchPoolSchedulingServic
     private final TeamsClient teamsClient;
     private final MatchPoolService matchPoolService;
     private final TaskScheduler taskScheduler;
+    private final OddsClient oddsClient;
 
     @Value("${INSTANCE_ID:local}")
     private String instanceId;
@@ -78,8 +86,7 @@ public class MatchPoolSchedulingServiceImpl implements MatchPoolSchedulingServic
                 break;
             }
 
-            createMatches(teams, pool)
-                    .forEach(pool::addMatch);
+            addMatchesToPool(teams, pool);
 
             matchPoolRepository.save(pool);
 
@@ -111,7 +118,7 @@ public class MatchPoolSchedulingServiceImpl implements MatchPoolSchedulingServic
         log.info("Scheduled pool {} at {}", pool.getId(), pool.getScheduledStartTime());
     }
 
-    private List<Match> createMatches(List<TeamStatsDto> teams, MatchPool pool) {
+    private List<Match> addMatchesToPool(List<TeamStatsDto> teams, MatchPool pool) {
 
         if (teams.size() % 2 != 0) {
             throw new IllegalArgumentException("Number of teams must be even");
@@ -119,24 +126,80 @@ public class MatchPoolSchedulingServiceImpl implements MatchPoolSchedulingServic
 
         Collections.shuffle(teams);
 
+
+        List<PreMatchDto> preMatches = getPreMatches(teams);
+
+        Map<UUID, BatchOddsResponse> oddsMap = oddsClient.getBatchPrediction(new PredictionBatchRequestDto(preMatches))
+                .getMatches()
+                .stream()
+                .collect(Collectors.toMap(
+                        BatchOddsResponse::matchId,
+                        Function.identity()
+                ));
+        log.info("xyz oddsMap {}", oddsMap);
         List<Match> matches = new ArrayList<>();
 
-        for (int i = 0; i < teams.size(); i += 2) {
-            TeamStatsDto home = teams.get(i);
-            TeamStatsDto away = teams.get(i + 1);
+        for (PreMatchDto preMatch : preMatches) {
+            BatchOddsResponse oddsResponse = oddsMap.get(preMatch.getMatchId());
+            if (oddsResponse == null) {
+                log.warn("No odds returned for match {}", preMatch.getMatchId());
+                continue;
+            }
 
             Match match = Match.builder()
                     .pool(pool)
-                    .homeTeamId(home.getId())
-                    .awayTeamId(away.getId())
+                    .homeTeamId(preMatch.getHomeTeamId())
+                    .awayTeamId(preMatch.getAwayTeamId())
                     .homeGoals(0)
                     .awayGoals(0)
                     .status(MatchStatus.SCHEDULED)
                     .build();
 
+            match.setOdds(calculateOdds(oddsResponse.oddsResponse()));
             pool.addMatch(match);
+            matches.add(match);
         }
 
         return matches;
     }
+
+    private List<PreMatchDto> getPreMatches(List<TeamStatsDto> teams) {
+        List<PreMatchDto> preMatches = new ArrayList<>();
+
+        for (int i = 0; i < teams.size(); i += 2) {
+            TeamStatsDto home = teams.get(i);
+            TeamStatsDto away = teams.get(i + 1);
+
+            PreMatchDto preMatch = PreMatchDto.builder()
+                    .matchId(UUID.randomUUID())
+                    .homeTeamId(home.getId())
+                    .awayTeamId(away.getId())
+                    .homeAttack(home.getAttackPower())
+                    .homeDefense(home.getDefencePower())
+                    .awayAttack(away.getDefencePower())
+                    .awayDefense(away.getDefencePower())
+                    .build();
+
+            preMatches.add(preMatch);
+        }
+
+        return preMatches;
+    }
+
+    private Odds calculateOdds(OddsDto dto) {
+        double sum = dto.homeWinProbability() + dto.drawProbability() + dto.awayWinProbability();
+
+        double homeOdd = sum / dto.homeWinProbability();
+        double drawOdd = sum / dto.drawProbability();
+        double awayOdd = sum / dto.awayWinProbability();
+
+        return Odds.builder()
+                .homeWin(homeOdd)
+                .draw(drawOdd)
+                .awayWin(awayOdd)
+                .build();
+    }
 }
+
+
+

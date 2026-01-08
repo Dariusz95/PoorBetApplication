@@ -1,12 +1,14 @@
 package com.poorbet.matchservice.match.stream.service;
 
+import com.poorbet.matchservice.match.stream.client.OddsClient;
 import com.poorbet.matchservice.match.stream.client.SimulationClient;
+import com.poorbet.matchservice.match.stream.client.TeamsClient;
 import com.poorbet.matchservice.match.stream.dto.TeamStatsDto;
 import com.poorbet.matchservice.match.stream.dto.LiveMatchEventDto;
 import com.poorbet.matchservice.match.stream.model.Match;
 import com.poorbet.matchservice.match.stream.repository.MatchRepository;
-import com.poorbet.matchservice.match.stream.request.SimulationRequest;
-import com.poorbet.matchservice.match.stream.request.SimulationTeamStats;
+import com.poorbet.matchservice.match.stream.dto.request.SimulationRequest;
+import com.poorbet.matchservice.match.stream.dto.request.SimulationTeamStats;
 import com.poorbet.matchservice.match.stream.simulation.LiveMatchSimulation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 @Service
@@ -28,9 +31,18 @@ public class MatchPoolSimulationServiceImpl implements MatchPoolSimulationServic
     private final MatchRepository matchRepository;
     private final MatchFinishService matchFinishService;
     private final SimulationClient simulationClient;
+    private final TeamsClient teamsClient;
+    private final OddsClient oddsClient;
 
-    public void startPoolSimulation(UUID poolId, List<TeamStatsDto> teamStats) {
+    public void startPoolSimulation(UUID poolId) {
         List<Match> matches = matchRepository.findByPoolId(poolId);
+
+        List<UUID> teamIds = matches.stream()
+                .flatMap(match -> Stream.of(match.getHomeTeamId(), match.getAwayTeamId()))
+                .distinct()
+                .toList();
+
+        List<TeamStatsDto> teamStats = teamsClient.getStatsByIds(teamIds);
 
         Map<UUID, TeamStatsDto> teamsById = teamStats.stream()
                 .collect(Collectors.toMap(

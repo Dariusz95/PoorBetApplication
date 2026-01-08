@@ -1,5 +1,7 @@
 package com.poorbet.matchservice.match.stream.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import com.poorbet.matchservice.match.stream.dto.TeamStatsDto;
@@ -39,6 +41,19 @@ public class Match {
     private MatchStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "match_pool_id", nullable = false)
+    @JoinColumn(name = "pool_id", nullable = false)
     private MatchPool pool;
+
+    @OneToOne(
+            mappedBy = "match",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY
+    )
+    private Odds odds;
+
+    public void setOdds(Odds odds) {
+        this.odds = odds;
+        odds.setMatch(this);
+    }
 }

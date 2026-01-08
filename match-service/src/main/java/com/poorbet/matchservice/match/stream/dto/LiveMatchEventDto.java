@@ -1,6 +1,6 @@
 package com.poorbet.matchservice.match.stream.dto;
 
-import com.poorbet.matchservice.match.stream.response.LiveMatchEvent;
+import com.poorbet.matchservice.match.stream.dto.response.LiveMatchEvent;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
