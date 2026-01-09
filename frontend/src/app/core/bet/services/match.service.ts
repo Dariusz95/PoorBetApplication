@@ -3,21 +3,15 @@ import { inject, Injectable, NgZone } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 
-
 export interface LiveMatchEvent {
   id: string;
   minute: number;
-  homeTeam: TeamScoreDto;
-  awayTeam: TeamScoreDto;
+  homeTeamId: string;
+  awayTeamId: string;
+  homeScore: number;
+  awayScore: number;
   finished: boolean;
 }
-
-export interface TeamScoreDto {
- id: string;
- teamName: string;
- score: number;
-}
-
 
 @Injectable({
   providedIn: 'root',
@@ -27,10 +21,6 @@ export class MatchService {
   private readonly ngZone = inject(NgZone);
 
   private apiBaseUrl = `${environment.backend.baseURL}/api/match`;
-
-  liveMatches() {
-    return this.http.get<any[]>(`${this.apiBaseUrl}`);
-  }
 
   streamMatch(): Observable<LiveMatchEvent> {
     return new Observable<LiveMatchEvent>((observer) => {

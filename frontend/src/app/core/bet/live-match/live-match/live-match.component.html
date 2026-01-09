@@ -1,0 +1,7 @@
+<div>
+  <span>{{ liveMatch()?.homeScore }} - {{ liveMatch()?.awayScore }}</span>
+  <span>Minuta: {{ liveMatch()?.minute }}</span>
+  @if (liveMatch()?.finished) {
+  <span>(Koniec)</span>
+  }
+</div>
