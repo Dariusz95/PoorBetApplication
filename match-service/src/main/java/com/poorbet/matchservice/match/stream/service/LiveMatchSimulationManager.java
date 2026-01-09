@@ -17,7 +17,7 @@ public class LiveMatchSimulationManager {
 
     private final Map<UUID, LiveMatchSimulation> simulations = new ConcurrentHashMap<>();
 
-    private final Sinks.Many<LiveMatchEventDto> sink = Sinks.many().replay().all();
+    private final Sinks.Many<LiveMatchEventDto> sink = Sinks.many().multicast().onBackpressureBuffer();
 
     public LiveMatchSimulation startIfNotRunning(UUID matchId) {
         return simulations.computeIfAbsent(

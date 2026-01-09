@@ -1,7 +1,6 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  effect,
   inject,
   input,
 } from '@angular/core';
@@ -20,23 +19,17 @@ export class LiveMatchComponent {
 
   private readonly teamService = inject(TeamService);
 
-  constructor() {
-    effect(() => {
-      if (this.liveMatch()) {
-        return;
-      }
+  ngOnInit(): void {
+    this.teamService
+      .getTeam(this.liveMatch().homeTeamId)
+      .subscribe((team: any) => {
+        console.log('Home Team:', team);
+      });
 
-      this.teamService
-        .getTeam(this.liveMatch().homeTeamId)
-        .subscribe((team: any) => {
-          console.log('Home Team:', team);
-        });
-
-      this.teamService
-        .getTeam(this.liveMatch().awayTeamId)
-        .subscribe((team: any) => {
-          console.log('Away Team:', team);
-        });
-    });
+    this.teamService
+      .getTeam(this.liveMatch().awayTeamId)
+      .subscribe((team: any) => {
+        console.log('Away Team:', team);
+      });
   }
 }

@@ -15,6 +15,8 @@ export class BetPageComponent {
   liveMatches: Record<string, LiveMatchEvent> = {};
 
   updateLiveMatch(event: LiveMatchEvent) {
+    console.log('xx liveMatches',this.liveMatches);
+
     this.liveMatches[event.id] = event;
   }
 
