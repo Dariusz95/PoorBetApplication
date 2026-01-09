@@ -26,5 +26,10 @@ spring:
           predicates:
             - Path=/api/match/**
 
+        - id: team-service
+          uri: http://teams-service:8080
+          predicates:
+            - Path=/api/team/**
+
 jwt:
   secret: ${JWT_SECRET}

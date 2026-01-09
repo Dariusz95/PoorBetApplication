@@ -1,0 +1,8 @@
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+
+@for (entry of liveMatches | keyvalue; track entry.key) {
+<app-live-match [liveMatch]="entry.value"></app-live-match>
+}

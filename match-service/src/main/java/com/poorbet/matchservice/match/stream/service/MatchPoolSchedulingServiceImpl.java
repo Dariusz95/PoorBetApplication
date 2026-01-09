@@ -136,7 +136,7 @@ public class MatchPoolSchedulingServiceImpl implements MatchPoolSchedulingServic
                         BatchOddsResponse::matchId,
                         Function.identity()
                 ));
-        log.info("xyz oddsMap {}", oddsMap);
+
         List<Match> matches = new ArrayList<>();
 
         for (PreMatchDto preMatch : preMatches) {

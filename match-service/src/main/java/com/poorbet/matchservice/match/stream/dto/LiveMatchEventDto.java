@@ -10,13 +10,15 @@ import java.util.UUID;
 @AllArgsConstructor
 public class LiveMatchEventDto {
     private UUID id;
-    private TeamScoreDto homeTeam;
-    private TeamScoreDto awayTeam;
+    private UUID homeTeamId;
+    private UUID awayTeamId;
+    private int homeScore;
+    private int awayScore;
     private int minute;
     private boolean isFinished;
 
     public static LiveMatchEventDto heartbeat() {
-        return new LiveMatchEventDto(null, null, null, 0, false);
+        return new LiveMatchEventDto(null, null, null, 0, 0, 0, false);
     }
 
     public static LiveMatchEventDto fromEvent(
@@ -26,8 +28,10 @@ public class LiveMatchEventDto {
     ) {
         return new LiveMatchEventDto(
                 event.getMatchId(),
-                new TeamScoreDto(home.getId(), home.getName(), event.getHomeGoals()),
-                new TeamScoreDto(away.getId(), away.getName(), event.getAwayGoals()),
+                home.getId(),
+                away.getId(),
+                event.getHomeGoals(),
+                event.getAwayGoals(),
                 event.getMinute(),
                 event.isFinished()
         );

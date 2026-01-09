@@ -88,10 +88,21 @@ services:
       - main_network
 
   redis:
-    image: redis:7
-    container_name: redis
+    image: redis:7.4-alpine
+    container_name: redis-dev
     ports:
       - "6379:6379"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      interval: 1s
+      timeout: 3s
+      retries: 5
+    command: ["redis-server"]
+    volumes:
+      - cache:/data
+    networks:
+      - main_network
 
   teams-service:
     build:
@@ -198,3 +209,4 @@ volumes:
   user_data:
   teams_data:
   match_data:
+  cache:
