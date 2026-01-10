@@ -69,6 +69,10 @@ services:
       - "5073:5073"
     networks:
       - main_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 5s
+      retries: 5
 
   user-service:
     build:

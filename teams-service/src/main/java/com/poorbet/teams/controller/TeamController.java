@@ -50,7 +50,7 @@ public class TeamController {
     public TeamShortDto getTeam(@PathVariable UUID id) {
         log.info("GET /api/teams/{} called", id);
         TeamShortDto team = teamService.getById(id);
-//        log.info("Returning team: id={}, name={}", team.id(), team.name());
+        log.info("Returning team: id={}, name={}", team.id(), team.name());
         return team;
     }
 }

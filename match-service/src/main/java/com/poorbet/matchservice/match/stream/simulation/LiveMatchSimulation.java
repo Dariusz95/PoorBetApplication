@@ -18,9 +18,4 @@ public class LiveMatchSimulation {
     public void publish(LiveMatchEventDto event) {
         sink.tryEmitNext(event);
     }
-
-    public Flux<LiveMatchEventDto> stream() {
-        return sink.asFlux();
-    }
-
 }

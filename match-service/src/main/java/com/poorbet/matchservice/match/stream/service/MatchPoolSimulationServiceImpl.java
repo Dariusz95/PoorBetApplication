@@ -3,6 +3,7 @@ package com.poorbet.matchservice.match.stream.service;
 import com.poorbet.matchservice.match.stream.client.OddsClient;
 import com.poorbet.matchservice.match.stream.client.SimulationClient;
 import com.poorbet.matchservice.match.stream.client.TeamsClient;
+import com.poorbet.matchservice.match.stream.dto.MatchSimpleDto;
 import com.poorbet.matchservice.match.stream.dto.TeamStatsDto;
 import com.poorbet.matchservice.match.stream.dto.LiveMatchEventDto;
 import com.poorbet.matchservice.match.stream.model.Match;
@@ -38,6 +39,11 @@ public class MatchPoolSimulationServiceImpl implements MatchPoolSimulationServic
         List<Match> matches = matchRepository.findByPoolId(poolId);
 
         List<UUID> teamIds = matches.stream()
+                .map(match -> MatchSimpleDto.builder()
+                        .matchId(match.getMatchId())
+                        .awayTeamId(match.getAwayTeamId())
+                        .homeTeamId(match.getHomeTeamId())
+                        .build())
                 .flatMap(match -> Stream.of(match.getHomeTeamId(), match.getAwayTeamId()))
                 .distinct()
                 .toList();

@@ -10,7 +10,15 @@ export interface LiveMatchEvent {
   awayTeamId: string;
   homeScore: number;
   awayScore: number;
-  finished: boolean;
+  eventType: MatchEventType;
+  eventData: null | string;
+}
+
+export enum MatchEventType {
+  MatchStarted = 'MATCH_STARTED',
+  Live = 'LIVE',
+  MatchEnded = 'MATCH_ENDED',
+  Heartbeat = 'HEARTBEAT',
 }
 
 @Injectable({
@@ -45,5 +53,9 @@ export class MatchService {
         eventSource.close();
       };
     });
+  }
+
+  futureMatch(): Observable<any> {
+    return this.http.get<any>(`${this.apiBaseUrl}/future`);
   }
 }

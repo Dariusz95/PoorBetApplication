@@ -3,6 +3,7 @@ package com.poorbet.simulationservice.service;
 import com.poorbet.simulationservice.dto.LiveMatchEvent;
 import com.poorbet.simulationservice.dto.TeamStatsDto;
 import com.poorbet.simulationservice.model.MatchContext;
+import com.poorbet.simulationservice.model.enums.MatchEventType;
 import com.poorbet.simulationservice.request.SimulationBatchRequest;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +33,8 @@ public class MatchSimulationServiceImpl implements MatchSimulationService {
                 0,
                 0,
                 0,
-                false
+                MatchEventType.MATCH_STARTED,
+                null
         );
 
         return Flux
@@ -50,7 +52,8 @@ public class MatchSimulationServiceImpl implements MatchSimulationService {
                 0,
                 0,
                 0,
-                false
+                MatchEventType.MATCH_STARTED,
+                null
         );
 
         for (int minute = 1; minute <= totalMinutes; minute++) {
@@ -62,7 +65,8 @@ public class MatchSimulationServiceImpl implements MatchSimulationService {
                 totalMinutes,
                 prev.homeGoals(),
                 prev.awayGoals(),
-                true
+                prev.eventType(),
+                prev.eventData()
         );
     }
 
@@ -98,11 +102,15 @@ public class MatchSimulationServiceImpl implements MatchSimulationService {
             }
         }
 
+        boolean isFinished = minute == 90;
+        MatchEventType matchEventType = isFinished ? MatchEventType.MATCH_ENDED : MatchEventType.LIVE;
+
         return new LiveMatchEvent(prev.matchId(),
                 minute,
                 homeGoals,
                 awayGoals,
-                minute == 90);
+                matchEventType,
+                null);
     }
 
     private double calculateGoalChance(
@@ -113,33 +121,15 @@ public class MatchSimulationServiceImpl implements MatchSimulationService {
         double attack = homeHasBall ? home.attackPower() : away.attackPower();
         double defence = homeHasBall ? away.defencePower() : home.defencePower();
 
-        // parametr do tuningu
         double k = 0.05;
 
-        // sigmoidalne mapowanie siły
         double strength = 1.0 / (1.0 + Math.exp(-k * (attack - defence)));
 
-        // minimalna szansa na gola + domowa przewaga
-        double base = 0.01;  // minimalna szansa
+        double base = 0.01;
         double advantage = homeHasBall ? 0.005 : 0.0;
 
         log.info("CALCUATE GOAL CHANCE -> {}", base + strength * 0.04 + advantage);
-        return base + strength * 0.04 + advantage;  // 0.04 → maksymalna korekta
+        return base + strength * 0.04 + advantage;
     }
 
-//    private double calculateGoalChance(
-//            TeamStatsDto home,
-//            TeamStatsDto away,
-//            boolean homeHasBall
-//    ) {
-//        double attack = homeHasBall ? home.attackPower() : away.attackPower();
-//        double defence = homeHasBall ? away.defencePower() : home.defencePower();
-//
-//        double strength = attack / (attack + defence);
-//
-//        double base = 0.02;
-//        double advantage = homeHasBall ? 0.005 : 0.0;
-//
-//        return base + strength * 0.02 + advantage;
-//    }
 }

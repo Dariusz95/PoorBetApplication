@@ -16,7 +16,6 @@ import org.springframework.stereotype.Component;
 public class MatchPoolScheduler {
 
     private final MatchPoolSchedulingService schedulingService;
-    private final MatchPoolProperties matchPoolProperties;
 
     @Value("${INSTANCE_ID:local}")
     private String instanceId;

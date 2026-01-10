@@ -9,3 +9,17 @@ generate:
 	./generate-matches.sh
 	docker-compose run --rm python-trainer python train_model.py
 	docker-compose up -d odds-service
+
+run-app:
+	docker-compose up -d --build simulation-service
+
+# 	until [ "`docker inspect -f {{.State.Health.Status}} simulation-service`" = "healthy" ]; do \
+# 		echo "Czekam na simulation-service..."; \
+# 		sleep 2; \
+# 	done
+# 	docker-compose up -d odds-service
+# 	sleep 15
+
+	./generate-matches.sh
+	docker-compose run --rm python-trainer python train_model.py
+	docker-compose up -d --build

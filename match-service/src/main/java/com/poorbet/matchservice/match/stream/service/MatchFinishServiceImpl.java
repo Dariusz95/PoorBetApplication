@@ -26,8 +26,8 @@ public class MatchFinishServiceImpl implements MatchFinishService {
                 .orElseThrow(() -> new IllegalStateException("Match not found: " + event.getId()));
 
         match.setStatus(FINISHED);
-        match.setHomeGoals(event.getHomeTeam().getScore());
-        match.setHomeGoals(event.getAwayTeam().getScore());
+        match.setHomeGoals(event.getHomeScore());
+        match.setHomeGoals(event.getAwayScore());
 
         matchRepository.save(match);
     }
