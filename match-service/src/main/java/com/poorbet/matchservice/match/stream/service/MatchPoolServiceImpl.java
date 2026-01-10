@@ -17,10 +17,9 @@ import java.util.stream.Stream;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class MatchPoolServiceImpl implements MatchPoolService{
+public class MatchPoolServiceImpl implements MatchPoolService {
     private final MatchPoolRepository matchPoolRepository;
     private final MatchPoolSimulationService matchPoolSimulationService;
-//    private final TeamsClient teamsClient;
 
     @Transactional
     public void startPool(UUID poolId) {
@@ -28,13 +27,6 @@ public class MatchPoolServiceImpl implements MatchPoolService{
                 .orElseThrow();
 
         if (pool.getStatus() != PoolStatus.BETTABLE) return;
-
-//        List<UUID> teamIds = pool.getMatches().stream()
-//                        .flatMap(match -> Stream.of(match.getHomeTeamId(), match.getAwayTeamId()))
-//                        .distinct()
-//                        .toList();
-
-//        List<TeamStatsDto> teamStats = teamsClient.getStatsByIds(teamIds);
 
         pool.setStatus(PoolStatus.STARTED);
         pool.getMatches().forEach(m -> m.setStatus(MatchStatus.LIVE));

@@ -2,9 +2,11 @@ package com.poorbet.matchservice.match.stream.repository;
 
 import com.poorbet.matchservice.match.stream.model.MatchPool;
 import com.poorbet.matchservice.match.stream.model.enums.PoolStatus;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.data.domain.Pageable;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -17,7 +19,15 @@ public interface MatchPoolRepository extends JpaRepository<MatchPool, UUID> {
             where p.status = :status
             and p.scheduledStartTime > :now
             order by p.scheduledStartTime
-            """)
+    """)
     List<MatchPool> findFuturePools(@Param("status") PoolStatus status,
                                     @Param("now") OffsetDateTime now);
+
+    @EntityGraph(attributePaths = "matches")
+    @Query("""
+        select mp from MatchPool mp
+        where mp.status = com.poorbet.matchservice.match.stream.model.enums.PoolStatus.BETTABLE
+        order by mp.scheduledStartTime asc
+    """)
+    List<MatchPool> getFutureMatchPools(Pageable pageable);
 }

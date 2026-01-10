@@ -4,12 +4,19 @@ import {
   inject,
   input,
 } from '@angular/core';
-import { LiveMatchEvent } from '../../services/match.service';
+import { Observable } from 'rxjs';
+import { LiveMatchEvent, MatchEventType } from '../../services/match.service';
 import { TeamService } from '../../services/team.service';
+import { AsyncPipe } from '@angular/common';
+
+export interface ShortTeamInfo {
+  id: string;
+  name: string;
+}
 
 @Component({
   selector: 'app-live-match',
-  imports: [],
+  imports: [AsyncPipe],
   templateUrl: './live-match.component.html',
   styleUrl: './live-match.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -19,17 +26,25 @@ export class LiveMatchComponent {
 
   private readonly teamService = inject(TeamService);
 
-  ngOnInit(): void {
-    this.teamService
-      .getTeam(this.liveMatch().homeTeamId)
-      .subscribe((team: any) => {
-        console.log('Home Team:', team);
-      });
+  homeTeam$!: Observable<ShortTeamInfo>;
+  awayTeam$!: Observable<ShortTeamInfo>;
 
-    this.teamService
-      .getTeam(this.liveMatch().awayTeamId)
-      .subscribe((team: any) => {
-        console.log('Away Team:', team);
-      });
+  MatchEventType = MatchEventType;
+
+  ngOnInit(): void {
+    this.homeTeam$ = this.teamService.getTeam(this.liveMatch().homeTeamId);
+    this.awayTeam$ = this.teamService.getTeam(this.liveMatch().awayTeamId);
+
+    // this.teamService
+    //   .getTeam(this.liveMatch().homeTeamId)
+    //   .subscribe((team: any) => {
+    //     console.log('Home Team:', team);
+    //   });
+
+    // this.teamService
+    //   .getTeam(this.liveMatch().awayTeamId)
+    //   .subscribe((team: any) => {
+    //     console.log('Away Team:', team);
+    //   });
   }
 }

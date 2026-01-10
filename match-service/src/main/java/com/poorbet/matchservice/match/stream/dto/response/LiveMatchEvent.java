@@ -1,5 +1,6 @@
 package com.poorbet.matchservice.match.stream.dto.response;
 
+import com.poorbet.matchservice.match.stream.model.enums.MatchEventType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,5 +13,6 @@ public class LiveMatchEvent {
     int minute;
     int homeGoals;
     int awayGoals;
-    boolean finished;
+    MatchEventType eventType;
+    String eventData;
 }

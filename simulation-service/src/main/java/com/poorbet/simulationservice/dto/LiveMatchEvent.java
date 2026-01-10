@@ -1,5 +1,7 @@
 package com.poorbet.simulationservice.dto;
 
+import com.poorbet.simulationservice.model.enums.MatchEventType;
+
 import java.util.UUID;
 
 public record LiveMatchEvent(
@@ -7,5 +9,7 @@ public record LiveMatchEvent(
         int minute,
         int homeGoals,
         int awayGoals,
-        boolean finished
-) {}
+        MatchEventType eventType,
+        String eventData
+) {
+}

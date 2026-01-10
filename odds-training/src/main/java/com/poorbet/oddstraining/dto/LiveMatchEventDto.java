@@ -1,5 +1,7 @@
 package com.poorbet.oddstraining.dto;
 
+import com.poorbet.oddstraining.dto.enums.MatchEventType;
+
 import java.util.UUID;
 
 public record LiveMatchEventDto(
@@ -7,5 +9,6 @@ public record LiveMatchEventDto(
         int minute,
         int homeGoals,
         int awayGoals,
-        boolean finished
+        MatchEventType eventType,
+        String eventData
 ) {}

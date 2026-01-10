@@ -16,8 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class LiveMatchSimulationManager {
 
     private final Map<UUID, LiveMatchSimulation> simulations = new ConcurrentHashMap<>();
-
-    private final Sinks.Many<LiveMatchEventDto> sink = Sinks.many().multicast().onBackpressureBuffer();
+    private final Sinks.Many<LiveMatchEventDto> sink = Sinks.many().replay().limit(10);
 
     public LiveMatchSimulation startIfNotRunning(UUID matchId) {
         return simulations.computeIfAbsent(
