@@ -1,7 +1,7 @@
 package com.poorbet.matchservice.match.stream.client;
 
 import com.poorbet.matchservice.match.stream.dto.request.PredictionBatchRequestDto;
-import com.poorbet.matchservice.match.stream.dto.OddsDto;
+import com.poorbet.matchservice.match.stream.dto.WinProbabilityDto;
 import com.poorbet.matchservice.match.stream.dto.request.PredictionRequestDto;
 import com.poorbet.matchservice.match.stream.dto.response.BatchPredictionResponse;
 import jakarta.validation.Valid;
@@ -21,12 +21,12 @@ public class OddsClient {
         this.oddsWebClient = webClient;
     }
 
-    public OddsDto getPrediction(@Valid PredictionRequestDto data){
+    public WinProbabilityDto getPrediction(@Valid PredictionRequestDto data){
         return this.oddsWebClient.post()
                 .uri("api/odds/predict")
                 .bodyValue(data)
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<OddsDto>() {})
+                .bodyToMono(new ParameterizedTypeReference<WinProbabilityDto>() {})
                 .block();
     }
 

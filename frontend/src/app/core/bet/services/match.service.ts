@@ -21,6 +21,27 @@ export enum MatchEventType {
   Heartbeat = 'HEARTBEAT',
 }
 
+export interface OddsDto {
+  id: string; 
+  homeWin: number;
+  draw: number;
+  awayWin: number;
+}
+
+export interface MatchDto {
+  matchId: string;
+  homeTeamId: string;
+  awayTeamId: string;
+  odds: OddsDto;
+}
+
+export interface PoolMatch {
+  id: string; 
+  status: string;
+  scheduledStartTime: string;
+  matches: MatchDto[];
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -55,7 +76,7 @@ export class MatchService {
     });
   }
 
-  futureMatch(): Observable<any> {
-    return this.http.get<any>(`${this.apiBaseUrl}/future`);
+  futureMatch(): Observable<PoolMatch[]> {
+    return this.http.get<PoolMatch[]>(`${this.apiBaseUrl}/future`);
   }
 }

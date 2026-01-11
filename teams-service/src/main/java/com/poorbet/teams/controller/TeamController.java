@@ -1,21 +1,15 @@
 package com.poorbet.teams.controller;
 
-import ch.qos.logback.core.joran.sanity.Pair;
-import com.poorbet.teams.config.MatchesProperties;
-import com.poorbet.teams.dto.MatchDto;
 import com.poorbet.teams.dto.TeamShortDto;
 import com.poorbet.teams.dto.TeamStatsDto;
-import com.poorbet.teams.model.Team;
 import com.poorbet.teams.request.TeamStatsRequest;
 import com.poorbet.teams.service.TeamService;
-import jakarta.persistence.Tuple;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -26,7 +20,6 @@ import java.util.UUID;
 public class TeamController {
 
     private final TeamService teamService;
-    private final MatchesProperties matchesProperties;
 
     @PostMapping("/stats")
     public List<TeamStatsDto> getTeamStats(
@@ -37,12 +30,13 @@ public class TeamController {
 
     @GetMapping("/random")
     public ResponseEntity<List<TeamStatsDto>> getRandomTeams(
-            @RequestParam(required = false) Integer count
+            @RequestParam(required = false, defaultValue = "1") Integer count
     ) {
-        int matchesInBatch = Optional.ofNullable(count)
-                .orElse(matchesProperties.getInBatch());
+        if (count <= 0) {
+            return ResponseEntity.badRequest().build();
+        }
 
-        List<TeamStatsDto> teams = teamService.findRandomTeams(matchesInBatch);
+        List<TeamStatsDto> teams = teamService.findRandomTeams(count);
         return ResponseEntity.ok(teams);
     }
 

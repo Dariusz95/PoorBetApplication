@@ -5,6 +5,7 @@ import java.util.UUID;
 public record MatchDto(
         UUID matchId,
         UUID homeTeamId,
-        UUID awayTeamId
+        UUID awayTeamId,
+        OddsDto odds
 ) {
 }

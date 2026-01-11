@@ -21,6 +21,3 @@ spring:
       timeout: 2000ms
     cache:
       type: redis
-
-matches:
-  in-batch: 1

@@ -4,11 +4,12 @@ package com.poorbet.matchservice.match.stream.service;
 import com.poorbet.matchservice.match.stream.client.OddsClient;
 import com.poorbet.matchservice.match.stream.client.TeamsClient;
 import com.poorbet.matchservice.match.stream.config.MatchPoolProperties;
-import com.poorbet.matchservice.match.stream.dto.OddsDto;
+import com.poorbet.matchservice.match.stream.dto.WinProbabilityDto;
 import com.poorbet.matchservice.match.stream.dto.request.PreMatchDto;
 import com.poorbet.matchservice.match.stream.dto.request.PredictionBatchRequestDto;
 import com.poorbet.matchservice.match.stream.dto.TeamStatsDto;
 import com.poorbet.matchservice.match.stream.dto.response.BatchOddsResponse;
+import com.poorbet.matchservice.match.stream.mapper.PredictionBatchMapper;
 import com.poorbet.matchservice.match.stream.model.Match;
 import com.poorbet.matchservice.match.stream.model.MatchPool;
 import com.poorbet.matchservice.match.stream.model.Odds;
@@ -80,7 +81,7 @@ public class MatchPoolSchedulingServiceImpl implements MatchPoolSchedulingServic
 
             List<TeamStatsDto> teams;
             try {
-                teams = teamsClient.randomTeams();
+                teams = teamsClient.randomTeams(4);
             } catch (Exception ex) {
                 log.error("Cannot fetch teams", ex);
                 break;
@@ -129,7 +130,11 @@ public class MatchPoolSchedulingServiceImpl implements MatchPoolSchedulingServic
 
         List<PreMatchDto> preMatches = getPreMatches(teams);
 
-        Map<UUID, BatchOddsResponse> oddsMap = oddsClient.getBatchPrediction(new PredictionBatchRequestDto(preMatches))
+        log.info("xxxxc preMatches -> {}", preMatches);
+
+        PredictionBatchRequestDto dto = PredictionBatchMapper.toPredictionBatchRequestDto(preMatches);
+
+        Map<UUID, BatchOddsResponse> oddsMap = oddsClient.getBatchPrediction(dto)
                 .getMatches()
                 .stream()
                 .collect(Collectors.toMap(
@@ -139,8 +144,12 @@ public class MatchPoolSchedulingServiceImpl implements MatchPoolSchedulingServic
 
         List<Match> matches = new ArrayList<>();
 
+        log.info("xxxxc odds response -> {}", oddsMap);
+
+
         for (PreMatchDto preMatch : preMatches) {
             BatchOddsResponse oddsResponse = oddsMap.get(preMatch.getMatchId());
+
             if (oddsResponse == null) {
                 log.warn("No odds returned for match {}", preMatch.getMatchId());
                 continue;
@@ -176,7 +185,7 @@ public class MatchPoolSchedulingServiceImpl implements MatchPoolSchedulingServic
                     .awayTeamId(away.getId())
                     .homeAttack(home.getAttackPower())
                     .homeDefense(home.getDefencePower())
-                    .awayAttack(away.getDefencePower())
+                    .awayAttack(away.getAttackPower())
                     .awayDefense(away.getDefencePower())
                     .build();
 
@@ -186,18 +195,23 @@ public class MatchPoolSchedulingServiceImpl implements MatchPoolSchedulingServic
         return preMatches;
     }
 
-    private Odds calculateOdds(OddsDto dto) {
+    private Odds calculateOdds(WinProbabilityDto dto) {
         double sum = dto.homeWinProbability() + dto.drawProbability() + dto.awayWinProbability();
 
-        double homeOdd = sum / dto.homeWinProbability();
-        double drawOdd = sum / dto.drawProbability();
-        double awayOdd = sum / dto.awayWinProbability();
+
+        double homeOdd = truncateToTwoDecimalPlaces(sum / dto.homeWinProbability());
+        double drawOdd = truncateToTwoDecimalPlaces(sum / dto.drawProbability());
+        double awayOdd = truncateToTwoDecimalPlaces(sum / dto.awayWinProbability());
 
         return Odds.builder()
                 .homeWin(homeOdd)
                 .draw(drawOdd)
                 .awayWin(awayOdd)
                 .build();
+    }
+
+    private double truncateToTwoDecimalPlaces(double value){
+        return Math.floor(value * 100) / 100;
     }
 }
 

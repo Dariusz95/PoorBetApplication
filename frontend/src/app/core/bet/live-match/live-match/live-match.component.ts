@@ -34,17 +34,5 @@ export class LiveMatchComponent {
   ngOnInit(): void {
     this.homeTeam$ = this.teamService.getTeam(this.liveMatch().homeTeamId);
     this.awayTeam$ = this.teamService.getTeam(this.liveMatch().awayTeamId);
-
-    // this.teamService
-    //   .getTeam(this.liveMatch().homeTeamId)
-    //   .subscribe((team: any) => {
-    //     console.log('Home Team:', team);
-    //   });
-
-    // this.teamService
-    //   .getTeam(this.liveMatch().awayTeamId)
-    //   .subscribe((team: any) => {
-    //     console.log('Away Team:', team);
-    //   });
   }
 }

@@ -2,8 +2,6 @@ package com.poorbet.oddsservice.service;
 
 import ai.onnxruntime.OnnxTensor;
 import ai.onnxruntime.OrtEnvironment;
-
-
 import ai.onnxruntime.OrtException;
 import ai.onnxruntime.OrtSession;
 import com.poorbet.oddsservice.dto.response.BatchOddsResponse;
@@ -67,8 +65,13 @@ public class OddsServiceImpl implements OddsService {
 
     @Override
     public List<BatchOddsResponse> predictBatch(List<MatchDto> matches) {
+        log.info("matches -> ", matches);
+
         List<BatchOddsResponse> oddsList = matches.stream()
                 .map(match -> {
+
+                    log.info("match -> ", match);
+
                     OddsResponseDto odds = predictOdds(
                             match.homeTeamAttack(),
                             match.homeTeamDefense(),

@@ -23,7 +23,7 @@ public interface MatchPoolRepository extends JpaRepository<MatchPool, UUID> {
     List<MatchPool> findFuturePools(@Param("status") PoolStatus status,
                                     @Param("now") OffsetDateTime now);
 
-    @EntityGraph(attributePaths = "matches")
+    @EntityGraph(attributePaths = {"matches", "matches.odds"})
     @Query("""
         select mp from MatchPool mp
         where mp.status = com.poorbet.matchservice.match.stream.model.enums.PoolStatus.BETTABLE
