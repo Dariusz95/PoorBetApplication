@@ -31,12 +31,16 @@ public class TeamsClient {
                 .block();
     }
 
-    public List<TeamStatsDto> randomTeams() {
+    public List<TeamStatsDto> randomTeams(int count) {
         ParameterizedTypeReference<List<TeamStatsDto>> typeRef = new ParameterizedTypeReference<List<TeamStatsDto>>() {};
 
         try {
             return teamsWebClient.get()
-                    .uri("/api/teams/random")
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/api/teams/random")
+                            .queryParam("count", count)
+                            .build()
+                    )
                     .retrieve()
                     .bodyToMono(new ParameterizedTypeReference<List<TeamStatsDto>>() {})
                     .block();

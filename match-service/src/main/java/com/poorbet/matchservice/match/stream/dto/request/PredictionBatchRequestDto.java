@@ -10,5 +10,5 @@ import java.util.List;
 @AllArgsConstructor
 public class PredictionBatchRequestDto {
     @NotNull
-    private List<PreMatchDto> matches;
+    private List<PredictionMatchDto> matches;
 }

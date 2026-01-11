@@ -3,7 +3,6 @@ package com.poorbet.matchservice.match.stream.service;
 import com.poorbet.matchservice.match.stream.dto.response.MatchPoolDto;
 import com.poorbet.matchservice.match.stream.mapper.MatchPoolMapper;
 import com.poorbet.matchservice.match.stream.model.MatchPool;
-import com.poorbet.matchservice.match.stream.model.enums.PoolStatus;
 import com.poorbet.matchservice.match.stream.repository.MatchPoolRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;

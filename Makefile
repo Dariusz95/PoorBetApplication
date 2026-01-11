@@ -17,7 +17,6 @@ run-app:
 # 		echo "Czekam na simulation-service..."; \
 # 		sleep 2; \
 # 	done
-# 	docker-compose up -d odds-service
 # 	sleep 15
 
 	./generate-matches.sh

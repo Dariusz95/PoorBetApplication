@@ -1,10 +1,7 @@
 package com.poorbet.teams.service;
 
-import com.poorbet.teams.config.MatchesProperties;
-import com.poorbet.teams.dto.MatchDto;
 import com.poorbet.teams.dto.TeamShortDto;
 import com.poorbet.teams.dto.TeamStatsDto;
-import com.poorbet.teams.exception.TeamNotFoundException;
 import com.poorbet.teams.mapper.TeamMapper;
 import com.poorbet.teams.model.Team;
 import com.poorbet.teams.repository.TeamRepository;
@@ -22,7 +19,6 @@ import java.util.stream.Collectors;
 @Service
 public class TeamServiceImpl implements TeamService {
     private final TeamRepository teamRepository;
-    private final MatchesProperties matchesProperties;
 
     @Override
     public List<TeamStatsDto> getStatsByIds(List<UUID> ids) {
@@ -39,13 +35,9 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public List<TeamStatsDto> findRandomTeams(Integer count) {
-        int matchesInBatch = Optional.ofNullable(count)
-                .orElse(matchesProperties.getInBatch());
-        int teamsToFetch = matchesInBatch * 2;
+        List<TeamStatsDto> teams = teamRepository.findRandomTeams(count);
 
-        List<TeamStatsDto> teams = teamRepository.findRandomTeams(teamsToFetch);
-
-        if (teams.size() < teamsToFetch) {
+        if (teams.size() < count) {
             throw new IllegalStateException("Not enough teams in database");
         }
 

@@ -1,4 +1,4 @@
-package com.poorbet.matchservice.match.stream;
+package com.poorbet.matchservice.match.stream.controller;
 
 import com.poorbet.matchservice.match.stream.dto.LiveMatchEventDto;
 import com.poorbet.matchservice.match.stream.dto.response.MatchPoolDto;
