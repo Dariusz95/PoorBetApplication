@@ -60,6 +60,7 @@ public class MatchPoolSchedulingServiceImpl implements MatchPoolSchedulingServic
                 matchPoolRepository.findFuturePools(PoolStatus.BETTABLE, now);
 
         OffsetDateTime nextStartTime = now.plusMinutes(intervalMinutes);
+
         if (!futurePools.isEmpty()) {
             OffsetDateTime lastTime = futurePools.get(futurePools.size() - 1).getScheduledStartTime();
             if (lastTime.isAfter(nextStartTime)) {
@@ -132,9 +133,9 @@ public class MatchPoolSchedulingServiceImpl implements MatchPoolSchedulingServic
 
         log.info("xxxxc preMatches -> {}", preMatches);
 
-        PredictionBatchRequestDto dto = PredictionBatchMapper.toPredictionBatchRequestDto(preMatches);
+        PredictionBatchRequestDto batchRequest = PredictionBatchMapper.toPredictionBatchRequestDto(preMatches);
 
-        Map<UUID, BatchOddsResponse> oddsMap = oddsClient.getBatchPrediction(dto)
+        Map<UUID, BatchOddsResponse> oddsMap = oddsClient.getBatchPrediction(batchRequest)
                 .getMatches()
                 .stream()
                 .collect(Collectors.toMap(

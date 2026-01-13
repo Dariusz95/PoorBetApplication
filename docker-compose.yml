@@ -154,6 +154,28 @@ services:
     networks:
       - main_network
 
+  coupon-service:
+    build:
+      context: ./coupon-service
+      dockerfile: Dockerfile.dev
+    container_name: coupon-service
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://coupon-db:5432/${POSTGRES_COUPON_DB}
+      - POSTGRES_USER=${POSTGRES_COUPON_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_COUPON_PASSWORD}
+    volumes:
+      - ./coupon-service:/app
+      - ~/.m2:/root/.m2
+    ports:
+      - "8086:8080"
+      - "5076:5076"
+    depends_on:
+      - redis
+      - coupon-db
+    networks:
+      - main_network
+
   user-db:
     build:
       context: ./user-db
@@ -188,6 +210,23 @@ services:
     networks:
       - main_network
 
+
+  coupon-db:
+    build:
+      context: ./coupon-db
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_COUPON_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_COUPON_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_COUPON_DB}
+    ports:
+      - "5435:5432"
+    volumes:
+      - coupon_data:/var/lib/postgresql/data
+    networks:
+      - main_network
+
   teams-db:
     build:
       context: ./teams-db
@@ -213,4 +252,5 @@ volumes:
   user_data:
   teams_data:
   match_data:
+  coupon_data:
   cache:
