@@ -7,7 +7,7 @@ import lombok.*;
 import java.util.UUID;
 
 @Entity
-@Table(name = "match_odds")
+@Table(name = "match_odds", uniqueConstraints = @UniqueConstraint(columnNames = "match_id"))
 @Getter
 @Setter
 @NoArgsConstructor
