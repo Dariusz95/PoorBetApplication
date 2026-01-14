@@ -30,7 +30,7 @@ public class MatchPoolMapper {
     }
 
     private MatchDto toMatchDto(Match match){
-        return new MatchDto(match.getMatchId(), match.getHomeTeamId(), match.getAwayTeamId(), toOddsDto(match.getOdds()));
+        return new MatchDto(match.getId(), match.getHomeTeamId(), match.getAwayTeamId(), toOddsDto(match.getOdds()));
     }
 
     private OddsDto toOddsDto(Odds odds){

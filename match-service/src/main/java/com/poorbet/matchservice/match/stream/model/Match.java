@@ -22,7 +22,7 @@ public class Match {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "match_id")
-    private UUID matchId;
+    private UUID id;
 
     @Column(name = "home_team_id", nullable = false)
     private UUID homeTeamId;
