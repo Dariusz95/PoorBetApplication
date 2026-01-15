@@ -1,7 +1,7 @@
 package com.poorbet.matchservice.match.stream.config;
 
 import io.netty.channel.ChannelOption;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
@@ -9,8 +9,12 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.netty.http.client.HttpClient;
 
 @Configuration
-@EnableConfigurationProperties({TeamServiceProperties.class, SimulationServiceProperties.class, OddsServiceProperties.class})
+@RequiredArgsConstructor
 public class WebClientConfig {
+
+    private final TeamServiceProperties teamServiceProperties;
+    private final SimulationServiceProperties simulationServiceProperties;
+    private final OddsServiceProperties oddsServiceProperties;
 
     @Bean
     public WebClient.Builder webClientBuilder() {
@@ -18,37 +22,37 @@ public class WebClientConfig {
     }
 
     @Bean
-    public WebClient teamsWebClient(TeamServiceProperties properties) {
+    public WebClient teamsWebClient() {
         return WebClient.builder()
-                .baseUrl(properties.url())
+                .baseUrl(teamServiceProperties.url())
                 .clientConnector(new ReactorClientHttpConnector(
                         HttpClient.create()
-                                .responseTimeout(properties.timeout().read())
-                                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, (int) properties.timeout().connect().toMillis())
+                                .responseTimeout(teamServiceProperties.timeout().read())
+                                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, (int) teamServiceProperties.timeout().connect().toMillis())
                 ))
                 .build();
     }
 
     @Bean
-    public WebClient oddsWebClient(OddsServiceProperties properties) {
+    public WebClient oddsWebClient() {
         return WebClient.builder()
-                .baseUrl(properties.url())
+                .baseUrl(oddsServiceProperties.url())
                 .clientConnector(new ReactorClientHttpConnector(
                         HttpClient.create()
-                                .responseTimeout(properties.timeout().read())
-                                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, (int) properties.timeout().connect().toMillis())
+                                .responseTimeout(oddsServiceProperties.timeout().read())
+                                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, (int) oddsServiceProperties.timeout().connect().toMillis())
                 ))
                 .build();
     }
 
     @Bean
-    public WebClient simulationWebClient(WebClient.Builder builder, SimulationServiceProperties properties) {
-        return builder.clone()
-                .baseUrl(properties.url())
+    public WebClient simulationWebClient() {
+        return WebClient.builder()
+                .baseUrl(simulationServiceProperties.url())
                 .clientConnector(new ReactorClientHttpConnector(
                         HttpClient.create()
-                                .responseTimeout(properties.timeout().read())
-                                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, (int) properties.timeout().connect().toMillis())
+                                .responseTimeout(simulationServiceProperties.timeout().read())
+                                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, (int) simulationServiceProperties.timeout().connect().toMillis())
                 ))
                 .build();
     }

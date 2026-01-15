@@ -40,7 +40,7 @@ public class MatchPoolSimulationServiceImpl implements MatchPoolSimulationServic
 
         List<UUID> teamIds = matches.stream()
                 .map(match -> MatchSimpleDto.builder()
-                        .matchId(match.getMatchId())
+                        .matchId(match.getId())
                         .awayTeamId(match.getAwayTeamId())
                         .homeTeamId(match.getHomeTeamId())
                         .build())
@@ -61,7 +61,7 @@ public class MatchPoolSimulationServiceImpl implements MatchPoolSimulationServic
                     TeamStatsDto home = teamsById.get(match.getHomeTeamId());
                     TeamStatsDto away = teamsById.get(match.getAwayTeamId());
 
-                    return startMatchSimulation(match.getMatchId(), home, away);
+                    return startMatchSimulation(match.getId(), home, away);
                 })
                 .subscribe();
 
