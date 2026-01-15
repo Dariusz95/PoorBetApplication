@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @Service
 @AllArgsConstructor
-public class MatchClient {
+public class MatchOddsClient {
 
     private final WebClient matchClient;
 
