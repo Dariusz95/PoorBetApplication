@@ -12,7 +12,7 @@ import java.util.UUID;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/match/odds")
+@RequestMapping("/api/match")
 public class OddsController {
 
     private final OddsService oddsService;
