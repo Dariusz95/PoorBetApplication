@@ -28,4 +28,8 @@ public class LiveMatchSimulationManager {
     public Flux<LiveMatchEventDto> streamAll() {
         return sink.asFlux();
     }
+
+    public Sinks.Many<LiveMatchEventDto> getSink(){
+        return sink;
+    }
 }

@@ -16,6 +16,7 @@ import static com.poorbet.matchservice.match.stream.model.enums.MatchStatus.FINI
 public class MatchFinishServiceImpl implements MatchFinishService {
 
     private final MatchRepository matchRepository;
+    private final MatchPoolLifecycleManager lifecycleManager;
 
     @Transactional
     public void finishMatch(LiveMatchEventDto event) {
@@ -27,8 +28,9 @@ public class MatchFinishServiceImpl implements MatchFinishService {
 
         match.setStatus(FINISHED);
         match.setHomeGoals(event.getHomeScore());
-        match.setHomeGoals(event.getAwayScore());
 
-        matchRepository.save(match);
+        Match saved = matchRepository.save(match);
+
+        lifecycleManager.handleMatchFinished(saved);
     }
 }

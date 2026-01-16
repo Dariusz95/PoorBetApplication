@@ -24,6 +24,10 @@ public class LiveMatchEventDto {
         return new LiveMatchEventDto(null, null, null, 0, 0, 0, MatchEventType.HEARTBEAT, null);
     }
 
+    public static LiveMatchEventDto poolFinished(UUID poolId) {
+        return new LiveMatchEventDto(poolId, null, null, 0, 0, 0, MatchEventType.MATCH_POOL_FINISHED, null);
+    }
+
     public static LiveMatchEventDto fromEvent(
             LiveMatchEvent event,
             TeamStatsDto home,

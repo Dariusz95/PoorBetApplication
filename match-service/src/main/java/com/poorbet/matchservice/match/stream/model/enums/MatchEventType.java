@@ -4,5 +4,6 @@ public enum MatchEventType {
     MATCH_STARTED,
     LIVE,
     MATCH_ENDED,
-    HEARTBEAT
+    HEARTBEAT,
+    MATCH_POOL_FINISHED
 }
