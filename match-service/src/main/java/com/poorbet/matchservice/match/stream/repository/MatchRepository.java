@@ -2,6 +2,7 @@ package com.poorbet.matchservice.match.stream.repository;
 
 import com.poorbet.matchservice.match.stream.model.Match;
 import com.poorbet.matchservice.match.stream.model.MatchPool;
+import com.poorbet.matchservice.match.stream.model.enums.MatchStatus;
 import com.poorbet.matchservice.match.stream.model.enums.PoolStatus;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -24,4 +25,6 @@ public interface MatchRepository extends JpaRepository<Match, UUID> {
         order by mp.scheduledStartTime asc
     """)
     List<MatchPool> getFutureMatchPools(@Param("status") PoolStatus  status, Pageable pageable);
+
+    long countByPoolIdAndStatusNot(UUID matchId, MatchStatus status);
 }
