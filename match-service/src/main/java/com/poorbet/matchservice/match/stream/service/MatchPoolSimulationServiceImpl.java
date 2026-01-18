@@ -39,12 +39,7 @@ public class MatchPoolSimulationServiceImpl implements MatchPoolSimulationServic
         List<Match> matches = matchRepository.findByPoolId(poolId);
 
         List<UUID> teamIds = matches.stream()
-                .map(match -> MatchSimpleDto.builder()
-                        .matchId(match.getId())
-                        .awayTeamId(match.getAwayTeamId())
-                        .homeTeamId(match.getHomeTeamId())
-                        .build())
-                .flatMap(match -> Stream.of(match.getHomeTeamId(), match.getAwayTeamId()))
+                .flatMap(m -> Stream.of(m.getHomeTeamId(), m.getAwayTeamId()))
                 .distinct()
                 .toList();
 

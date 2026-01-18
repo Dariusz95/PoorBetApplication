@@ -28,4 +28,10 @@ public class LiveMatchSimulationManager {
     public Flux<LiveMatchEventDto> streamAll() {
         return sink.asFlux();
     }
+
+    public void notifyPoolFinished(UUID poolId) {
+        LiveMatchEventDto poolFinishedEvent = LiveMatchEventDto.poolFinished(poolId);
+
+        sink.tryEmitNext(poolFinishedEvent);
+    }
 }

@@ -3,6 +3,7 @@ package com.poorbet.matchservice.match.stream.service;
 import com.poorbet.matchservice.match.stream.dto.LiveMatchEventDto;
 import com.poorbet.matchservice.match.stream.model.Match;
 import com.poorbet.matchservice.match.stream.repository.MatchRepository;
+import com.poorbet.matchservice.match.stream.tx.AfterCommitHandler;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,8 @@ import static com.poorbet.matchservice.match.stream.model.enums.MatchStatus.FINI
 public class MatchFinishServiceImpl implements MatchFinishService {
 
     private final MatchRepository matchRepository;
+    private final MatchPoolLifecycleManager lifecycleManager;
+    private final AfterCommitHandler afterCommitHandler;
 
     @Transactional
     public void finishMatch(LiveMatchEventDto event) {
@@ -27,8 +30,9 @@ public class MatchFinishServiceImpl implements MatchFinishService {
 
         match.setStatus(FINISHED);
         match.setHomeGoals(event.getHomeScore());
-        match.setHomeGoals(event.getAwayScore());
 
-        matchRepository.save(match);
+        Match saved = matchRepository.save(match);
+
+        afterCommitHandler.run(() -> lifecycleManager.handleMatchFinished(saved));
     }
 }
