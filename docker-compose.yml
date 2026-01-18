@@ -141,6 +141,10 @@ services:
       - POSTGRES_USER=${POSTGRES_MATCH_USER}
       - POSTGRES_PASSWORD=${POSTGRES_MATCH_PASSWORD}
       - INSTANCE_ID=match-1
+      - RABBITMQ_USER=${RABBITMQ_USER}
+      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+      - RABBITMQ_PORT=${RABBITMQ_PORT}
+      - RABBITMQ_HOST=rabbitmq
     volumes:
       - ./match-service:/app
       - ~/.m2:/root/.m2
@@ -164,6 +168,10 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://coupon-db:5432/${POSTGRES_COUPON_DB}
       - POSTGRES_USER=${POSTGRES_COUPON_USER}
       - POSTGRES_PASSWORD=${POSTGRES_COUPON_PASSWORD}
+      - RABBITMQ_USER=${RABBITMQ_USER}
+      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+      - RABBITMQ_PORT=${RABBITMQ_PORT}
+      - RABBITMQ_HOST=rabbitmq
     volumes:
       - ./coupon-service:/app
       - ~/.m2:/root/.m2
@@ -210,7 +218,6 @@ services:
     networks:
       - main_network
 
-
   coupon-db:
     build:
       context: ./coupon-db
@@ -244,6 +251,20 @@ services:
     networks:
       - main_network
 
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - main_network
+
 networks:
   main_network:
     driver: bridge
@@ -254,3 +275,4 @@ volumes:
   match_data:
   coupon_data:
   cache:
+  rabbitmq_data:

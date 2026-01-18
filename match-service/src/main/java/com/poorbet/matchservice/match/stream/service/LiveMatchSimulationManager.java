@@ -29,7 +29,9 @@ public class LiveMatchSimulationManager {
         return sink.asFlux();
     }
 
-    public Sinks.Many<LiveMatchEventDto> getSink(){
-        return sink;
+    public void notifyPoolFinished(UUID poolId) {
+        LiveMatchEventDto poolFinishedEvent = LiveMatchEventDto.poolFinished(poolId);
+
+        sink.tryEmitNext(poolFinishedEvent);
     }
 }

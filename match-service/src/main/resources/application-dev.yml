@@ -50,6 +50,11 @@ spring:
       timeout: 2000ms
     cache:
       type: redis
+  rabbitmq:
+    host: ${RABBITMQ_HOST}
+    port: 5672
+    username: ${RABBITMQ_USER}
+    password: ${RABBITMQ_PASSWORD}
 
 match-pool:
   matches-per-pool: 5

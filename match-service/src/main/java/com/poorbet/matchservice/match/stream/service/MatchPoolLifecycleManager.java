@@ -1,21 +1,22 @@
 package com.poorbet.matchservice.match.stream.service;
 
-import com.poorbet.matchservice.match.stream.dto.LiveMatchEventDto;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.poorbet.matchservice.match.stream.model.Match;
 import com.poorbet.matchservice.match.stream.model.MatchPool;
 import com.poorbet.matchservice.match.stream.model.enums.MatchStatus;
 import com.poorbet.matchservice.match.stream.model.enums.PoolStatus;
 import com.poorbet.matchservice.match.stream.repository.MatchPoolRepository;
 import com.poorbet.matchservice.match.stream.repository.MatchRepository;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
@@ -26,12 +27,18 @@ public class MatchPoolLifecycleManager {
     private final MatchPoolRepository matchPoolRepository;
     private final LiveMatchSimulationManager liveMatchSimulationManager;
     private final RedisTemplate<String, String> redisTemplate;
+    private final MatchPoolEventPublisher matchPoolEventPublisher;
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void handleMatchFinished(Match match) {
         UUID poolId = match.getPool().getId();
 
+        log.info("🚀 id - {} - handleMatchFinished", match.getId());
+
         long remaining = matchRepository.countByPoolIdAndStatusNot(poolId, MatchStatus.FINISHED);
+
+        log.info("🚀 Match id - {} - remaining  {}", match.getId(), remaining);
+
 
         if (remaining > 0) {
             return;
@@ -39,18 +46,14 @@ public class MatchPoolLifecycleManager {
 
         String lockKey = "match-pool:" + poolId + ":finalize";
 
-        String currentValue = redisTemplate.opsForValue().get(lockKey);
-        log.info("🚀 Current Redis value for {}: {}", lockKey, currentValue);
-
         Boolean first = redisTemplate.opsForValue()
                 .setIfAbsent(
-                        "match-pool:" + poolId + ":finalize",
+                        lockKey,
                         "1",
                         5,
                         TimeUnit.MINUTES
                 );
 
-        log.info("🚀 setIfAbsent result: {}", first);
 
         if (!Boolean.TRUE.equals(first)) {
             return;
@@ -59,20 +62,14 @@ public class MatchPoolLifecycleManager {
         MatchPool matchPool = matchPoolRepository.findById(poolId)
                 .orElseThrow(() -> new IllegalStateException("Match not found: " + poolId));
 
-        log.info("🚀 matchPool changeStatus  {}", matchPool);
+        log.info("🚀 matchPool  {}", matchPool);
 
 
         matchPool.setStatus(PoolStatus.FINISHED);
         matchPoolRepository.save(matchPool);
 
-        notifyPoolFinished(poolId);
-    }
+        liveMatchSimulationManager.notifyPoolFinished(poolId);
 
-    private void notifyPoolFinished(UUID poolId) {
-        LiveMatchEventDto poolFinishedEvent = LiveMatchEventDto.poolFinished(poolId);
-
-        var sink = liveMatchSimulationManager.getSink();
-
-        sink.tryEmitNext(poolFinishedEvent);
+        matchPoolEventPublisher.publishPoolFinished(poolId);
     }
 }
