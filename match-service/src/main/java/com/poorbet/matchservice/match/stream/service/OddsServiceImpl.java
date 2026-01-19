@@ -8,6 +8,7 @@ import com.poorbet.matchservice.match.stream.repository.OddsRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -18,7 +19,7 @@ public class OddsServiceImpl implements OddsService{
     private OddsRepository oddsRepository;
 
     @Override
-    public Optional<Double> getOdds(UUID matchId, OddsType type) {
+    public Optional<BigDecimal> getOdds(UUID matchId, OddsType type) {
         return switch (type){
             case HOME_WIN -> oddsRepository.findHomeWinByMatchId(matchId).map(HomeWin::getHomeWin);
             case DRAW -> oddsRepository.findDrawByMatchId(matchId).map(Draw::getDraw);

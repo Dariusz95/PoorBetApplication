@@ -1,5 +1,6 @@
 package com.poorbet.matchservice.match.stream.service;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -35,12 +36,12 @@ public class MatchPoolLifecycleManager {
 
         log.info("🚀 id - {} - handleMatchFinished", match.getId());
 
-        long remaining = matchRepository.countByPoolIdAndStatusNot(poolId, MatchStatus.FINISHED);
+        long remainingLive = matchRepository.countByPoolIdAndStatus(poolId, MatchStatus.LIVE);
 
-        log.info("🚀 Match id - {} - remaining  {}", match.getId(), remaining);
+        log.info("🚀 Match id - {} - remaining  {}", match.getId(), remainingLive);
 
 
-        if (remaining > 0) {
+        if (remainingLive > 0) {
             return;
         }
 
@@ -64,12 +65,30 @@ public class MatchPoolLifecycleManager {
 
         log.info("🚀 matchPool  {}", matchPool);
 
+        int updated = matchPoolRepository.updateStatus(poolId, PoolStatus.FINISHED);
 
-        matchPool.setStatus(PoolStatus.FINISHED);
-        matchPoolRepository.save(matchPool);
+        if (updated == 0) {
+            throw new  IllegalStateException("Match not found: " + poolId);
+        }
 
-        liveMatchSimulationManager.notifyPoolFinished(poolId);
+        List<UUID> matchIds = matchPoolRepository.findById(poolId)
+                .map(MatchPool::getMatches)
+                .orElse(List.of())
+                .stream()
+                .map(Match::getId)
+                .toList();
 
-        matchPoolEventPublisher.publishPoolFinished(poolId);
+        sendPoolFinishedEventsAsync(poolId, matchIds);
+    }
+
+    private void sendPoolFinishedEventsAsync(UUID poolId, List<UUID> matchIds) {
+        try {
+            matchPoolEventPublisher.publishPoolFinished(matchIds);
+
+            liveMatchSimulationManager.notifyPoolFinished(poolId);
+
+        } catch (Exception e) {
+            log.error("Failed to notify about finished pool {}", poolId, e);
+        }
     }
 }

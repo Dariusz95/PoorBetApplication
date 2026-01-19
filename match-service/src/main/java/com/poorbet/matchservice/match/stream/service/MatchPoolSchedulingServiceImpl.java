@@ -120,7 +120,7 @@ public class MatchPoolSchedulingServiceImpl implements MatchPoolSchedulingServic
         log.info("Scheduled pool {} at {}", pool.getId(), pool.getScheduledStartTime());
     }
 
-    private List<Match> addMatchesToPool(List<TeamStatsDto> teams, MatchPool pool) {
+    private void addMatchesToPool(List<TeamStatsDto> teams, MatchPool pool) {
 
         if (teams.size() % 2 != 0) {
             throw new IllegalArgumentException("Number of teams must be even");
@@ -169,8 +169,6 @@ public class MatchPoolSchedulingServiceImpl implements MatchPoolSchedulingServic
             pool.addMatch(match);
             matches.add(match);
         }
-
-        return matches;
     }
 
     private List<PreMatchDto> getPreMatches(List<TeamStatsDto> teams) {

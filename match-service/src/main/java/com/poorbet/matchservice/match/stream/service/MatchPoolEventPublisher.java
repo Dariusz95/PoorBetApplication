@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -13,11 +14,11 @@ public class MatchPoolEventPublisher {
 
     private final RabbitTemplate rabbitTemplate;
 
-    public void publishPoolFinished(UUID poolId) {
+    public void publishPoolFinished(List<UUID> matchIds) {
         rabbitTemplate.convertAndSend(
                 "match-pool.events",
                 "",
-                new MatchPoolFinishedEvent(poolId)
+                new MatchPoolFinishedEvent(matchIds)
         );
     }
 }

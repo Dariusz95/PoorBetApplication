@@ -4,6 +4,7 @@ package com.poorbet.matchservice.match.stream.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Entity
@@ -24,11 +25,11 @@ public class Odds {
     private Match match;
 
     @Column(name = "home_win")
-    private double homeWin;
+    private BigDecimal homeWin;
 
     @Column(name = "draw")
-    private double draw;
+    private BigDecimal draw;
 
     @Column(name = "away_win")
-    private double awayWin;
+    private BigDecimal awayWin;
 }

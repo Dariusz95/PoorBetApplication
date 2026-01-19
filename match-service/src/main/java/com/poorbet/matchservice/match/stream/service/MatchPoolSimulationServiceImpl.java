@@ -33,7 +33,6 @@ public class MatchPoolSimulationServiceImpl implements MatchPoolSimulationServic
     private final MatchFinishService matchFinishService;
     private final SimulationClient simulationClient;
     private final TeamsClient teamsClient;
-    private final OddsClient oddsClient;
 
     public void startPoolSimulation(UUID poolId) {
         List<Match> matches = matchRepository.findByPoolId(poolId);

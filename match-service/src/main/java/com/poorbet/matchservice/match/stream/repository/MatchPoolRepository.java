@@ -30,4 +30,11 @@ public interface MatchPoolRepository extends JpaRepository<MatchPool, UUID> {
         order by mp.scheduledStartTime asc
     """)
     List<MatchPool> getFutureMatchPools(Pageable pageable);
+
+    @Query("""
+            UPDATE MatchPool mp
+            SET mp.status = :status
+            WHERE mp.id = :id
+            """)
+    int updateStatus(UUID id, PoolStatus status );
 }
