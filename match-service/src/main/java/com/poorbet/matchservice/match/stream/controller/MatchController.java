@@ -1,17 +1,21 @@
 package com.poorbet.matchservice.match.stream.controller;
 
 import com.poorbet.matchservice.match.stream.dto.LiveMatchEventDto;
+import com.poorbet.matchservice.match.stream.dto.MatchResultMapDto;
 import com.poorbet.matchservice.match.stream.dto.response.MatchPoolDto;
 import com.poorbet.matchservice.match.stream.service.LiveMatchSimulationManager;
+import com.poorbet.matchservice.match.stream.service.MatchResultsService;
 import com.poorbet.matchservice.match.stream.service.MatchService;
 import com.poorbet.matchservice.match.stream.service.MatchServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @RestController
@@ -20,6 +24,7 @@ import java.util.List;
 public class MatchController {
 
     private final LiveMatchSimulationManager manager;
+    private final MatchResultsService matchResultsService;
     private final MatchService matchService;
 
     @GetMapping(
@@ -39,5 +44,12 @@ public class MatchController {
     @GetMapping("/future")
     public List<MatchPoolDto> getFutureMatchPools(){
         return matchService.getFutureMatchPools();
+    }
+
+    @GetMapping("/results")
+    public ResponseEntity<MatchResultMapDto> getResults(@RequestParam List<UUID> matchUuids){
+        MatchResultMapDto result = matchResultsService.getMatchResultMap(matchUuids);
+
+        return ResponseEntity.ok(result);
     }
 }

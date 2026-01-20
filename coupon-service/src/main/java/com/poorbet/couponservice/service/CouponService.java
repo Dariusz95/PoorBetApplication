@@ -2,6 +2,7 @@ package com.poorbet.couponservice.service;
 
 import com.poorbet.couponservice.client.MatchOddsClient;
 import com.poorbet.couponservice.dto.CreateCouponDto;
+import com.poorbet.couponservice.dto.MatchResultMapDto;
 import com.poorbet.couponservice.model.Bet;
 import com.poorbet.couponservice.model.Coupon;
 import com.poorbet.couponservice.model.enums.OddsType;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -44,5 +46,10 @@ public class CouponService {
         });
 
         return couponRepository.save(coupon);
+    }
+
+    @Transactional(readOnly = true)
+    public MatchResultMapDto getMatchResults(List<UUID> matchIds){
+
     }
 }

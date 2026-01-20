@@ -1,5 +1,6 @@
 package com.poorbet.matchservice.match.stream.service;
 
+import com.poorbet.matchservice.match.stream.dto.MatchResultMapDto;
 import com.poorbet.matchservice.match.stream.dto.response.MatchPoolDto;
 import com.poorbet.matchservice.match.stream.mapper.MatchPoolMapper;
 import com.poorbet.matchservice.match.stream.model.MatchPool;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -25,4 +27,5 @@ public class MatchServiceImpl implements MatchService{
 
         return matchPoolMapper.toDto(matchPools);
     }
+
 }

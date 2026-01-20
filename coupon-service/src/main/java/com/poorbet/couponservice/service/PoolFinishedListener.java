@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -18,7 +19,7 @@ public class PoolFinishedListener {
     @RabbitListener(queues = RabbitConfig.QUEUE_COUPON_POOL_FINISHED)
     public void handlePoolFinished(MatchPoolFinishedEvent event) {
 
-        UUID poolId = event.matchPoolId();
+        List<UUID> poolId = event.matchIds();
 
         log.info("🔥 [COUPON] Received POOL FINISHED for pool {}", poolId);
     }

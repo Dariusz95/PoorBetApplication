@@ -17,7 +17,7 @@ public class WebClientConfig {
 
 
     @Bean
-    public WebClient matchWebClient() {
+    public WebClient matchServiceWebClientBuilder() {
 
         HttpClient httpClient = HttpClient.create()
                 .responseTimeout(matchProperties.timeout().read())

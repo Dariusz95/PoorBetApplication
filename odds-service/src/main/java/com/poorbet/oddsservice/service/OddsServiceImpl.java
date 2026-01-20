@@ -65,8 +65,6 @@ public class OddsServiceImpl implements OddsService {
 
     @Override
     public List<BatchOddsResponse> predictBatch(List<MatchDto> matches) {
-        log.info("matches -> ", matches);
-
         List<BatchOddsResponse> oddsList = matches.stream()
                 .map(match -> {
 

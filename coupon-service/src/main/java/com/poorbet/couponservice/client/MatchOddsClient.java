@@ -11,13 +11,13 @@ import java.util.UUID;
 @AllArgsConstructor
 public class MatchOddsClient {
 
-    private final WebClient matchClient;
+    private final WebClient matchServiceWebClientBuilder;
 
     public Double getOdd(UUID matchId, OddsType type) {
-        return matchClient
+        return matchServiceWebClientBuilder
                 .get()
                 .uri(uriBuilder -> uriBuilder
-                        .path("/api/match/{matchId}/odds")
+                        .path("/api/match/odds/{matchId}/")
                         .queryParam("type", type)
                         .build(matchId))
                 .retrieve()

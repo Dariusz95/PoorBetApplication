@@ -27,4 +27,6 @@ public interface MatchRepository extends JpaRepository<Match, UUID> {
     List<MatchPool> getFutureMatchPools(@Param("status") PoolStatus  status, Pageable pageable);
 
     long countByPoolIdAndStatus(UUID matchId, MatchStatus status);
+
+
 }

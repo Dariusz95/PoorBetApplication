@@ -13,12 +13,12 @@ import java.util.UUID;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/match")
+@RequestMapping("/api/match/odds")
 public class OddsController {
 
     private final OddsService oddsService;
 
-    @GetMapping("/{matchId}/odds")
+    @GetMapping("/{matchId}")
     public ResponseEntity<BigDecimal> getOdds(@PathVariable UUID matchId, @RequestParam OddsType type) {
         return oddsService.getOdds(matchId, type)
                 .map(ResponseEntity::ok)

@@ -17,7 +17,6 @@ public class LiveMatchEventDto {
     private int awayScore;
     private int minute;
     private MatchEventType eventType;
-
     private String eventData;
 
     public static LiveMatchEventDto heartbeat() {
