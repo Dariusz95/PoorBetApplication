@@ -1,5 +1,6 @@
 package com.poorbet.couponservice.service;
 
+import com.poorbet.couponservice.client.MatchClient;
 import com.poorbet.couponservice.client.MatchOddsClient;
 import com.poorbet.couponservice.dto.CreateCouponDto;
 import com.poorbet.couponservice.dto.MatchResultMapDto;
@@ -23,12 +24,12 @@ public class CouponService {
     private final MatchOddsClient matchOddsClient;
 
     @Transactional
-    public Coupon createCoupon(CreateCouponDto dto, UUID userId){
+    public Coupon createCoupon(CreateCouponDto dto, UUID userId) {
         Coupon coupon = Coupon.builder()
                 .stake(dto.getStake())
                 .build();
 
-        dto.getBets().forEach(betDto->{
+        dto.getBets().forEach(betDto -> {
 
             Double odd = matchOddsClient.getOdd(
                     betDto.getMatchId(),
@@ -48,8 +49,5 @@ public class CouponService {
         return couponRepository.save(coupon);
     }
 
-    @Transactional(readOnly = true)
-    public MatchResultMapDto getMatchResults(List<UUID> matchIds){
 
-    }
 }

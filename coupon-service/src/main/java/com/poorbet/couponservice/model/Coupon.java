@@ -2,6 +2,8 @@ package com.poorbet.couponservice.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.poorbet.couponservice.dto.CreateBetDto;
+import com.poorbet.couponservice.model.enums.BetStatus;
+import com.poorbet.couponservice.model.enums.CouponStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import lombok.AllArgsConstructor;
@@ -28,6 +30,10 @@ public class Coupon {
     @Column(nullable = false)
     @DecimalMin("1.00")
     private BigDecimal stake;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private CouponStatus status;
 
     @JsonManagedReference
     @OneToMany(mappedBy = "coupon", orphanRemoval = true, cascade = CascadeType.ALL)

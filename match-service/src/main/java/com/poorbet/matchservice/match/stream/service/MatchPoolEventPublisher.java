@@ -1,6 +1,6 @@
 package com.poorbet.matchservice.match.stream.service;
 
-import com.poorbet.matchservice.match.stream.dto.MatchPoolFinishedEvent;
+import com.poorbet.matchservice.match.stream.dto.MatchesFinishedEvent;
 import lombok.AllArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
@@ -14,11 +14,11 @@ public class MatchPoolEventPublisher {
 
     private final RabbitTemplate rabbitTemplate;
 
-    public void publishPoolFinished(List<UUID> matchIds) {
+    public void publishMatchesFinished(List<UUID> matchIds) {
         rabbitTemplate.convertAndSend(
-                "match-pool.events",
+                "match.events",
                 "",
-                new MatchPoolFinishedEvent(matchIds)
+                new MatchesFinishedEvent(matchIds)
         );
     }
 }

@@ -6,7 +6,6 @@ import com.poorbet.matchservice.match.stream.dto.response.MatchPoolDto;
 import com.poorbet.matchservice.match.stream.service.LiveMatchSimulationManager;
 import com.poorbet.matchservice.match.stream.service.MatchResultsService;
 import com.poorbet.matchservice.match.stream.service.MatchService;
-import com.poorbet.matchservice.match.stream.service.MatchServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -46,9 +45,9 @@ public class MatchController {
         return matchService.getFutureMatchPools();
     }
 
-    @GetMapping("/results")
-    public ResponseEntity<MatchResultMapDto> getResults(@RequestParam List<UUID> matchUuids){
-        MatchResultMapDto result = matchResultsService.getMatchResultMap(matchUuids);
+    @PostMapping("/results")
+    public ResponseEntity<MatchResultMapDto> getResults(@RequestBody List<UUID> matchIds){
+        MatchResultMapDto result = matchResultsService.getMatchResultMap(matchIds);
 
         return ResponseEntity.ok(result);
     }

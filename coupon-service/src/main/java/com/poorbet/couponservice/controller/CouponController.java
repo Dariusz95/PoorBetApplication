@@ -29,4 +29,6 @@ public class CouponController {
         Coupon coupon = couponService.createCoupon(createCouponDto, UUID.randomUUID());
         return new ResponseEntity<>(coupon, HttpStatus.CREATED);
     }
+
+
 }

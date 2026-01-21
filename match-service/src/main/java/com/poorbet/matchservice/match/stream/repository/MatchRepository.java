@@ -1,5 +1,6 @@
 package com.poorbet.matchservice.match.stream.repository;
 
+import com.poorbet.matchservice.match.stream.dto.MatchResultDto;
 import com.poorbet.matchservice.match.stream.model.Match;
 import com.poorbet.matchservice.match.stream.model.MatchPool;
 import com.poorbet.matchservice.match.stream.model.enums.MatchStatus;
@@ -11,7 +12,6 @@ import org.springframework.data.repository.query.Param;
 
 import java.awt.print.Pageable;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 public interface MatchRepository extends JpaRepository<Match, UUID> {
@@ -28,5 +28,15 @@ public interface MatchRepository extends JpaRepository<Match, UUID> {
 
     long countByPoolIdAndStatus(UUID matchId, MatchStatus status);
 
-
+    @Query("""
+        select new com.poorbet.matchservice.match.stream.dto.MatchResultDto(
+            m.id,
+            m.homeGoals,
+            m.awayGoals,
+            m.status
+        )
+        from Match m
+        where m.id in :ids
+    """)
+    List<MatchResultDto> findResultsByIds(@Param("ids") List<UUID> ids);
 }

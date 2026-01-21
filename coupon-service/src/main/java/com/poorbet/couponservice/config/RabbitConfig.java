@@ -12,26 +12,26 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitConfig {
 
-    public static final String QUEUE_COUPON_POOL_FINISHED =
-            "coupon.pool.finished";
+    public static final String QUEUE_COUPON_MATCHES_FINISHED =
+            "coupon.matches.finished";
 
     @Bean
-    public Queue couponPoolFinishedQueue() {
-        return new Queue(QUEUE_COUPON_POOL_FINISHED, true);
+    public Queue matchesFinishedQueue() {
+        return new Queue(QUEUE_COUPON_MATCHES_FINISHED, true);
     }
 
     @Bean
     public FanoutExchange matchPoolExchange() {
-        return new FanoutExchange("match-pool.events", true, false);
+        return new FanoutExchange("match.events", true, false);
     }
 
     @Bean
     public Binding bindCouponQueueToPoolExchange(
             FanoutExchange matchPoolExchange,
-            Queue couponPoolFinishedQueue) {
+            Queue matchesFinishedQueue) {
 
         return BindingBuilder
-                .bind(couponPoolFinishedQueue)
+                .bind(matchesFinishedQueue)
                 .to(matchPoolExchange);
     }
 

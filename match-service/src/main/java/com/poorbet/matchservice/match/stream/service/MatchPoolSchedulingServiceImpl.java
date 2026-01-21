@@ -26,6 +26,8 @@ import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.function.Function;
@@ -195,22 +197,25 @@ public class MatchPoolSchedulingServiceImpl implements MatchPoolSchedulingServic
     }
 
     private Odds calculateOdds(WinProbabilityDto dto) {
-        double sum = dto.homeWinProbability() + dto.drawProbability() + dto.awayWinProbability();
+        BigDecimal sum = BigDecimal.valueOf(1.0);
 
+        BigDecimal homeOdd = sum
+                .divide(BigDecimal.valueOf(dto.homeWinProbability()), 10, RoundingMode.HALF_UP)
+                .setScale(2, RoundingMode.HALF_UP);
 
-        double homeOdd = truncateToTwoDecimalPlaces(sum / dto.homeWinProbability());
-        double drawOdd = truncateToTwoDecimalPlaces(sum / dto.drawProbability());
-        double awayOdd = truncateToTwoDecimalPlaces(sum / dto.awayWinProbability());
+        BigDecimal drawOdd = sum
+                .divide(BigDecimal.valueOf(dto.drawProbability()), 10, RoundingMode.HALF_UP)
+                .setScale(2, RoundingMode.HALF_UP);
+
+        BigDecimal awayOdd = sum
+                .divide(BigDecimal.valueOf(dto.awayWinProbability()), 10, RoundingMode.HALF_UP)
+                .setScale(2, RoundingMode.HALF_UP);
 
         return Odds.builder()
                 .homeWin(homeOdd)
                 .draw(drawOdd)
                 .awayWin(awayOdd)
                 .build();
-    }
-
-    private double truncateToTwoDecimalPlaces(double value){
-        return Math.floor(value * 100) / 100;
     }
 }
 

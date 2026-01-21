@@ -1,12 +1,13 @@
 package com.poorbet.matchservice.match.stream.dto.response;
 
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 public record OddsDto(
         UUID id,
-        double homeWin,
-        double draw,
-        double awayWin
+        BigDecimal homeWin,
+        BigDecimal draw,
+        BigDecimal awayWin
         ) {
 }

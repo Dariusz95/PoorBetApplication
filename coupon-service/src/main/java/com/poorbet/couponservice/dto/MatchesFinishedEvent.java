@@ -3,7 +3,7 @@ package com.poorbet.couponservice.dto;
 import java.util.List;
 import java.util.UUID;
 
-public record MatchPoolFinishedEvent(
+public record MatchesFinishedEvent(
         List<UUID> matchIds
 ) {
 }

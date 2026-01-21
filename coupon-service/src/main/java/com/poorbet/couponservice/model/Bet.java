@@ -1,6 +1,7 @@
 package com.poorbet.couponservice.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.poorbet.couponservice.model.enums.BetStatus;
 import com.poorbet.couponservice.model.enums.BetType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -25,6 +26,10 @@ public class Bet {
 
     @Column(nullable = false)
     private UUID matchId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private BetStatus status;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)

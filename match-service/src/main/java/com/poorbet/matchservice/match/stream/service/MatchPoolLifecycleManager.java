@@ -83,7 +83,7 @@ public class MatchPoolLifecycleManager {
 
     private void sendPoolFinishedEventsAsync(UUID poolId, List<UUID> matchIds) {
         try {
-            matchPoolEventPublisher.publishPoolFinished(matchIds);
+            matchPoolEventPublisher.publishMatchesFinished(matchIds);
 
             liveMatchSimulationManager.notifyPoolFinished(poolId);
 
