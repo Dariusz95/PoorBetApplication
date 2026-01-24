@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public record SimulationRequestDto(
         UUID matchId,
-        @NotNull @Valid TeamPower home,
-        @NotNull @Valid TeamPower away
+        @NotNull TeamPower home,
+        @NotNull TeamPower away
 ) {}
 

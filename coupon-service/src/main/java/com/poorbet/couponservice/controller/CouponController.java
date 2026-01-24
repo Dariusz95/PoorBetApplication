@@ -1,7 +1,7 @@
 package com.poorbet.couponservice.controller;
 
 import com.poorbet.couponservice.dto.CreateCouponDto;
-import com.poorbet.couponservice.model.Coupon;
+import com.poorbet.couponservice.domain.Coupon;
 import com.poorbet.couponservice.service.CouponService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,4 +29,6 @@ public class CouponController {
         Coupon coupon = couponService.createCoupon(createCouponDto, UUID.randomUUID());
         return new ResponseEntity<>(coupon, HttpStatus.CREATED);
     }
+
+
 }

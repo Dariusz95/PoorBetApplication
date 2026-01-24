@@ -17,7 +17,7 @@ run-app:
 # 		echo "Czekam na simulation-service..."; \
 # 		sleep 2; \
 # 	done
-# 	sleep 15
+	sleep 15
 
 	./generate-matches.sh
 	docker-compose run --rm python-trainer python train_model.py

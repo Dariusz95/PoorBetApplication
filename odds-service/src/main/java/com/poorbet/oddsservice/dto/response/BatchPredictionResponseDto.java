@@ -1,6 +1,5 @@
 package com.poorbet.oddsservice.dto.response;
 
-import com.poorbet.oddsservice.dto.response.BatchOddsResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
