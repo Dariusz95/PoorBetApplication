@@ -155,6 +155,7 @@ services:
       - redis
       - teams-db
       - match-db
+      - rabbitmq
     networks:
       - main_network
 
@@ -181,6 +182,7 @@ services:
     depends_on:
       - redis
       - coupon-db
+      - rabbitmq
     networks:
       - main_network
 

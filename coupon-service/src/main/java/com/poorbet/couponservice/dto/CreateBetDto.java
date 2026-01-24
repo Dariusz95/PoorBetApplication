@@ -1,13 +1,12 @@
 package com.poorbet.couponservice.dto;
 
-import com.poorbet.couponservice.model.enums.BetType;
+import com.poorbet.couponservice.domain.BetType;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
 import java.util.UUID;
 
 @Data

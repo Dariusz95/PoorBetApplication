@@ -128,7 +128,6 @@ public class MatchSimulationServiceImpl implements MatchSimulationService {
         double base = 0.01;
         double advantage = homeHasBall ? 0.005 : 0.0;
 
-        log.info("CALCUATE GOAL CHANCE -> {}", base + strength * 0.04 + advantage);
         return base + strength * 0.04 + advantage;
     }
 

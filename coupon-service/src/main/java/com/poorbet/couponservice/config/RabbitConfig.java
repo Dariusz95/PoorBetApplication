@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitConfig {
 
-rab    public static final String MATCH_EVENTS_EXCHANGE = "match.events";
+    public static final String MATCH_EVENTS_EXCHANGE = "match.events";
     public static final String MATCH_FINISHED_QUEUE =
             "match.finished.coupon.queue";
 

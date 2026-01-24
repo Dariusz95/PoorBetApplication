@@ -14,7 +14,7 @@ import java.util.UUID;
 @Builder
 public class MatchResultDto {
     UUID id;
-    int homeScore;
-    int awayScore;
+    int homeGoals;
+    int awayGoals;
     MatchStatus status;
 }

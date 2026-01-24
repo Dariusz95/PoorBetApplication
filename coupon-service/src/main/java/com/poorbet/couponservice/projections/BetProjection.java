@@ -1,6 +1,6 @@
 package com.poorbet.couponservice.projections;
 
-import com.poorbet.couponservice.model.enums.BetType;
+import com.poorbet.couponservice.domain.BetType;
 
 import java.util.UUID;
 

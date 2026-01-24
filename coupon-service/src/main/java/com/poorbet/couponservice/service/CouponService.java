@@ -1,21 +1,18 @@
 package com.poorbet.couponservice.service;
 
 import com.poorbet.couponservice.client.MatchClient;
-import com.poorbet.couponservice.client.MatchOddsClient;
 import com.poorbet.couponservice.dto.CreateCouponDto;
-import com.poorbet.couponservice.dto.MatchResultMapDto;
-import com.poorbet.couponservice.model.Bet;
-import com.poorbet.couponservice.model.Coupon;
-import com.poorbet.couponservice.model.enums.BetStatus;
-import com.poorbet.couponservice.model.enums.CouponStatus;
-import com.poorbet.couponservice.model.enums.OddsType;
+import com.poorbet.couponservice.domain.Bet;
+import com.poorbet.couponservice.domain.Coupon;
+import com.poorbet.couponservice.domain.BetStatus;
+import com.poorbet.couponservice.domain.CouponStatus;
+import com.poorbet.couponservice.domain.OddsType;
 import com.poorbet.couponservice.repository.CouponRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -23,7 +20,7 @@ import java.util.UUID;
 public class CouponService {
 
     private final CouponRepository couponRepository;
-    private final MatchOddsClient matchOddsClient;
+    private final MatchClient matchClient;
 
     @Transactional
     public Coupon createCoupon(CreateCouponDto dto, UUID userId) {
@@ -34,7 +31,7 @@ public class CouponService {
 
         dto.getBets().forEach(betDto -> {
 
-            Double odd = matchOddsClient.getOdd(
+            Double odd = matchClient.getOdd(
                     betDto.getMatchId(),
                     OddsType.HOME_WIN
             );
