@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+import com.poorbet.matchservice.match.stream.dto.MatchResultDto;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -40,7 +42,6 @@ public class MatchPoolLifecycleManager {
 
         log.info("🚀 Match id - {} - remaining  {}", match.getId(), remainingLive);
 
-
         if (remainingLive > 0) {
             return;
         }
@@ -51,7 +52,7 @@ public class MatchPoolLifecycleManager {
                 .setIfAbsent(
                         lockKey,
                         "1",
-                        5,
+                        4,
                         TimeUnit.MINUTES
                 );
 
@@ -60,15 +61,10 @@ public class MatchPoolLifecycleManager {
             return;
         }
 
-        MatchPool matchPool = matchPoolRepository.findById(poolId)
-                .orElseThrow(() -> new IllegalStateException("Match not found: " + poolId));
-
-        log.info("🚀 matchPool  {}", matchPool);
-
         int updated = matchPoolRepository.updateStatus(poolId, PoolStatus.FINISHED);
 
         if (updated == 0) {
-            throw new  IllegalStateException("Match not found: " + poolId);
+            throw new EntityNotFoundException("MatchPool not found: " + poolId);
         }
 
         List<UUID> matchIds = matchPoolRepository.findById(poolId)
@@ -81,7 +77,7 @@ public class MatchPoolLifecycleManager {
         sendPoolFinishedEventsAsync(poolId, matchIds);
     }
 
-    private void sendPoolFinishedEventsAsync(UUID poolId, List<UUID> matchIds) {
+    private void sendPoolFinishedEventsAsync(UUID poolId, List<MatchResultDto> matchIds) {
         try {
             matchPoolEventPublisher.publishMatchesFinished(matchIds);
 

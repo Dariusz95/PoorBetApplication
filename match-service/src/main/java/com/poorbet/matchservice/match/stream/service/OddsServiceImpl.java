@@ -14,13 +14,13 @@ import java.util.UUID;
 
 @Service
 @AllArgsConstructor
-public class OddsServiceImpl implements OddsService{
+public class OddsServiceImpl implements OddsService {
 
     private OddsRepository oddsRepository;
 
     @Override
     public Optional<BigDecimal> getOdds(UUID matchId, OddsType type) {
-        return switch (type){
+        return switch (type) {
             case HOME_WIN -> oddsRepository.findHomeWinByMatchId(matchId).map(HomeWin::getHomeWin);
             case DRAW -> oddsRepository.findDrawByMatchId(matchId).map(Draw::getDraw);
             case AWAY_WIN -> oddsRepository.findAwayWinByMatchId(matchId).map(AwayWin::getAwayWin);

@@ -1,5 +1,6 @@
 package com.poorbet.matchservice.match.stream.repository;
 
+import com.poorbet.matchservice.match.stream.dto.MatchResultDto;
 import com.poorbet.matchservice.match.stream.model.MatchPool;
 import com.poorbet.matchservice.match.stream.model.enums.PoolStatus;
 import jakarta.transaction.Transactional;
@@ -41,4 +42,9 @@ public interface MatchPoolRepository extends JpaRepository<MatchPool, UUID> {
             WHERE mp.id = :id
             """)
     int updateStatus(UUID id, PoolStatus status );
+
+    @Query("""
+            select mp 
+            """)
+    List<MatchResultDto> getResults(UUID poolId);
 }

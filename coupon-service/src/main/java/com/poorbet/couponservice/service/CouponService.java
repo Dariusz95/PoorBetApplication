@@ -6,6 +6,8 @@ import com.poorbet.couponservice.dto.CreateCouponDto;
 import com.poorbet.couponservice.dto.MatchResultMapDto;
 import com.poorbet.couponservice.model.Bet;
 import com.poorbet.couponservice.model.Coupon;
+import com.poorbet.couponservice.model.enums.BetStatus;
+import com.poorbet.couponservice.model.enums.CouponStatus;
 import com.poorbet.couponservice.model.enums.OddsType;
 import com.poorbet.couponservice.repository.CouponRepository;
 import lombok.AllArgsConstructor;
@@ -27,6 +29,7 @@ public class CouponService {
     public Coupon createCoupon(CreateCouponDto dto, UUID userId) {
         Coupon coupon = Coupon.builder()
                 .stake(dto.getStake())
+                .status(CouponStatus.OPEN)
                 .build();
 
         dto.getBets().forEach(betDto -> {
@@ -40,6 +43,7 @@ public class CouponService {
                     .betType(betDto.getBetType())
                     .matchId(betDto.getMatchId())
                     .odds(BigDecimal.valueOf(odd))
+                    .status(BetStatus.PENDING)
                     .build();
 
             coupon.addBet(bet);

@@ -17,7 +17,7 @@ public class MatchesFinishedListener {
 
     private final CouponProcessingService couponProcessingService;
 
-    @RabbitListener(queues = RabbitConfig.QUEUE_COUPON_MATCHES_FINISHED)
+    @RabbitListener(queues = RabbitConfig.MATCH_FINISHED_QUEUE)
     public void handleFinishedMatches(MatchesFinishedEvent event) {
         List<UUID> matchIds = event.matchIds();
         log.info("🔥 [COUPON] Processing finished matches: {}", matchIds);

@@ -17,7 +17,7 @@ public class MatchOddsClient {
         return matchServiceWebClientBuilder
                 .get()
                 .uri(uriBuilder -> uriBuilder
-                        .path("/api/match/odds/{matchId}/")
+                        .path("/api/match/odds/{matchId}")
                         .queryParam("type", type)
                         .build(matchId))
                 .retrieve()

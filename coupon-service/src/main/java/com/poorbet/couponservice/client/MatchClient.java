@@ -20,7 +20,7 @@ public class MatchClient {
     public MatchResultMapDto getMatchResult(List<UUID> matchIds) {
         return matchServiceWebClientBuilder
                 .post()
-                .uri("/api/match/result")
+                .uri("/api/match/results")
                 .bodyValue(matchIds)
                 .retrieve()
                 .onStatus(
