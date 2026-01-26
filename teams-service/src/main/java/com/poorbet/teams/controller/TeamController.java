@@ -4,6 +4,7 @@ import com.poorbet.teams.dto.TeamShortDto;
 import com.poorbet.teams.dto.TeamStatsDto;
 import com.poorbet.teams.request.TeamStatsRequest;
 import com.poorbet.teams.service.TeamService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -22,10 +23,16 @@ public class TeamController {
     private final TeamService teamService;
 
     @PostMapping("/stats")
-    public List<TeamStatsDto> getTeamStats(
-            @RequestBody TeamStatsRequest request
+    public ResponseEntity<List<TeamStatsDto>> getTeamStats(
+            @Valid @RequestBody TeamStatsRequest request
     ) {
-        return teamService.getStatsByIds(request.teamIds());
+        List<TeamStatsDto> result = teamService.getStatsByIds(request.teamIds());
+
+        if (result.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/random")
