@@ -5,6 +5,7 @@ import com.poorbet.teams.dto.TeamStatsDto;
 import com.poorbet.teams.request.TeamStatsRequest;
 import com.poorbet.teams.service.TeamService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +38,7 @@ public class TeamController {
 
     @GetMapping("/random")
     public ResponseEntity<List<TeamStatsDto>> getRandomTeams(
-            @RequestParam(required = false, defaultValue = "1") Integer count
+            @RequestParam(required = false, defaultValue = "1") @Min(1) Integer count
     ) {
         if (count <= 0) {
             return ResponseEntity.badRequest().build();
@@ -49,9 +50,9 @@ public class TeamController {
 
     @GetMapping("/{id}")
     public TeamShortDto getTeam(@PathVariable UUID id) {
-        log.info("GET /api/teams/{} called", id);
         TeamShortDto team = teamService.getById(id);
         log.info("Returning team: id={}, name={}", team.id(), team.name());
+
         return team;
     }
 }

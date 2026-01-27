@@ -1,9 +1,11 @@
 package com.poorbet.teams.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.poorbet.teams.dto.TeamShortDto;
 import com.poorbet.teams.dto.TeamStatsDto;
 import com.poorbet.teams.request.TeamStatsRequest;
 import com.poorbet.teams.service.TeamService;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -15,6 +17,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -74,4 +77,75 @@ class TeamControllerTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isNoContent());
     }
+
+    @Test
+    void shouldReturnRandomTeams_whenCountProvided() throws Exception {
+        when(teamService.findRandomTeams(3))
+                .thenReturn(List.of(
+                        new TeamStatsDto(UUID.randomUUID(), "Inter Miami", 11, 22),
+                        new TeamStatsDto(UUID.randomUUID(), "Barcelona", 11, 22),
+                        new TeamStatsDto(UUID.randomUUID(), "PSG", 11, 22)
+                ));
+
+        mockMvc.perform(get("/api/teams/random")
+                        .param("count", "3"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(3));
+    }
+
+    @Test
+    void shouldReturnOneTeam_whenCountNotProvided() throws Exception {
+        when(teamService.findRandomTeams(1))
+                .thenReturn(List.of(new TeamStatsDto(UUID.randomUUID(), "PSG", 11, 22)));
+
+        mockMvc.perform(get("/api/teams/random"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(1));
+    }
+
+    @Test
+    void shouldReturn400_whenCountIsZero() throws Exception {
+        mockMvc.perform(get("/api/teams/random")
+                        .param("count", "0"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void shouldReturn400_whenCountIsNegative() throws Exception {
+        mockMvc.perform(get("/api/teams/random")
+                        .param("count", "-5"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void shouldReturnTeam_whenIdExists() throws Exception {
+        UUID id = UUID.randomUUID();
+        String name = "FC Barceluna";
+        TeamShortDto team = new TeamShortDto(id, name);
+
+        when(teamService.getById(id)).thenReturn(team);
+
+        mockMvc.perform(get("/api/teams/{id}", id))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(id.toString()))
+                .andExpect(jsonPath("$.name").value(name));
+    }
+
+    @Test
+    void shouldReturn400_whenIdIsNotUuid() throws Exception {
+        mockMvc.perform(get("/api/teams/{id}", "not-a-uuid"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void shouldReturn404_whenTeamNotFound() throws Exception {
+        UUID id = UUID.randomUUID();
+
+        when(teamService.getById(id))
+                .thenThrow(new EntityNotFoundException("Team not found"));
+
+        mockMvc.perform(get("/api/teams/{id}", id))
+                .andExpect(status().isNotFound());
+    }
+
 }
