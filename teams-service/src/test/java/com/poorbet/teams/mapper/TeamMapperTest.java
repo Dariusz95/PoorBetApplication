@@ -1,13 +1,15 @@
 package com.poorbet.teams.mapper;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import com.poorbet.teams.TeamFixtures;
-import com.poorbet.teams.dto.TeamShortDto;
-import com.poorbet.teams.dto.TeamStatsDto;
-import com.poorbet.teams.model.Team;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import com.poorbet.teams.dto.TeamShortDto;
+import com.poorbet.teams.dto.TeamStatsDto;
+import com.poorbet.teams.fixture.TeamFixtures;
+import com.poorbet.teams.model.Team;
 
 class TeamMapperTest {
 

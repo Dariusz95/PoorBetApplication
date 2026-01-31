@@ -1,4 +1,4 @@
-package com.poorbet.teams;
+package com.poorbet.teams.fixture;
 
 import java.util.UUID;
 
@@ -6,15 +6,6 @@ import com.poorbet.teams.dto.TeamShortDto;
 import com.poorbet.teams.dto.TeamStatsDto;
 import com.poorbet.teams.model.Team;
 
-/**
- * Team test fixtures - centralized test data management.
- * 
- * Provides factory methods for creating consistent test data across all test classes.
- * This prevents data duplication and makes it easy to update team stats in one place.
- * 
- * Note: This is NOT a builder pattern - it's a fixture factory.
- * For flexibility, use the createTeam() method with custom parameters.
- */
 public class TeamFixtures {
 
     // ==================== Team IDs ====================
@@ -33,36 +24,25 @@ public class TeamFixtures {
     public static final String BARCELONA = "Barcelona";
     public static final String PSG = "PSG";
 
-    // ==================== Team Stats (Power Values) ====================
-    // Manchester United: Balanced team (78 attack, 75 defence)
     private static final int MU_ATTACK = 78;
     private static final int MU_DEFENCE = 75;
 
-    // Liverpool: Strong offensive team (82 attack, 80 defence)
     private static final int LIV_ATTACK = 82;
     private static final int LIV_DEFENCE = 80;
 
-    // Chelsea: Balanced team (76 attack, 78 defence)
     private static final int CHE_ATTACK = 76;
     private static final int CHE_DEFENCE = 78;
 
-    // Inter Miami: Weaker team (72 attack, 70 defence)
     private static final int IM_ATTACK = 72;
     private static final int IM_DEFENCE = 70;
 
-    // Barcelona: Strong offensive team (85 attack, 72 defence)
     private static final int BAR_ATTACK = 85;
     private static final int BAR_DEFENCE = 72;
 
-    // PSG: Strong balanced team (80 attack, 75 defence)
     private static final int PSG_ATTACK = 80;
     private static final int PSG_DEFENCE = 75;
 
-    // ==================== Factory Methods - Generic ====================
 
-    /**
-     * Creates a Team entity with specified values
-     */
     public static Team createTeam(UUID id, String name, int attackPower, int defencePower) {
         return Team.builder()
                 .id(id)
@@ -72,23 +52,13 @@ public class TeamFixtures {
                 .build();
     }
 
-    /**
-     * Creates a TeamStatsDto with specified values
-     */
     public static TeamStatsDto createTeamStatsDto(UUID id, String name, int attackPower, int defencePower) {
         return new TeamStatsDto(id, name, attackPower, defencePower);
     }
 
-    /**
-     * Creates a TeamShortDto with specified values
-     */
     public static TeamShortDto createTeamShortDto(UUID id, String name) {
         return new TeamShortDto(id, name);
     }
-
-    // ==================== Fixture Methods - Team Entities ====================
-    // These methods create Team entities using the predefined constants above.
-    // This eliminates data duplication and makes it easy to update stats globally.
 
     public static Team manchesterUnited() {
         return createTeam(MANCHESTER_UNITED_ID, MANCHESTER_UNITED, MU_ATTACK, MU_DEFENCE);
@@ -113,10 +83,6 @@ public class TeamFixtures {
     public static Team psg() {
         return createTeam(PSG_ID, PSG, PSG_ATTACK, PSG_DEFENCE);
     }
-
-    // ==================== Fixture Methods - TeamStatsDtos ====================
-    // These methods create DTOs from Team entities to avoid duplicating stats.
-    // If Team stats change, DTO stats automatically update.
 
     public static TeamStatsDto manchesterUnitedStats() {
         Team team = manchesterUnited();
@@ -148,8 +114,6 @@ public class TeamFixtures {
         return toStatsDto(team);
     }
 
-    // ==================== Fixture Methods - TeamShortDtos ====================
-
     public static TeamShortDto manchesterUnitedShort() {
         return createTeamShortDto(MANCHESTER_UNITED_ID, MANCHESTER_UNITED);
     }
@@ -174,13 +138,7 @@ public class TeamFixtures {
         return createTeamShortDto(PSG_ID, PSG);
     }
 
-    // ==================== Helper Methods ====================
-
-    /**
-     * Converts Team entity to TeamStatsDto
-     */
     private static TeamStatsDto toStatsDto(Team team) {
         return createTeamStatsDto(team.getId(), team.getName(), team.getAttackPower(), team.getDefencePower());
     }
 }
-

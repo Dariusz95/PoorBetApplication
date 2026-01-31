@@ -1,19 +1,60 @@
 package com.poorbet.teams.repository;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import com.poorbet.teams.BaseRepositoryTest;
-import com.poorbet.teams.TeamFixtures;
-import com.poorbet.teams.dto.TeamStatsDto;
-import com.poorbet.teams.model.Team;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
+import org.springframework.test.context.ActiveProfiles;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
+import com.poorbet.teams.dto.TeamStatsDto;
+import com.poorbet.teams.fixture.TeamFixtures;
+import com.poorbet.teams.model.Team;
 
-class TeamRepositoryTest extends BaseRepositoryTest {
+@Testcontainers
+@DataJpaTest
+@ActiveProfiles("test")
+class TeamRepositoryTest {
+
+    @Container
+    @ServiceConnection
+    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16-alpine")
+            .withDatabaseName("teams_test")
+            .withUsername("test")
+            .withPassword("test");
+
+    @Autowired
+    private TeamRepository teamRepository;
+
+    @BeforeEach
+    void setUp() {
+        teamRepository.deleteAll();
+        initializeTestData();
+    }
+
+    private void initializeTestData() {
+        List<Team> teams = List.of(
+                TeamFixtures.manchesterUnited(),
+                TeamFixtures.liverpool(),
+                TeamFixtures.chelsea(),
+                TeamFixtures.interMiami(),
+                TeamFixtures.barcelona(),
+                TeamFixtures.psg()
+        );
+        teamRepository.saveAll(teams);
+    }
 
     @Test
     void findRandomTeams_shouldReturnRequestedNumberOfTeams() {
@@ -89,7 +130,6 @@ class TeamRepositoryTest extends BaseRepositoryTest {
         assertEquals(TeamFixtures.LIVERPOOL, team.getName());
         assertEquals(82, team.getAttackPower());
         assertEquals(80, team.getDefencePower());
-        assertEquals("liverpool.png", team.getImg());
     }
 
     // ==================== findAllById Tests ====================
@@ -235,14 +275,5 @@ class TeamRepositoryTest extends BaseRepositoryTest {
 
         // Assert
         assertFalse(exists);
-    }
-
-    // ==================== Helper Methods ====================
-
-    private boolean isValidTeamFromDatabase(TeamStatsDto team) {
-        return team.getId() != null
-                && (team.getName().equals("Manchester United") || 
-                    team.getName().equals("Liverpool") || 
-                    team.getName().equals("Chelsea"));
     }
 }

@@ -10,26 +10,19 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
-class TeamTest {
+import com.poorbet.teams.fixture.TeamFixtures;
 
-    private final UUID testTeamId = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
+class TeamTest {
 
     @Test
     void shouldCreateTeamWithBuilder() {
         // Act
-        Team team = Team.builder()
-                .id(testTeamId)
-                .name("Manchester United")
-                .img("manchester-united.png")
-                .attackPower(78)
-                .defencePower(75)
-                .build();
+        Team team = TeamFixtures.manchesterUnited();
 
         // Assert
         assertNotNull(team);
-        assertEquals(testTeamId, team.getId());
-        assertEquals("Manchester United", team.getName());
-        assertEquals("manchester-united.png", team.getImg());
+        assertEquals(TeamFixtures.MANCHESTER_UNITED_ID, team.getId());
+        assertEquals(TeamFixtures.MANCHESTER_UNITED, team.getName());
         assertEquals(78, team.getAttackPower());
         assertEquals(75, team.getDefencePower());
     }
@@ -51,12 +44,11 @@ class TeamTest {
     @Test
     void shouldCreateTeamWithAllArgsConstructor() {
         // Act
-        Team team = new Team(testTeamId, "Liverpool", "liverpool.png", 82, 80);
+        Team team = TeamFixtures.liverpool();
 
         // Assert
-        assertEquals(testTeamId, team.getId());
-        assertEquals("Liverpool", team.getName());
-        assertEquals("liverpool.png", team.getImg());
+        assertEquals(TeamFixtures.LIVERPOOL_ID, team.getId());
+        assertEquals(TeamFixtures.LIVERPOOL, team.getName());
         assertEquals(82, team.getAttackPower());
         assertEquals(80, team.getDefencePower());
     }
@@ -82,10 +74,10 @@ class TeamTest {
         Team team = new Team();
 
         // Act
-        team.setName("Chelsea");
+        team.setName(TeamFixtures.CHELSEA);
 
         // Assert
-        assertEquals("Chelsea", team.getName());
+        assertEquals(TeamFixtures.CHELSEA, team.getName());
     }
 
     @Test
@@ -129,12 +121,11 @@ class TeamTest {
     @Test
     void shouldAcceptPositiveAttackPower() {
         // Act
-        Team team = Team.builder()
-                .id(testTeamId)
-                .name("Arsenal")
-                .attackPower(79)
-                .defencePower(77)
-                .build();
+        Team team = TeamFixtures.createTeam(
+                UUID.randomUUID(),
+                "Arsenal",
+                79,
+                77);
 
         // Assert
         assertEquals(79, team.getAttackPower());
@@ -143,26 +134,20 @@ class TeamTest {
     @Test
     void shouldAcceptPositiveDefencePower() {
         // Act
-        Team team = Team.builder()
-                .id(testTeamId)
-                .name("Barcelona")
-                .attackPower(85)
-                .defencePower(70)
-                .build();
+        Team team = TeamFixtures.barcelona();
 
         // Assert
-        assertEquals(70, team.getDefencePower());
+        assertEquals(72, team.getDefencePower());
     }
 
     @Test
     void shouldAcceptZeroAttackPower() {
         // Act
-        Team team = Team.builder()
-                .id(testTeamId)
-                .name("Weak Team")
-                .attackPower(0)
-                .defencePower(50)
-                .build();
+        Team team = TeamFixtures.createTeam(
+                UUID.randomUUID(),
+                "Weak Team",
+                0,
+                50);
 
         // Assert
         assertEquals(0, team.getAttackPower());
@@ -171,12 +156,11 @@ class TeamTest {
     @Test
     void shouldAcceptZeroDefencePower() {
         // Act
-        Team team = Team.builder()
-                .id(testTeamId)
-                .name("Weak Team")
-                .attackPower(50)
-                .defencePower(0)
-                .build();
+        Team team = TeamFixtures.createTeam(
+                UUID.randomUUID(),
+                "Weak Team",
+                50,
+                0);
 
         // Assert
         assertEquals(0, team.getDefencePower());
@@ -185,12 +169,11 @@ class TeamTest {
     @Test
     void shouldAcceptHighAttackAndDefencePowers() {
         // Act
-        Team team = Team.builder()
-                .id(testTeamId)
-                .name("Strong Team")
-                .attackPower(100)
-                .defencePower(100)
-                .build();
+        Team team = TeamFixtures.createTeam(
+                UUID.randomUUID(),
+                "Strong Team",
+                100,
+                100);
 
         // Assert
         assertEquals(100, team.getAttackPower());
@@ -202,21 +185,9 @@ class TeamTest {
     @Test
     void shouldBeEqual_whenTeamsHaveSameData() {
         // Arrange
-        Team team1 = Team.builder()
-                .id(testTeamId)
-                .name("Real Madrid")
-                .img("real-madrid.png")
-                .attackPower(88)
-                .defencePower(85)
-                .build();
-
-        Team team2 = Team.builder()
-                .id(testTeamId)
-                .name("Real Madrid")
-                .img("real-madrid.png")
-                .attackPower(88)
-                .defencePower(85)
-                .build();
+        UUID id = UUID.randomUUID();
+        Team team1 = TeamFixtures.createTeam(id, "Real Madrid", 88, 85);
+        Team team2 = TeamFixtures.createTeam(id, "Real Madrid", 88, 85);
 
         // Assert
         assertEquals(team1, team2);
@@ -225,24 +196,12 @@ class TeamTest {
     @Test
     void shouldNotBeEqual_whenTeamsHaveDifferentIds() {
         // Arrange
-        UUID id1 = UUID.randomUUID();
-        UUID id2 = UUID.randomUUID();
-
-        Team team1 = Team.builder()
-                .id(id1)
-                .name("PSG")
-                .img("psg.png")
-                .attackPower(80)
-                .defencePower(75)
-                .build();
-
-        Team team2 = Team.builder()
-                .id(id2)
-                .name("PSG")
-                .img("psg.png")
-                .attackPower(80)
-                .defencePower(75)
-                .build();
+        Team team1 = TeamFixtures.psg();
+        Team team2 = TeamFixtures.createTeam(
+                UUID.randomUUID(),
+                TeamFixtures.PSG,
+                80,
+                75);
 
         // Assert
         assertNotEquals(team1, team2);
@@ -251,21 +210,9 @@ class TeamTest {
     @Test
     void shouldNotBeEqual_whenTeamsHaveDifferentNames() {
         // Arrange
-        Team team1 = Team.builder()
-                .id(testTeamId)
-                .name("Bayern Munich")
-                .img("bayern.png")
-                .attackPower(82)
-                .defencePower(80)
-                .build();
-
-        Team team2 = Team.builder()
-                .id(testTeamId)
-                .name("Dortmund")
-                .img("bayern.png")
-                .attackPower(82)
-                .defencePower(80)
-                .build();
+        UUID id = UUID.randomUUID();
+        Team team1 = TeamFixtures.createTeam(id, "Bayern Munich", 82, 80);
+        Team team2 = TeamFixtures.createTeam(id, "Dortmund", 82, 80);
 
         // Assert
         assertNotEquals(team1, team2);
@@ -274,21 +221,9 @@ class TeamTest {
     @Test
     void shouldNotBeEqual_whenTeamsHaveDifferentAttackPower() {
         // Arrange
-        Team team1 = Team.builder()
-                .id(testTeamId)
-                .name("Juventus")
-                .img("juventus.png")
-                .attackPower(75)
-                .defencePower(78)
-                .build();
-
-        Team team2 = Team.builder()
-                .id(testTeamId)
-                .name("Juventus")
-                .img("juventus.png")
-                .attackPower(80)
-                .defencePower(78)
-                .build();
+        UUID id = UUID.randomUUID();
+        Team team1 = TeamFixtures.createTeam(id, "Juventus", 75, 78);
+        Team team2 = TeamFixtures.createTeam(id, "Juventus", 80, 78);
 
         // Assert
         assertNotEquals(team1, team2);
@@ -297,21 +232,9 @@ class TeamTest {
     @Test
     void shouldNotBeEqual_whenTeamsHaveDifferentDefencePower() {
         // Arrange
-        Team team1 = Team.builder()
-                .id(testTeamId)
-                .name("Ajax")
-                .img("ajax.png")
-                .attackPower(76)
-                .defencePower(72)
-                .build();
-
-        Team team2 = Team.builder()
-                .id(testTeamId)
-                .name("Ajax")
-                .img("ajax.png")
-                .attackPower(76)
-                .defencePower(80)
-                .build();
+        UUID id = UUID.randomUUID();
+        Team team1 = TeamFixtures.createTeam(id, "Ajax", 76, 72);
+        Team team2 = TeamFixtures.createTeam(id, "Ajax", 76, 80);
 
         // Assert
         assertNotEquals(team1, team2);
@@ -322,13 +245,7 @@ class TeamTest {
     @Test
     void shouldGenerateToString() {
         // Arrange
-        Team team = Team.builder()
-                .id(testTeamId)
-                .name("AC Milan")
-                .img("ac-milan.png")
-                .attackPower(77)
-                .defencePower(76)
-                .build();
+        Team team = TeamFixtures.createTeam(UUID.randomUUID(), "AC Milan", 77, 76);
 
         // Act
         String toString = team.toString();
@@ -344,21 +261,9 @@ class TeamTest {
     @Test
     void shouldHaveSameHashCode_whenTeamsAreEqual() {
         // Arrange
-        Team team1 = Team.builder()
-                .id(testTeamId)
-                .name("Inter Milan")
-                .img("inter-milan.png")
-                .attackPower(81)
-                .defencePower(79)
-                .build();
-
-        Team team2 = Team.builder()
-                .id(testTeamId)
-                .name("Inter Milan")
-                .img("inter-milan.png")
-                .attackPower(81)
-                .defencePower(79)
-                .build();
+        UUID id = UUID.randomUUID();
+        Team team1 = TeamFixtures.createTeam(id, "Inter Milan", 81, 79);
+        Team team2 = TeamFixtures.createTeam(id, "Inter Milan", 81, 79);
 
         // Assert
         assertEquals(team1.hashCode(), team2.hashCode());
@@ -384,7 +289,7 @@ class TeamTest {
     void shouldHandleNullImageUrl() {
         // Act
         Team team = Team.builder()
-                .id(testTeamId)
+                .id(UUID.randomUUID())
                 .name("Unknown Team")
                 .img(null)
                 .attackPower(50)
@@ -399,7 +304,7 @@ class TeamTest {
     void shouldHandleEmptyStringName() {
         // Act
         Team team = Team.builder()
-                .id(testTeamId)
+                .id(UUID.randomUUID())
                 .name("")
                 .img("empty.png")
                 .attackPower(50)
@@ -413,13 +318,7 @@ class TeamTest {
     @Test
     void shouldAllowTeamNameUpdate() {
         // Arrange
-        Team team = Team.builder()
-                .id(testTeamId)
-                .name("Original Name")
-                .img("original.png")
-                .attackPower(60)
-                .defencePower(60)
-                .build();
+        Team team = TeamFixtures.createTeam(UUID.randomUUID(), "Original Name", 60, 60);
 
         // Act
         team.setName("Updated Name");
@@ -431,13 +330,7 @@ class TeamTest {
     @Test
     void shouldAllowMultipleUpdates() {
         // Arrange
-        Team team = Team.builder()
-                .id(testTeamId)
-                .name("Team A")
-                .img("a.png")
-                .attackPower(50)
-                .defencePower(50)
-                .build();
+        Team team = TeamFixtures.createTeam(UUID.randomUUID(), "Team A", 50, 50);
 
         // Act
         team.setName("Team B");

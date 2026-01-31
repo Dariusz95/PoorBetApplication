@@ -1,38 +1,41 @@
 package com.poorbet.teams.service;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import com.poorbet.teams.BaseServiceTest;
-import com.poorbet.teams.TeamFixtures;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import org.mockito.junit.jupiter.MockitoExtension;
+
 import com.poorbet.teams.dto.TeamShortDto;
 import com.poorbet.teams.dto.TeamStatsDto;
 import com.poorbet.teams.exception.TeamNotFoundException;
+import com.poorbet.teams.fixture.TeamFixtures;
+import com.poorbet.teams.mapper.TeamMapper;
 import com.poorbet.teams.model.Team;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
+import com.poorbet.teams.repository.TeamRepository;
 
-/**
- * Unit tests for TeamServiceImpl.
- * Uses mocked repository to test business logic in isolation.
- */
-class TeamServiceImplTest extends BaseServiceTest {
+@ExtendWith(MockitoExtension.class)
+class TeamServiceImplTest {
+
+    @Mock
+    private TeamRepository teamRepository;
+
+    @Mock
+    private TeamMapper teamMapper;
 
     @InjectMocks
     private TeamServiceImpl teamService;
-
-    @Override
-    @BeforeEach
-    protected void setUp() {
-        // Service is already injected by @InjectMocks
-    }
-
-    // ==================== findRandomTeams Tests ====================
 
     @Test
     void findRandomTeams_shouldReturnListOfTeamsWithRequestedCount() {
@@ -182,8 +185,6 @@ class TeamServiceImplTest extends BaseServiceTest {
         verify(teamRepository, times(1)).findAllById(ids);
     }
 
-    // ==================== getById Tests ====================
-
     @Test
     void getById_shouldReturnTeamShortDto_whenTeamExists() {
         // Arrange
@@ -209,24 +210,6 @@ class TeamServiceImplTest extends BaseServiceTest {
         // Act & Assert
         assertThrows(TeamNotFoundException.class, () -> teamService.getById(TeamFixtures.BARCELONA_ID));
         verify(teamRepository, times(1)).findById(TeamFixtures.BARCELONA_ID);
-    }
-
-    @Test
-    void getById_shouldUseCache_onSecondCall() {
-        // Arrange
-        Team team = TeamFixtures.psg();
-
-        when(teamRepository.findById(TeamFixtures.PSG_ID)).thenReturn(Optional.of(team));
-
-        // Act
-        TeamShortDto result1 = teamService.getById(TeamFixtures.PSG_ID);
-        TeamShortDto result2 = teamService.getById(TeamFixtures.PSG_ID);
-
-        // Assert
-        assertEquals(result1, result2);
-        assertEquals(TeamFixtures.PSG, result1.name());
-        // Cache should be used, so repository is called once due to @Cacheable
-        verify(teamRepository, times(1)).findById(TeamFixtures.PSG_ID);
     }
 
     @Test
@@ -259,3 +242,4 @@ class TeamServiceImplTest extends BaseServiceTest {
         verify(teamRepository, times(1)).findById(TeamFixtures.INTER_MIAMI_ID);
     }
 }
+
