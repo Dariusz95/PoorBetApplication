@@ -7,6 +7,8 @@ import ai.onnxruntime.OrtSession;
 import com.poorbet.oddsservice.dto.response.BatchOddsResponse;
 import com.poorbet.oddsservice.dto.OddsResponseDto;
 import com.poorbet.oddsservice.dto.request.MatchDto;
+import com.poorbet.oddsservice.model.OddsModel;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -16,71 +18,37 @@ import java.util.List;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class OddsServiceImpl implements OddsService {
 
-    private final OrtEnvironment ortEnvironment;
-    private final OrtSession session;
+    private final OddsModel oddsModel;
 
-    public OddsServiceImpl(@Value("${model.path:/app/data/models/match_predictor.onnx}") String modelPath) {
-        try {
-            this.ortEnvironment = OrtEnvironment.getEnvironment();
-            this.session = ortEnvironment.createSession(modelPath, new OrtSession.SessionOptions());
-            log.info("ONNX model loaded from: {}", modelPath);
-        } catch (OrtException e) {
-            log.error("Failed to load ONNX model from: {}", modelPath, e);
-            throw new RuntimeException("Failed to initialize ONNX model", e);
-        }
-    }
-
+    @Override
     public OddsResponseDto predictOdds(
             int homeAttack,
-            int homeDefence,
+            int homeDefense,
             int awayAttack,
-            int awayDefence
+            int awayDefense
     ) {
-        float[][] input = new float[][]{{
+        return oddsModel.predict(
                 homeAttack,
-                homeDefence,
+                homeDefense,
                 awayAttack,
-                awayDefence
-        }};
-
-        try (OnnxTensor tensor = OnnxTensor.createTensor(ortEnvironment, input);
-             OrtSession.Result result = session.run(
-                     Collections.singletonMap("float_input", tensor)
-             )) {
-
-            float[] probs = ((float[][]) result.get(1).getValue())[0];
-
-            return new OddsResponseDto(
-                    probs[0], // H
-                    probs[1], // X
-                    probs[2]  // A
-            );
-
-        } catch (OrtException e) {
-            throw new RuntimeException("ONNX inference failed", e);
-        }
+                awayDefense
+        );
     }
 
     @Override
     public List<BatchOddsResponse> predictBatch(List<MatchDto> matches) {
         return matches.stream()
                 .map(match -> {
-
-                    OddsResponseDto odds = predictOdds(
+                    OddsResponseDto odds = oddsModel.predict(
                             match.homeTeamAttack(),
                             match.homeTeamDefense(),
                             match.awayTeamAttack(),
                             match.awayTeamDefense()
                     );
-
-                    log.info("odds ->  {}", odds);
-
-                    return new BatchOddsResponse(
-                            match.matchId(),
-                            odds
-                    );
+                    return new BatchOddsResponse(match.matchId(), odds);
                 })
                 .toList();
     }

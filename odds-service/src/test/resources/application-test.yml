@@ -1,0 +1,14 @@
+spring:
+  test:
+    database:
+      replace: none
+  application:
+    name: odds-service-test
+
+logging:
+  level:
+    root: INFO
+    com.poorbet: DEBUG
+
+model:
+  path: /app/data/models/match_predictor.onnx
