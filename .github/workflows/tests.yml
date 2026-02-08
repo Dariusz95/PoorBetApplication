@@ -33,3 +33,60 @@ jobs:
           java-version: '21'
           cache: maven
       - run: mvn clean test
+
+  odds-service:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: odds-service
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: maven
+      - run: mvn clean test
+
+  odds-training:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: odds-training
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: maven
+      - run: mvn clean test
+
+  simulation-service:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: simulation-service
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: maven
+      - run: mvn clean test
+
+
+  teams-service:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: teams-service
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: maven
+      - run: mvn clean test

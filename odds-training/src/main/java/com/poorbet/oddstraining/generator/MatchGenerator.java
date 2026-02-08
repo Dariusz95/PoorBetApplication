@@ -16,15 +16,15 @@ import java.util.UUID;
 @Component
 @RequiredArgsConstructor
 public class MatchGenerator {
-    private final TeamGenerator teamGenerator;
+    private final TeamPowerGenerator teamPowerGenerator;
     private final TrainingProperties trainingProperties;
 
-    public List<SimulationRequestDto> getMatches(){
+    public List<SimulationRequestDto> getMatches() {
         int countPerTier = trainingProperties.countPerTier();
 
-        List<TeamPower> weakTeams = teamGenerator.generateForTier(TeamTier.WEAK, countPerTier);
-        List<TeamPower> averageTeams = teamGenerator.generateForTier(TeamTier.AVERAGE, countPerTier);
-        List<TeamPower> strongTeams = teamGenerator.generateForTier(TeamTier.STRONG, countPerTier);
+        List<TeamPower> weakTeams = teamPowerGenerator.generateForTier(TeamTier.WEAK, countPerTier);
+        List<TeamPower> averageTeams = teamPowerGenerator.generateForTier(TeamTier.AVERAGE, countPerTier);
+        List<TeamPower> strongTeams = teamPowerGenerator.generateForTier(TeamTier.STRONG, countPerTier);
 
         Map<TeamTier, List<TeamPower>> teamsByTier = Map.of(
                 TeamTier.WEAK, weakTeams,
@@ -43,7 +43,6 @@ public class MatchGenerator {
 
         return allPairs;
     }
-
 
 
     private List<SimulationRequestDto> createPairs(List<TeamPower> list1, List<TeamPower> list2, boolean includeSameTeam) {
