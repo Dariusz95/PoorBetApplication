@@ -1,27 +1,27 @@
 package com.poorbet.teams.repository;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import com.poorbet.teams.dto.TeamStatsDto;
+import com.poorbet.teams.fixture.TeamFixtures;
+import com.poorbet.teams.model.Team;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
+import org.springframework.cache.CacheManager;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import com.poorbet.teams.dto.TeamStatsDto;
-import com.poorbet.teams.fixture.TeamFixtures;
-import com.poorbet.teams.model.Team;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @Testcontainers
 @DataJpaTest
@@ -34,9 +34,20 @@ class TeamRepositoryTest {
             .withDatabaseName("teams_test")
             .withUsername("test")
             .withPassword("test");
-
+    @MockitoBean
+    private CacheManager cacheManager;
     @Autowired
     private TeamRepository teamRepository;
+
+    @DynamicPropertySource
+    static void registerPgProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", postgres::getJdbcUrl);
+        registry.add("spring.datasource.username", postgres::getUsername);
+        registry.add("spring.datasource.password", postgres::getPassword);
+        registry.add("spring.jpa.properties.hibernate.dialect", () -> "org.hibernate.dialect.PostgreSQLDialect");
+        registry.add("spring.jpa.hibernate.ddl-auto", () -> "update");
+        registry.add("spring.cache.type", () -> "none");
+    }
 
     @BeforeEach
     void setUp() {

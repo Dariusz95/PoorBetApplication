@@ -1,28 +1,26 @@
 package com.poorbet.teams.controller;
 
-import java.util.List;
-import java.util.UUID;
-
-import org.junit.jupiter.api.Test;
-import static org.mockito.Mockito.when;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.servlet.MockMvc;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.poorbet.teams.dto.TeamShortDto;
 import com.poorbet.teams.dto.TeamStatsDto;
 import com.poorbet.teams.request.TeamStatsRequest;
 import com.poorbet.teams.service.TeamService;
-
 import jakarta.persistence.EntityNotFoundException;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.cache.CacheManager;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
+import tools.jackson.databind.ObjectMapper;
+
+import java.util.List;
+import java.util.UUID;
+
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(TeamController.class)
 class TeamControllerTest {
@@ -35,6 +33,9 @@ class TeamControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @MockitoBean
+    private CacheManager cacheManager;
 
     @Test
     void shouldReturnTeamStats_whenRequestIsValid() throws Exception {

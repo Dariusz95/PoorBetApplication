@@ -1,6 +1,5 @@
 package com.poorbet.oddsservice.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.poorbet.oddsservice.dto.OddsResponseDto;
 import com.poorbet.oddsservice.dto.PredictOddsRequest;
 import com.poorbet.oddsservice.dto.request.BatchPredictionRequest;
@@ -10,10 +9,11 @@ import com.poorbet.oddsservice.service.OddsService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.List;
 
@@ -23,6 +23,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 
 @WebMvcTest(OddsController.class)
 @DisplayName("OddsController – WebMvcTest")
@@ -92,8 +93,8 @@ class OddsControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.predictions", hasSize(1)))
-                .andExpect(jsonPath("$.predictions[0].matchId")
+                .andExpect(jsonPath("$.matches", hasSize(1)))
+                .andExpect(jsonPath("$.matches[0].matchId")
                         .value(OddsFixtures.MATCH_1_ID.toString()));
 
         verify(oddsService).predictBatch(request.matches());
