@@ -34,7 +34,7 @@ team-power:
     STRONG:
       attack:
         min: 70
-        max: 90
+        max: 100
       defence:
         min: 70
-        max: 90
+        max: 100
