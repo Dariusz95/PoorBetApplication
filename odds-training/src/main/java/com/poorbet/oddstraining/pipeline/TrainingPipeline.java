@@ -52,18 +52,15 @@ public class TrainingPipeline {
                 })
                 .toList();
 
-        log.info("list - > {}", results);
-        log.info("list length - > {}", results.toArray().length);
-
         datasetWriter.write(results);
     }
 
-    private String getResult(int homeGoals, int awayGoals){
-        if(homeGoals == awayGoals) return "X";
+    private String getResult(int homeGoals, int awayGoals) {
+        if (homeGoals == awayGoals) return "X";
 
-        if(homeGoals > awayGoals){
+        if (homeGoals > awayGoals) {
             return "H";
-        }else{
+        } else {
             return "A";
         }
     }
