@@ -1,0 +1,35 @@
+name: Run microservices tests
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  coupon-service:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: coupon-service
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: maven
+      - run: mvn clean test
+
+  match-service:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: match-service
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: maven
+      - run: mvn clean test

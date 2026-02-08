@@ -1,9 +1,10 @@
 package com.poorbet.matchservice.match.matchpool.simulation;
 
-import com.poorbet.matchservice.match.matchpool.dto.LiveMatchEventDto;
-import reactor.core.publisher.Sinks;
-
 import java.util.UUID;
+
+import com.poorbet.matchservice.match.matchpool.dto.LiveMatchEventDto;
+
+import reactor.core.publisher.Sinks;
 
 public class LiveMatchSimulation {
     private final UUID matchId;
@@ -12,6 +13,10 @@ public class LiveMatchSimulation {
     public LiveMatchSimulation(UUID matchId, Sinks.Many<LiveMatchEventDto> sink){
         this.matchId = matchId;
         this.sink = sink;
+    }
+
+    public UUID getMatchId() {
+        return matchId;
     }
 
     public void publish(LiveMatchEventDto event) {
