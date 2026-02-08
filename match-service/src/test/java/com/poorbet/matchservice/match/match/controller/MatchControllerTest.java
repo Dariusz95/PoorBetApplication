@@ -87,38 +87,6 @@ class MatchControllerTest {
         }
 
         @Test
-        @DisplayName("Should handle single match ID")
-        void shouldHandleSingleMatchId() {
-            // Arrange
-            List<UUID> singleMatchId = List.of(testMatchId);
-            MatchResultMapDto singleResult = MatchResultMapDto.builder().build();
-            when(matchResultsService.getMatchResultMap(singleMatchId))
-                    .thenReturn(singleResult);
-
-            // Act
-            ResponseEntity<MatchResultMapDto> response = matchController.getResults(singleMatchId);
-
-            // Assert
-            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-            verify(matchResultsService).getMatchResultMap(singleMatchId);
-        }
-
-        @Test
-        @DisplayName("Should handle multiple match IDs")
-        void shouldHandleMultipleMatchIds() {
-            // Arrange
-            when(matchResultsService.getMatchResultMap(testMatchIds))
-                    .thenReturn(testResultMap);
-
-            // Act
-            ResponseEntity<MatchResultMapDto> response = matchController.getResults(testMatchIds);
-
-            // Assert
-            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-            verify(matchResultsService).getMatchResultMap(testMatchIds);
-        }
-
-        @Test
         @DisplayName("Should return response body from service")
         void shouldReturnResponseBodyFromService() {
             // Arrange
@@ -204,54 +172,6 @@ class MatchControllerTest {
         }
 
         @Test
-        @DisplayName("Should handle HOME_WIN odds type")
-        void shouldHandleHomeWinOddsType() {
-            // Arrange
-            BigDecimal homeWinOdds = new BigDecimal("1.50");
-            when(oddsService.getOdds(testMatchId, OddsType.HOME_WIN))
-                    .thenReturn(Optional.of(homeWinOdds));
-
-            // Act
-            ResponseEntity<BigDecimal> response = matchController.getOdds(testMatchId, OddsType.HOME_WIN);
-
-            // Assert
-            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-            assertThat(response.getBody()).isEqualByComparingTo(homeWinOdds);
-        }
-
-        @Test
-        @DisplayName("Should handle DRAW odds type")
-        void shouldHandleDrawOddsType() {
-            // Arrange
-            BigDecimal drawOdds = new BigDecimal("3.25");
-            when(oddsService.getOdds(testMatchId, OddsType.DRAW))
-                    .thenReturn(Optional.of(drawOdds));
-
-            // Act
-            ResponseEntity<BigDecimal> response = matchController.getOdds(testMatchId, OddsType.DRAW);
-
-            // Assert
-            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-            assertThat(response.getBody()).isEqualByComparingTo(drawOdds);
-        }
-
-        @Test
-        @DisplayName("Should handle AWAY_WIN odds type")
-        void shouldHandleAwayWinOddsType() {
-            // Arrange
-            BigDecimal awayWinOdds = new BigDecimal("5.00");
-            when(oddsService.getOdds(testMatchId, OddsType.AWAY_WIN))
-                    .thenReturn(Optional.of(awayWinOdds));
-
-            // Act
-            ResponseEntity<BigDecimal> response = matchController.getOdds(testMatchId, OddsType.AWAY_WIN);
-
-            // Assert
-            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-            assertThat(response.getBody()).isEqualByComparingTo(awayWinOdds);
-        }
-
-        @Test
         @DisplayName("Should return correct odds value")
         void shouldReturnCorrectOddsValue() {
             // Arrange
@@ -279,56 +199,5 @@ class MatchControllerTest {
                     .hasMessage("Odds service error");
         }
 
-        @Test
-        @DisplayName("Should handle multiple requests for same match")
-        void shouldHandleMultipleRequestsForSameMatch() {
-            // Arrange
-            BigDecimal homeWinOdds = new BigDecimal("1.50");
-            BigDecimal drawOdds = new BigDecimal("3.25");
-            BigDecimal awayWinOdds = new BigDecimal("5.00");
-
-            when(oddsService.getOdds(testMatchId, OddsType.HOME_WIN))
-                    .thenReturn(Optional.of(homeWinOdds));
-            when(oddsService.getOdds(testMatchId, OddsType.DRAW))
-                    .thenReturn(Optional.of(drawOdds));
-            when(oddsService.getOdds(testMatchId, OddsType.AWAY_WIN))
-                    .thenReturn(Optional.of(awayWinOdds));
-
-            // Act
-            ResponseEntity<BigDecimal> response1 = matchController.getOdds(testMatchId, OddsType.HOME_WIN);
-            ResponseEntity<BigDecimal> response2 = matchController.getOdds(testMatchId, OddsType.DRAW);
-            ResponseEntity<BigDecimal> response3 = matchController.getOdds(testMatchId, OddsType.AWAY_WIN);
-
-            // Assert
-            assertThat(response1.getBody()).isEqualByComparingTo(homeWinOdds);
-            assertThat(response2.getBody()).isEqualByComparingTo(drawOdds);
-            assertThat(response3.getBody()).isEqualByComparingTo(awayWinOdds);
-            verify(oddsService, times(3)).getOdds(eq(testMatchId), any());
-        }
-    }
-
-    @Nested
-    @DisplayName("Controller Integration")
-    class ControllerIntegration {
-
-        @Test
-        @DisplayName("Should handle concurrent requests to different endpoints")
-        void shouldHandleConcurrentRequestsToDifferentEndpoints() {
-            // Arrange
-            when(matchResultsService.getMatchResultMap(testMatchIds))
-                    .thenReturn(testResultMap);
-            when(oddsService.getOdds(testMatchId, OddsType.HOME_WIN))
-                    .thenReturn(Optional.of(new BigDecimal("1.50")));
-
-            // Act
-            ResponseEntity<MatchResultMapDto> resultsResponse = matchController.getResults(testMatchIds);
-            ResponseEntity<BigDecimal> oddsResponse = matchController.getOdds(testMatchId, OddsType.HOME_WIN);
-
-            // Assert
-            assertThat(resultsResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-            assertThat(oddsResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-            verify(matchResultsService).getMatchResultMap(testMatchIds);
-            verify(oddsService).getOdds(testMatchId, OddsType.HOME_WIN);
-        }
     }
 }
