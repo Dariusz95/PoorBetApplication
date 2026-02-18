@@ -15,6 +15,29 @@ services:
     networks:
       - main_network
 
+  authorization-server:
+    build:
+      context: ./authorization-service
+      dockerfile: Dockerfile
+    container_name: authorization-server
+    ports:
+      - "9000:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://oauth-db:5432/${POSTGRES_OAUTH_DB}
+      - POSTGRES_USER=${POSTGRES_OAUTH_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_OAUTH_PASSWORD}
+      - JWT_PRIVATE_KEY_PATH=/secrets/private.pem
+      - JWT_PUBLIC_KEY_PATH=/secrets/public.pem
+      - FRONTEND_CLIENT_ID=frontend-client
+      - FRONTEND_CLIENT_REDIRECT_URI=http://localhost:4200/callback
+    volumes:
+      - ./secrets:/secrets:ro
+    depends_on:
+      - oauth-db
+    networks:
+      - main_network
+
   gateway:
     build:
       context: ./gateway
@@ -30,6 +53,7 @@ services:
     depends_on:
       - user-service
       - user-db
+      - authorization-server
 
   python-trainer:
     build: ./odds-training/python-scripts
@@ -203,6 +227,23 @@ services:
     networks:
       - main_network
 
+  oauth-db:
+    build:
+      context: ./oauth-db
+      dockerfile: Dockerfile
+    container_name: oauth-db
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_OAUTH_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_OAUTH_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_OAUTH_DB}
+    ports:
+      - "5436:5432"
+    volumes:
+      - oauth_data:/var/lib/postgresql/data
+    networks:
+      - main_network
+
   match-db:
     build:
       context: ./match-db
@@ -276,5 +317,6 @@ volumes:
   teams_data:
   match_data:
   coupon_data:
+  oauth_data:
   cache:
   rabbitmq_data:
