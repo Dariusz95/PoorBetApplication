@@ -8,7 +8,7 @@ spring:
         - id: public-user-service
           uri: http://user-service:8080
           predicates:
-            - Path=/api/users/login, /api/users/register
+            - Path=/api/users/register
           filters:
             - StripPrefix=0
 
@@ -18,7 +18,6 @@ spring:
             - Path=/api/users/**
           filters:
             - StripPrefix=0
-            - JwtAuthFilter
             - AddRequestHeader=X-API-KEY, ${API_KEY}
 
         - id: match-service
@@ -31,11 +30,19 @@ spring:
           predicates:
             - Path=/api/teams/**
 
-
         - id: coupon-service
-          uri: http://coupon-service:8086
+          uri: http://coupon-service:8080
           predicates:
             - Path=/api/coupons/**
 
-jwt:
-  secret: ${JWT_SECRET}
+        - id: authorization-server
+          uri: http://authorization-server:8080
+          predicates:
+            - Path=/.well-known/**, /oauth2/**, /userinfo, /login, /error
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${AUTH_SERVER_ISSUER:http://authorization-server:8080}
+          jwk-set-uri: ${AUTH_SERVER_JWK_SET_URI:http://authorization-server:8080/oauth2/jwks}

@@ -8,6 +8,8 @@ import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.server.authorization.client.JdbcRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
+import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
+import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
 import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
 
 import java.util.UUID;
@@ -28,11 +30,16 @@ public class AuthorizationServerConfig {
 
             RegisteredClient frontendClient = RegisteredClient.withId(UUID.randomUUID().toString())
                     .clientId(frontendProps.getId())
+                    .clientName("PoorBet Frontend/Mobile")
                     .clientAuthenticationMethod(ClientAuthenticationMethod.NONE)
                     .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                     .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
                     .redirectUri(frontendProps.getRedirectUri())
                     .scopes(scopes -> scopes.addAll(frontendProps.getScopes()))
+                    .clientSettings(ClientSettings.builder()
+                            .requireProofKey(true)
+                            .requireAuthorizationConsent(false)
+                            .build())
                     .tokenSettings(TokenSettings.builder()
                             .accessTokenTimeToLive(tokenProps.getAccessTokenTtl())
                             .refreshTokenTimeToLive(tokenProps.getRefreshTokenTtl())
@@ -44,5 +51,12 @@ public class AuthorizationServerConfig {
         }
 
         return repository;
+    }
+
+    @Bean
+    public AuthorizationServerSettings authorizationServerSettings(AuthServerProperties authServerProperties) {
+        return AuthorizationServerSettings.builder()
+                .issuer(authServerProperties.getIssuer())
+                .build();
     }
 }

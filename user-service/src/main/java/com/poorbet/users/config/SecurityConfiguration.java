@@ -34,8 +34,10 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .anyRequest().permitAll()
-                );
+                        .requestMatchers(HttpMethod.POST, "/api/users/login", "/api/users/register").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> {}));
 
         return http.build();
     }

@@ -24,6 +24,9 @@ logging:
     org.flywaydb: DEBUG
 
 auth:
+  server:
+    issuer: ${AUTH_SERVER_ISSUER:http://authorization-service:9000}
+    audience: ${AUTH_SERVER_AUDIENCE:poorbet-api}
   cors:
     allowed-origins:
       - http://localhost:4200
@@ -39,3 +42,4 @@ auth:
         - openid
         - profile
         - users:read
+        - offline_access
