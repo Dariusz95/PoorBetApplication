@@ -1,82 +1,113 @@
 .pb-button {
-  @apply inline-flex items-center justify-center font-medium transition-all duration-200 ease-in-out;
-  @apply focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed select-none relative;
+  @apply inline-flex items-center justify-center relative select-none;
+  @apply font-medium transition duration-200 ease-out;
+  @apply focus:outline-none focus:ring-2 focus:ring-app-primary focus:ring-offset-2;
+  @apply disabled:cursor-not-allowed disabled:opacity-60;
+  @apply rounded-md;
+  min-height: 40px;
+  padding: 0 1.25rem;
+}
 
-  &--sm {
-    @apply px-3 py-1.5 text-sm rounded-md min-h-[32px];
-  }
+.pb-button--sm {
+  @apply px-3 text-sm rounded-md;
+  min-height: 32px;
+}
 
-  &--md {
-    @apply px-4 py-2 text-sm rounded-md min-h-[40px];
-  }
+.pb-button--md {
+  @apply px-4 text-sm rounded-md;
+  min-height: 40px;
+}
 
-  &--lg {
-    @apply px-6 py-3 text-base rounded-lg min-h-[48px];
-  }
+.pb-button--lg {
+  @apply px-6 text-base rounded-lg;
+  min-height: 48px;
+}
 
-  &--responsive {
-    @apply px-3 sm:px-4 lg:px-6 py-1.5 sm:py-2 lg:py-3;
-    @apply text-sm lg:text-base rounded-md lg:rounded-lg;
-    @apply min-h-[32px] sm:min-h-[40px] lg:min-h-[48px];
-  }
+.pb-button--responsive {
+  @apply px-3 sm:px-4 lg:px-6;
+  @apply text-sm lg:text-base;
+  min-height: 40px;
+}
 
-  &--primary {
-    @apply bg-blue-600 text-white border border-blue-600;
-    @apply hover:bg-blue-700 hover:border-blue-700 focus:ring-blue-500;
-    @apply active:bg-blue-800 disabled:bg-blue-300 disabled:border-blue-300;
-    @apply shadow-sm hover:shadow-md;
-  }
+.pb-button--primary {
+  background: linear-gradient(
+    135deg,
+    theme("colors.app.primary"),
+    theme("colors.app.primaryDark")
+  );
+  @apply text-white shadow-glow;
+}
 
-  &--secondary {
-    @apply bg-gray-100 text-gray-900 border border-gray-300;
-    @apply hover:bg-gray-200 hover:border-gray-400 focus:ring-gray-500;
-    @apply active:bg-gray-300 disabled:bg-gray-50 disabled:text-gray-400 disabled:border-gray-200;
-    @apply shadow-sm hover:shadow-md;
-  }
+.pb-button--primary:hover {
+  transform: translateY(-2px);
+  @apply shadow-elevated;
+}
 
-  &--outline {
-    @apply bg-transparent text-blue-600 border-2 border-blue-600;
-    @apply hover:bg-blue-50 hover:text-blue-700 focus:ring-blue-500;
-    @apply active:bg-blue-100 disabled:text-blue-300 disabled:border-blue-300 disabled:bg-transparent;
-  }
+.pb-button--primary:active {
+  transform: translateY(0);
+}
 
-  &--ghost {
-    @apply bg-transparent text-gray-700 border border-transparent;
-    @apply hover:bg-gray-100 hover:text-gray-900 focus:ring-gray-500;
-    @apply active:bg-gray-200 disabled:text-gray-400 disabled:bg-transparent;
-  }
+.pb-button--secondary {
+  @apply bg-app-surface text-app-text border border-app-border shadow-surface;
+}
 
-  &--danger {
-    @apply bg-red-600 text-white border border-red-600;
-    @apply hover:bg-red-700 hover:border-red-700 focus:ring-red-500;
-    @apply active:bg-red-800 disabled:bg-red-300 disabled:border-red-300;
-    @apply shadow-sm hover:shadow-md;
-  }
+.pb-button--secondary:hover {
+  @apply bg-app-surfaceSoft;
+}
 
-  &--success {
-    @apply bg-green-600 text-white border border-green-600;
-    @apply hover:bg-green-700 hover:border-green-700 focus:ring-green-500;
-    @apply active:bg-green-800 disabled:bg-green-300 disabled:border-green-300;
-    @apply shadow-sm hover:shadow-md;
-  }
+.pb-button--outline {
+  @apply bg-transparent text-app-primary border border-app-primary;
+}
 
-  &--full-width {
-    @apply w-full;
-  }
+.pb-button--outline:hover {
+  background: rgba(139, 92, 246, 0.08);
+}
 
-  &--loading {
-    @apply cursor-wait;
-  }
+.pb-button--ghost {
+  @apply bg-transparent text-app-text;
+}
 
-  &__content {
-    @apply flex items-center justify-center gap-2;
-  }
+.pb-button--ghost:hover {
+  @apply bg-app-surfaceSoft;
+}
 
-  &__text {
-    @apply truncate;
-    
-    &--loading {
-      @apply opacity-70;
-    }
-  }
+.pb-button--success {
+  background: linear-gradient(135deg, theme("colors.app.success"), #16a34a);
+  @apply text-white;
+}
+
+.pb-button--danger {
+  background: linear-gradient(135deg, theme("colors.app.danger"), #dc2626);
+  @apply text-white;
+}
+
+.pb-button--link {
+  background: transparent;
+  color: theme("colors.app.primary");
+  text-decoration: underline;
+  @apply shadow-none;
+}
+
+.pb-button--link:hover {
+  color: theme("colors.app.primaryDark");
+}
+
+.pb-button--full-width {
+  @apply w-full;
+}
+
+.pb-button--loading {
+  cursor: wait;
+}
+
+.pb-button__content {
+  @apply flex items-center justify-center gap-2;
+}
+
+.pb-button__text {
+  @apply truncate;
+}
+
+.pb-button__text--loading {
+  @apply opacity-70;
 }

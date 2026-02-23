@@ -32,7 +32,7 @@ export class PbButtonComponent {
   routerLink = input<RoutePath | null>(null);
   routerParams = input<Partial<Record<RouteParam, string>> | null>(null);
   disabled = input<boolean>(false);
-  type = input<'button' | 'submit' | 'reset'>('button');
+  type = input<'button' | 'submit' | 'reset' | 'link'>('button');
   fullWidth = input<boolean>(false);
   loading = input<boolean>(false);
   ariaLabel = input<string | undefined>();
@@ -50,14 +50,17 @@ export class PbButtonComponent {
 
     return this.routingService.createLink(
       this.routerLink()!,
-      this.routerParams()
+      this.routerParams(),
     );
   });
 
   onClick(event: Event): void {
-    if (!this.loading && !this.disabled) {
-      this.buttonClick.emit(event);
+    if (this.loading() || this.disabled()) {
+      event.preventDefault();
+      return;
     }
+
+    this.buttonClick.emit(event);
   }
 
   getButtonClasses(): string {

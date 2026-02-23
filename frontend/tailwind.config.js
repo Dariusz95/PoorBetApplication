@@ -1,47 +1,52 @@
 module.exports = {
-  darkMode: "selector",
   content: ["./src/**/*.{html,ts,scss}"],
   theme: {
     extend: {
       colors: {
-        primary: {
-          50: "#f6f4f6",
-          100: "#eae5eb",
-          200: "#d5c9d7",
-          300: "#b9a6bd",
-          400: "#9e83a3",
-          500: "#7e6184",
-          600: "#664a6a",
-          700: "#4A314D",
-          800: "#3d2a40",
-          900: "#2b1e2d",
-          950: "#1a121b",
-        },
-        secondary: {
-          50: "#f4f7f2",
-          100: "#e8efe3",
-          200: "#d2dfcb",
-          300: "#b3ca9f",
-          400: "#89A971",
-          500: "#6c8f54",
-          600: "#567243",
-          700: "#455b36",
-          800: "#39482d",
-          900: "#2e3a25",
-          950: "#171e12",
+        app: {
+          bg: "#0e1117",
+          surface: "#1e222b",
+          surfaceSoft: "#252b38",
+          border: "rgba(255,255,255,0.06)",
+
+          primary: "#8B5CF6",
+          primaryDark: "#6D28D9",
+
+          accent: "#3B82F6",
+          accentDark: "#2563EB",
+
+          success: "#22C55E",
+          danger: "#e16f67",
+
+          text: "#E5E7EB",
+          textMuted: "#9CA3AF",
         },
       },
+
+      borderRadius: {
+        sm: "4px",
+        md: "8px",
+        lg: "16px",
+        xl: "24px",
+      },
+
       boxShadow: {
-        neon: "0 0 5px theme('colors.primary.500'), 0 0 20px theme('colors.purple.500')",
+        surface: "0 10px 30px rgba(0,0,0,0.6)",
+        glow: "0 0 30px rgba(139,92,246,0.35)",
+        elevated: "0 20px 50px rgba(0,0,0,0.7)",
       },
-      fontSize: {
-        "xs-clamp": "clamp(0.75rem, 1.5vw, 0.875rem)",
-        "sm-clamp": "clamp(0.875rem, 1.8vw, 1rem)",
-        "base-clamp": "clamp(1rem, 2vw, 1.125rem)",
-        "lg-clamp": "clamp(1.25rem, 2.5vw, 1.5rem)",
-        "xl-clamp": "clamp(1.5rem, 4vw, 2rem)",
-        "2xl-clamp": "clamp(2rem, 5vw, 2.5rem)",
-        "3xl-clamp": "clamp(2.5rem, 6vw, 3rem)",
+
+      backgroundImage: {
+        "app-gradient": `
+          radial-gradient(circle at 100% 0%, rgba(139,92,246,0.25) 0%, transparent 45%),
+          radial-gradient(circle at 0% 100%, rgba(59,130,246,0.15) 0%, transparent 50%),
+          linear-gradient(180deg, #151922 0%, #0e1117 100%)
+        `,
+      },
+
+      fontFamily: {
+        sans: ["Inter", "system-ui", "sans-serif"],
+        display: ["Inter", "system-ui", "sans-serif"],
       },
     },
   },

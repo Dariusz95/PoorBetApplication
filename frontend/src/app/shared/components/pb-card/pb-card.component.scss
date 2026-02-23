@@ -1,3 +1,30 @@
 :host {
-  @apply p-2 md:p-4 lg:p-6 rounded-lg shadow-neon bg-white dark:bg-zinc-900;
+  @apply block relative overflow-hidden;
+  @apply bg-app-surface border border-app-border rounded-lg;
+  @apply shadow-surface transition-all duration-300 ease-out;
+  @apply w-full max-w-md;
+
+  padding: 1rem;
+}
+
+:host(.with-glow) {
+  @apply shadow-surface shadow-glow;
+}
+
+:host(.hoverable:hover) {
+  @apply shadow-elevated;
+  transform: translateY(-1px);
+}
+
+:host::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.06),
+    transparent 40%
+  );
+  pointer-events: none;
 }

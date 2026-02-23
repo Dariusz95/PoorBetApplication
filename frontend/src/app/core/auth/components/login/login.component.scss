@@ -1,31 +1,8 @@
 .login-container {
-  @apply bg-white dark:bg-zinc-900 flex items-center justify-center min-h-screen p-8;
-
-  .card {
-    @apply w-full max-w-[600px];
-  }
-
-  .header {
-    @apply flex justify-between items-center mb-6;
-
-    h2 {
-      @apply m-0;
-    }
-  }
-
-  .error-message {
-    @apply text-[color:var(--error-color)] text-sm mt-1;
-  }
-
-  .form-actions {
-    @apply mt-6;
-
-    .btn {
-      @apply w-full;
-    }
-  }
-
-  .register-link {
-    @apply text-center mt-6 text-sm;
-  }
+  display: flex;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
 }

@@ -1,109 +1,70 @@
-/* --- Global Header Styles --- */
 .app-header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    background-color: #fff; /* Białe tło jak na obrazku */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08); /* Delikatniejszy cień */
-    padding: 10px 20px;
-    z-index: 1000;
-    height: 60px; /* Stała wysokość nagłówka */
-    box-sizing: border-box; /* Upewnij się, że padding nie zwiększa wysokości */
+  @apply fixed top-0 left-0 right-0 z-[1000] h-[60px] px-5 md:px-5 box-border;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.header-content {
+  @apply flex justify-between items-center w-full h-full max-w-[1200px] mx-auto;
+}
+
+.header-left,
+.header-right {
+  @apply flex items-center h-full;
+}
+
+.logo-link img.app-logo {
+  @apply h-10;
+}
+
+@media (min-width: 768px) {
+  .header-left {
+    @apply gap-5;
   }
-  
-  .header-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    max-width: 1200px;
-    margin: 0 auto;
-    width: 100%;
-    height: 100%; /* Zawartość zajmuje całą wysokość headera */
+
+  .header-nav-desktop {
+    @apply block;
   }
-  
-  .header-left,
+
+  .header-nav-desktop ul {
+    @apply flex list-none p-0 m-0 gap-4;
+  }
+
+  .header-nav-desktop a {
+    @apply no-underline font-bold text-[#333] py-1;
+  }
+
   .header-right {
-    display: flex;
-    align-items: center;
-    height: 100%;
+    @apply gap-2;
   }
-  
+
+  .header-button {
+    @apply py-2 px-4 rounded-sm font-bold text-center cursor-pointer;
+  }
+
+  .login-button {
+    @apply border border-app-primary text-app-primary bg-transparent;
+  }
+
+  .register-button {
+    @apply border border-app-primary bg-app-primary text-white;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .header-nav-desktop,
+  .header-right {
+    @apply hidden;
+  }
+
+  .header-left {
+    @apply w-full justify-center;
+  }
+
   .logo-link img.app-logo {
-    height: 40px; /* Rozmiar logo */
+    @apply mx-auto;
   }
-  
-  
-  /* --- Desktop Styles (min-width) --- */
-  @media (min-width: 768px) {
-    .header-left {
-       gap: 20px;
-    }
-  
-    .header-nav-desktop {
-      display: block;
-    }
-  
-    .header-nav-desktop ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      display: flex;
-      gap: 15px;
-    }
-  
-    .header-nav-desktop a {
-      text-decoration: none;
-      color: #333;
-      font-weight: bold;
-      padding: 5px 0; /* Dodaj padding dla klikalności */
-    }
-  
-    .header-right {
-       gap: 10px;
-    }
-  
-    .header-button {
-      padding: 8px 15px;
-      border-radius: 4px;
-      text-decoration: none;
-      font-weight: bold;
-      text-align: center;
-      cursor: pointer;
-    }
-  
-    .login-button {
-      border: 1px solid #007bff;
-      color: #007bff;
-      background-color: transparent;
-    }
-  
-    .register-button {
-      background-color: #007bff;
-      color: white;
-      border: 1px solid #007bff;
-    }
+
+  .app-header {
+    @apply px-4;
   }
-  
-  /* --- Mobile Styles (max-width) --- */
-  @media (max-width: 767.98px) {
-     .header-nav-desktop,
-     .header-right {
-       display: none;
-     }
-  
-     /* Na małym ekranie lewa sekcja zawiera tylko logo i może być wyśrodkowana */
-      .header-left {
-        width: 100%;
-        justify-content: center; /* Wyśrodkuj logo na małym ekranie */
-      }
-       .logo-link img.app-logo {
-         /* Brak marginesu po prawej, jeśli logo jest wyśrodkowane */
-         margin: 0 auto;
-      }
-  
-      /* Header na małym ekranie ma stałą wysokość */
-      .app-header {
-        padding: 0 15px; /* Mniejszy padding boczny */
-      }
-  }
+}

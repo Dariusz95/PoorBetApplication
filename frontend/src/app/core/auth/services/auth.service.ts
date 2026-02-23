@@ -17,7 +17,7 @@ export class AuthService {
   private apiBaseUrl = `${environment.backend.baseURL}/api/users`;
 
   private readonly isLoggedInSubject = new BehaviorSubject<boolean>(
-    this.jwtAuthState.isLoggedIn()
+    this.jwtAuthState.isAuthenticated()
   );
   readonly isLoggedIn$: Observable<boolean> =
     this.isLoggedInSubject.asObservable();
@@ -33,7 +33,7 @@ export class AuthService {
       tap((response) => {
         if (response.token) {
           this.jwtAuthState.setToken(response.token);
-          this.isLoggedInSubject.next(true);
+          this.isLoggedInSubject.next(this.jwtAuthState.isAuthenticated());
         }
       })
     );
@@ -45,6 +45,6 @@ export class AuthService {
   }
 
   isLoggedIn(): boolean {
-    return this.jwtAuthState.isLoggedIn();
+    return this.jwtAuthState.isAuthenticated();
   }
 }
