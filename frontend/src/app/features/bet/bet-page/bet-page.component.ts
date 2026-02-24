@@ -1,51 +1,46 @@
-import { AsyncPipe, DatePipe, KeyValuePipe, SlicePipe } from '@angular/common';
+import { AsyncPipe, KeyValuePipe } from '@angular/common';
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { interval, startWith, Subject, switchMap, takeUntil } from 'rxjs';
-import { LiveMatchComponent } from '../live-match/live-match/live-match.component';
+import { LiveMatchComponent } from '../components/live-match-card/live-match.component';
+import { PoolCardComponent } from '../components/pool-card/pool-card.component';
 import { LiveMatchEvent, MatchService } from '../services/match.service';
-
-interface PoolWithTimer {
-  id: string;
-  status: string;
-  scheduledStartTime: string;
-  matches: any[];
-  timeRemaining: string;
-}
 
 @Component({
   selector: 'app-bet-page',
-  imports: [KeyValuePipe, LiveMatchComponent, AsyncPipe, DatePipe, SlicePipe],
+  standalone: true,
+  imports: [KeyValuePipe, LiveMatchComponent, AsyncPipe, PoolCardComponent],
   templateUrl: './bet-page.component.html',
   styleUrl: './bet-page.component.scss',
 })
 export class BetPageComponent implements OnInit, OnDestroy {
   private readonly matchService = inject(MatchService);
-  private destroy$ = new Subject<void>();
-  private refreshTrigger = new Subject<void>();
+  private readonly destroy$ = new Subject<void>();
+  private readonly refreshTrigger = new Subject<void>();
 
   liveMatches: Record<string, LiveMatchEvent> = {};
-
-  updateLiveMatch(event: LiveMatchEvent) {
-    console.log('xx liveMatches', this.liveMatches);
-    this.liveMatches[event.id] = event;
-  }
 
   future$ = this.refreshTrigger.pipe(
     startWith(void 0),
     switchMap(() => this.matchService.futureMatch())
   );
 
-  refreshFutureMatches() {
+  updateLiveMatch(event: LiveMatchEvent): void {
+    this.liveMatches[event.id] = event;
+  }
+
+  refreshFutureMatches(): void {
     this.refreshTrigger.next();
   }
 
-  calculateTimeRemaining(scheduledStartTime: string, first: boolean): string {
+  calculateTimeRemaining(scheduledStartTime: string, isFirst: boolean): string {
     const now = new Date().getTime();
     const startTime = new Date(scheduledStartTime).getTime();
     const diff = startTime - now;
 
     if (diff <= 0) {
-      if (first) this.refreshFutureMatches();
+      if (isFirst) {
+        this.refreshFutureMatches();
+      }
 
       return 'Rozpoczyna się';
     }
@@ -57,33 +52,35 @@ export class BetPageComponent implements OnInit, OnDestroy {
 
     if (days > 0) {
       return `${days}d ${hours}h`;
-    } else if (hours > 0) {
-      return `${hours}h ${minutes}m`;
-    } else if (minutes > 0) {
-      return `${minutes}m ${seconds}s`;
-    } else {
-      return `${seconds}s`;
     }
+
+    if (hours > 0) {
+      return `${hours}h ${minutes}m`;
+    }
+
+    if (minutes > 0) {
+      return `${minutes}m ${seconds}s`;
+    }
+
+    return `${seconds}s`;
   }
 
-  ngOnInit() {
-    // Stream live matches
-    this.matchService.streamMatch().subscribe((match) => {
-      console.log('Live Matches:', match);
-      if (match.id) {
-        this.updateLiveMatch(match);
-      }
-    });
+  ngOnInit(): void {
+    this.matchService
+      .streamMatch()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((match) => {
+        if (match.id) {
+          this.updateLiveMatch(match);
+        }
+      });
 
-    // Update timers every second
     interval(1000)
       .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        // Timer będzie aktualizowany automatycznie w template
-      });
+      .subscribe();
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
   }

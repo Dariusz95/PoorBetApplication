@@ -49,11 +49,11 @@ export class MatchService {
   private readonly http = inject(HttpClient);
   private readonly ngZone = inject(NgZone);
 
-  private apiBaseUrl = `${environment.backend.baseURL}/api/match`;
+  private apiBaseUrl = `${environment.backend.baseURL}/api/match-pool`;
 
   streamMatch(): Observable<LiveMatchEvent> {
     return new Observable<LiveMatchEvent>((observer) => {
-      const eventSource = new EventSource(this.apiBaseUrl);
+      const eventSource = new EventSource(`${this.apiBaseUrl}/live`);
 
       eventSource.onmessage = (event) => {
         this.ngZone.run(() => {
@@ -69,7 +69,6 @@ export class MatchService {
         eventSource.close();
       };
 
-      // Cleanup przy odsubskrybowaniu
       return () => {
         eventSource.close();
       };

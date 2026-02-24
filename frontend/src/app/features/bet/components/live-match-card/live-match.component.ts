@@ -3,6 +3,7 @@ import {
   Component,
   inject,
   input,
+  OnInit,
 } from '@angular/core';
 import { Observable } from 'rxjs';
 import { LiveMatchEvent, MatchEventType } from '../../services/match.service';
@@ -15,13 +16,14 @@ export interface ShortTeamInfo {
 }
 
 @Component({
-  selector: 'app-live-match',
+  selector: 'app-live-match-card',
+  standalone: true,
   imports: [AsyncPipe],
   templateUrl: './live-match.component.html',
   styleUrl: './live-match.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LiveMatchComponent {
+export class LiveMatchComponent implements OnInit {
   liveMatch = input.required<LiveMatchEvent>();
 
   private readonly teamService = inject(TeamService);

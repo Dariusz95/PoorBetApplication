@@ -24,7 +24,7 @@ spring:
         - id: match-service
           uri: http://match-service:8080
           predicates:
-            - Path=/api/match/**
+            - Path=/api/match/**, /api/match-pool/**
 
         - id: team-service
           uri: http://teams-service:8080

@@ -1,0 +1,39 @@
+<div class="rounded-lg border border-app-border bg-app-surface shadow-surface">
+  <header class="flex items-center justify-between border-b border-app-border bg-app-surfaceSoft px-4 py-3">
+    <div class="flex items-center gap-2">
+      <span class="relative flex h-2.5 w-2.5">
+        <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-app-danger opacity-80"></span>
+        <span class="relative inline-flex h-2.5 w-2.5 rounded-full bg-app-danger"></span>
+      </span>
+      <span class="text-xs font-semibold uppercase tracking-wide text-app-text">LIVE</span>
+    </div>
+
+    <span class="text-sm font-semibold text-app-primary">{{ liveMatch().minute }}'</span>
+  </header>
+
+  <div class="grid grid-cols-[1fr_auto_1fr] items-center gap-3 px-4 py-5">
+    <div class="text-center">
+      @if (homeTeam$ | async; as home) {
+        <p class="mb-2 line-clamp-2 text-sm font-medium text-app-text">{{ home.name }}</p>
+      }
+      <p class="text-3xl font-bold text-app-accent">{{ liveMatch().homeScore }}</p>
+    </div>
+
+    <p class="text-xs font-semibold uppercase tracking-wide text-app-textMuted">vs</p>
+
+    <div class="text-center">
+      @if (awayTeam$ | async; as away) {
+        <p class="mb-2 line-clamp-2 text-sm font-medium text-app-text">{{ away.name }}</p>
+      }
+      <p class="text-3xl font-bold text-app-primary">{{ liveMatch().awayScore }}</p>
+    </div>
+  </div>
+
+  <footer class="border-t border-app-border px-4 py-3 text-center text-xs font-medium text-app-textMuted">
+    @if (liveMatch().eventType === MatchEventType.MatchEnded) {
+      Koniec meczu
+    } @else {
+      Mecz trwa
+    }
+  </footer>
+</div>
