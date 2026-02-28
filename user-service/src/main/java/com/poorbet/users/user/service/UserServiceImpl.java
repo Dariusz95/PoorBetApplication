@@ -1,6 +1,5 @@
 package com.poorbet.users.user.service;
 
-import java.util.Collections;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -23,6 +22,8 @@ import com.poorbet.users.user.repository.UserRepository;
 @Service
 public class UserServiceImpl implements UserService  {
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
+    private static final String BET_CREATE_PERMISSION = "bet:create";
+    private static final String MATCH_FUTURE_PERMISSION = "match:future";
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
@@ -69,10 +70,11 @@ public class UserServiceImpl implements UserService  {
             throw new IllegalArgumentException("Invalid credentials");
         }
 
-        String token = jwtUtil.generateAccessToken(user.getEmail());
+        List<String> roles = List.of(user.getRole().name());
+        List<String> permissions = List.of(BET_CREATE_PERMISSION, MATCH_FUTURE_PERMISSION);
+        String token = jwtUtil.generateAccessToken(user.getEmail(), roles, permissions);
         long expiresAt = System.currentTimeMillis() + jwtUtil.getAccessTokenExpiration();
-        List<String> roles = Collections.emptyList();
 
-        return new JwtResponse(token, user.getEmail(), roles, expiresAt);
+        return new JwtResponse(token, user.getEmail(), roles, permissions, expiresAt);
     }
 }
