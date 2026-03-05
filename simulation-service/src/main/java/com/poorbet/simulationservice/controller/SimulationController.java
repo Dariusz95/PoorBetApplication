@@ -8,6 +8,7 @@ import com.poorbet.simulationservice.service.MatchSimulationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +28,7 @@ public class SimulationController {
             value = "/live",
             produces = MediaType.TEXT_EVENT_STREAM_VALUE
     )
+    @PreAuthorize("hasAuthority('match:live')")
     public Flux<LiveMatchEvent> simulateMatch(
             @Valid @RequestBody SimulationRequest request
     ) {

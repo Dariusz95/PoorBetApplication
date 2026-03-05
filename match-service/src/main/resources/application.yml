@@ -8,3 +8,28 @@ poorbet:
     jwk-set-uri: ${AUTH_JWKS_URI:http://user-service:8080/.well-known/jwks.json}
     protected-paths:
       - /api/match-pool/future
+      - /api/match-pool/live
+
+teams:
+  service:
+    url: http://teams-service:8080
+    timeout:
+      connect: 2s
+      read: 3s
+  internal-api:
+    token: ${TEAMS_INTERNAL_API_TOKEN}
+
+simulation:
+  service:
+    url: http://simulation-service:8080
+    timeout:
+      connect: 2s
+      read: 3s
+
+odds:
+  service:
+    url: http://odds-service:8080
+    timeout:
+      connect: 2s
+      read: 3s
+

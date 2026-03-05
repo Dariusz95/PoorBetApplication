@@ -19,23 +19,29 @@ spring:
           filters:
             - StripPrefix=0
             - JwtAuthFilter
-            - AddRequestHeader=X-API-KEY, ${API_KEY}
 
         - id: match-service
           uri: http://match-service:8080
           predicates:
             - Path=/api/match/**, /api/match-pool/**
+          filters:
+            - JwtAuthFilter
 
         - id: team-service
           uri: http://teams-service:8080
           predicates:
             - Path=/api/teams/**
+          filters:
+            - JwtAuthFilter
 
 
         - id: coupon-service
           uri: http://coupon-service:8086
           predicates:
             - Path=/api/coupons/**
+          filters:
+            - JwtAuthFilter
 
 jwt:
-  secret: ${JWT_SECRET}
+  issuer: ${JWT_ISSUER:poorbet-auth-service}
+  jwk-set-uri: ${AUTH_JWKS_URI:http://user-service:8080/.well-known/jwks.json}

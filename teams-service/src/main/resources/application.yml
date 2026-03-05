@@ -21,3 +21,14 @@ spring:
       timeout: 2000ms
     cache:
       type: redis
+
+poorbet:
+  security:
+    issuer: ${JWT_ISSUER:poorbet-auth-service}
+    jwk-set-uri: ${AUTH_JWKS_URI:http://user-service:8080/.well-known/jwks.json}
+    protected-paths:
+      - /api/teams/**
+
+teams:
+  internal-api:
+    token: ${TEAMS_INTERNAL_API_TOKEN}

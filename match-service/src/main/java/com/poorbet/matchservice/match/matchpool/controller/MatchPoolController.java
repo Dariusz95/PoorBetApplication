@@ -26,6 +26,7 @@ public class MatchPoolController {
             path = "/live",
             produces = MediaType.TEXT_EVENT_STREAM_VALUE
     )
+    @PreAuthorize("hasAuthority('match:live')")
     public Flux<LiveMatchEventDto> streamAll() {
         return Flux.merge(
                 Flux.just(LiveMatchEventDto.heartbeat()),

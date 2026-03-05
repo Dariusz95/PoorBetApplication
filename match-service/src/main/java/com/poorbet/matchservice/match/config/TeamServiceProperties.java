@@ -10,7 +10,9 @@ public record TeamServiceProperties (
         @NotNull
         String url,
         @NotNull
-        Timeout timeout
+        Timeout timeout,
+        @NotNull
+        String internalApiToken
 ){
     public record Timeout(Duration connect, Duration read){}
 }
