@@ -1,35 +1,39 @@
 spring:
   application:
     name: match-service
-
-poorbet:
   security:
-    issuer: ${JWT_ISSUER:poorbet-auth-service}
-    jwk-set-uri: ${AUTH_JWKS_URI:http://user-service:8080/.well-known/jwks.json}
-    protected-paths:
-      - /api/match-pool/future
-      - /api/match-pool/live
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${SECURITY_JWK_SET_URI:http://user-service:8080/.well-known/jwks.json}
+          issuer-uri: ${SECURITY_ISSUER_URI:http://user-service:8080}
 
 teams:
   service:
-    url: http://teams-service:8080
+    url: ${TEAMS_SERVICE_URL:http://teams-service:8080}
     timeout:
-      connect: 2s
-      read: 3s
-  internal-api:
-    token: ${TEAMS_INTERNAL_API_TOKEN}
+      connect: ${TEAMS_SERVICE_CONNECT_TIMEOUT:2s}
+      read: ${TEAMS_SERVICE_READ_TIMEOUT:3s}
 
 simulation:
   service:
-    url: http://simulation-service:8080
+    url: ${SIMULATION_SERVICE_URL:http://simulation-service:8080}
     timeout:
-      connect: 2s
-      read: 3s
+      connect: ${SIMULATION_SERVICE_CONNECT_TIMEOUT:2s}
+      read: ${SIMULATION_SERVICE_READ_TIMEOUT:3s}
 
 odds:
   service:
-    url: http://odds-service:8080
+    url: ${ODDS_SERVICE_URL:http://odds-service:8080}
     timeout:
-      connect: 2s
-      read: 3s
+      connect: ${ODDS_SERVICE_CONNECT_TIMEOUT:2s}
+      read: ${ODDS_SERVICE_READ_TIMEOUT:3s}
 
+auth:
+  service:
+    url: ${AUTH_SERVICE_URL:http://user-service:8080}
+    client-id: ${AUTH_SERVICE_CLIENT_ID:match-service}
+    client-secret: ${AUTH_SERVICE_CLIENT_SECRET:secret}
+    timeout:
+      connect: ${AUTH_SERVICE_CONNECT_TIMEOUT:2s}
+      read: ${AUTH_SERVICE_READ_TIMEOUT:3s}

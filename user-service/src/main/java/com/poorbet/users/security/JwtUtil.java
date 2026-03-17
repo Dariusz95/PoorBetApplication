@@ -1,7 +1,9 @@
 package com.poorbet.users.security;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -16,48 +18,49 @@ public class JwtUtil {
 
     private final RsaKeyProvider rsaKeyProvider;
 
+    public JwtUtil(RsaKeyProvider rsaKeyProvider) {
+        this.rsaKeyProvider = rsaKeyProvider;
+    }
+
+    @Value("${jwt.issuer:poorbet-auth-service}")
+    private String issuer;
+
     @Value("${jwt.access-token-expiration:900000}")
     private Long accessTokenExpiration;
 
     @Value("${jwt.refresh-token-expiration:604800000}")
     private Long refreshTokenExpiration;
 
-    @Value("${jwt.issuer:poorbet-auth-service}")
-    private String issuer;
-
-    public JwtUtil(RsaKeyProvider rsaKeyProvider) {
-        this.rsaKeyProvider = rsaKeyProvider;
-    }
-
-    public String generateAccessToken(String email, List<String> roles, List<String> permissions) {
-        return generateToken(email, accessTokenExpiration, roles, permissions);
+    public String generateAccessToken(String subject, List<String> roles, List<String> permissions) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("roles", roles);
+        claims.put("permissions", permissions);
+        return generateToken(subject, accessTokenExpiration, claims);
     }
 
     public String generateRefreshToken(String email) {
-        return generateToken(email, refreshTokenExpiration, List.of(), List.of());
+        return generateToken(email, refreshTokenExpiration, Map.of());
     }
 
-    private String generateToken(String subject, Long expiration, List<String> roles, List<String> permissions) {
+    private String generateToken(String subject, Long expiration, Map<String, Object> claims) {
         return Jwts.builder()
-                .header().add("kid", rsaKeyProvider.keyId()).and()
-                .subject(subject)
-                .claim("roles", roles)
-                .claim("permissions", permissions)
-                .issuer(issuer)
-                .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + expiration))
+                .setClaims(claims)
+                .setSubject(subject)
+                .setHeaderParam("kid", rsaKeyProvider.keyId())
+                .setIssuedAt(new Date())
+                .setIssuer(issuer)
+                .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(rsaKeyProvider.privateKey(), SignatureAlgorithm.RS256)
                 .compact();
     }
 
     public boolean validateToken(String token) {
         try {
-            Claims claims = Jwts.parser()
+            Jwts.parser()
                     .verifyWith(rsaKeyProvider.publicKey())
                     .build()
-                    .parseSignedClaims(token)
-                    .getPayload();
-            return issuer.equals(claims.getIssuer());
+                    .parseSignedClaims(token);
+            return true;
         } catch (JwtException | IllegalArgumentException e) {
             return false;
         }
@@ -69,10 +72,6 @@ public class JwtUtil {
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
-
-        if (!issuer.equals(claims.getIssuer())) {
-            throw new JwtException("Invalid issuer");
-        }
         return claims.getSubject();
     }
 

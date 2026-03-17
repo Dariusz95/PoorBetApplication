@@ -1,18 +1,17 @@
 package com.poorbet.matchservice.match.config;
 
+import com.poorbet.commons.auth.webclient.JwtForwardingFilter;
 import io.netty.channel.ChannelOption;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
-import org.springframework.util.StringUtils;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.netty.http.client.HttpClient;
 
 @Configuration
 @RequiredArgsConstructor
 public class WebClientConfig {
-    private static final String X_API_KEY_HEADER = "X-API-KEY";
 
     private final TeamServiceProperties teamServiceProperties;
     private final SimulationServiceProperties simulationServiceProperties;
@@ -24,10 +23,10 @@ public class WebClientConfig {
     }
 
     @Bean
-    public WebClient teamsWebClient() {
+    public WebClient teamsWebClient(JwtForwardingFilter jwtForwardingFilter) {
         return WebClient.builder()
                 .baseUrl(teamServiceProperties.url())
-                .defaultHeader(X_API_KEY_HEADER, teamServiceProperties.internalApiToken())
+                .filter(jwtForwardingFilter)
                 .clientConnector(new ReactorClientHttpConnector(
                         HttpClient.create()
                                 .responseTimeout(teamServiceProperties.timeout().read())
@@ -47,6 +46,7 @@ public class WebClientConfig {
                 ))
                 .build();
     }
+
 
     @Bean
     public WebClient simulationWebClient() {

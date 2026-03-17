@@ -22,3 +22,9 @@ run-app:
 	./generate-matches.sh
 	docker compose run --rm python-trainer python train_model.py
 	docker compose up -d --build
+
+user:
+	docker compose up --build user-service
+
+dev:
+	docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build

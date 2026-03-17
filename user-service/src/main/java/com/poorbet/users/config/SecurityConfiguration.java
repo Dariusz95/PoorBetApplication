@@ -1,6 +1,7 @@
 package com.poorbet.users.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import com.poorbet.users.auth.AuthClientsProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +15,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-@EnableConfigurationProperties(CorsProperties.class)
+@EnableConfigurationProperties({CorsProperties.class, AuthClientsProperties.class})
 @Configuration
 public class SecurityConfiguration {
 

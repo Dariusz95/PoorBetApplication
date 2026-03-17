@@ -11,6 +11,8 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.List;
+
 
 @Slf4j
 @Service
@@ -31,6 +33,11 @@ public class OddsClient {
     }
 
     public BatchPredictionResponse getBatchPrediction(@Valid PredictionBatchRequestDto data){
+        if (data == null || data.getMatches() == null || data.getMatches().isEmpty()) {
+            log.warn("Skipping odds batch prediction request because match list is empty");
+            return new BatchPredictionResponse(List.of());
+        }
+
         return this.oddsWebClient.post()
                 .uri("api/odds/predict/batch")
                 .bodyValue(data)

@@ -1,3 +1,5 @@
+version: "3.3"
+
 services:
   frontend:
     build:
@@ -20,6 +22,10 @@ services:
     container_name: gateway
     ports:
       - "8081:8081"
+    environment:
+      - JWT_ISSUER=${JWT_ISSUER}
+      - JWT_KEY_ID=${JWT_KEY_ID}
+      - API_KEY=${API_KEY}
     networks:
       - main_network
     depends_on:
@@ -36,17 +42,12 @@ services:
   odds-service:
     build:
       context: ./odds-service
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     container_name: odds-service
-    volumes:
-      - ./odds-service:/app
-      - ./data/models:/app/data/models
-      - ~/.m2:/root/.m2
     ports:
       - "8085:8080"
-      - "5072:5072"
     environment:
-      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_PROFILES_ACTIVE=prod
       - MODEL_PATH=/app/data/models/match_predictor.onnx
     networks:
       - main_network
@@ -54,14 +55,10 @@ services:
   simulation-service:
     build:
       context: ./simulation-service
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     container_name: simulation-service
-    volumes:
-      - ./simulation-service:/app
-      - ~/.m2:/root/.m2
     ports:
       - "8084:8080"
-      - "5073:5073"
     networks:
       - main_network
     healthcheck:
@@ -71,20 +68,17 @@ services:
 
   user-service:
     build:
-      context: ./user-service
-      dockerfile: Dockerfile.dev
+      context: .
+      dockerfile: user-service/Dockerfile
     container_name: user-service
     environment:
-      - SPRING_PROFILES_ACTIVE=dev
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://user-db:5432/${POSTGRES_DB}
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-    volumes:
-      - ./user-service:/app
-      - ~/.m2:/root/.m2
-    ports:
-      - "8089:8080"
-      - "5079:5079"
+      - JWT_ISSUER=${JWT_ISSUER}
+      - JWT_KEY_ID=${JWT_KEY_ID}
+      - API_KEY=${API_KEY}
     depends_on:
       - user-db
     networks:
@@ -110,20 +104,16 @@ services:
   teams-service:
     build:
       context: ./teams-service
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     container_name: teams-service
     environment:
-      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_PROFILES_ACTIVE=prod
       - SPRING_DATASOURCE_URL=jdbc:postgresql://teams-db:5432/${POSTGRES_TEAMS_DB}
       - POSTGRES_USER=${POSTGRES_TEAMS_USER}
       - POSTGRES_PASSWORD=${POSTGRES_TEAMS_PASSWORD}
       - TEAMS_INTERNAL_API_TOKEN=${TEAMS_INTERNAL_API_TOKEN}
-    volumes:
-      - ./teams-service:/app
-      - ~/.m2:/root/.m2
     ports:
       - "8082:8080"
-      - "5071:5071"
     depends_on:
       - redis
       - teams-db
@@ -132,11 +122,11 @@ services:
 
   match-service:
     build:
-      context: ./match-service
-      dockerfile: Dockerfile.dev
+      context: .
+      dockerfile: match-service/Dockerfile
     container_name: match-service
     environment:
-      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_PROFILES_ACTIVE=prod
       - SPRING_DATASOURCE_URL=jdbc:postgresql://match-db:5432/${POSTGRES_MATCH_DB}
       - POSTGRES_USER=${POSTGRES_MATCH_USER}
       - POSTGRES_PASSWORD=${POSTGRES_MATCH_PASSWORD}
@@ -146,13 +136,8 @@ services:
       - RABBITMQ_PORT=${RABBITMQ_PORT}
       - RABBITMQ_HOST=rabbitmq
       - TEAMS_INTERNAL_API_TOKEN=${TEAMS_INTERNAL_API_TOKEN}
-    volumes:
-      - ./match-service:/app
-      - ./poorbet-commons:/poorbet-commons
-      - ~/.m2:/root/.m2
     ports:
       - "8083:8080"
-      - "5070:5070"
     depends_on:
       - redis
       - teams-db
@@ -164,10 +149,10 @@ services:
   coupon-service:
     build:
       context: ./coupon-service
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     container_name: coupon-service
     environment:
-      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_PROFILES_ACTIVE=prod
       - SPRING_DATASOURCE_URL=jdbc:postgresql://coupon-db:5432/${POSTGRES_COUPON_DB}
       - POSTGRES_USER=${POSTGRES_COUPON_USER}
       - POSTGRES_PASSWORD=${POSTGRES_COUPON_PASSWORD}
@@ -175,12 +160,8 @@ services:
       - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
       - RABBITMQ_PORT=${RABBITMQ_PORT}
       - RABBITMQ_HOST=rabbitmq
-    volumes:
-      - ./coupon-service:/app
-      - ~/.m2:/root/.m2
     ports:
       - "8086:8080"
-      - "5076:5076"
     depends_on:
       - redis
       - coupon-db
