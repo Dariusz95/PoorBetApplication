@@ -9,7 +9,6 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-
     <groupId>com.poorbet</groupId>
 	<artifactId>match-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>

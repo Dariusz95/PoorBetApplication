@@ -1,11 +1,14 @@
-version: "3.3"
-
 services:
   frontend:
     build:
+      context: ./frontend
       dockerfile: Dockerfile.dev
+    container_name: frontend
+    ports:
+      - "4200:4200"
     volumes:
-      - ./frontend:/app
+      - ./frontend:/app:cached
+      - /app/node_modules
     environment:
       - CHOKIDAR_USEPOLLING=true
 
@@ -29,7 +32,8 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=dev
     volumes:
-      - ./simulation-service:/app
+#      - ./simulation-service:/app
+      - ./simulation-service:/app:cached
       - ~/.m2:/root/.m2
     ports:
       - "8084:8080"
@@ -41,9 +45,10 @@ services:
       context: .
       dockerfile: user-service/Dockerfile.dev
     container_name: user-service
+    working_dir: /app/user-service
     environment:
       - SPRING_PROFILES_ACTIVE=dev
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/${POSTGRES_DB}
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://user-db:5432/${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - JWT_ISSUER=${JWT_ISSUER}
@@ -89,6 +94,7 @@ services:
       - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
       - RABBITMQ_PORT=${RABBITMQ_PORT}
       - RABBITMQ_HOST=rabbitmq
+      - JWT_ISSUER=${JWT_ISSUER}
     volumes:
       - ./match-service:/app
       - ~/.m2:/root/.m2
@@ -114,3 +120,19 @@ services:
     ports:
       - "8086:8080"
       - "5076:5076"
+
+  gateway:
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    environment:
+      - JWT_ISSUER=dev-issuer
+      - JWT_KEY_ID=dev-key
+      - API_KEY=dev-key
+    networks:
+      - main_network
+    depends_on:
+      - user-service
+      - user-db

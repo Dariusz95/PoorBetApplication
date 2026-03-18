@@ -10,6 +10,11 @@
     <packaging>pom</packaging>
     <name>poorbet-application-parent</name>
 
+    <properties>
+        <java.version>21</java.version>
+        <spring.boot.version>3.4.1</spring.boot.version>
+    </properties>
+
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -21,6 +26,7 @@
         <module>poorbet-commons</module>
         <module>user-service</module>
         <module>match-service</module>
+        <module>simulation-service</module>
     </modules>
 
     <dependencyManagement>
@@ -29,6 +35,11 @@
                 <groupId>com.poorbet</groupId>
                 <artifactId>poorbet-commons</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>1.18.30</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -14,6 +14,8 @@ spring:
 
   jpa:
     generate-ddl: true
+    properties:
+      hibernate.default_schema: public
 
 web:
   cors:
@@ -48,7 +50,10 @@ jwt:
 
 apiKey: ${API_KEY}
 
-
 oauth:
   clients:
     match-service: ${MATCH_SERVICE_CLIENT_SECRET:secret}
+
+poorbet:
+  security:
+    enabled: false

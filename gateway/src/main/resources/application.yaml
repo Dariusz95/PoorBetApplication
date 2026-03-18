@@ -9,16 +9,16 @@ spring:
           uri: http://user-service:8080
           predicates:
             - Path=/api/users/login, /api/users/register
-          filters:
-            - StripPrefix=0
+#          filters:
+#            - StripPrefix=0
 
         - id: protected-user-service
           uri: http://user-service:8080
           predicates:
             - Path=/api/users/**
-          filters:
-            - StripPrefix=0
-            - JwtAuthFilter
+#          filters:
+#            - StripPrefix=0
+#            - JwtAuthFilter
 
         - id: match-service
           uri: http://match-service:8080

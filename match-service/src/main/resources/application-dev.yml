@@ -62,3 +62,7 @@ match-pool:
   pools-in-advance: 5
   pool-interval-minutes: 3
   schedule-rate-ms: 60000
+
+jwt:
+  issuer: ${JWT_ISSUER:poorbet-auth-service}
+  jwk-set-uri: ${AUTH_JWKS_URI:http://user-service:8080/.well-known/jwks.json}
