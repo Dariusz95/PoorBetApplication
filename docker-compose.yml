@@ -22,10 +22,6 @@ services:
     container_name: gateway
     ports:
       - "8081:8081"
-    environment:
-      - JWT_ISSUER=${JWT_ISSUER}
-      - JWT_KEY_ID=${JWT_KEY_ID}
-      - API_KEY=${API_KEY}
     networks:
       - main_network
     depends_on:

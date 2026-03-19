@@ -34,17 +34,22 @@ public class PoorbetSecurityAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, PoorbetSecurityProperties properties,
-            JwtAuthenticationConverter jwtAuthenticationConverter) throws Exception {
-        http.csrf(csrf -> csrf.disable())
+    public SecurityFilterChain securityFilterChain(HttpSecurity http,
+                                                   PoorbetSecurityProperties properties,
+                                                   JwtAuthenticationConverter jwtAuthenticationConverter) throws Exception {
+        http
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> {
-                    if (!properties.getProtectedPaths().isEmpty()) {
-                        auth.requestMatchers(properties.getProtectedPaths().toArray(new String[0])).authenticated();
+                    if (!properties.getUnprotectedPaths().isEmpty()) {
+                        auth.requestMatchers(
+                                properties.getUnprotectedPaths().toArray(new String[0])
+                        ).permitAll();
                     }
-                    auth.anyRequest().permitAll();
+                    auth.anyRequest().authenticated();
                 })
                 .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter)));
+                        .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter))
+                );
 
         return http.build();
     }

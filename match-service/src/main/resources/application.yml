@@ -7,8 +7,6 @@ poorbet:
     enabled: true
     jwk-set-uri: ${AUTH_JWKS_URI:http://auth-service:8080/.well-known/jwks.json}
     issuer: ${AUTH_ISSUER_URI:http://auth-service:8080}
-    protected-paths:
-      - /api/**
 
 teams:
   service:

@@ -57,12 +57,10 @@ services:
       - ./:/app
       - ~/.m2:/root/.m2
       - ./.mvn:/app/.mvn
-    networks:
-      - main_network
+
     ports:
       - "8089:8080"
       - "5079:5079"
-#    command: ./mvnw -pl user-service -am spring-boot:run
 
   teams-service:
     build:
@@ -123,16 +121,10 @@ services:
 
   gateway:
     build:
-      context: ./gateway
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: gateway/Dockerfile
     ports:
       - "8081:8081"
-    environment:
-      - JWT_ISSUER=dev-issuer
-      - JWT_KEY_ID=dev-key
-      - API_KEY=dev-key
-    networks:
-      - main_network
     depends_on:
       - user-service
       - user-db

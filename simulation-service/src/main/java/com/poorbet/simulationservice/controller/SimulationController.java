@@ -28,7 +28,6 @@ public class SimulationController {
             value = "/live",
             produces = MediaType.TEXT_EVENT_STREAM_VALUE
     )
-    @PreAuthorize("hasAuthority('match:live')")
     public Flux<LiveMatchEvent> simulateMatch(
             @Valid @RequestBody SimulationRequest request
     ) {

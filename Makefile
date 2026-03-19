@@ -35,8 +35,14 @@ run-app-dev:
 user-dev:
 	docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build user-service
 
-run-simulation-dev:
+simulation-dev:
 	docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build simulation-service
+
+teams-dev:
+	docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build teams-service
+
+match-dev:
+	docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build match-service
 
 gate-dev:
 	docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build gateway

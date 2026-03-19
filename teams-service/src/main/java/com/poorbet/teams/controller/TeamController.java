@@ -18,7 +18,6 @@ public class TeamController {
     private final TeamService teamService;
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('teams:read')")
     public TeamShortDto getTeam(@PathVariable UUID id) {
         TeamShortDto team = teamService.getById(id);
         log.info("Returning team: id={}, name={}", team.id(), team.name());

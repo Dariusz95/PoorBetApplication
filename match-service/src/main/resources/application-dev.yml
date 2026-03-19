@@ -20,6 +20,18 @@ odds:
       connect: 2s
       read: 3s
 
+poorbet:
+  security:
+    enabled: true
+    jwk-set-uri: ${AUTH_JWKS_URI:http://auth-service:8080/.well-known/jwks.json}
+    issuer: ${AUTH_ISSUER_URI:http://auth-service:8080}
+    unprotected-paths:
+      - /api/match-pool/**
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+
 spring:
   application:
     name: match-service
@@ -64,5 +76,5 @@ match-pool:
   schedule-rate-ms: 60000
 
 jwt:
-  issuer: ${JWT_ISSUER:poorbet-auth-service}
+  issuer: ${JWT_ISSUER:http://user-service:8080}
   jwk-set-uri: ${AUTH_JWKS_URI:http://user-service:8080/.well-known/jwks.json}

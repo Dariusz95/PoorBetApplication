@@ -22,13 +22,6 @@
         <relativePath/>
     </parent>
 
-    <modules>
-        <module>poorbet-commons</module>
-        <module>user-service</module>
-        <module>match-service</module>
-        <module>simulation-service</module>
-    </modules>
-
     <dependencyManagement>
         <dependencies>
             <dependency>

@@ -17,5 +17,5 @@ public class PoorbetSecurityProperties {
     private boolean enabled = true;
     private String issuer = "poorbet-auth-service";
     private String jwkSetUri;
-    private List<String> protectedPaths = new ArrayList<>();
+    private List<String> unprotectedPaths = new ArrayList<>();
 }
