@@ -7,7 +7,13 @@ import com.poorbet.matchservice.match.match.service.OddsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -16,18 +22,15 @@ import java.util.UUID;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/match")
-public class MatchController {
+@RequestMapping("/internal/match")
+public class InternalMatchController {
 
     private final MatchResultsService matchResultsService;
     private final OddsService oddsService;
 
-
-
     @PostMapping("/results")
-    public ResponseEntity<MatchResultMapDto> getResults(@RequestBody List<UUID> matchIds){
+    public ResponseEntity<MatchResultMapDto> getResults(@RequestBody List<UUID> matchIds) {
         MatchResultMapDto result = matchResultsService.getMatchResultMap(matchIds);
-
         return ResponseEntity.ok(result);
     }
 
@@ -37,5 +40,4 @@ public class MatchController {
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
-
 }

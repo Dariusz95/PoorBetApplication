@@ -6,8 +6,10 @@ import com.poorbet.users.user.dto.UserRegisterDto;
 import com.poorbet.users.user.dto.UserResponseDto;
 import com.poorbet.users.user.model.Role;
 import com.poorbet.users.user.model.User;
+import com.poorbet.users.security.JwtUtil;
 import com.poorbet.users.user.repository.UserRepository;
 import com.poorbet.users.user.mapper.UserMapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,6 +29,15 @@ class UserServiceTest {
 
     @Mock
     private UserMapper userMapper;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
+
+    @Mock
+    private JwtUtil jwtUtil;
+
+    @Mock
+    private AuthorizationPolicyService authorizationPolicyService;
 
     @InjectMocks
     private UserServiceImpl userService;

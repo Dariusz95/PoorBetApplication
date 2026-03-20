@@ -2,20 +2,27 @@ package com.poorbet.commons.auth.config;
 
 import com.poorbet.commons.auth.token.ServiceTokenProvider;
 import com.poorbet.commons.auth.webclient.JwtForwardingFilter;
+import com.poorbet.commons.auth.webclient.ServiceJwtForwardingFilter;
 import io.netty.channel.ChannelOption;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.netty.http.client.HttpClient;
 
-@Configuration
+@AutoConfiguration
+@ConditionalOnClass(WebClient.class)
+@ConditionalOnProperty(prefix = "auth.service", name = "url")
 @EnableConfigurationProperties(AuthServiceProperties.class)
 public class AuthWebClientConfiguration {
 
     @Bean(name = "authWebClient")
+    @ConditionalOnMissingBean(name = "authWebClient")
     public WebClient authWebClient(AuthServiceProperties authServiceProperties) {
         return WebClient.builder()
                 .baseUrl(authServiceProperties.url())
@@ -28,11 +35,19 @@ public class AuthWebClientConfiguration {
     }
 
     @Bean
-    public JwtForwardingFilter jwtForwardingFilter(ServiceTokenProvider serviceTokenProvider) {
-        return new JwtForwardingFilter(serviceTokenProvider);
+    @ConditionalOnMissingBean
+    public JwtForwardingFilter jwtForwardingFilter() {
+        return new JwtForwardingFilter();
     }
 
     @Bean
+    @ConditionalOnMissingBean
+    public ServiceJwtForwardingFilter serviceJwtForwardingFilter(ServiceTokenProvider serviceTokenProvider) {
+        return new ServiceJwtForwardingFilter(serviceTokenProvider);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
     public ServiceTokenProvider serviceTokenProvider(@Qualifier("authWebClient") WebClient authWebClient,
                                                      AuthServiceProperties authServiceProperties) {
         return new ServiceTokenProvider(authWebClient, authServiceProperties);

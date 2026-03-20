@@ -21,7 +21,7 @@ public class MatchClient {
     public MatchResultMapDto getMatchResult(List<UUID> matchIds) {
         return matchServiceWebClientBuilder
                 .post()
-                .uri("/api/match/results")
+                .uri("/internal/match/results")
                 .bodyValue(matchIds)
                 .retrieve()
                 .onStatus(
@@ -36,7 +36,7 @@ public class MatchClient {
         return matchServiceWebClientBuilder
                 .get()
                 .uri(uriBuilder -> uriBuilder
-                        .path("/api/match/{matchId}/odds")
+                        .path("/internal/match/{matchId}/odds")
                         .queryParam("type", type)
                         .build(matchId))
                 .retrieve()

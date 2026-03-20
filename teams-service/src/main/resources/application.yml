@@ -24,7 +24,10 @@ spring:
 
 poorbet:
   security:
-    issuer: ${JWT_ISSUER:http://user-service:8080}
+    enabled: true
+    issuer: ${AUTH_ISSUER_URI:http://user-service:8080}
+    internal-audience:
+      - teams-service
     jwk-set-uri: ${AUTH_JWKS_URI:http://user-service:8080/.well-known/jwks.json}
 
 teams:

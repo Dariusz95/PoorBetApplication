@@ -16,7 +16,7 @@ Microservice do predykcji szans (prawdopodobieństwa wygranej/remisu/przegranej)
 
 ## API
 
-### POST /api/odds/predict
+### POST /internal/odds/predict
 
 Predykcja szans na mecz na podstawie statystyk ataku i obrony drużyn.
 

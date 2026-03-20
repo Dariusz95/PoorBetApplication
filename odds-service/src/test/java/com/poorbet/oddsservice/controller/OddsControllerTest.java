@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
-@WebMvcTest(OddsController.class)
+@WebMvcTest(InternalOddsController.class)
 @DisplayName("OddsController – WebMvcTest")
 class OddsControllerTest {
 
@@ -50,7 +50,7 @@ class OddsControllerTest {
                 request.awayTeamDefense()
         )).thenReturn(response);
 
-        mockMvc.perform(post("/api/odds/predict")
+        mockMvc.perform(post("/internal/odds/predict")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
@@ -70,7 +70,7 @@ class OddsControllerTest {
     void shouldRejectInvalidPredictRequest() throws Exception {
         PredictOddsRequest invalid = new PredictOddsRequest(-1, 50, 60, 70);
 
-        mockMvc.perform(post("/api/odds/predict")
+        mockMvc.perform(post("/internal/odds/predict")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(invalid)))
                 .andExpect(status().isBadRequest());
@@ -89,7 +89,7 @@ class OddsControllerTest {
         when(oddsService.predictBatch(request.matches()))
                 .thenReturn(responses);
 
-        mockMvc.perform(post("/api/odds/predict/batch")
+        mockMvc.perform(post("/internal/odds/predict/batch")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
@@ -105,7 +105,7 @@ class OddsControllerTest {
         BatchPredictionRequest request =
                 new BatchPredictionRequest(List.of());
 
-        mockMvc.perform(post("/api/odds/predict/batch")
+        mockMvc.perform(post("/internal/odds/predict/batch")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());

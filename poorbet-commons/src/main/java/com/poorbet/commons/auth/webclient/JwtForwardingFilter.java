@@ -1,7 +1,5 @@
 package com.poorbet.commons.auth.webclient;
 
-import com.poorbet.commons.auth.token.ServiceTokenProvider;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -11,14 +9,12 @@ import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.ExchangeFunction;
 import reactor.core.publisher.Mono;
 
-@RequiredArgsConstructor
 public class JwtForwardingFilter implements ExchangeFilterFunction {
-
-    private final ServiceTokenProvider serviceTokenProvider;
 
     @Override
     public Mono<ClientResponse> filter(ClientRequest request, ExchangeFunction next) {
-        String token = resolveUserToken().orElseGet(serviceTokenProvider::getServiceToken);
+        String token = resolveUserToken()
+                .orElseThrow(() -> new IllegalStateException("Missing user JWT in SecurityContext for API WebClient call"));
 
         ClientRequest newRequest = ClientRequest.from(request)
                 .headers(headers -> headers.setBearerAuth(token))

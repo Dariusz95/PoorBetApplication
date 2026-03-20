@@ -19,9 +19,9 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/odds")
+@RequestMapping("/internal/odds")
 @RequiredArgsConstructor
-public class OddsController {
+public class InternalOddsController {
 
     private final OddsService oddsService;
 

@@ -25,7 +25,7 @@ public class OddsClient {
 
     public WinProbabilityDto getPrediction(@Valid PredictionRequestDto data){
         return this.oddsWebClient.post()
-                .uri("api/odds/predict")
+                .uri("/internal/odds/predict")
                 .bodyValue(data)
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<WinProbabilityDto>() {})
@@ -39,7 +39,7 @@ public class OddsClient {
         }
 
         return this.oddsWebClient.post()
-                .uri("api/odds/predict/batch")
+                .uri("/internal/odds/predict/batch")
                 .bodyValue(data)
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<BatchPredictionResponse>() {})

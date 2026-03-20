@@ -4,7 +4,6 @@ teams:
     timeout:
       connect: 2s
       read: 3s
-    internal-api-token: ${TEAMS_INTERNAL_API_TOKEN:change-me}
 
 simulation:
   service:
@@ -23,10 +22,13 @@ odds:
 poorbet:
   security:
     enabled: true
-    jwk-set-uri: ${AUTH_JWKS_URI:http://auth-service:8080/.well-known/jwks.json}
-    issuer: ${AUTH_ISSUER_URI:http://auth-service:8080}
+    jwk-set-uri: ${AUTH_JWKS_URI:http://user-service:8080/.well-known/jwks.json}
+    issuer: ${AUTH_ISSUER_URI:http://user-service:8080}
+    internal-audience:
+      - match-service
     unprotected-paths:
-      - /api/match-pool/**
+      - /api/match-pool/live
+      - /api/match-pool/future
 
 logging:
   level:
@@ -75,6 +77,11 @@ match-pool:
   pool-interval-minutes: 3
   schedule-rate-ms: 60000
 
-jwt:
-  issuer: ${JWT_ISSUER:http://user-service:8080}
-  jwk-set-uri: ${AUTH_JWKS_URI:http://user-service:8080/.well-known/jwks.json}
+auth:
+  service:
+    url: ${AUTH_SERVICE_URL:http://user-service:8080}
+    client-id: ${AUTH_SERVICE_CLIENT_ID:match-service}
+    client-secret: ${AUTH_SERVICE_CLIENT_SECRET:secret}
+    timeout:
+      connect: ${AUTH_SERVICE_CONNECT_TIMEOUT:2s}
+      read: ${AUTH_SERVICE_READ_TIMEOUT:3s}

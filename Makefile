@@ -25,12 +25,16 @@ run-app:
 
 run-app-dev:
 	docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build simulation-service
+	docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build user-service
 
 	sleep 15
 
-	./generate-matches.sh
+	docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build odds-training
 	docker compose -f docker-compose.yml -f docker-compose.dev.yml run --rm python-trainer python train_model.py
 	docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build
+
+user-dev:
+	docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build user-service
 
 user-dev:
 	docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build user-service

@@ -1,9 +1,7 @@
 package com.poorbet.matchservice.match.client;
 
-import com.poorbet.matchservice.match.config.TeamServiceProperties;
 import com.poorbet.matchservice.match.match.dto.TeamStatsDto;
 import com.poorbet.matchservice.match.match.dto.request.TeamStatsRequest;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;

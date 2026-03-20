@@ -52,13 +52,28 @@ apiKey: ${API_KEY}
 
 oauth:
   clients:
-    match-service: ${MATCH_SERVICE_CLIENT_SECRET:secret}
+    match-service:
+      secret: ${MATCH_SERVICE_CLIENT_SECRET:secret}
+      permissions:
+        - internal
+      audiences:
+        - teams-service
+        - simulation-service
+        - odds-service
+    coupon-service:
+      secret: ${COUPON_SERVICE_CLIENT_SECRET:secret}
+      permissions:
+        - internal
+      audiences:
+        - match-service
 
 poorbet:
   security:
     enabled: true
-    jwk-set-uri: ${AUTH_JWKS_URI:http://auth-service:8080/.well-known/jwks.json}
-    issuer: ${AUTH_ISSUER_URI:http://auth-service:8080}
+    jwk-set-uri: ${AUTH_JWKS_URI:http://user-service:8080/.well-known/jwks.json}
+    issuer: ${AUTH_ISSUER_URI:http://user-service:8080}
     unprotected-paths:
       - /api/users/login
       - /api/users/register
+      - /oauth/token
+      - /.well-known/jwks.json

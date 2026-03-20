@@ -1,8 +1,9 @@
 package com.poorbet.oddstraining.config;
 
+import com.poorbet.commons.auth.webclient.ServiceJwtForwardingFilter;
 import com.poorbet.oddstraining.properties.SimulationServiceProperties;
 import io.netty.channel.ChannelOption;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
@@ -10,8 +11,11 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.netty.http.client.HttpClient;
 
 @Configuration
-@EnableConfigurationProperties({SimulationServiceProperties.class})
+@RequiredArgsConstructor
 public class WebClientConfig {
+
+    private final SimulationServiceProperties simulationServiceProperties;
+
 
     @Bean
     public WebClient.Builder webClientBuilder() {
@@ -19,14 +23,15 @@ public class WebClientConfig {
     }
 
     @Bean
-    public WebClient simulationWebClient(WebClient.Builder builder, SimulationServiceProperties properties) {
-        return builder.clone()
-                .baseUrl(properties.url())
+    public WebClient simulationWebClient(ServiceJwtForwardingFilter serviceJwtForwardingFilter) {
+        return WebClient.builder()
+                .baseUrl(simulationServiceProperties.url())
                 .clientConnector(new ReactorClientHttpConnector(
                         HttpClient.create()
-                                .responseTimeout(properties.timeout().read())
-                                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, (int) properties.timeout().connect().toMillis())
+                                .responseTimeout(simulationServiceProperties.timeout().read())
+                                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, (int) simulationServiceProperties.timeout().connect().toMillis())
                 ))
+                .filter(serviceJwtForwardingFilter)
                 .build();
     }
 }

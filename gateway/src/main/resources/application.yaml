@@ -28,8 +28,8 @@ spring:
 poorbet:
   security:
     enabled: false
-    jwk-set-uri: ${AUTH_JWKS_URI:http://auth-service:8080/.well-known/jwks.json}
-    issuer: ${AUTH_ISSUER_URI:http://auth-service:8080}
+    jwk-set-uri: ${AUTH_JWKS_URI:http://user-service:8080/.well-known/jwks.json}
+    issuer: ${AUTH_ISSUER_URI:http://user-service:8080}
     unprotected-paths:
       - /api/users/login
       - /api/users/register

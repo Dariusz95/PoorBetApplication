@@ -2,6 +2,7 @@ package com.poorbet.users.auth;
 
 import com.poorbet.commons.auth.dto.ClientCredentialsTokenRequest;
 import com.poorbet.commons.auth.dto.TokenResponse;
+import com.poorbet.commons.security.PoorbetTokenTypes;
 import com.poorbet.users.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,12 +25,19 @@ public class ClientCredentialsAuthService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unsupported grant type");
         }
 
-        String expectedSecret = authClientsProperties.getClients().get(request.clientId());
-        if (expectedSecret == null || !expectedSecret.equals(request.clientSecret())) {
+        AuthClientsProperties.ClientRegistration clientRegistration = authClientsProperties.getClients().get(request.clientId());
+        if (clientRegistration == null || clientRegistration.getSecret() == null || !clientRegistration.getSecret().equals(request.clientSecret())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid client credentials");
         }
 
-        String token = jwtUtil.generateAccessToken(request.clientId(), List.of("ROLE_SERVICE"), List.of("internal:read", "internal:write"));
+        String token = jwtUtil.generateAccessToken(
+                request.clientId(),
+                List.of(),
+                clientRegistration.getPermissions(),
+                PoorbetTokenTypes.SERVICE,
+                request.clientId(),
+                clientRegistration.getAudiences()
+        );
         long expiresIn = jwtUtil.getAccessTokenExpiration() / 1000;
         return new TokenResponse(token, "Bearer", expiresIn);
     }

@@ -3,29 +3,17 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>4.0.1</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<groupId>com.poorbet</groupId>
+		<artifactId>poorbet-application-parent</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
+
 	<groupId>com.poorbet</groupId>
 	<artifactId>couponservice</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>couponservice</name>
 	<description>Coupon service</description>
-	<url/>
-	<licenses>
-		<license/>
-	</licenses>
-	<developers>
-		<developer/>
-	</developers>
-	<scm>
-		<connection/>
-		<developerConnection/>
-		<tag/>
-		<url/>
-	</scm>
 	<properties>
 		<java.version>21</java.version>
 	</properties>
@@ -46,6 +34,10 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
@@ -85,6 +77,10 @@
             <artifactId>spring-boot-starter-webmvc-test</artifactId>
             <version>4.0.0</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.poorbet</groupId>
+            <artifactId>poorbet-commons</artifactId>
         </dependency>
     </dependencies>
 

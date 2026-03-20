@@ -1,4 +1,16 @@
 services:
+  odds-training:
+    build:
+      context: ./odds-training
+      dockerfile: Dockerfile.dev
+    container_name: odds-training
+    ports:
+      - "8090:8080"
+    volumes:
+      - ./data:/app/data
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+
   frontend:
     build:
       context: ./frontend
@@ -32,8 +44,7 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=dev
     volumes:
-#      - ./simulation-service:/app
-      - ./simulation-service:/app:cached
+      - ./simulation-service:/app
       - ~/.m2:/root/.m2
     ports:
       - "8084:8080"

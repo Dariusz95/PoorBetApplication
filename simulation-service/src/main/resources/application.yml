@@ -5,5 +5,7 @@ spring:
 poorbet:
   security:
     enabled: true
-    issuer: ${JWT_ISSUER:http://user-service:8080}
+    issuer: ${AUTH_ISSUER_URI:http://user-service:8080}
+    internal-audience:
+      - simulation-service
     jwk-set-uri: ${AUTH_JWKS_URI:http://user-service:8080/.well-known/jwks.json}

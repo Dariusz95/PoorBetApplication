@@ -1,5 +1,6 @@
 package com.poorbet.couponservice.config;
 
+import com.poorbet.commons.auth.webclient.ServiceJwtForwardingFilter;
 import io.netty.channel.ChannelOption;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -10,16 +11,14 @@ import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.netty.http.client.HttpClient;
 
-
 @Configuration
 @AllArgsConstructor
 public class WebClientConfig {
 
     private final MatchProperties matchProperties;
 
-
     @Bean
-    public WebClient matchServiceWebClientBuilder() {
+    public WebClient matchServiceWebClientBuilder(ServiceJwtForwardingFilter serviceJwtForwardingFilter) {
 
         HttpClient httpClient = HttpClient.create()
                 .responseTimeout(matchProperties.timeout().read())
@@ -32,6 +31,7 @@ public class WebClientConfig {
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .baseUrl(matchProperties.url())
                 .clientConnector(new ReactorClientHttpConnector(httpClient))
+                .filter(serviceJwtForwardingFilter)
                 .build();
     }
 }

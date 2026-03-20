@@ -18,4 +18,5 @@ public class PoorbetSecurityProperties {
     private String issuer = "poorbet-auth-service";
     private String jwkSetUri;
     private List<String> unprotectedPaths = new ArrayList<>();
+    private List<String> internalAudience = new ArrayList<>();
 }

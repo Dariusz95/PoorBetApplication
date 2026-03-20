@@ -1,20 +1,27 @@
 package com.poorbet.users.auth;
 
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+@Getter
+@Setter
 @ConfigurationProperties(prefix = "oauth")
 public class AuthClientsProperties {
 
-    private Map<String, String> clients = new HashMap<>();
+    private Map<String, ClientRegistration> clients = new HashMap<>();
 
-    public Map<String, String> getClients() {
-        return clients;
-    }
-
-    public void setClients(Map<String, String> clients) {
-        this.clients = clients;
+    @Getter
+    @Setter
+    public static class ClientRegistration {
+        private String secret;
+        private List<String> permissions = new ArrayList<>();
+        private List<String> audiences = new ArrayList<>();
     }
 }

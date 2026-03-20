@@ -2,6 +2,14 @@ spring:
   application:
     name: odds-service
 
+poorbet:
+  security:
+    enabled: true
+    issuer: ${AUTH_ISSUER_URI:http://user-service:8080}
+    internal-audience:
+      - odds-service
+    jwk-set-uri: ${AUTH_JWKS_URI:http://user-service:8080/.well-known/jwks.json}
+
 logging:
   level:
     root: INFO

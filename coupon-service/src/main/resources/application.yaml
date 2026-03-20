@@ -19,6 +19,21 @@ spring:
     username: ${RABBITMQ_USER}
     password: ${RABBITMQ_PASSWORD}
 
+poorbet:
+  security:
+    enabled: true
+    issuer: ${AUTH_ISSUER_URI:http://user-service:8080}
+    jwk-set-uri: ${AUTH_JWKS_URI:http://user-service:8080/.well-known/jwks.json}
+
+auth:
+  service:
+    url: ${AUTH_SERVICE_URL:http://user-service:8080}
+    client-id: ${AUTH_SERVICE_CLIENT_ID:coupon-service}
+    client-secret: ${AUTH_SERVICE_CLIENT_SECRET:secret}
+    timeout:
+      connect: ${AUTH_SERVICE_CONNECT_TIMEOUT:2s}
+      read: ${AUTH_SERVICE_READ_TIMEOUT:3s}
+
 match:
   service:
     url: http://match-service:8080

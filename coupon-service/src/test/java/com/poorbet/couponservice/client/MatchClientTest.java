@@ -69,7 +69,7 @@ class MatchClientTest {
     @SuppressWarnings({"unchecked", "rawtypes"})
     private void setupWebClientChainForPost(MatchResultMapDto results) {
         when(webClient.post()).thenReturn((WebClient.RequestBodyUriSpec) requestBodyUriSpec);
-        when(requestBodyUriSpec.uri("/api/match/results")).thenReturn((WebClient.RequestBodySpec) requestBodySpec);
+        when(requestBodyUriSpec.uri("/internal/match/results")).thenReturn((WebClient.RequestBodySpec) requestBodySpec);
         when(requestBodySpec.bodyValue(any())).thenReturn((WebClient.RequestHeadersSpec) requestHeadersSpec);
         when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
         when(responseSpec.onStatus(any(), any())).thenReturn(responseSpec);
