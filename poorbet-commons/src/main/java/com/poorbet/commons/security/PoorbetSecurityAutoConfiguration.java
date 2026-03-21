@@ -1,10 +1,6 @@
 package com.poorbet.commons.security;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.function.Supplier;
-
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -33,8 +29,14 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.function.Supplier;
+
+@Slf4j
 @AutoConfiguration
-@ConditionalOnClass({ HttpSecurity.class, NimbusJwtDecoder.class })
+@ConditionalOnClass({HttpSecurity.class, NimbusJwtDecoder.class})
 @ConditionalOnProperty(prefix = "poorbet.security", name = "enabled", havingValue = "true", matchIfMissing = true)
 @EnableMethodSecurity
 @EnableConfigurationProperties(PoorbetSecurityProperties.class)
@@ -57,7 +59,7 @@ public class PoorbetSecurityAutoConfiguration {
         return http.build();
     }
 
-    @Bean
+    @Bean(name = "apiSecurityFilterChain")
     @Order(Ordered.HIGHEST_PRECEDENCE + 1)
     @ConditionalOnMissingBean(name = "apiSecurityFilterChain")
     public SecurityFilterChain apiSecurityFilterChain(HttpSecurity http,
@@ -81,14 +83,14 @@ public class PoorbetSecurityAutoConfiguration {
         return http.build();
     }
 
-    @Bean
-    @ConditionalOnMissingBean
+    @Bean(name = "apiAuthorizationManager")
+    @ConditionalOnMissingBean(name = "apiAuthorizationManager")
     public AuthorizationManager<RequestAuthorizationContext> apiAuthorizationManager() {
         return (authentication, context) -> new AuthorizationDecision(hasTokenType(authentication, PoorbetTokenTypes.USER));
     }
 
-    @Bean
-    @ConditionalOnMissingBean
+    @Bean(name = "internalAuthorizationManager")
+    @ConditionalOnMissingBean(name = "internalAuthorizationManager")
     public AuthorizationManager<RequestAuthorizationContext> internalAuthorizationManager(PoorbetSecurityProperties properties) {
         return (authentication, context) -> new AuthorizationDecision(
                 hasTokenType(authentication, PoorbetTokenTypes.SERVICE)

@@ -1,58 +1,61 @@
+COMPOSE = docker compose
+COMPOSE_DEV = docker compose -f docker-compose.yml -f docker-compose.dev.yml
+TRAIN = $(COMPOSE) run --rm python-trainer python train_model.py
+
 train:
-	docker-compose run --rm --build python-trainer python train_model.py
+	$(TRAIN)
 
 train-clean:
-	docker compose build --no-cache python-trainer
-	docker compose run --rm python-trainer python train_model.py
+	$(COMPOSE) build --no-cache python-trainer
+	$(TRAIN)
 
 generate:
 	./generate-matches.sh
-	docker compose run --rm python-trainer python train_model.py
-	docker compose up -d odds-service
+	$(TRAIN)
+	$(COMPOSE) up -d odds-service
+
+# ========================
+# APP
+# ========================
 
 run-app:
-	docker compose up -d --build simulation-service
-
-# 	until [ "`docker inspect -f {{.State.Health.Status}} simulation-service`" = "healthy" ]; do \
-# 		echo "Czekam na simulation-service..."; \
-# 		sleep 2; \
-# 	done
+	$(COMPOSE) up -d --build simulation-service
 	sleep 15
+	$(MAKE) generate
+	$(COMPOSE) up -d --build
 
-	./generate-matches.sh
-	docker compose run --rm python-trainer python train_model.py
-	docker compose up -d --build
+# ========================
+# DEV ENV
+# ========================
 
 run-app-dev:
-	docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build simulation-service
-	docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build user-service
-
+	$(COMPOSE_DEV) up -d --build simulation-service user-service
 	sleep 15
-
-	docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build odds-training
-	docker compose -f docker-compose.yml -f docker-compose.dev.yml run --rm python-trainer python train_model.py
-	docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build
-
-user-dev:
-	docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build user-service
-
-user-dev:
-	docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build user-service
-
-simulation-dev:
-	docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build simulation-service
-
-teams-dev:
-	docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build teams-service
-
-match-dev:
-	docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build match-service
-
-gate-dev:
-	docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build gateway
+	$(COMPOSE_DEV) up -d --build odds-training
+	$(COMPOSE_DEV) run --rm python-trainer python train_model.py
+	$(COMPOSE_DEV) up -d --build
 
 dev:
-	docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build
+	$(COMPOSE_DEV) up -d --build
+
+# ========================
+# DEV
+# ========================
+
+user-dev:
+	$(COMPOSE_DEV) up -d --build user-service
+
+simulation-dev:
+	$(COMPOSE_DEV) up -d --build simulation-service
+
+teams-dev:
+	$(COMPOSE_DEV) up -d --build teams-service
+
+match-dev:
+	$(COMPOSE_DEV) up -d --build match-service
+
+gate-dev:
+	$(COMPOSE_DEV) up -d --build gateway
 
 front:
-	docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build frontend
+	$(COMPOSE_DEV) up -d --build frontend

@@ -39,7 +39,7 @@ class TeamControllerTest {
 
         when(teamService.getById(id)).thenReturn(team);
 
-        mockMvc.perform(get("/api/teams/{id}", id))
+        mockMvc.perform(get("/api/teams/public/{id}", id))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(id.toString()))
                 .andExpect(jsonPath("$.name").value(name));
@@ -47,7 +47,7 @@ class TeamControllerTest {
 
     @Test
     void shouldReturn400_whenIdIsNotUuid() throws Exception {
-        mockMvc.perform(get("/api/teams/{id}", "not-a-uuid"))
+        mockMvc.perform(get("/api/teams/public/{id}", "not-a-uuid"))
                 .andExpect(status().isBadRequest());
     }
 
@@ -58,7 +58,7 @@ class TeamControllerTest {
         when(teamService.getById(id))
                 .thenThrow(new EntityNotFoundException("Team not found"));
 
-        mockMvc.perform(get("/api/teams/{id}", id))
+        mockMvc.perform(get("/api/teams/public/{id}", id))
                 .andExpect(status().isNotFound());
     }
 }

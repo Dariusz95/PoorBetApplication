@@ -25,8 +25,8 @@ public class WebClientConfig {
     }
 
     @Bean
-    public WebClient teamsWebClient(ServiceJwtForwardingFilter serviceJwtForwardingFilter) {
-        return WebClient.builder()
+    public WebClient teamsWebClient(WebClient.Builder builder, ServiceJwtForwardingFilter serviceJwtForwardingFilter) {
+        return builder
                 .baseUrl(teamsServiceProperties.url())
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .clientConnector(new ReactorClientHttpConnector(

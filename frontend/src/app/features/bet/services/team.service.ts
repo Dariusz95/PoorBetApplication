@@ -8,7 +8,7 @@ import { environment } from '../../../../environments/environment';
 export class TeamService {
   private readonly http = inject(HttpClient);
 
-  private apiBaseUrl = `${environment.backend.baseURL}/api/teams`;
+  private apiBaseUrl = `${environment.backend.baseURL}/api/teams/public`;
 
   getTeam(teamId: string): any {
     return this.http.get<any>(`${this.apiBaseUrl}/${teamId}`);

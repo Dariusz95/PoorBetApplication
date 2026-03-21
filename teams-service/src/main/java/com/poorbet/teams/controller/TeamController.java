@@ -4,14 +4,16 @@ import com.poorbet.teams.dto.TeamShortDto;
 import com.poorbet.teams.service.TeamService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/teams")
+@RequestMapping("/api/teams/public")
 @RequiredArgsConstructor
 public class TeamController {
 

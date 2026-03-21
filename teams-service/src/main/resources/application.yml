@@ -28,6 +28,8 @@ poorbet:
     issuer: ${AUTH_ISSUER_URI:http://user-service:8080}
     internal-audience:
       - teams-service
+    unprotected-paths:
+      - /api/teams/public/**
     jwk-set-uri: ${AUTH_JWKS_URI:http://user-service:8080/.well-known/jwks.json}
 
 teams:

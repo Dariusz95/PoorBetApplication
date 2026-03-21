@@ -34,3 +34,4 @@ poorbet:
       - /api/users/login
       - /api/users/register
       - /api/match-pool/**
+      - /api/teams/public/**
