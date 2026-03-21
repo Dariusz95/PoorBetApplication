@@ -143,7 +143,6 @@ public class PoorbetSecurityAutoConfiguration {
             List<GrantedAuthority> authorities = new ArrayList<>();
 
             addAuthorities(authorities, jwt.getClaimAsStringList("permissions"));
-            addAuthorities(authorities, jwt.getClaimAsStringList("scp"));
             addAuthorities(authorities, resolveScopes(jwt));
 
             List<String> roles = jwt.getClaimAsStringList("roles");

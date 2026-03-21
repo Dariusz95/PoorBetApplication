@@ -48,8 +48,6 @@ jwt:
     private-key-location: ${JWT_PRIVATE_KEY_LOCATION:classpath:keys/private.pem}
     public-key-location: ${JWT_PUBLIC_KEY_LOCATION:classpath:keys/public.pem}
 
-apiKey: ${API_KEY}
-
 oauth:
   clients:
     match-service:
@@ -71,7 +69,7 @@ poorbet:
   security:
     enabled: true
     jwk-set-uri: ${AUTH_JWKS_URI:http://user-service:8080/.well-known/jwks.json}
-    issuer: ${AUTH_ISSUER_URI:http://user-service:8080}
+    issuer: ${JWT_ISSUER:http://user-service:8080}
     unprotected-paths:
       - /api/users/login
       - /api/users/register

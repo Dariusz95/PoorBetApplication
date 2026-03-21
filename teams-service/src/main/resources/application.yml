@@ -31,7 +31,3 @@ poorbet:
     unprotected-paths:
       - /api/teams/public/**
     jwk-set-uri: ${AUTH_JWKS_URI:http://user-service:8080/.well-known/jwks.json}
-
-teams:
-  internal-api:
-    token: ${TEAMS_INTERNAL_API_TOKEN}
