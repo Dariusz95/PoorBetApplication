@@ -34,9 +34,19 @@ public class SchedulerConfig {
 
     @Bean
     public LockProvider lockProvider() {
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+        jdbcTemplate.execute("""
+                CREATE TABLE IF NOT EXISTS shedlock (
+                    name VARCHAR(64) PRIMARY KEY,
+                    lock_until TIMESTAMPTZ NOT NULL,
+                    locked_at TIMESTAMPTZ NOT NULL,
+                    locked_by VARCHAR(255) NOT NULL
+                )
+                """);
+
         return new JdbcTemplateLockProvider(
                 JdbcTemplateLockProvider.Configuration.builder()
-                        .withJdbcTemplate(new JdbcTemplate(dataSource))
+                        .withJdbcTemplate(jdbcTemplate)
                         .usingDbTime()
                         .build()
         );

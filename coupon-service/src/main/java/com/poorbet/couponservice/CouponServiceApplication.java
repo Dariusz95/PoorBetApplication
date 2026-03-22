@@ -8,8 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 @ConfigurationPropertiesScan
 public class CouponServiceApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(CouponServiceApplication.class, args);
-	}
-
+    public static void main(String[] args) {
+        SpringApplication.run(CouponServiceApplication.class, args);
+    }
 }

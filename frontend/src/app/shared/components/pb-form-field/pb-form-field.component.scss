@@ -1,23 +1,23 @@
 .form-field-container {
-  @apply relative mb-4;
+  @apply relative mb-6;
 
   .input-wrapper {
-    @apply flex items-center w-full mb-6;
+    @apply flex items-center w-full;
   }
 
   .form-field-label {
-    @apply text-primary-700 font-bold;
+    @apply text-app-text transition-colors duration-200;
   }
 
   &.focused {
     .form-field-label {
-      @apply text-blue-500;
+      @apply text-app-accent;
     }
   }
 
   &.invalid {
     .form-field-label {
-      @apply dark:text-red-300 text-red-500;
+      @apply text-app-danger;
     }
   }
 }

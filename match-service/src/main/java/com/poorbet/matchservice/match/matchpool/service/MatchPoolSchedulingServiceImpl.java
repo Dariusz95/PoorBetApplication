@@ -133,7 +133,12 @@ public class MatchPoolSchedulingServiceImpl implements MatchPoolSchedulingServic
 
         List<PreMatchDto> preMatches = getPreMatches(teams);
 
-        log.info("xxxxc preMatches -> {}", preMatches);
+        log.debug("Pre-matches generated for pool {}: {}", pool.getId(), preMatches.size());
+
+        if (preMatches.isEmpty()) {
+            log.warn("Skipping odds batch prediction because there are no pre-matches for pool {}", pool.getId());
+            return;
+        }
 
         PredictionBatchRequestDto batchRequest = PredictionBatchMapper.toPredictionBatchRequestDto(preMatches);
 
@@ -147,7 +152,7 @@ public class MatchPoolSchedulingServiceImpl implements MatchPoolSchedulingServic
 
         List<Match> matches = new ArrayList<>();
 
-        log.info("xxxxc odds response -> {}", oddsMap);
+        log.debug("Odds response entries for pool {}: {}", pool.getId(), oddsMap.size());
 
 
         for (PreMatchDto preMatch : preMatches) {

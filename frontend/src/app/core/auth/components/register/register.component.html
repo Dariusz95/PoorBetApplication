@@ -8,17 +8,27 @@
       <form [formGroup]="form">
         <pb-form-field>
           <pb-label> {{ t("email") }}</pb-label>
-          <pb-input formControlName="email"></pb-input>
+          <pb-input
+            placeholder="example@example.com"
+            formControlName="email"
+          ></pb-input>
         </pb-form-field>
 
         <pb-form-field>
           <pb-label> {{ t("password") }}</pb-label>
-          <pb-input formControlName="password"></pb-input>
+          <pb-input
+            type="password"
+            placeholder="Type password..."
+            formControlName="password"
+          ></pb-input>
         </pb-form-field>
 
         <pb-form-field>
           <pb-label> {{ t("confirmPassword") }}</pb-label>
-          <pb-input formControlName="confirmPassword"></pb-input>
+          <pb-input
+            placeholder="Confirm password..."
+            formControlName="confirmPassword"
+          ></pb-input>
         </pb-form-field>
 
         <div class="form-actions">

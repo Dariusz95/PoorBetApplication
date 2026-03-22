@@ -1,7 +1,7 @@
-<div class="error-container">
+<ul class="error-container">
   @for(error of formErrors();track $index){ @if(error){
-  <div [@errorState] class="error-message">
+  <li [@errorState] class="error-message">
     {{ error.translateKey | transloco : error?.params }}
-  </div>
+  </li>
   } }
-</div>
+</ul>

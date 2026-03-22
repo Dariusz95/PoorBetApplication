@@ -1,6 +1,24 @@
 version: "3.3"
 
 services:
+  odds-training:
+    build:
+      context: ./odds-training
+      dockerfile: Dockerfile
+    container_name: odds-training
+    ports:
+      - "8090:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - AUTH_SERVICE_URL=${AUTH_SERVICE_URL}
+      - AUTH_SERVICE_CLIENT_ID=odds-training
+      - AUTH_SERVICE_CLIENT_SECRET=${AUTH_SERVICE_CLIENT_SECRET}
+    depends_on:
+      - user-service
+      - simulation-service
+    networks:
+      - main_network
+
   frontend:
     build:
       context: ./frontend
@@ -23,8 +41,8 @@ services:
     ports:
       - "8081:8081"
     environment:
-      - JWT_SECRET=${JWT_SECRET}
-      - API_KEY=${API_KEY}
+      - AUTH_ISSUER_URI=${AUTH_ISSUER_URI}
+      - AUTH_JWKS_URI=${AUTH_JWKS_URI}
     networks:
       - main_network
     depends_on:
@@ -41,51 +59,52 @@ services:
   odds-service:
     build:
       context: ./odds-service
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     container_name: odds-service
-    volumes:
-      - ./odds-service:/app
-      - ./data/models:/app/data/models
-      - ~/.m2:/root/.m2
     ports:
       - "8085:8080"
-      - "5072:5072"
     environment:
-      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_PROFILES_ACTIVE=prod
       - MODEL_PATH=/app/data/models/match_predictor.onnx
+      - AUTH_ISSUER_URI=${AUTH_ISSUER_URI}
+      - AUTH_JWKS_URI=${AUTH_JWKS_URI}
     networks:
       - main_network
 
   simulation-service:
     build:
       context: ./simulation-service
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     container_name: simulation-service
-    volumes:
-      - ./simulation-service:/app
-      - ~/.m2:/root/.m2
     ports:
       - "8084:8080"
-      - "5073:5073"
+    environment:
+      - AUTH_ISSUER_URI=${AUTH_ISSUER_URI}
+      - AUTH_JWKS_URI=${AUTH_JWKS_URI}
     networks:
       - main_network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/health" ]
       interval: 5s
       retries: 5
+    depends_on:
+      - user-service
 
   user-service:
     build:
-      context: ./user-service
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: user-service/Dockerfile
     container_name: user-service
     environment:
-      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_PROFILES_ACTIVE=prod
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - JWT_SECRET=${JWT_SECRET}
-      - API_KEY=${API_KEY}
+      - AUTH_ISSUER_URI=${AUTH_ISSUER_URI}
+      - AUTH_JWKS_URI=${AUTH_JWKS_URI}
+      - JWT_KEY_ID=${JWT_KEY_ID}
+      - MATCH_SERVICE_CLIENT_SECRET=${MATCH_SERVICE_CLIENT_SECRET}
+      - COUPON_SERVICE_CLIENT_SECRET=${COUPON_SERVICE_CLIENT_SECRET}
     depends_on:
       - user-db
     networks:
@@ -98,11 +117,11 @@ services:
       - "6379:6379"
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      test: [ "CMD-SHELL", "redis-cli ping | grep PONG" ]
       interval: 1s
       timeout: 3s
       retries: 5
-    command: ["redis-server"]
+    command: [ "redis-server" ]
     volumes:
       - cache:/data
     networks:
@@ -111,19 +130,17 @@ services:
   teams-service:
     build:
       context: ./teams-service
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     container_name: teams-service
     environment:
-      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_PROFILES_ACTIVE=prod
       - SPRING_DATASOURCE_URL=jdbc:postgresql://teams-db:5432/${POSTGRES_TEAMS_DB}
       - POSTGRES_USER=${POSTGRES_TEAMS_USER}
       - POSTGRES_PASSWORD=${POSTGRES_TEAMS_PASSWORD}
-    volumes:
-      - ./teams-service:/app
-      - ~/.m2:/root/.m2
+      - AUTH_ISSUER_URI=${AUTH_ISSUER_URI}
+      - AUTH_JWKS_URI=${AUTH_JWKS_URI}
     ports:
       - "8082:8080"
-      - "5071:5071"
     depends_on:
       - redis
       - teams-db
@@ -132,11 +149,11 @@ services:
 
   match-service:
     build:
-      context: ./match-service
-      dockerfile: Dockerfile.dev
+      context: .
+      dockerfile: match-service/Dockerfile
     container_name: match-service
     environment:
-      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_PROFILES_ACTIVE=prod
       - SPRING_DATASOURCE_URL=jdbc:postgresql://match-db:5432/${POSTGRES_MATCH_DB}
       - POSTGRES_USER=${POSTGRES_MATCH_USER}
       - POSTGRES_PASSWORD=${POSTGRES_MATCH_PASSWORD}
@@ -145,12 +162,13 @@ services:
       - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
       - RABBITMQ_PORT=${RABBITMQ_PORT}
       - RABBITMQ_HOST=rabbitmq
-    volumes:
-      - ./match-service:/app
-      - ~/.m2:/root/.m2
+      - AUTH_ISSUER_URI=${AUTH_ISSUER_URI}
+      - AUTH_JWKS_URI=${AUTH_JWKS_URI}
+      - AUTH_SERVICE_URL=${AUTH_SERVICE_URL}
+      - AUTH_SERVICE_CLIENT_ID=match-service
+      - AUTH_SERVICE_CLIENT_SECRET=${AUTH_SERVICE_CLIENT_SECRET}
     ports:
       - "8083:8080"
-      - "5070:5070"
     depends_on:
       - redis
       - teams-db
@@ -162,10 +180,10 @@ services:
   coupon-service:
     build:
       context: ./coupon-service
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     container_name: coupon-service
     environment:
-      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_PROFILES_ACTIVE=prod
       - SPRING_DATASOURCE_URL=jdbc:postgresql://coupon-db:5432/${POSTGRES_COUPON_DB}
       - POSTGRES_USER=${POSTGRES_COUPON_USER}
       - POSTGRES_PASSWORD=${POSTGRES_COUPON_PASSWORD}
@@ -173,12 +191,13 @@ services:
       - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
       - RABBITMQ_PORT=${RABBITMQ_PORT}
       - RABBITMQ_HOST=rabbitmq
-    volumes:
-      - ./coupon-service:/app
-      - ~/.m2:/root/.m2
+      - AUTH_ISSUER_URI=${AUTH_ISSUER_URI}
+      - AUTH_JWKS_URI=${AUTH_JWKS_URI}
+      - AUTH_SERVICE_URL=${AUTH_SERVICE_URL}
+      - AUTH_SERVICE_CLIENT_ID=coupon-service
+      - AUTH_SERVICE_CLIENT_SECRET=${AUTH_SERVICE_CLIENT_SECRET}
     ports:
       - "8086:8080"
-      - "5076:5076"
     depends_on:
       - redis
       - coupon-db

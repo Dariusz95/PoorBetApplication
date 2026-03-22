@@ -19,6 +19,21 @@ odds:
       connect: 2s
       read: 3s
 
+poorbet:
+  security:
+    enabled: true
+    jwk-set-uri: ${AUTH_JWKS_URI}
+    issuer: ${AUTH_ISSUER_URI}
+    internal-audience:
+      - match-service
+    unprotected-paths:
+      - /api/match-pool/live
+      - /api/match-pool/future
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+
 spring:
   application:
     name: match-service
@@ -61,3 +76,12 @@ match-pool:
   pools-in-advance: 5
   pool-interval-minutes: 3
   schedule-rate-ms: 60000
+
+auth:
+  service:
+    url: ${AUTH_SERVICE_URL:http://user-service:8080}
+    client-id: ${AUTH_SERVICE_CLIENT_ID:match-service}
+    client-secret: ${AUTH_SERVICE_CLIENT_SECRET:secret}
+    timeout:
+      connect: ${AUTH_SERVICE_CONNECT_TIMEOUT:2s}
+      read: ${AUTH_SERVICE_READ_TIMEOUT:3s}

@@ -14,6 +14,8 @@ spring:
 
   jpa:
     generate-ddl: true
+    properties:
+      hibernate.default_schema: public
 
 web:
   cors:
@@ -38,8 +40,38 @@ web:
     maxAge: 3600
 
 jwt:
-  secret: ${JWT_SECRET}
+  issuer: ${AUTH_ISSUER_URI}
   access-token-expiration: 900000
   refresh-token-expiration: 604800000
+  rsa:
+    key-id: ${JWT_KEY_ID:poorbet-key-1}
+    private-key-location: ${JWT_PRIVATE_KEY_LOCATION:classpath:keys/private.pem}
+    public-key-location: ${JWT_PUBLIC_KEY_LOCATION:classpath:keys/public.pem}
 
-apiKey: ${API_KEY}
+oauth:
+  clients:
+    match-service:
+      secret: ${MATCH_SERVICE_CLIENT_SECRET:secret}
+      permissions:
+        - internal
+      audiences:
+        - teams-service
+        - simulation-service
+        - odds-service
+    coupon-service:
+      secret: ${COUPON_SERVICE_CLIENT_SECRET:secret}
+      permissions:
+        - internal
+      audiences:
+        - match-service
+
+poorbet:
+  security:
+    enabled: true
+    jwk-set-uri: ${AUTH_JWKS_URI}
+    issuer: ${AUTH_ISSUER_URI}
+    unprotected-paths:
+      - /api/users/login
+      - /api/users/register
+      - /oauth/token
+      - /.well-known/jwks.json

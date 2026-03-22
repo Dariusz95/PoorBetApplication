@@ -17,7 +17,7 @@ public class SimulationClient {
 
     public List<LiveMatchEventDto> simulateBatchMatch(SimulationBatchRequest request) {
         return simulationWebClient.post()
-                .uri("/api/simulation/batch-result")
+                .uri("/internal/simulation/batch-result")
                 .bodyValue(request)
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<List<LiveMatchEventDto>>() {})

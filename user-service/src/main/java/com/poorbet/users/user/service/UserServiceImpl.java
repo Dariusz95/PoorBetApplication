@@ -1,6 +1,5 @@
 package com.poorbet.users.user.service;
 
-import java.util.Collections;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -9,6 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.poorbet.commons.security.PoorbetTokenTypes;
 import com.poorbet.users.exception.ResourceAlreadyExistsException;
 import com.poorbet.users.security.JwtUtil;
 import com.poorbet.users.user.dto.JwtResponse;
@@ -19,7 +19,6 @@ import com.poorbet.users.user.mapper.UserMapper;
 import com.poorbet.users.user.model.User;
 import com.poorbet.users.user.repository.UserRepository;
 
-
 @Service
 public class UserServiceImpl implements UserService  {
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
@@ -28,13 +27,16 @@ public class UserServiceImpl implements UserService  {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final AuthorizationPolicyService authorizationPolicyService;
 
     public UserServiceImpl(UserRepository userRepository, UserMapper userMapper,
-                           PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
+                           PasswordEncoder passwordEncoder, JwtUtil jwtUtil,
+                           AuthorizationPolicyService authorizationPolicyService) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
+        this.authorizationPolicyService = authorizationPolicyService;
     }
 
     @Override
@@ -69,10 +71,18 @@ public class UserServiceImpl implements UserService  {
             throw new IllegalArgumentException("Invalid credentials");
         }
 
-        String token = jwtUtil.generateAccessToken(user.getEmail());
+        List<String> roles = List.of(user.getRole().name());
+        List<String> permissions = authorizationPolicyService.resolvePermissions(user.getRole());
+        String token = jwtUtil.generateAccessToken(
+                user.getEmail(),
+                roles,
+                permissions,
+                PoorbetTokenTypes.USER,
+                null,
+                List.of()
+        );
         long expiresAt = System.currentTimeMillis() + jwtUtil.getAccessTokenExpiration();
-        List<String> roles = Collections.emptyList();
 
-        return new JwtResponse(token, user.getEmail(), roles, expiresAt);
+        return new JwtResponse(token, user.getEmail(), roles, permissions, expiresAt);
     }
 }

@@ -16,7 +16,7 @@
           <pb-input formControlName="password"></pb-input>
         </pb-form-field>
 
-        <div class="form-actions">
+        <div class="my-6">
           <pb-button
             [disabled]="!form.valid"
             variant="primary"
@@ -28,14 +28,10 @@
           </pb-button>
         </div>
 
-        <div class="register-link">
+        <div class="text-center">
           {{ t("dontHaveAccount") }}
 
-          <pb-button
-            variant="outline"
-            size="sm"
-            [routerLink]="RoutePath.Register"
-          >
+          <pb-button size="sm" type="link" variant="link" [routerLink]="RoutePath.Register">
             {{ t("register") }}
           </pb-button>
         </div>

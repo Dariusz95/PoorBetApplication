@@ -1,16 +1,46 @@
 import { Routes } from '@angular/router';
-import { AppComponent } from './app.component';
+import { AppLayoutComponent } from './core/layouts/app-layout/app-layout.component';
 import { RouteFragment } from './core/routing/route-fragment';
 
 export const routes: Routes = [
+  // {
+  //   path: '',
+  //   // canActivate: [rootRedirectGuard],
+  //   children: [],
+  // },
   {
     path: '',
-    component: AppComponent,
+    // path: RouteFragment.App,
+    component: AppLayoutComponent,
+    //     canActivate: [authGuard],
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('./features/bet/bet-page/bet-page.component').then(
+            (m) => m.BetPageComponent,
+          ),
+      },
+    ],
   },
   {
     path: RouteFragment.Auth,
-    loadChildren: () =>
-      import('./core/auth/auth.routes').then((m) => m.AUTH_ROUTES),
+    component: AppLayoutComponent,
+    children: [
+      {
+        path: '',
+        loadChildren: () =>
+          import('./core/auth/auth.routes').then((m) => m.AUTH_ROUTES),
+      },
+    ],
   },
-  { path: '**', redirectTo: 'auth/register' },
+  //   {
+  //     path: RouteFragment.Auth,
+  //     loadChildren: () =>
+  //       import('./core/auth/auth.routes').then((m) => m.AUTH_ROUTES),
+  //   },
+  {
+    path: '**',
+    redirectTo: '',
+  },
 ];

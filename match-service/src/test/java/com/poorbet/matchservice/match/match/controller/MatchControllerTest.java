@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import static org.mockito.Mockito.times;
@@ -30,7 +29,7 @@ import com.poorbet.matchservice.match.match.service.MatchResultsService;
 import com.poorbet.matchservice.match.match.service.OddsService;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("MatchController Unit Tests")
+@DisplayName("InternalMatchController Unit Tests")
 class MatchControllerTest {
 
     @Mock
@@ -40,7 +39,7 @@ class MatchControllerTest {
     private OddsService oddsService;
 
     @InjectMocks
-    private MatchController matchController;
+    private InternalMatchController matchController;
 
     private UUID testMatchId;
     private List<UUID> testMatchIds;

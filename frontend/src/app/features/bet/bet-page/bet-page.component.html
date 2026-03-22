@@ -1,0 +1,30 @@
+<section class="grid gap-4 lg:grid-cols-2">
+  <div class="space-y-4">
+    <h2 class="text-lg font-semibold text-app-text">Mecze na żywo</h2>
+
+    @if ((liveMatches | keyvalue).length === 0) {
+      <p class="rounded-md border border-app-border bg-app-surface p-4 text-sm text-app-textMuted">
+        Brak aktywnych meczów live.
+      </p>
+    }
+
+    @for (entry of liveMatches | keyvalue; track entry.key) {
+      <app-live-match-card [liveMatch]="entry.value"></app-live-match-card>
+    }
+  </div>
+
+  <div class="space-y-4">
+    <h2 class="text-lg font-semibold text-app-text">Nadchodzące pule</h2>
+
+    @if (future$ | async; as pools) {
+      <div class="space-y-4">
+        @for (pool of pools; track pool.id) {
+          <app-pool-card
+            [pool]="pool"
+            [timeRemaining]="calculateTimeRemaining(pool.scheduledStartTime, $index === 0)"
+          ></app-pool-card>
+        }
+      </div>
+    }
+  </div>
+</section>

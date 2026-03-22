@@ -1,28 +1,27 @@
 package com.poorbet.couponservice.client;
 
+import com.poorbet.couponservice.domain.OddsType;
+import com.poorbet.couponservice.dto.MatchResultMapDto;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import static org.mockito.ArgumentMatchers.any;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.web.reactive.function.client.WebClient;
-
-import com.poorbet.couponservice.domain.OddsType;
-import com.poorbet.couponservice.dto.MatchResultMapDto;
-
-import reactor.core.publisher.Mono;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("MatchClient Unit Tests")
@@ -60,7 +59,7 @@ class MatchClientTest {
     @SuppressWarnings({"unchecked", "rawtypes"})
     private void setupWebClientChainForGet(Double oddValue) {
         when(webClient.get()).thenReturn((WebClient.RequestHeadersUriSpec) requestHeadersUriSpec);
-        when(requestHeadersUriSpec.uri(any(Function.class))).thenReturn((WebClient.RequestHeadersSpec) requestHeadersSpec);
+        when(requestHeadersUriSpec.uri(any(Function.class))).thenReturn(requestHeadersSpec);
         when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
         when(responseSpec.bodyToMono(Double.class))
                 .thenReturn(Mono.just(oddValue));
@@ -68,8 +67,8 @@ class MatchClientTest {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     private void setupWebClientChainForPost(MatchResultMapDto results) {
-        when(webClient.post()).thenReturn((WebClient.RequestBodyUriSpec) requestBodyUriSpec);
-        when(requestBodyUriSpec.uri("/api/match/results")).thenReturn((WebClient.RequestBodySpec) requestBodySpec);
+        when(webClient.post()).thenReturn(requestBodyUriSpec);
+        when(requestBodyUriSpec.uri("/internal/match/results")).thenReturn(requestBodySpec);
         when(requestBodySpec.bodyValue(any())).thenReturn((WebClient.RequestHeadersSpec) requestHeadersSpec);
         when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
         when(responseSpec.onStatus(any(), any())).thenReturn(responseSpec);

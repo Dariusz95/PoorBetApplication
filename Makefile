@@ -1,24 +1,65 @@
+COMPOSE = docker compose --env-file env
+COMPOSE_DEV = docker compose --env-file .env.dev -f docker-compose.yml -f docker-compose.dev.yml
+TRAIN = $(COMPOSE) run --rm python-trainer python train_model.py
+
 train:
-	docker-compose run --rm --build python-trainer python train_model.py
+	$(TRAIN)
 
 train-clean:
-	docker-compose build --no-cache python-trainer
-	docker-compose run --rm python-trainer python train_model.py
+	$(COMPOSE) build --no-cache python-trainer
+	$(TRAIN)
 
 generate:
 	./generate-matches.sh
-	docker-compose run --rm python-trainer python train_model.py
-	docker-compose up -d odds-service
+	$(TRAIN)
+	$(COMPOSE) up -d odds-service
+
+# ========================
+# APP
+# ========================
 
 run-app:
-	docker-compose up -d --build simulation-service
+	$(COMPOSE) up -d --build simulation-service
+	$(MAKE) generate
+	$(COMPOSE) up -d --build
 
-# 	until [ "`docker inspect -f {{.State.Health.Status}} simulation-service`" = "healthy" ]; do \
-# 		echo "Czekam na simulation-service..."; \
-# 		sleep 2; \
-# 	done
-	sleep 15
+# ========================
+# DEV ENV
+# ========================
 
-	./generate-matches.sh
-	docker-compose run --rm python-trainer python train_model.py
-	docker-compose up -d --build
+app-dev:
+	$(COMPOSE_DEV) up -d --build simulation-service user-service
+	$(COMPOSE_DEV) up -d --build odds-training
+	$(COMPOSE_DEV) run --rm python-trainer python train_model.py
+	$(COMPOSE_DEV) up -d --build
+
+dev:
+	$(COMPOSE_DEV) up -d --build
+
+# ========================
+# DEV
+# ========================
+
+odds-training-dev:
+	$(COMPOSE_DEV) up -d --build odds-training
+
+user-dev:
+	$(COMPOSE_DEV) up -d --build user-service
+
+simulation-dev:
+	$(COMPOSE_DEV) up -d --build simulation-service
+
+coupon-dev:
+	$(COMPOSE_DEV) up -d --build coupon-service
+
+teams-dev:
+	$(COMPOSE_DEV) up -d --build teams-service
+
+match-dev:
+	$(COMPOSE_DEV) up -d --build match-service
+
+gate-dev:
+	$(COMPOSE_DEV) up -d --build gateway
+
+front:
+	$(COMPOSE_DEV) up -d --build frontend

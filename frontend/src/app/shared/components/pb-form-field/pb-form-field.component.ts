@@ -39,7 +39,7 @@ export class PbFormFieldComponent {
   value = signal<string>('');
   touched = signal(false);
   invalid = signal(false);
-  _labelId ='';
+  _labelId = '';
 
   ngAfterContentInit() {
     this.control.stateChanges.subscribe(() => {
@@ -47,7 +47,6 @@ export class PbFormFieldComponent {
       this._updateErrorsState();
       this._updateTouchedState();
       this._updateInvalidState();
-      console.log(this.control.errors());
 
       this._changeDetectorRef.markForCheck();
     });
@@ -70,9 +69,10 @@ export class PbFormFieldComponent {
 
   private _updateErrorsState() {
     const errors = this.control.errors();
-    console.log('Errors:', errors);
+
     if (!errors) {
       this.errors.set(null);
+      
       return;
     }
 

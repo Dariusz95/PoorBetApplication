@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +23,7 @@ public class CouponController {
     private final CouponService couponService;
 
     @PostMapping
+    @PreAuthorize("hasAuthority(T(com.poorbet.commons.security.PoorbetPermissions).COUPON_CREATE)")
     public ResponseEntity<Coupon> createCoupon(
             @RequestBody @Valid CreateCouponDto createCouponDto
 
@@ -29,6 +31,4 @@ public class CouponController {
         Coupon coupon = couponService.createCoupon(createCouponDto, UUID.randomUUID());
         return new ResponseEntity<>(coupon, HttpStatus.CREATED);
     }
-
-
 }

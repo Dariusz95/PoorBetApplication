@@ -1,33 +1,35 @@
-<ng-container *ngIf="routerLink(); else regularButton">
-  <a
-    [routerLink]="routePath()"
-    [ngClass]="getButtonClasses()"
-    [attr.aria-disabled]="disabled()"
-    [class.pointer-events-none]="disabled()"
-    [class.opacity-50]="disabled()"
-    role="button"
-    [attr.aria-label]="ariaLabel()"
-  >
-    <ng-container *ngTemplateOutlet="buttonContent"></ng-container>
-  </a>
-</ng-container>
+@switch (type()) {
+  @case ("link") {
+    <a
+      [routerLink]="routePath()"
+      [ngClass]="getButtonClasses()"
+      [attr.aria-disabled]="disabled()"
+      [class.pointer-events-none]="disabled()"
+      [class.opacity-50]="disabled()"
+      role="button"
+      [attr.aria-label]="ariaLabel()"
+    >
+      <ng-container *ngTemplateOutlet="buttonContent"></ng-container>
+    </a>
+  }
 
-<ng-template #regularButton>
-  <button
-    [type]="type()"
-    [ngClass]="getButtonClasses()"
-    [disabled]="disabled()"
-    (click)="onClick($event)"
-    [attr.aria-label]="ariaLabel()"
-  >
-    <ng-container *ngTemplateOutlet="buttonContent"></ng-container>
-  </button>
-</ng-template>
+  @default {
+    <button
+      [type]="type()"
+      [ngClass]="getButtonClasses()"
+      [disabled]="disabled()"
+      (click)="onClick($event)"
+      [attr.aria-label]="ariaLabel()"
+    >
+      <ng-container *ngTemplateOutlet="buttonContent"></ng-container>
+    </button>
+  }
+}
 
 <ng-template #buttonContent>
   <span class="pb-button__content">
-    @if(iconTemplate()){
-    <ng-content select="pb-icon"></ng-content>
+    @if (iconTemplate()) {
+      <ng-content select="pb-icon"></ng-content>
     }
     <span
       class="button__text"

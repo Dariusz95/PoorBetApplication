@@ -8,6 +8,7 @@ import {
 import {
   FormBuilder,
   FormControl,
+  FormGroup,
   FormsModule,
   ReactiveFormsModule,
   Validators,
@@ -21,7 +22,7 @@ import { PbInputComponent } from '../../../../shared/components/pb-input/pb-inpu
 import { RoutePath } from '../../../routing/route-path';
 import { LoginRequest } from '../../requests/login-request';
 import { AuthService } from '../../services/auth.service';
-import { LoginFormGroup } from './types/login-form-group';
+import { LoginForm } from './types/login-form';
 import { LoginFormValue } from './types/login-form-value';
 
 @Component({
@@ -49,25 +50,10 @@ export class LoginComponent implements OnInit {
 
   readonly RoutePath = RoutePath;
 
-  form: LoginFormGroup;
+  form!: FormGroup<LoginForm>;
 
   constructor() {
-    this.form = this.formBuilder.group({
-      email: new FormControl('asd@asd.pl', {
-        nonNullable: true,
-        validators: [Validators.required, Validators.email],
-      }),
-      password: new FormControl('zaq1@WSX', {
-        nonNullable: true,
-        validators: [
-          Validators.required,
-          Validators.minLength(8),
-          Validators.pattern(
-            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
-          ),
-        ],
-      }),
-    });
+    this.initForm();
   }
 
   submitted = false;
@@ -76,7 +62,7 @@ export class LoginComponent implements OnInit {
 
   onSubmit(): void {
     this.submitted = true;
-    console.log('this.form.invalid',this.form.invalid)
+    console.log('this.form.invalid', this.form.invalid);
     if (this.form.invalid) {
       return;
     }
@@ -89,8 +75,7 @@ export class LoginComponent implements OnInit {
       password,
     };
 
-    this.authService.login(request)
-    .subscribe({
+    this.authService.login(request).subscribe({
       next: (response) => {
         console.log('Logowanie zakończone sukcesem:', response);
       },
@@ -101,5 +86,24 @@ export class LoginComponent implements OnInit {
 
     this.form.reset();
     this.submitted = false;
+  }
+
+  private initForm(): void {
+    this.form = this.formBuilder.group({
+      email: new FormControl('asd@asd.pl', {
+        nonNullable: true,
+        validators: [Validators.required, Validators.email],
+      }),
+      password: new FormControl('zaq1@WSX', {
+        nonNullable: true,
+        validators: [
+          Validators.required,
+          Validators.minLength(8),
+          Validators.pattern(
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+          ),
+        ],
+      }),
+    });
   }
 }

@@ -1,5 +1,20 @@
 package com.poorbet.matchservice.match.matchpool.controller;
 
+import com.poorbet.matchservice.match.matchpool.domain.PoolStatus;
+import com.poorbet.matchservice.match.matchpool.dto.LiveMatchEventDto;
+import com.poorbet.matchservice.match.matchpool.dto.MatchPoolDto;
+import com.poorbet.matchservice.match.matchpool.service.LiveMatchSimulationManager;
+import com.poorbet.matchservice.match.matchpool.service.MatchPoolService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import reactor.core.publisher.Flux;
+import reactor.test.StepVerifier;
+
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -9,30 +24,8 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.*;
 
-import com.poorbet.matchservice.match.matchpool.domain.PoolStatus;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import com.poorbet.matchservice.match.matchpool.dto.LiveMatchEventDto;
-import com.poorbet.matchservice.match.matchpool.dto.MatchPoolDto;
-import com.poorbet.matchservice.match.matchpool.service.LiveMatchSimulationManager;
-import com.poorbet.matchservice.match.matchpool.service.MatchPoolService;
-
-import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
-import reactor.core.publisher.Flux;
-import reactor.test.StepVerifier;
-
-@ExtendWith(MockitoExtension.class)
 @WebMvcTest(MatchPoolControllerTest.class)
 class MatchPoolControllerTest {
 
@@ -64,7 +57,7 @@ class MatchPoolControllerTest {
             // Arrange
             LiveMatchEventDto event1 = LiveMatchEventDto.heartbeat();
             LiveMatchEventDto event2 = LiveMatchEventDto.poolFinished(UUID.randomUUID());
-            
+
             Flux<LiveMatchEventDto> managerEvents = Flux.just(event1, event2);
             when(manager.streamAll()).thenReturn(managerEvents);
 

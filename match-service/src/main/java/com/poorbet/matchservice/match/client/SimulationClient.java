@@ -19,7 +19,7 @@ public class SimulationClient {
 
     public Flux<LiveMatchEvent> simulateMatch(SimulationRequest request) {
         return simulationWebClient.post()
-                .uri("/api/simulation/live")
+                .uri("/internal/simulation/live")
                 .bodyValue(request)
                 .retrieve()
                 .bodyToFlux(LiveMatchEvent.class);

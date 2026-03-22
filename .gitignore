@@ -1,5 +1,7 @@
 .env
+.env.dev
 /dist
 .idea/*
 **/.idea/*
 /data/*
+.idea/
