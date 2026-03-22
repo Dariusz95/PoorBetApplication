@@ -40,7 +40,7 @@ web:
     maxAge: 3600
 
 jwt:
-  issuer: ${JWT_ISSUER:http://user-service:8080}
+  issuer: ${AUTH_ISSUER_URI}
   access-token-expiration: 900000
   refresh-token-expiration: 604800000
   rsa:
@@ -68,8 +68,8 @@ oauth:
 poorbet:
   security:
     enabled: true
-    jwk-set-uri: ${AUTH_JWKS_URI:http://user-service:8080/.well-known/jwks.json}
-    issuer: ${JWT_ISSUER:http://user-service:8080}
+    jwk-set-uri: ${AUTH_JWKS_URI}
+    issuer: ${AUTH_ISSUER_URI}
     unprotected-paths:
       - /api/users/login
       - /api/users/register

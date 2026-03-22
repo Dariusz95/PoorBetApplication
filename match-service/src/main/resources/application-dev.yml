@@ -22,8 +22,8 @@ odds:
 poorbet:
   security:
     enabled: true
-    jwk-set-uri: ${AUTH_JWKS_URI:http://user-service:8080/.well-known/jwks.json}
-    issuer: ${AUTH_ISSUER_URI:http://user-service:8080}
+    jwk-set-uri: ${AUTH_JWKS_URI}
+    issuer: ${AUTH_ISSUER_URI}
     internal-audience:
       - match-service
     unprotected-paths:

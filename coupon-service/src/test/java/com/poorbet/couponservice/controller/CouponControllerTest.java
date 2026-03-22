@@ -1,36 +1,38 @@
 package com.poorbet.couponservice.controller;
 
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.UUID;
-
-import static org.hamcrest.Matchers.comparesEqualTo;
-import static org.hamcrest.Matchers.equalTo;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.servlet.MockMvc;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.poorbet.couponservice.domain.BetType;
 import com.poorbet.couponservice.domain.Coupon;
 import com.poorbet.couponservice.domain.CouponStatus;
 import com.poorbet.couponservice.dto.CreateBetDto;
 import com.poorbet.couponservice.dto.CreateCouponDto;
 import com.poorbet.couponservice.service.CouponService;
-import tools.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
+
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
+
+import static org.hamcrest.Matchers.comparesEqualTo;
+import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(CouponController.class)
+@AutoConfigureMockMvc(addFilters = false)
 class CouponControllerTest {
 
     @Autowired
@@ -84,8 +86,8 @@ class CouponControllerTest {
 
         // Act & Assert
         mockMvc.perform(post(COUPONS_ENDPOINT)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(validCreateCouponDto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(validCreateCouponDto)))
                 .andExpect(status().isCreated());
     }
 
@@ -95,12 +97,12 @@ class CouponControllerTest {
         // Arrange
         CreateCouponDto invalidDto = new CreateCouponDto();
         invalidDto.setStake(null);
-        invalidDto.setBets(Arrays.asList(createBetDto(BetType.HOME_WIN)));
+        invalidDto.setBets(Collections.singletonList(createBetDto(BetType.HOME_WIN)));
 
         // Act & Assert
         mockMvc.perform(post(COUPONS_ENDPOINT)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(invalidDto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidDto)))
                 .andExpect(status().isBadRequest());
     }
 
@@ -110,12 +112,12 @@ class CouponControllerTest {
         // Arrange
         CreateCouponDto invalidDto = new CreateCouponDto();
         invalidDto.setStake(new BigDecimal("0.50"));
-        invalidDto.setBets(Arrays.asList(createBetDto(BetType.HOME_WIN)));
+        invalidDto.setBets(Collections.singletonList(createBetDto(BetType.HOME_WIN)));
 
         // Act & Assert
         mockMvc.perform(post(COUPONS_ENDPOINT)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(invalidDto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidDto)))
                 .andExpect(status().isBadRequest());
     }
 
@@ -125,12 +127,12 @@ class CouponControllerTest {
         // Arrange
         CreateCouponDto invalidDto = new CreateCouponDto();
         invalidDto.setStake(new BigDecimal("50.00"));
-        invalidDto.setBets(Arrays.asList());
+        invalidDto.setBets(List.of());
 
         // Act & Assert
         mockMvc.perform(post(COUPONS_ENDPOINT)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(invalidDto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidDto)))
                 .andExpect(status().isBadRequest());
     }
 
@@ -144,12 +146,12 @@ class CouponControllerTest {
 
         CreateCouponDto invalidDto = new CreateCouponDto();
         invalidDto.setStake(new BigDecimal("50.00"));
-        invalidDto.setBets(Arrays.asList(invalidBet));
+        invalidDto.setBets(List.of(invalidBet));
 
         // Act & Assert
         mockMvc.perform(post(COUPONS_ENDPOINT)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(invalidDto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidDto)))
                 .andExpect(status().isBadRequest());
     }
 
@@ -163,12 +165,12 @@ class CouponControllerTest {
 
         CreateCouponDto invalidDto = new CreateCouponDto();
         invalidDto.setStake(new BigDecimal("50.00"));
-        invalidDto.setBets(Arrays.asList(invalidBet));
+        invalidDto.setBets(List.of(invalidBet));
 
         // Act & Assert
         mockMvc.perform(post(COUPONS_ENDPOINT)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(invalidDto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidDto)))
                 .andExpect(status().isBadRequest());
     }
 
@@ -178,15 +180,15 @@ class CouponControllerTest {
         // Arrange
         CreateCouponDto minimumDto = new CreateCouponDto();
         minimumDto.setStake(new BigDecimal("1.00"));
-        minimumDto.setBets(Arrays.asList(createBetDto(BetType.HOME_WIN)));
+        minimumDto.setBets(Collections.singletonList(createBetDto(BetType.HOME_WIN)));
 
         when(couponService.createCoupon(any(CreateCouponDto.class), any(UUID.class)))
                 .thenReturn(couponResponse);
 
         // Act & Assert
         mockMvc.perform(post(COUPONS_ENDPOINT)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(minimumDto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(minimumDto)))
                 .andExpect(status().isCreated());
     }
 
@@ -196,15 +198,15 @@ class CouponControllerTest {
         // Arrange
         CreateCouponDto highStakeDto = new CreateCouponDto();
         highStakeDto.setStake(new BigDecimal("10000.00"));
-        highStakeDto.setBets(Arrays.asList(createBetDto(BetType.HOME_WIN)));
+        highStakeDto.setBets(Collections.singletonList(createBetDto(BetType.HOME_WIN)));
 
         when(couponService.createCoupon(any(CreateCouponDto.class), any(UUID.class)))
                 .thenReturn(couponResponse);
 
         // Act & Assert
         mockMvc.perform(post(COUPONS_ENDPOINT)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(highStakeDto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(highStakeDto)))
                 .andExpect(status().isCreated());
     }
 
@@ -217,8 +219,8 @@ class CouponControllerTest {
 
         // Act
         mockMvc.perform(post(COUPONS_ENDPOINT)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(validCreateCouponDto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(validCreateCouponDto)))
                 .andExpect(status().isCreated());
 
         // Assert
@@ -244,8 +246,8 @@ class CouponControllerTest {
 
         // Act & Assert
         mockMvc.perform(post(COUPONS_ENDPOINT)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(validCreateCouponDto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(validCreateCouponDto)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", equalTo(couponId.toString())))
                 .andExpect(jsonPath("$.stake", comparesEqualTo(50.00)))
@@ -269,8 +271,8 @@ class CouponControllerTest {
 
         // Act & Assert
         mockMvc.perform(post(COUPONS_ENDPOINT)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(multipleBeetsDto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(multipleBeetsDto)))
                 .andExpect(status().isCreated());
     }
 
@@ -279,8 +281,8 @@ class CouponControllerTest {
     void shouldRejectInvalidJsonFormat() throws Exception {
         // Act & Assert
         mockMvc.perform(post(COUPONS_ENDPOINT)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("invalid json"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("invalid json"))
                 .andExpect(status().isBadRequest());
     }
 
@@ -289,8 +291,8 @@ class CouponControllerTest {
     void shouldRequireJsonContentType() throws Exception {
         // Act & Assert
         mockMvc.perform(post(COUPONS_ENDPOINT)
-                .contentType(MediaType.TEXT_PLAIN)
-                .content(objectMapper.writeValueAsString(validCreateCouponDto)))
+                        .contentType(MediaType.TEXT_PLAIN)
+                        .content(objectMapper.writeValueAsString(validCreateCouponDto)))
                 .andExpect(status().isUnsupportedMediaType());
     }
 }

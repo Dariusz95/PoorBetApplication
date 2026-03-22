@@ -10,6 +10,9 @@ services:
       - "8090:8080"
     environment:
       - SPRING_PROFILES_ACTIVE=prod
+      - AUTH_SERVICE_URL=${AUTH_SERVICE_URL}
+      - AUTH_SERVICE_CLIENT_ID=odds-training
+      - AUTH_SERVICE_CLIENT_SECRET=${AUTH_SERVICE_CLIENT_SECRET}
     depends_on:
       - user-service
       - simulation-service
@@ -37,6 +40,9 @@ services:
     container_name: gateway
     ports:
       - "8081:8081"
+    environment:
+      - AUTH_ISSUER_URI=${AUTH_ISSUER_URI}
+      - AUTH_JWKS_URI=${AUTH_JWKS_URI}
     networks:
       - main_network
     depends_on:
@@ -60,6 +66,8 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=prod
       - MODEL_PATH=/app/data/models/match_predictor.onnx
+      - AUTH_ISSUER_URI=${AUTH_ISSUER_URI}
+      - AUTH_JWKS_URI=${AUTH_JWKS_URI}
     networks:
       - main_network
 
@@ -70,12 +78,17 @@ services:
     container_name: simulation-service
     ports:
       - "8084:8080"
+    environment:
+      - AUTH_ISSUER_URI=${AUTH_ISSUER_URI}
+      - AUTH_JWKS_URI=${AUTH_JWKS_URI}
     networks:
       - main_network
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8080/health" ]
       interval: 5s
       retries: 5
+    depends_on:
+      - user-service
 
   user-service:
     build:
@@ -87,9 +100,11 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - JWT_ISSUER=${JWT_ISSUER}
+      - AUTH_ISSUER_URI=${AUTH_ISSUER_URI}
+      - AUTH_JWKS_URI=${AUTH_JWKS_URI}
       - JWT_KEY_ID=${JWT_KEY_ID}
-      - API_KEY=${API_KEY}
+      - MATCH_SERVICE_CLIENT_SECRET=${MATCH_SERVICE_CLIENT_SECRET}
+      - COUPON_SERVICE_CLIENT_SECRET=${COUPON_SERVICE_CLIENT_SECRET}
     depends_on:
       - user-db
     networks:
@@ -122,6 +137,8 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://teams-db:5432/${POSTGRES_TEAMS_DB}
       - POSTGRES_USER=${POSTGRES_TEAMS_USER}
       - POSTGRES_PASSWORD=${POSTGRES_TEAMS_PASSWORD}
+      - AUTH_ISSUER_URI=${AUTH_ISSUER_URI}
+      - AUTH_JWKS_URI=${AUTH_JWKS_URI}
     ports:
       - "8082:8080"
     depends_on:
@@ -145,6 +162,11 @@ services:
       - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
       - RABBITMQ_PORT=${RABBITMQ_PORT}
       - RABBITMQ_HOST=rabbitmq
+      - AUTH_ISSUER_URI=${AUTH_ISSUER_URI}
+      - AUTH_JWKS_URI=${AUTH_JWKS_URI}
+      - AUTH_SERVICE_URL=${AUTH_SERVICE_URL}
+      - AUTH_SERVICE_CLIENT_ID=match-service
+      - AUTH_SERVICE_CLIENT_SECRET=${AUTH_SERVICE_CLIENT_SECRET}
     ports:
       - "8083:8080"
     depends_on:
@@ -169,6 +191,11 @@ services:
       - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
       - RABBITMQ_PORT=${RABBITMQ_PORT}
       - RABBITMQ_HOST=rabbitmq
+      - AUTH_ISSUER_URI=${AUTH_ISSUER_URI}
+      - AUTH_JWKS_URI=${AUTH_JWKS_URI}
+      - AUTH_SERVICE_URL=${AUTH_SERVICE_URL}
+      - AUTH_SERVICE_CLIENT_ID=coupon-service
+      - AUTH_SERVICE_CLIENT_SECRET=${AUTH_SERVICE_CLIENT_SECRET}
     ports:
       - "8086:8080"
     depends_on:

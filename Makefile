@@ -1,5 +1,5 @@
-COMPOSE = docker compose
-COMPOSE_DEV = docker compose -f docker-compose.yml -f docker-compose.dev.yml
+COMPOSE = docker compose --env-file env
+COMPOSE_DEV = docker compose --env-file .env.dev -f docker-compose.yml -f docker-compose.dev.yml
 TRAIN = $(COMPOSE) run --rm python-trainer python train_model.py
 
 train:
@@ -20,7 +20,6 @@ generate:
 
 run-app:
 	$(COMPOSE) up -d --build simulation-service
-	sleep 15
 	$(MAKE) generate
 	$(COMPOSE) up -d --build
 
@@ -28,9 +27,8 @@ run-app:
 # DEV ENV
 # ========================
 
-run-app-dev:
+app-dev:
 	$(COMPOSE_DEV) up -d --build simulation-service user-service
-	sleep 15
 	$(COMPOSE_DEV) up -d --build odds-training
 	$(COMPOSE_DEV) run --rm python-trainer python train_model.py
 	$(COMPOSE_DEV) up -d --build
@@ -47,6 +45,9 @@ user-dev:
 
 simulation-dev:
 	$(COMPOSE_DEV) up -d --build simulation-service
+
+coupon-dev:
+	$(COMPOSE_DEV) up -d --build coupon-service
 
 teams-dev:
 	$(COMPOSE_DEV) up -d --build teams-service

@@ -1,0 +1,53 @@
+simulation:
+  service:
+    url: http://localhost:8084
+    timeout:
+      connect: 2s
+      read: 3s
+
+auth:
+  service:
+    url: ${AUTH_SERVICE_URL:http://user-service:8080}
+    client-id: ${AUTH_SERVICE_CLIENT_ID:odds-training}
+    client-secret: ${AUTH_SERVICE_CLIENT_SECRET:secret}
+    timeout:
+      connect: ${AUTH_SERVICE_CONNECT_TIMEOUT:2s}
+      read: ${AUTH_SERVICE_READ_TIMEOUT:3s}
+
+poorbet:
+  security:
+    enabled: false
+
+training:
+  count-per-tier: 7
+  repetitions: 5
+
+dataset:
+  output-path: "../data/matches.csv"
+  delimiter: ","
+
+team-power:
+  tiers:
+    WEAK:
+      attack:
+        min: 30
+        max: 50
+      defence:
+        min: 30
+        max: 50
+
+    AVERAGE:
+      attack:
+        min: 50
+        max: 70
+      defence:
+        min: 50
+        max: 70
+
+    STRONG:
+      attack:
+        min: 70
+        max: 100
+      defence:
+        min: 70
+        max: 100

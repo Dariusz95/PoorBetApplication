@@ -8,8 +8,13 @@ services:
       - "8090:8080"
     volumes:
       - ./data:/app/data
+      - ./odds-training:/app
+      - ~/.m2:/root/.m2
     environment:
       - SPRING_PROFILES_ACTIVE=dev
+      - AUTH_SERVICE_URL=${AUTH_SERVICE_URL}
+      - AUTH_SERVICE_CLIENT_ID=odds-training
+      - AUTH_SERVICE_CLIENT_SECRET=${AUTH_SERVICE_CLIENT_SECRET}
 
   frontend:
     build:
@@ -26,10 +31,13 @@ services:
 
   odds-service:
     build:
+      context: ./odds-service
       dockerfile: Dockerfile.dev
     environment:
       - SPRING_PROFILES_ACTIVE=dev
       - MODEL_PATH=/app/data/models/match_predictor.onnx
+      - AUTH_ISSUER_URI=${AUTH_ISSUER_URI}
+      - AUTH_JWKS_URI=${AUTH_JWKS_URI}
     volumes:
       - ./odds-service:/app
       - ./data/models:/app/data/models
@@ -40,38 +48,50 @@ services:
 
   simulation-service:
     build:
+      context: ./simulation-service
       dockerfile: Dockerfile.dev
     environment:
       - SPRING_PROFILES_ACTIVE=dev
+      - AUTH_ISSUER_URI=${AUTH_ISSUER_URI}
+      - AUTH_JWKS_URI=${AUTH_JWKS_URI}
     volumes:
       - ./simulation-service:/app
       - ~/.m2:/root/.m2
     ports:
       - "8084:8080"
       - "5073:5073"
-
+    depends_on:
+      - user-service
 
   user-service:
     build:
       context: .
       dockerfile: user-service/Dockerfile.dev
-    container_name: user-service
+    container_name: dev-user-service
     working_dir: /app/user-service
     environment:
       - SPRING_PROFILES_ACTIVE=dev
       - SPRING_DATASOURCE_URL=jdbc:postgresql://user-db:5432/${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - JWT_ISSUER=${JWT_ISSUER}
+      - AUTH_ISSUER_URI=${AUTH_ISSUER_URI}
+      - AUTH_JWKS_URI=${AUTH_JWKS_URI}
       - JWT_KEY_ID=${JWT_KEY_ID}
+      - MATCH_SERVICE_CLIENT_SECRET=${MATCH_SERVICE_CLIENT_SECRET}
+      - COUPON_SERVICE_CLIENT_SECRET=${COUPON_SERVICE_CLIENT_SECRET}
     volumes:
       - ./:/app
       - ~/.m2:/root/.m2
       - ./.mvn:/app/.mvn
-
     ports:
       - "8089:8080"
       - "5079:5079"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health/readiness" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
 
   teams-service:
     build:
@@ -82,6 +102,8 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://teams-db:5432/${POSTGRES_TEAMS_DB}
       - POSTGRES_USER=${POSTGRES_TEAMS_USER}
       - POSTGRES_PASSWORD=${POSTGRES_TEAMS_PASSWORD}
+      - AUTH_ISSUER_URI=${AUTH_ISSUER_URI}
+      - AUTH_JWKS_URI=${AUTH_JWKS_URI}
     volumes:
       - ./teams-service:/app
       - ~/.m2:/root/.m2
@@ -103,7 +125,11 @@ services:
       - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
       - RABBITMQ_PORT=${RABBITMQ_PORT}
       - RABBITMQ_HOST=rabbitmq
-      - JWT_ISSUER=${JWT_ISSUER}
+      - AUTH_ISSUER_URI=${AUTH_ISSUER_URI}
+      - AUTH_JWKS_URI=${AUTH_JWKS_URI}
+      - AUTH_SERVICE_URL=${AUTH_SERVICE_URL}
+      - AUTH_SERVICE_CLIENT_ID=match-service
+      - AUTH_SERVICE_CLIENT_SECRET=${AUTH_SERVICE_CLIENT_SECRET}
     volumes:
       - ./match-service:/app
       - ~/.m2:/root/.m2
@@ -113,6 +139,7 @@ services:
 
   coupon-service:
     build:
+      context: ./coupon-service
       dockerfile: Dockerfile.dev
     environment:
       - SPRING_PROFILES_ACTIVE=dev
@@ -123,6 +150,11 @@ services:
       - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
       - RABBITMQ_PORT=${RABBITMQ_PORT}
       - RABBITMQ_HOST=rabbitmq
+      - AUTH_ISSUER_URI=${AUTH_ISSUER_URI}
+      - AUTH_JWKS_URI=${AUTH_JWKS_URI}
+      - AUTH_SERVICE_URL=${AUTH_SERVICE_URL}
+      - AUTH_SERVICE_CLIENT_ID=coupon-service
+      - AUTH_SERVICE_CLIENT_SECRET=${AUTH_SERVICE_CLIENT_SECRET}
     volumes:
       - ./coupon-service:/app
       - ~/.m2:/root/.m2
@@ -132,10 +164,12 @@ services:
 
   gateway:
     build:
-      context: .
-      dockerfile: gateway/Dockerfile
+      context: ./gateway
+      dockerfile: Dockerfile.dev
+    container_name: dev-gateway
+    volumes:
+      - ./gateway:/app
+      - ~/.m2:/root/.m2
     ports:
       - "8081:8081"
-    depends_on:
-      - user-service
-      - user-db
+      - "5081:5081"
