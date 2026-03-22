@@ -14,7 +14,16 @@
         <java.version>21</java.version>
         <spring.boot.version>3.4.1</spring.boot.version>
         <poorbet.commons.version>0.0.1-SNAPSHOT</poorbet.commons.version>
+        <github.repository>Dariusz95/PoorBetComons</github.repository>
     </properties>
+
+    <repositories>
+        <repository>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/${github.repository}</url>
+        </repository>
+    </repositories>
 
     <parent>
         <groupId>org.springframework.boot</groupId>

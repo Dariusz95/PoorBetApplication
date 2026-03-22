@@ -1,30 +1,24 @@
-name: Run microservices tests
+name: Publish poorbet-commons
 
 on:
-  pull_request:
+  push:
     branches:
       - main
+    paths:
+      - "poorbet-commons/**"
+      - ".github/workflows/publish-poorbet-commons.yml"
+  workflow_dispatch:
 
 permissions:
   contents: read
-  packages: read
+  packages: write
 
 jobs:
-  test:
+  publish:
     runs-on: ubuntu-latest
     env:
       GITHUB_ACTOR: ${{ github.actor }}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    strategy:
-      matrix:
-        service: [
-          coupon-service,
-          match-service,
-          odds-service,
-          odds-training,
-          simulation-service,
-          teams-service
-        ]
 
     steps:
       - name: Checkout code
@@ -40,6 +34,8 @@ jobs:
           server-username: GITHUB_ACTOR
           server-password: GITHUB_TOKEN
 
-      - name: Run tests for ${{ matrix.service }}
-        working-directory: ${{ matrix.service }}
-        run: mvn clean test
+      - name: Publish poorbet-commons to GitHub Packages
+        working-directory: poorbet-commons
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: mvn --batch-mode deploy
