@@ -1,0 +1,59 @@
+:host {
+  @apply block;
+}
+
+.pool-card {
+  @apply overflow-hidden rounded-xl border border-app-border bg-app-surface shadow-surface;
+}
+
+.pool-card__header {
+  @apply flex items-center justify-between border-b border-app-border bg-app-surfaceSoft px-4 py-3;
+}
+
+.pool-card__eyebrow {
+  @apply text-xs uppercase tracking-wide text-app-textMuted;
+}
+
+.pool-card__time {
+  @apply text-sm text-app-textMuted;
+}
+
+.pool-card__status {
+  @apply text-right;
+}
+
+.pool-card__status-label {
+  @apply text-xs font-medium text-app-primary;
+}
+
+.pool-card__status-value {
+  @apply text-sm font-semibold text-app-text;
+}
+
+.pool-card__body {
+  @apply space-y-3 p-4;
+}
+
+.pool-card__match {
+  @apply rounded-lg border border-app-border bg-app-surfaceSoft p-3;
+}
+
+.pool-card__teams {
+  @apply mb-3 grid grid-cols-[1fr_auto_1fr] items-center gap-3 text-sm text-app-text;
+}
+
+.pool-card__team {
+  @apply truncate font-medium;
+}
+
+.pool-card__team--away {
+  @apply text-right;
+}
+
+.pool-card__versus {
+  @apply text-xs font-semibold uppercase tracking-wide text-app-textMuted;
+}
+
+.pool-card__footer {
+  @apply border-t border-app-border p-4;
+}

@@ -33,4 +33,9 @@ export class RoutingService {
     const params = Object.values(RouteParam) as string[];
     return params.includes(data as string);
   }
+
+  navigateTo(path: RoutePath, params?: Partial<Record<RouteParam, string>>): void {
+    const link = this.createLink(path, params);
+    this.router.navigateByUrl(link);
+  }
 }

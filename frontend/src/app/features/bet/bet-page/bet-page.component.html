@@ -1,30 +1,97 @@
-<section class="grid gap-4 lg:grid-cols-2">
-  <div class="space-y-4">
-    <h2 class="text-lg font-semibold text-app-text">Mecze na żywo</h2>
+<section class="bet-page-layout" (scroll)="onScroll($event)">
+  <div class="bet-page-main">
+    <!-- Sticky Header with Carousel Tabs -->
+    <div class="bet-page-header" [class.scrolled]="isHeaderScrolled">
+      <div class="bet-page-header__content">
+        <h1 class="bet-page-header__title">Dostępne pule</h1>
 
-    @if ((liveMatches | keyvalue).length === 0) {
-      <p class="rounded-md border border-app-border bg-app-surface p-4 text-sm text-app-textMuted">
-        Brak aktywnych meczów live.
-      </p>
-    }
+        <!-- Tabs -->
+        <div class="tabs-container">
+          @for (tab of tabs$ | async; track tab) {
+            <button
+              class="tab-button"
+              [class.active]="selectedTab === tab"
+              (click)="selectTab(tab)"
+            >
+              @if (tab === "Live") {
+                <span class="tab-button__label">{{ tab }}</span>
+                <span class="tab-button__badge">●</span>
+              } @else {
+                <span class="tab-button__label">{{ tab }}</span>
+              }
+            </button>
+          }
+        </div>
+      </div>
+    </div>
 
-    @for (entry of liveMatches | keyvalue; track entry.key) {
-      <app-live-match-card [liveMatch]="entry.value"></app-live-match-card>
-    }
-  </div>
+    <!-- Main Content Area -->
+    <div class="bet-page-content">
+      <div [@fadeInOut]="selectedTab" class="content-wrapper">
+        @if (selectedTab === "Live") {
+          <div class="matches-section">
+            <div class="section-header">
+              <h2 class="section-header__title">Mecze na żywo</h2>
+              <p class="section-header__subtitle">
+                Dołącz do meczów w trakcie gry
+              </p>
+            </div>
 
-  <div class="space-y-4">
-    <h2 class="text-lg font-semibold text-app-text">Nadchodzące pule</h2>
+            @if ((liveMatches | keyvalue).length === 0) {
+              <div class="empty-state">
+                <p class="empty-state__title">Brak aktywnych meczów</p>
+                <p class="empty-state__text">
+                  Nie ma teraz żadnych meczów na żywo. Sprawdź dostępne pule w
+                  innych datach.
+                </p>
+              </div>
+            } @else {
+              <div class="matches-grid">
+                @for (entry of liveMatches | keyvalue; track entry.key) {
+                  <app-live-match-card
+                    [liveMatch]="entry.value"
+                  ></app-live-match-card>
+                }
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="matches-section">
+            <div class="section-header">
+              <h2 class="section-header__title">Nadchodzące pule</h2>
+              <p class="section-header__subtitle">{{ selectedTab }}</p>
+            </div>
 
-    @if (future$ | async; as pools) {
-      <div class="space-y-4">
-        @for (pool of pools; track pool.id) {
-          <app-pool-card
-            [pool]="pool"
-            [timeRemaining]="calculateTimeRemaining(pool.scheduledStartTime, $index === 0)"
-          ></app-pool-card>
+            @if (futureGrouped$ | async; as grouped) {
+              @if (grouped[selectedTab] && grouped[selectedTab].length > 0) {
+                <div class="matches-grid">
+                  @for (pool of grouped[selectedTab]; track pool.id) {
+                    <app-pool-card
+                      [pool]="pool"
+                      [timeRemaining]="
+                        calculateTimeRemaining(
+                          pool.scheduledStartTime,
+                          $index === 0
+                        )
+                      "
+                    ></app-pool-card>
+                  }
+                </div>
+              } @else {
+                <div class="empty-state">
+                  <p class="empty-state__title">Brak pul w tej dacie</p>
+                  <p class="empty-state__text">
+                    Nie ma dostępnych pul na {{ selectedTab }}. Spróbuj innej
+                    daty.
+                  </p>
+                </div>
+              }
+            }
+          </div>
         }
       </div>
-    }
+    </div>
   </div>
+
+  <app-bet-coupon-card></app-bet-coupon-card>
 </section>

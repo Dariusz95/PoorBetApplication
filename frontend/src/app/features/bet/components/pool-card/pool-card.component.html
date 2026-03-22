@@ -1,56 +1,64 @@
-<div class="rounded-lg border border-app-border bg-app-surface shadow-surface">
-  <header
-    class="flex items-center justify-between border-b border-app-border px-4 py-3"
-  >
+<div class="pool-card">
+  <header class="pool-card__header">
     <div>
-      <p class="text-xs uppercase tracking-wide text-app-textMuted">Pool</p>
-      <p class="text-sm text-app-textMuted">
-        {{ pool().scheduledStartTime | date: "HH:mm:ss" }}
+      <p class="pool-card__eyebrow">Pool</p>
+      <p class="pool-card__time">
+        {{ pool().scheduledStartTime | date: 'HH:mm:ss' }}
       </p>
     </div>
 
-    <div class="text-right">
-      <p class="text-xs font-medium text-app-primary">{{ pool().status }}</p>
-      <p class="text-sm font-semibold text-app-text">{{ timeRemaining() }}</p>
+    <div class="pool-card__status">
+      <p class="pool-card__status-label">{{ pool().status }}</p>
+      <p class="pool-card__status-value">{{ timeRemaining() }}</p>
     </div>
   </header>
 
-  <div class="space-y-3 p-4">
+  <div class="pool-card__body">
     @for (match of pool().matches; track trackByMatchId($index, match)) {
-      <section
-        class="rounded-md border border-app-border bg-app-surfaceSoft p-3"
-      >
-        <div
-          class="mb-3 flex items-center justify-between text-sm text-app-text"
-        >
-          <span class="max-w-[45%] truncate">{{
-            match.homeTeamId | slice: 0 : 8
-          }}</span>
-          <span class="text-app-textMuted">vs</span>
-          <span class="max-w-[45%] truncate text-right">{{
-            match.awayTeamId | slice: 0 : 8
-          }}</span>
+      <section class="pool-card__match">
+        <div class="pool-card__teams">
+          <span class="pool-card__team">
+            @if (getTeamName(match.homeTeamId) | async; as homeTeam) {
+              {{ homeTeam.name }}
+            } @else {
+              {{ match.homeTeamId | slice: 0 : 8 }}
+            }
+          </span>
+          <span class="pool-card__versus">vs</span>
+          <span class="pool-card__team pool-card__team--away">
+            @if (getTeamName(match.awayTeamId) | async; as awayTeam) {
+              {{ awayTeam.name }}
+            } @else {
+              {{ match.awayTeamId | slice: 0 : 8 }}
+            }
+          </span>
         </div>
 
         <div class="grid grid-cols-3 gap-2">
           <app-odds-button
             label="1"
             [value]="match.odds.homeWin"
+            [selected]="isSelected(match.matchId, 'HOME_WIN')"
+            (oddsClick)="toggleBet(match, 'HOME_WIN', '1', match.odds.homeWin)"
           ></app-odds-button>
           <app-odds-button
             label="X"
             [value]="match.odds.draw"
+            [selected]="isSelected(match.matchId, 'DRAW')"
+            (oddsClick)="toggleBet(match, 'DRAW', 'X', match.odds.draw)"
           ></app-odds-button>
           <app-odds-button
             label="2"
             [value]="match.odds.awayWin"
+            [selected]="isSelected(match.matchId, 'AWAY_WIN')"
+            (oddsClick)="toggleBet(match, 'AWAY_WIN', '2', match.odds.awayWin)"
           ></app-odds-button>
         </div>
       </section>
     }
   </div>
 
-  <footer class="border-t border-app-border p-4">
+  <footer class="pool-card__footer">
     <pb-button [fullWidth]="true">Postaw kupon</pb-button>
   </footer>
 </div>

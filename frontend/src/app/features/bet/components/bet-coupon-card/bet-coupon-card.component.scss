@@ -1,0 +1,96 @@
+:host {
+  @apply block;
+}
+
+.bet-coupon-card {
+  @apply sticky top-24 flex max-h-[calc(100vh-8rem)] flex-col overflow-hidden rounded-xl border border-app-border bg-app-surface shadow-surface;
+}
+
+.bet-coupon-card__header,
+.bet-coupon-card__footer {
+  @apply flex items-center justify-between gap-3 border-app-border px-4 py-4;
+}
+
+.bet-coupon-card__header {
+  @apply border-b bg-app-surfaceSoft;
+}
+
+.bet-coupon-card__footer {
+  @apply mt-auto flex-col items-stretch border-t;
+}
+
+.bet-coupon-card__amount {
+  @apply mb-4;
+}
+
+.bet-coupon-card__amount-label {
+  @apply block text-sm font-medium text-app-text mb-1;
+}
+
+.bet-coupon-card__amount-input {
+  @apply w-full rounded-md border border-app-border bg-app-surface px-3 py-2 text-sm text-app-text focus:border-app-primary focus:outline-none;
+}
+
+.bet-coupon-card__eyebrow {
+  @apply text-xs font-semibold uppercase tracking-[0.2em] text-app-textMuted;
+}
+
+.bet-coupon-card__title {
+  @apply mb-0 text-lg font-semibold text-app-text;
+}
+
+.bet-coupon-card__badge {
+  @apply inline-flex h-9 min-w-9 items-center justify-center rounded-full bg-app-primary/15 px-3 text-sm font-semibold text-app-primary;
+}
+
+.bet-coupon-card__body {
+  @apply flex-1 overflow-y-auto p-4;
+}
+
+.bet-coupon-card__empty-state {
+  @apply rounded-lg border border-dashed border-app-border bg-app-surfaceSoft p-4 text-sm;
+}
+
+.bet-coupon-card__empty-title {
+  @apply mb-2 font-medium text-app-text;
+}
+
+.bet-coupon-card__empty-text {
+  @apply text-app-textMuted;
+}
+
+.bet-coupon-card__list {
+  @apply space-y-3;
+}
+
+.bet-coupon-card__item {
+  @apply flex items-start justify-between gap-3 rounded-lg border border-app-border bg-app-surfaceSoft p-3;
+}
+
+.bet-coupon-card__item-details {
+  @apply min-w-0 flex-1;
+}
+
+.bet-coupon-card__match {
+  @apply truncate text-sm font-semibold text-app-text;
+}
+
+.bet-coupon-card__meta {
+  @apply mt-1 flex flex-wrap items-center gap-2 text-xs text-app-textMuted;
+}
+
+.bet-coupon-card__separator {
+  @apply text-app-primary;
+}
+
+.bet-coupon-card__summary {
+  @apply flex items-center justify-between text-sm;
+}
+
+.bet-coupon-card__summary-label {
+  @apply text-app-textMuted;
+}
+
+.bet-coupon-card__summary-value {
+  @apply text-lg font-semibold text-app-primary;
+}

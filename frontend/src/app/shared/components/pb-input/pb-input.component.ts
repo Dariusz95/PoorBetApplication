@@ -42,6 +42,7 @@ export class PbInputComponent
   implements ControlValueAccessor, FormFieldControl
 {
   placeholder = input<string>('');
+  type = input<string>('text');
 
   private readonly injector = inject(Injector);
 

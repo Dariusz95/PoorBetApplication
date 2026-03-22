@@ -18,22 +18,22 @@ import {
   ConnectedPosition,
   OverlayModule,
 } from '@angular/cdk/overlay';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgTemplateOutlet } from '@angular/common';
 import { TemplateRef } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { DropdownOption } from './dropdown-option';
 
 const dropdownAnimation = trigger('dropdownAnimation', [
-  state('void', style({ opacity: 0, transform: 'scale(0.95)' })),
-  state('*', style({ opacity: 1, transform: 'scale(1)' })),
-  transition(':enter', [animate('100ms ease-out')]),
-  transition(':leave', [animate('75ms ease-in')]),
+  state('void', style({ opacity: 0, transform: 'translateY(-4px) scale(0.98)' })),
+  state('*', style({ opacity: 1, transform: 'translateY(0) scale(1)' })),
+  transition(':enter', [animate('120ms ease-out')]),
+  transition(':leave', [animate('90ms ease-in')]),
 ]);
 
 @Component({
   selector: 'app-pb-dropdown',
-  imports: [OverlayModule, CommonModule, TranslocoPipe],
+  imports: [OverlayModule, CommonModule, TranslocoPipe, NgTemplateOutlet],
   templateUrl: './pb-dropdown.component.html',
   styleUrl: './pb-dropdown.component.scss',
   standalone: true,
@@ -87,7 +87,9 @@ export class PbDropdownComponent<T extends DropdownOption>
   selectOption(option: T): void {
     this.value.set(option.value);
     this.onChange(option.value);
-    if (this.closeOnSelect()) this.closeDropdown();
+    if (this.closeOnSelect()) {
+      this.closeDropdown();
+    }
   }
 
   selectedOption(): T | undefined {
