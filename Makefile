@@ -40,6 +40,9 @@ dev:
 # DEV
 # ========================
 
+odds-training-dev:
+	$(COMPOSE_DEV) up -d --build odds-training
+
 user-dev:
 	$(COMPOSE_DEV) up -d --build user-service
 

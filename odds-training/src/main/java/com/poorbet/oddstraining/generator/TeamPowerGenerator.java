@@ -15,7 +15,7 @@ import java.util.stream.IntStream;
 public class TeamPowerGenerator {
 
     private final TeamPowerProperties properties;
-    private final Random random = new Random();
+    private final Random random;
 
     public List<TeamPower> generateForTier(TeamTier tier, int count) {
         TeamPowerProperties.TierPower power = properties.getTiers().get(tier);
