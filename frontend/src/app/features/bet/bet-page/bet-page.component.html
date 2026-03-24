@@ -1,34 +1,38 @@
 <section class="bet-page-layout" (scroll)="onScroll($event)">
   <div class="bet-page-main">
-    <!-- Sticky Header with Carousel Tabs -->
     <div class="bet-page-header" [class.scrolled]="isHeaderScrolled">
       <div class="bet-page-header__content">
         <h1 class="bet-page-header__title">Dostępne pule</h1>
 
-        <!-- Tabs -->
-        <div class="tabs-container">
+        <div class="tabs-container" #tabsContainer>
           @for (tab of tabs$ | async; track tab) {
             <button
               class="tab-button"
-              [class.active]="selectedTab === tab"
+              [class.active]="selectedTab() === tab"
               (click)="selectTab(tab)"
             >
               @if (tab === "Live") {
                 <span class="tab-button__label">{{ tab }}</span>
                 <span class="tab-button__badge">●</span>
               } @else {
-                <span class="tab-button__label">{{ tab }}</span>
+                <span class="tab-button__label">
+                  {{ tab | timeRemaining: true | async }}
+                </span>
               }
             </button>
           }
+          <div
+            class="tab-indicator text-app-primary"
+            [style.left]="indicatorStyle().left"
+            [style.width]="indicatorStyle().width"
+          ></div>
         </div>
       </div>
     </div>
 
-    <!-- Main Content Area -->
     <div class="bet-page-content">
-      <div [@fadeInOut]="selectedTab" class="content-wrapper">
-        @if (selectedTab === "Live") {
+      <div [@fadeInOut]="selectedTab()" class="content-wrapper">
+        @if (selectedTab() === "Live") {
           <div class="matches-section">
             <div class="section-header">
               <h2 class="section-header__title">Mecze na żywo</h2>
@@ -59,29 +63,26 @@
           <div class="matches-section">
             <div class="section-header">
               <h2 class="section-header__title">Nadchodzące pule</h2>
-              <p class="section-header__subtitle">{{ selectedTab }}</p>
+              <p class="section-header__subtitle">{{ selectedTab() }}</p>
             </div>
 
             @if (futureGrouped$ | async; as grouped) {
-              @if (grouped[selectedTab] && grouped[selectedTab].length > 0) {
+              @if (
+                grouped[selectedTab()] && grouped[selectedTab()].length > 0
+              ) {
                 <div class="matches-grid">
-                  @for (pool of grouped[selectedTab]; track pool.id) {
-                    <app-pool-card
-                      [pool]="pool"
-                      [timeRemaining]="
-                        calculateTimeRemaining(
-                          pool.scheduledStartTime,
-                          $index === 0
-                        )
-                      "
-                    ></app-pool-card>
+                  @for (pool of grouped[selectedTab()]; track pool.id) {
+                    <app-pool-card [pool]="pool"></app-pool-card>
+                    <!-- [timeRemaining]="
+                        pool.scheduledStartTime | timeRemaining | async
+                      " -->
                   }
                 </div>
               } @else {
                 <div class="empty-state">
                   <p class="empty-state__title">Brak pul w tej dacie</p>
                   <p class="empty-state__text">
-                    Nie ma dostępnych pul na {{ selectedTab }}. Spróbuj innej
+                    Nie ma dostępnych pul na {{ selectedTab() }}. Spróbuj innej
                     daty.
                   </p>
                 </div>

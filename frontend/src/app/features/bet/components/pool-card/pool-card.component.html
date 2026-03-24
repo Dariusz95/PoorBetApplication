@@ -3,14 +3,14 @@
     <div>
       <p class="pool-card__eyebrow">Pool</p>
       <p class="pool-card__time">
-        {{ pool().scheduledStartTime | date: 'HH:mm:ss' }}
+        {{ pool().scheduledStartTime | date: "HH:mm:ss" }}
       </p>
     </div>
 
-    <div class="pool-card__status">
+    <!-- <div class="pool-card__status">
       <p class="pool-card__status-label">{{ pool().status }}</p>
       <p class="pool-card__status-value">{{ timeRemaining() }}</p>
-    </div>
+    </div> -->
   </header>
 
   <div class="pool-card__body">
@@ -58,7 +58,6 @@
     }
   </div>
 
-  <footer class="pool-card__footer">
-    <pb-button [fullWidth]="true">Postaw kupon</pb-button>
-  </footer>
+  <!-- <footer class="pool-card__footer">
+  </footer> -->
 </div>

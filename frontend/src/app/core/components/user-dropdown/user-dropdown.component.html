@@ -1,29 +1,14 @@
 <ng-container *transloco="let t">
   <app-pb-dropdown
-    [options]="userMenuOptions"
+    [options]="(filteredOptions$ | async) ?? []"
     [optionTemplate]="userMenuTpl"
-    [formControl]="userMenuControl"
+    [highlightedOption]="false"
   >
-    <span dropdownLabel class="user-dropdown-trigger">
-      <span class="material-icons user-icon">account_circle</span>
-    </span>
+    <app-icon dropdownLabel icon="account_circle" size="s"></app-icon>
   </app-pb-dropdown>
 
   <ng-template #userMenuTpl let-option>
-    @let isLoggedIn = isLoggedIn$ | async;
-
-    @if (option.value === "settings") {
-      <span class="material-icons">settings</span>
-      <span>{{ t(option.label) }}</span>
-    } @else if (option.value === "login" && !isLoggedIn) {
-      <span class="material-icons">login</span>
-      <span>{{ t(option.label) }}</span>
-    } @else if (option.value === "register" && !isLoggedIn) {
-      <span class="material-icons">person_add</span>
-      <span>{{ t(option.label) }}</span>
-    } @else if (option.value === "logout" && isLoggedIn) {
-      <span class="material-icons">logout</span>
-      <span>{{ t(option.label) }}</span>
-    }
+    <app-icon [icon]="option.icon" size="s"></app-icon>
+    <span>{{ t(option.label) }}</span>
   </ng-template>
 </ng-container>

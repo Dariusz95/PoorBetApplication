@@ -16,7 +16,6 @@
   min-height: 0;
 }
 
-// ===== HEADER WITH CAROUSEL TABS =====
 .bet-page-header {
   position: sticky;
   top: 0;
@@ -45,15 +44,14 @@
   color: rgb(var(--app-text));
 }
 
-// ===== TABS =====
 .tabs-container {
+  position: relative;
   display: flex;
   gap: 0;
   border-bottom: 1px solid rgb(var(--app-border));
   background-color: rgb(var(--app-surface));
   overflow-x: auto;
 
-  /* Hide scrollbar */
   &::-webkit-scrollbar {
     display: none;
   }
@@ -75,8 +73,7 @@
   background: none;
   border: none;
   cursor: pointer;
-  transition: all 200ms;
-  border-bottom: 2px solid transparent;
+  transition: color 200ms;
   flex-shrink: 0;
 
   &:hover {
@@ -86,7 +83,6 @@
 
   &.active {
     color: rgb(var(--app-primary));
-    border-bottom-color: rgb(var(--app-primary));
     background-color: rgba(var(--app-primary), 0.05);
   }
 
@@ -102,6 +98,44 @@
     background-color: rgb(var(--app-primary));
     animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
+}
+
+// .tab-indicator {
+//   position: absolute;
+//   bottom: -1px;
+//   left: 0;
+//   height: 3px;
+//   background: linear-gradient(
+//     90deg,
+//     rgb(var(--app-primary)),
+//     rgb(var(--app-primary))
+//   );
+//   border-radius: 2px;
+//   transition:
+//     left 300ms cubic-bezier(0.34, 1.56, 0.64, 1),
+//     width 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+//   box-shadow: 0 0 12px rgba(var(--app-primary), 0.4);
+// }
+
+.tab-indicator {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  height: 3px;
+
+  background: linear-gradient(
+    90deg,
+    currentColor,
+    currentColor
+  );
+
+  border-radius: 2px;
+
+  transition:
+    left 300ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    width 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  box-shadow: 0 0 12px currentColor;
 }
 
 // ===== MAIN CONTENT =====

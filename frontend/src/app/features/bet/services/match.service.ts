@@ -49,11 +49,11 @@ export class MatchService {
   private readonly http = inject(HttpClient);
   private readonly ngZone = inject(NgZone);
 
-  private apiBaseUrl = `${environment.backend.baseURL}/api/match-pool`;
+  private BASE_URL = `${environment.backend.baseURL}/api/match-pool`;
 
   streamMatch(): Observable<LiveMatchEvent> {
     return new Observable<LiveMatchEvent>((observer) => {
-      const eventSource = new EventSource(`${this.apiBaseUrl}/live`);
+      const eventSource = new EventSource(`${this.BASE_URL}/live`);
 
       eventSource.onmessage = (event) => {
         this.ngZone.run(() => {
@@ -76,6 +76,6 @@ export class MatchService {
   }
 
   futureMatch(): Observable<PoolMatch[]> {
-    return this.http.get<PoolMatch[]>(`${this.apiBaseUrl}/future`);
+    return this.http.get<PoolMatch[]>(`${this.BASE_URL}/future`);
   }
 }

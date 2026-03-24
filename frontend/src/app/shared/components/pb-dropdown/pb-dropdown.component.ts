@@ -25,7 +25,10 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { DropdownOption } from './dropdown-option';
 
 const dropdownAnimation = trigger('dropdownAnimation', [
-  state('void', style({ opacity: 0, transform: 'translateY(-4px) scale(0.98)' })),
+  state(
+    'void',
+    style({ opacity: 0, transform: 'translateY(-4px) scale(0.98)' }),
+  ),
   state('*', style({ opacity: 1, transform: 'translateY(0) scale(1)' })),
   transition(':enter', [animate('120ms ease-out')]),
   transition(':leave', [animate('90ms ease-in')]),
@@ -47,17 +50,23 @@ const dropdownAnimation = trigger('dropdownAnimation', [
     },
   ],
 })
-export class PbDropdownComponent<T extends DropdownOption>
-  implements ControlValueAccessor
-{
+export class PbDropdownComponent<
+  T extends DropdownOption,
+> implements ControlValueAccessor {
   options = input<T[]>([]);
   origin = input<CdkOverlayOrigin | undefined>(undefined);
   positions = input<ConnectedPosition[]>([
-    { originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top' },
+    {
+      originX: 'start',
+      originY: 'bottom',
+      overlayX: 'center',
+      overlayY: 'top',
+    },
     { originX: 'start', originY: 'top', overlayX: 'start', overlayY: 'bottom' },
   ]);
   optionTemplate = input<TemplateRef<{ $implicit: T }> | undefined>(undefined);
   closeOnSelect = input(true);
+  highlightedOption = input(true);
 
   isOpen = signal(false);
   value = signal<string | null>(null);
@@ -84,15 +93,23 @@ export class PbDropdownComponent<T extends DropdownOption>
     this.onTouched();
   }
 
-  selectOption(option: T): void {
-    this.value.set(option.value);
-    this.onChange(option.value);
+  selectOption(option: DropdownOption): void {
+    if (option.action) {
+      option.action();
+    }
+
+    if (option?.value !== undefined) {
+      this.value.set(option.value);
+      this.onChange(option.value);
+    }
+
     if (this.closeOnSelect()) {
       this.closeDropdown();
     }
   }
 
   selectedOption(): T | undefined {
+    if (!this.value()) return undefined;
     return this.options().find((o) => o.value === this.value());
   }
 }

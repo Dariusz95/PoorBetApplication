@@ -1,15 +1,27 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { AsyncPipe, KeyValuePipe } from '@angular/common';
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { interval, map, startWith, Subject, switchMap, takeUntil } from 'rxjs';
+import {
+  afterRenderEffect,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  DestroyRef,
+  ElementRef,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+  viewChild,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { map, tap } from 'rxjs';
+import { logStream } from '../../../shared/utils/log-stream';
 import { BetCouponCardComponent } from '../components/bet-coupon-card/bet-coupon-card.component';
 import { LiveMatchComponent } from '../components/live-match-card/live-match.component';
 import { PoolCardComponent } from '../components/pool-card/pool-card.component';
-import {
-  LiveMatchEvent,
-  MatchService,
-  PoolMatch,
-} from '../services/match.service';
+import { TimeRemainingPipe } from '../pipes/time-remaining.pipe';
+import { LiveMatchEvent, MatchService } from '../services/match.service';
+import { PoolRefreshService } from '../services/pool-refresh.service';
 
 @Component({
   selector: 'app-bet-page',
@@ -20,56 +32,55 @@ import {
     AsyncPipe,
     PoolCardComponent,
     BetCouponCardComponent,
+    TimeRemainingPipe,
   ],
   templateUrl: './bet-page.component.html',
   styleUrl: './bet-page.component.scss',
   animations: [
     trigger('fadeInOut', [
-      transition(':enter', [
+      transition('* <=> *', [
         style({ opacity: 0, transform: 'translateY(10px)' }),
         animate(
           '300ms ease-out',
           style({ opacity: 1, transform: 'translateY(0)' }),
         ),
       ]),
-      transition(':leave', [
-        animate(
-          '200ms ease-in',
-          style({ opacity: 0, transform: 'translateY(-10px)' }),
-        ),
-      ]),
     ]),
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BetPageComponent implements OnInit, OnDestroy {
   private readonly matchService = inject(MatchService);
-  private readonly destroy$ = new Subject<void>();
-  private readonly refreshTrigger = new Subject<void>();
+  private readonly poolRefreshService = inject(PoolRefreshService);
+  private readonly destroyRef = inject(DestroyRef);
+  // @ViewChild('tabsContainer') tabsContainer!: ElementRef<HTMLElement>;
+  tabsContainer = viewChild<ElementRef>('tabsContainer');
 
   liveMatches: Record<string, LiveMatchEvent> = {};
-  selectedTab: string = 'Live';
+  selectedTab = signal('Live');
   isHeaderScrolled: boolean = false;
 
-  future$ = this.refreshTrigger.pipe(
-    startWith(void 0),
-    switchMap(() => this.matchService.futureMatch()),
-  );
+  indicatorStyle = signal({ left: '0px', width: '0px' });
 
-  futureGrouped$ = this.future$.pipe(
-    map((pools) => {
-      const grouped: { [date: string]: PoolMatch[] } = {};
-      pools.forEach((pool) => {
-        const date = new Date(pool.scheduledStartTime).toDateString();
-        if (!grouped[date]) grouped[date] = [];
-        grouped[date].push(pool);
-      });
-      return grouped;
+  futureGrouped$ = this.poolRefreshService.futureGrouped$;
+
+  cdr = inject(ChangeDetectorRef);
+  tabs$ = this.futureGrouped$.pipe(
+    logStream('tabs$'),
+    map((grouped) => ['Live', ...Object.keys(grouped)]),
+    tap(() => {
+      this.selectTab('Live');
+      this.cdr.detectChanges();
     }),
   );
 
-  tabs$ = this.futureGrouped$.pipe(
-    map((grouped) => ['Live', ...Object.keys(grouped)]),
-  );
+  constructor() {
+    afterRenderEffect(() => {
+      const tab = this.selectedTab();
+
+      this.updateIndicatorPosition();
+    });
+  }
 
   onScroll(event: Event): void {
     const target = event.target as HTMLElement;
@@ -80,62 +91,46 @@ export class BetPageComponent implements OnInit, OnDestroy {
     this.liveMatches[event.id] = event;
   }
 
-  refreshFutureMatches(): void {
-    this.refreshTrigger.next();
-  }
-
   selectTab(tab: string): void {
-    this.selectedTab = tab;
+    this.selectedTab.set(tab);
   }
 
-  calculateTimeRemaining(scheduledStartTime: string, isFirst: boolean): string {
-    const now = new Date().getTime();
-    const startTime = new Date(scheduledStartTime).getTime();
-    const diff = startTime - now;
-
-    if (diff <= 0) {
-      if (isFirst) {
-        this.refreshFutureMatches();
-      }
-
-      return 'Rozpoczyna się';
+  private updateIndicatorPosition(): void {
+    if (!this.tabsContainer()) {
+      return;
     }
 
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-    if (days > 0) {
-      return `${days}d ${hours}h`;
+    const activeButton = this.tabsContainer()!.nativeElement.querySelector(
+      '.tab-button.active',
+    ) as HTMLElement | null;
+    console.log(activeButton);
+    if (!activeButton) {
+      return;
     }
 
-    if (hours > 0) {
-      return `${hours}h ${minutes}m`;
-    }
+    const left = activeButton.offsetLeft;
+    const width = activeButton.offsetWidth;
 
-    if (minutes > 0) {
-      return `${minutes}m ${seconds}s`;
-    }
-
-    return `${seconds}s`;
+    this.indicatorStyle.set({ left: `${left}px`, width: `${width}px` });
   }
 
   ngOnInit(): void {
+    this.listenToLiveMatches();
+    this.selectTab('Live');
+  }
+
+  ngOnDestroy(): void {
+    this.poolRefreshService.destroy();
+  }
+
+  private listenToLiveMatches(): void {
     this.matchService
       .streamMatch()
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((match) => {
         if (match.id) {
           this.updateLiveMatch(match);
         }
       });
-
-    interval(1000).pipe(takeUntil(this.destroy$)).subscribe();
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
   }
 }

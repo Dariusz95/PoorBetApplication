@@ -10,14 +10,14 @@ import { ShortTeamInfo } from '../live-match-card/live-match.component';
 
 @Component({
   selector: 'app-pool-card',
-  imports: [AsyncPipe, DatePipe, SlicePipe, PbButtonComponent, OddsButtonComponent],
+  imports: [AsyncPipe, DatePipe, SlicePipe, OddsButtonComponent],
   templateUrl: './pool-card.component.html',
   styleUrl: './pool-card.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PoolCardComponent {
   pool = input.required<PoolMatch>();
-  timeRemaining = input.required<string>();
+  // timeRemaining = input.required<string>();
 
   private readonly teamService = inject(TeamService);
   private readonly betSlipService = inject(BetSlipService);

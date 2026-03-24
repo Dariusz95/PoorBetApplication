@@ -6,7 +6,6 @@
   (click)="toggleDropdown()"
 >
   <ng-content select="[dropdownLabel]"></ng-content>
-  <i [class.rotate]="isOpen()" class="bi bi-caret-down-fill dropdown-trigger__icon"></i>
 </div>
 
 <ng-template
@@ -25,11 +24,16 @@
         *ngFor="let option of options()"
         (click)="selectOption(option)"
         class="dropdown-list-item"
-        [class.dropdown-list-item--selected]="option.value === value()"
+        [class.dropdown-list-item--selected]="
+          highlightedOption() && option.value === value()
+        "
       >
         @if (optionTemplate()) {
           <ng-container
-            *ngTemplateOutlet="optionTemplate()!; context: { $implicit: option }"
+            *ngTemplateOutlet="
+              optionTemplate()!;
+              context: { $implicit: option }
+            "
           ></ng-container>
         } @else {
           {{ option.label | transloco }}

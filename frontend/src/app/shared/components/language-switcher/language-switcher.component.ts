@@ -1,13 +1,16 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { Component, computed, inject, OnInit } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { ReactiveFormsModule } from '@angular/forms';
 import {
   LangDefinition,
   TranslocoPipe,
   TranslocoService,
-} from '@jsverse/transloco'; // Importuj TranslocoService
+} from '@jsverse/transloco';
 import { DropdownOption } from '../pb-dropdown/dropdown-option';
 import { PbDropdownComponent } from '../pb-dropdown/pb-dropdown.component';
+import { PbIconComponent } from '../pb-icon/pb-icon.component';
+import { IconType } from '../pb-icon/pb-icon.model';
 
 @Component({
   selector: 'app-language-switcher',
@@ -16,6 +19,7 @@ import { PbDropdownComponent } from '../pb-dropdown/pb-dropdown.component';
     PbDropdownComponent,
     ReactiveFormsModule,
     TranslocoPipe,
+    PbIconComponent,
   ],
   templateUrl: './language-switcher.component.html',
   styleUrls: ['./language-switcher.component.scss'],
@@ -23,27 +27,43 @@ import { PbDropdownComponent } from '../pb-dropdown/pb-dropdown.component';
 export class LanguageSwitcherComponent implements OnInit {
   private readonly translocoService = inject(TranslocoService);
 
-  availableLanguages: DropdownOption[] = [];
-  activeLanguageControl = new FormControl<string>('');
+  languageDropdownOptions: DropdownOption[] = [];
+  activeLanguage = toSignal(this.translocoService.langChanges$);
+
+  iconType = computed(() => this.getIconType(this.activeLanguage()));
 
   ngOnInit(): void {
-    this.availableLanguages = this.translocoService
+    this.languageDropdownOptions = this.buildLanguageOptions();
+  }
+
+  getIconType(code: string | undefined): IconType | undefined {
+    if (!code) {
+      return undefined;
+    }
+
+    const iconMap: Record<string, IconType> = {
+      pl: IconType.PlFlag,
+      en: IconType.EnFlag,
+    };
+
+    return iconMap[code];
+  }
+
+  private buildLanguageOptions(): DropdownOption[] {
+    return this.translocoService
       .getAvailableLangs()
       .map((lang) => this.mapToDropdownOption(lang));
-
-    this.translocoService.langChanges$.subscribe((lang) => {
-      this.activeLanguageControl.setValue(lang, { emitEvent: false });
-    });
-
-    this.activeLanguageControl.valueChanges.subscribe((lang) => {
-      this.translocoService.setActiveLang(lang!);
-    });
   }
 
   private mapToDropdownOption(lang: string | LangDefinition): DropdownOption {
     const code = typeof lang === 'string' ? lang : lang.label;
     const label = `lang.${code}`;
 
-    return { value: code, label };
+    return {
+      label,
+      value: code,
+      icon: this.getIconType(code),
+      action: () => this.translocoService.setActiveLang(code),
+    };
   }
 }
