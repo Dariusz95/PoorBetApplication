@@ -11,6 +11,9 @@ export class TeamService {
   private apiBaseUrl = `${environment.backend.baseURL}/api/teams/public`;
 
   getTeam(teamId: string): any {
+    if (!teamId) {
+      throw new Error('Team ID is required');
+    }
     return this.http.get<any>(`${this.apiBaseUrl}/${teamId}`);
   }
 }
