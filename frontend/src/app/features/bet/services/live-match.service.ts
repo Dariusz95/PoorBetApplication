@@ -44,11 +44,6 @@ export class LiveMatchService {
       ...current,
       [event.id]: event,
     });
-    console.log(`[LiveMatchService] Updated match ${event.id}`, event);
-    console.log(
-      'xx[LiveMatchService] Updated match',
-      this.liveMatchesSubject.value,
-    );
   }
 
   cleanupEndedMatches(): void {

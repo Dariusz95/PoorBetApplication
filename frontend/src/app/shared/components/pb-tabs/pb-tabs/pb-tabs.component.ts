@@ -24,7 +24,7 @@ export class PbTabsComponent<T> {
   tabButtonContent = input<TemplateRef<{ $implicit: TabConfig<T> }> | null>(
     null,
   );
-  
+
   selectedTabChange = output<T>();
 
   tabsContainer = viewChild<ElementRef>('tabsContainer');
@@ -43,7 +43,7 @@ export class PbTabsComponent<T> {
     this.selectedTabChange.emit(tab.value);
   }
 
-  private updateIndicatorPosition(): void {
+  updateIndicatorPosition(): void {
     if (!this.tabsContainer()) {
       return;
     }

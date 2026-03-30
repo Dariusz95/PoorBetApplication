@@ -7,6 +7,7 @@ import {
   input,
   signal,
   TemplateRef,
+  viewChild,
   ViewEncapsulation,
 } from '@angular/core';
 import { isNotNil } from '@shared/utils/is-not-nil.util';
@@ -39,6 +40,7 @@ export class PbTabContainerComponent<T> {
   selectedTab = signal<T | null>(null);
 
   tabContents = contentChildren(PbTabContentComponent, { descendants: true });
+  tabsContainer = viewChild<PbTabsComponent<T>>('tabsContainer');
 
   tabButtonContent = input<TemplateRef<{ $implicit: TabConfig<T> }> | null>(
     null,
@@ -52,26 +54,22 @@ export class PbTabContainerComponent<T> {
     });
 
     effect(() => {
-      const currentTabs = this.tabs();
+      this.tabs();
 
-      if (
-        currentTabs.length > 0 &&
-        !currentTabs.some((tab) => tab.value === this.selectedTab())
-      ) {
-        this.setSelected(currentTabs[0].value);
-      } else {
-        this.updateContentVisibility();
-      }
+      this.setDefaultTab();
     });
   }
 
   private setDefaultTab(): void {
+    console.log('setDefaultTab');
+
     const tabList = this.tabs();
     const initial = this.defaultTab() ?? tabList?.[0]?.value;
     const active = tabList.find((tab) => tab.value === this.selectedTab());
-
+    
     if (isNotNil(active)) {
       this.setSelected(active.value);
+      this.tabsContainer()?.updateIndicatorPosition();
 
       return;
     }
@@ -86,12 +84,16 @@ export class PbTabContainerComponent<T> {
   }
 
   private setSelected(value: T): void {
+    console.log('setSelected');
+
     this.selectedTab.set(value);
     this.updateContentVisibility();
   }
 
   private updateContentVisibility(): void {
     const current = this.selectedTab();
+    console.log('current', current);
+
     this.tabContents().forEach((content) => {
       content.active.set(content.value === current);
     });

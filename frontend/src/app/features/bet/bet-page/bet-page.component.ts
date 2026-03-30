@@ -13,7 +13,6 @@ import { PbTabContainerComponent } from '@shared/components/pb-tabs/pb-tab-conta
 import { PbTabContentComponent } from '@shared/components/pb-tabs/pb-tab-content/pb-tab-content.component';
 import { TabTemplateDirective } from '@shared/components/pb-tabs/pb-tab-template.directive';
 import { TabConfig } from '@shared/components/pb-tabs/tab-config.model';
-import { logStream } from '@shared/utils/log-stream.util';
 import { map } from 'rxjs';
 import { BetCouponCardComponent } from '../components/bet-coupon-card/bet-coupon-card.component';
 import { LiveMatchesComponent } from '../components/live-matches/live-matches.component';
@@ -55,7 +54,6 @@ export class BetPageComponent implements OnDestroy {
   futureGrouped$ = this.poolRefreshService.futureGrouped$;
 
   tabs$ = this.futureGrouped$.pipe(
-    logStream('XX tabs$'),
     map((grouped): TabConfig<BetTabValue>[] => {
       const futureTabs: TabConfig<BetTabValue>[] = Object.values(grouped).map(
         (group) => ({
