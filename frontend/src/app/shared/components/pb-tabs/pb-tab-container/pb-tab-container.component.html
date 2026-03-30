@@ -1,0 +1,15 @@
+<div class="pb-tab-container-wrapper">
+  <pb-tabs
+    [tabs]="tabs()"
+    [selectedTab]="selectedTab()"
+    (selectedTabChange)="onTabSelected($event)"
+    [tabButtonContent]="tabButtonContent()"
+    #tabsContainer
+  ></pb-tabs>
+
+  <div class="bet-page-content">
+    <div [@fadeInOut]="selectedTab()" class="content-wrapper">
+      <ng-content></ng-content>
+    </div>
+  </div>
+</div>

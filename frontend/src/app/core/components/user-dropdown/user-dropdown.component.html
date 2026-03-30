@@ -1,0 +1,14 @@
+<ng-container *transloco="let t">
+  <app-pb-dropdown
+    [options]="(filteredOptions$ | async) ?? []"
+    [optionTemplate]="userMenuTpl"
+    [highlightedOption]="false"
+  >
+    <app-icon dropdownLabel icon="account_circle" size="lg"></app-icon>
+  </app-pb-dropdown>
+
+  <ng-template #userMenuTpl let-option>
+    <app-icon [icon]="option.icon" size="s"></app-icon>
+    <span>{{ t(option.label) }}</span>
+  </ng-template>
+</ng-container>

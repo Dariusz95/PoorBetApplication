@@ -60,6 +60,9 @@ export class PbButtonComponent {
       return;
     }
 
+    // if(this.routePath()){
+      
+    // }
     this.buttonClick.emit(event);
   }
 

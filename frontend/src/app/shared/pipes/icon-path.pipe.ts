@@ -11,5 +11,7 @@ export class IconPathPipe implements PipeTransform {
 
   private ICON_MAP: Record<IconType, string> = {
     [IconType.User]: 'assets/user.svg',
+    [IconType.PlFlag]: 'assets/flags/pl.svg',
+    [IconType.EnFlag]: 'assets/flags/gb.svg',
   };
 }

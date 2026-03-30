@@ -1,0 +1,22 @@
+:host {
+  @apply block;
+}
+
+.odds-button-content {
+  @apply flex w-full items-center justify-between gap-2 text-xs;
+}
+
+.odds-button-content__label {
+  @apply text-app-textMuted transition-colors duration-200;
+}
+
+.odds-button-content__value {
+  @apply font-semibold text-app-text transition-colors duration-200;
+}
+
+.odds-button-content--selected {
+  .odds-button-content__label,
+  .odds-button-content__value {
+    @apply text-white;
+  }
+}

@@ -1,6 +1,12 @@
-<pb-button variant="secondary" size="sm" [fullWidth]="true">
-  <div class="flex w-full items-center justify-between gap-2 text-xs">
-    <span class="text-app-textMuted">{{ label() }}</span>
-    <span class="font-semibold text-app-text">{{ value() }}</span>
+<pb-button
+  [variant]="selected() ? 'primary' : 'secondary'"
+  size="sm"
+  [fullWidth]="true"
+  [ariaLabel]="'Typ ' + label() + ' z kursem ' + value()"
+  (buttonClick)="oddsClick.emit()"
+>
+  <div class="odds-button-content" [class.odds-button-content--selected]="selected()">
+    <span class="odds-button-content__label">{{ label() }}</span>
+    <span class="odds-button-content__value">{{ value() }}</span>
   </div>
 </pb-button>

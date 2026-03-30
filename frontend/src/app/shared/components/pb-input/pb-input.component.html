@@ -3,14 +3,15 @@
   [class.focused]="focused()"
   [class.has-value]="value() !== ''"
 >
-     <input 
-      class="pb-input"
-      [placeholder]="placeholder()"
-      [value]="value()"
-      (input)="handleInput($event)"
-      (focus)="onFocus()"
-      (blur)="onBlur()"
-    />
+  <input
+    class="pb-input"
+    [type]="type()"
+    [placeholder]="placeholder()"
+    [value]="value()"
+    (input)="handleInput($event)"
+    (focus)="onFocus()"
+    (blur)="onBlur()"
+  />
   <div class="underline">
     <div class="base-line"></div>
     <div class="focus-line"></div>

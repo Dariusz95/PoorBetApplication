@@ -3,7 +3,7 @@ import { Component, HostBinding, input } from '@angular/core';
 @Component({
   selector: 'app-pb-card',
   imports: [],
-  template: `<ng-content></ng-content>`,
+  templateUrl: './pb-card.component.html',
   styleUrl: './pb-card.component.scss',
 })
 export class PbCardComponent {

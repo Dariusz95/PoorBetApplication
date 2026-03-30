@@ -1,0 +1,22 @@
+<div class="tabs-container" #tabsContainer>
+  @for (tab of tabs(); track tab) {
+    <button
+      class="tab-button"
+      [class.active]="selectedTab() === tab.value"
+      (click)="selectTab(tab)"
+    >
+      @if (tabButtonContent()) {
+        <ng-container
+          *ngTemplateOutlet="tabButtonContent(); context: { $implicit: tab }"
+        ></ng-container>
+      } @else {
+        <span class="tab-button__label">{{ tab.label }}</span>
+      }
+    </button>
+  }
+  <div
+    class="tab-indicator"
+    [style.left]="indicatorStyle().left"
+    [style.width]="indicatorStyle().width"
+  ></div>
+</div>

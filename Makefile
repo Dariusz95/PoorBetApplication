@@ -61,5 +61,5 @@ match-dev:
 gate-dev:
 	$(COMPOSE_DEV) up -d --build gateway
 
-front:
+front-dev:
 	$(COMPOSE_DEV) up -d --build frontend

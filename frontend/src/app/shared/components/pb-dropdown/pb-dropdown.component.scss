@@ -1,44 +1,43 @@
-div[cdkOverlayOrigin] {
-  @apply flex justify-between;
-  cursor: pointer;
-  padding: 8px 12px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  user-select: none;
-  min-width: 100px;
+:host {
+  @apply inline-block;
+}
 
-  .arrow-icon {
-    @apply ml-2;
-  }
+.dropdown-trigger {
+  @apply flex items-center justify-between rounded-lg border border-app-border bg-app-surface px-3 py-2 text-sm text-app-text shadow-surface transition duration-200 ease-out;
+  cursor: pointer;
+  user-select: none;
+}
+
+.dropdown-trigger:hover,
+.dropdown-trigger--open {
+  @apply border-app-primary/60 bg-app-surfaceSoft;
+}
+
+.dropdown-trigger__icon {
+  @apply text-xs text-app-textMuted transition duration-200 ease-out;
 }
 
 .rotate {
   transform: rotate(180deg);
-  transition: transform 0.2s;
 }
 
 .dropdown-panel {
-  border: 1px solid #ccc;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
-  background: white;
-  min-width: 150px;
-  margin-top: 5px;
-  border-radius: 4px;
-  overflow: hidden;
+  @apply mt-2 min-w-[180px] overflow-hidden rounded-xl border border-app-border bg-app-surface shadow-elevated;
 }
 
 .dropdown-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+  @apply list-none p-1;
 }
 
 .dropdown-list-item {
-  padding: 8px 12px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
+  @apply flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-sm text-app-text transition-colors duration-200 ease-out;
 }
 
-.dropdown-list-item:hover {
-  background-color: #f0f0f0;
+.dropdown-list-item:hover,
+.dropdown-list-item--selected {
+  @apply bg-app-surfaceSoft text-app-primary;
+}
+
+:host ::ng-deep .pb-dropdown-backdrop {
+  background: transparent;
 }

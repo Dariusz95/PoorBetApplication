@@ -1,6 +1,11 @@
-<div #trigger="cdkOverlayOrigin" cdkOverlayOrigin (click)="toggleDropdown()">
+<div
+  #trigger="cdkOverlayOrigin"
+  cdkOverlayOrigin
+  class="dropdown-trigger"
+  [class.dropdown-trigger--open]="isOpen()"
+  (click)="toggleDropdown()"
+>
   <ng-content select="[dropdownLabel]"></ng-content>
-  <i [class.rotate]="isOpen()" class="bi bi-caret-down-fill"></i>
 </div>
 
 <ng-template
@@ -8,6 +13,8 @@
   [cdkConnectedOverlayOrigin]="origin() || trigger"
   [cdkConnectedOverlayOpen]="isOpen()"
   [cdkConnectedOverlayPositions]="positions()"
+  [cdkConnectedOverlayHasBackdrop]="true"
+  cdkConnectedOverlayBackdropClass="pb-dropdown-backdrop"
   (backdropClick)="closeDropdown()"
   (detach)="closeDropdown()"
 >
@@ -17,13 +24,19 @@
         *ngFor="let option of options()"
         (click)="selectOption(option)"
         class="dropdown-list-item"
+        [class.dropdown-list-item--selected]="
+          highlightedOption() && option.value === value()
+        "
       >
-        @if(optionTemplate()) {
-        <ng-container
-          *ngTemplateOutlet="optionTemplate()!; context: { $implicit: option }"
-        ></ng-container>
-        }@else {
-        {{ option.label | transloco }}
+        @if (optionTemplate()) {
+          <ng-container
+            *ngTemplateOutlet="
+              optionTemplate()!;
+              context: { $implicit: option }
+            "
+          ></ng-container>
+        } @else {
+          {{ option.label | transloco }}
         }
       </li>
     </ul>

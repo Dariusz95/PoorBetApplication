@@ -33,14 +33,14 @@ import { FormError } from './types/form-error';
         style({
           opacity: 0,
           transform: 'translateY(-10px)',
-        })
+        }),
       ),
       state(
         '*',
         style({
           opacity: 1,
           transform: 'translateY(0)',
-        })
+        }),
       ),
       transition('void <=> *', animate('200ms ease-in-out')),
     ]),
@@ -63,7 +63,7 @@ export class PbErrorsComponent {
     return slicedErrors.map(([key, value]) =>
       this.mapToFormError({
         [key as ErrorType]: value,
-      } as ErrorValueMap)
+      } as ErrorValueMap),
     );
   });
 
@@ -89,7 +89,6 @@ export class PbErrorsComponent {
         };
         break;
     }
-    console.log(formError);
 
     return formError;
   }

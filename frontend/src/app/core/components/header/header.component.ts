@@ -4,9 +4,9 @@ import { RouterLink } from '@angular/router';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { Observable } from 'rxjs';
 import { LanguageSwitcherComponent } from '../../../shared/components/language-switcher/language-switcher.component';
-import { PbButtonComponent } from '../../../shared/components/pb-button/pb-button.component';
 import { AuthService } from '../../auth/services/auth.service';
 import { RoutePath } from '../../routing/route-path';
+import { UserDropdownComponent } from '../user-dropdown/user-dropdown.component';
 import { MENU_ITEMS } from './models/menu-items';
 
 @Component({
@@ -15,10 +15,9 @@ import { MENU_ITEMS } from './models/menu-items';
   imports: [
     CommonModule,
     RouterLink,
-    PbButtonComponent,
     LanguageSwitcherComponent,
     TranslocoDirective,
-    PbButtonComponent,
+    UserDropdownComponent,
   ],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],

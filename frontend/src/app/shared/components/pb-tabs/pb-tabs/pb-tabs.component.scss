@@ -1,0 +1,52 @@
+.tabs-container {
+  @apply relative flex border-b overflow-x-auto bg-app-surface gap-0 rounded-3xl;
+
+  border-color: rgb(var(--app-border));
+  border-bottom: 1px solid rgb(var(--app-border));
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.tab-button {
+  @apply relative flex flex-1 items-center justify-center gap-2 px-4 py-3 text-sm font-medium transition-colors cursor-pointer;
+
+  color: rgb(var(--app-textMuted));
+  background: none;
+  border: none;
+
+  &:hover {
+    color: rgb(var(--app-text));
+    background-color: rgb(var(--app-surfaceSoft));
+  }
+
+  &.active {
+    @apply bg-app-gradient;
+
+    color: rgb(var(--app-primary));
+    background-color: rgba(var(--app-primary), 0.05);
+  }
+
+  &__label {
+    @apply block text-center;
+  }
+}
+
+.tab-indicator {
+  @apply absolute text-app-primary;
+  bottom: -1px;
+  left: 0;
+  height: 3px;
+
+  background: linear-gradient(90deg, currentColor, currentColor);
+  border-radius: 2px;
+
+  transition:
+    left 300ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    width 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  box-shadow: 0 0 12px currentColor;
+}

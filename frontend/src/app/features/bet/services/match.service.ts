@@ -2,45 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, NgZone } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
-
-export interface LiveMatchEvent {
-  id: string;
-  minute: number;
-  homeTeamId: string;
-  awayTeamId: string;
-  homeScore: number;
-  awayScore: number;
-  eventType: MatchEventType;
-  eventData: null | string;
-}
-
-export enum MatchEventType {
-  MatchStarted = 'MATCH_STARTED',
-  Live = 'LIVE',
-  MatchEnded = 'MATCH_ENDED',
-  Heartbeat = 'HEARTBEAT',
-}
-
-export interface OddsDto {
-  id: string; 
-  homeWin: number;
-  draw: number;
-  awayWin: number;
-}
-
-export interface MatchDto {
-  matchId: string;
-  homeTeamId: string;
-  awayTeamId: string;
-  odds: OddsDto;
-}
-
-export interface PoolMatch {
-  id: string; 
-  status: string;
-  scheduledStartTime: string;
-  matches: MatchDto[];
-}
+import { LiveMatchEvent, PoolMatch } from '../types/match.types';
 
 @Injectable({
   providedIn: 'root',
@@ -49,11 +11,11 @@ export class MatchService {
   private readonly http = inject(HttpClient);
   private readonly ngZone = inject(NgZone);
 
-  private apiBaseUrl = `${environment.backend.baseURL}/api/match-pool`;
+  private BASE_URL = `${environment.backend.baseURL}/api/match-pool`;
 
   streamMatch(): Observable<LiveMatchEvent> {
     return new Observable<LiveMatchEvent>((observer) => {
-      const eventSource = new EventSource(`${this.apiBaseUrl}/live`);
+      const eventSource = new EventSource(`${this.BASE_URL}/live`);
 
       eventSource.onmessage = (event) => {
         this.ngZone.run(() => {
@@ -76,6 +38,6 @@ export class MatchService {
   }
 
   futureMatch(): Observable<PoolMatch[]> {
-    return this.http.get<PoolMatch[]>(`${this.apiBaseUrl}/future`);
+    return this.http.get<PoolMatch[]>(`${this.BASE_URL}/future`);
   }
 }
