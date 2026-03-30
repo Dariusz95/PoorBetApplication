@@ -1,18 +1,23 @@
 import { Injectable, inject } from '@angular/core';
+import { Uuid } from '@shared/types/uuid.type';
+import { toUuid } from '@shared/utils/uuid.util';
 import {
+  BehaviorSubject,
   Observable,
   Subject,
+  Subscription,
   map,
-  of,
   startWith,
   switchMap,
   tap,
   timer,
 } from 'rxjs';
-import { MatchService, PoolMatch } from './match.service';
+import { PoolMatch } from '../types/match.types';
+import { LiveMatchService } from './live-match.service';
+import { MatchService } from './match.service';
 
 export interface GroupedPools {
-  [key: string]: PoolMatch[];
+  [key: Uuid]: PoolMatch;
 }
 
 @Injectable({
@@ -20,78 +25,54 @@ export interface GroupedPools {
 })
 export class PoolRefreshService {
   private readonly matchService = inject(MatchService);
-  private readonly refreshTrigger = new Subject<void>();
-  private refreshSubscription: any;
-
-  private readonly REFRESH_OFFSET_MS = 30 * 1000; // 30 seconds
+  private readonly liveMatchService = inject(LiveMatchService);
+  // private readonly refreshTrigger = new Subject<void>();
+  private readonly refreshTrigger = new BehaviorSubject<void>(undefined);
+  private refreshSubscription: Subscription | null = null;
 
   futureGrouped$: Observable<GroupedPools> = this.refreshTrigger.pipe(
-    startWith(void 0),
-    tap(() => console.log('[PoolRefresh] Refresh triggered')),
     switchMap(() => this.matchService.futureMatch()),
-    tap((pools) => {
-      console.log(`[PoolRefresh] Fetched ${pools.length} pools`);
-      this.scheduleNextRefresh(pools);
-    }),
-    map((pools) => this.groupPoolsByStartTime(pools)),
+    map((pools) => this.sortPoolMatchesByDateAsc(pools)),
+    tap((pools) => this.scheduleNextRefreshAndRearange(pools)),
+    map((pools) => this.groupPoolsById(pools)),
   );
 
-  constructor() {
-    this.refreshTrigger
-      .pipe(
-        tap(() => console.log('[PoolRefresh] Refresh triggered')),
-        switchMap(() => of({})),
-      )
-      .subscribe(() => {
-        console.log('[PoolRefresh] Initial trigger');
-      });
-  }
+private sortPoolMatchesByDateAsc(pools: PoolMatch[]): PoolMatch[] {
+  return [...pools].sort((a, b) => {
+    const dateA = new Date(a.scheduledStartTime).getTime();
+    const dateB = new Date(b.scheduledStartTime).getTime();
 
-  private groupPoolsByStartTime(pools: PoolMatch[]): GroupedPools {
+    return dateA - dateB;
+  });
+}
+  private groupPoolsById(pools: PoolMatch[]): GroupedPools {
     const grouped: GroupedPools = {};
 
     pools.forEach((pool) => {
-      const key = pool.scheduledStartTime;
-      if (!grouped[key]) {
-        grouped[key] = [];
-      }
+      const key = toUuid(pool.id);
 
-      if (!grouped[key].some((existing) => existing.id === pool.id)) {
-        grouped[key].push(pool);
-      }
+      grouped[key] = pool;
     });
 
     return grouped;
   }
 
-  private scheduleNextRefresh(pools: PoolMatch[]): void {
+  private scheduleNextRefreshAndRearange(pools: PoolMatch[]): void {
     if (this.refreshSubscription) {
       this.refreshSubscription.unsubscribe();
     }
 
     const nextRefreshTime = this.getNextRefreshTime(pools);
 
-    if (nextRefreshTime === null) {
-      console.log('[PoolRefresh] No upcoming pools to schedule');
-      return;
-    }
+    if (nextRefreshTime === null) return;
 
     const now = Date.now();
     const delay = Math.max(0, nextRefreshTime - now);
 
-    if (delay <= 0) {
-      console.log(
-        '[PoolRefresh] Next refresh time is in the past, skipping timer',
-      );
-      return;
-    }
-
-    console.log(
-      `[PoolRefresh] Scheduled next refresh in ${Math.round(delay / 1000)}s`,
-    );
+    if (delay <= 0) return;
 
     this.refreshSubscription = timer(delay).subscribe(() => {
-      console.log('[PoolRefresh] Timer triggered, refreshing...');
+      this.liveMatchService.cleanupEndedMatches();
       this.refreshTrigger.next();
     });
   }
@@ -108,16 +89,12 @@ export class PoolRefreshService {
       .filter((time) => time > now)
       .sort((a, b) => a - b);
 
-    if (!upcomingTimes.length) {
-      return null;
-    }
+    if (!upcomingTimes.length) return null;
 
-    const closestStart = upcomingTimes[0];
-    return closestStart - this.REFRESH_OFFSET_MS;
+    return upcomingTimes[0];
   }
 
   manualRefresh(): void {
-    console.log('[PoolRefresh] Manual refresh triggered');
     this.refreshTrigger.next();
   }
 

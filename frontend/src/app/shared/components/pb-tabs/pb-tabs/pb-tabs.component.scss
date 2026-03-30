@@ -1,10 +1,9 @@
 .tabs-container {
-  position: relative;
-  display: flex;
-  gap: 0;
+  @apply relative flex border-b overflow-x-auto;
+
+  border-color: rgb(var(--app-border));
   border-bottom: 1px solid rgb(var(--app-border));
-  background-color: rgb(var(--app-surface));
-  overflow-x: auto;
+  gap: 0;
 
   &::-webkit-scrollbar {
     display: none;
@@ -14,21 +13,11 @@
 }
 
 .tab-button {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  white-space: nowrap;
-  padding: 0.75rem 1.5rem;
-  font-size: 0.875rem;
-  line-height: 1.25rem;
-  font-weight: 500;
+  @apply relative flex items-center gap-2 whitespace-nowrap px-6 py-3 text-sm font-medium transition-colors shrink-0 cursor-pointer;
+
   color: rgb(var(--app-textMuted));
   background: none;
   border: none;
-  cursor: pointer;
-  transition: color 200ms;
-  flex-shrink: 0;
 
   &:hover {
     color: rgb(var(--app-text));
@@ -41,27 +30,17 @@
   }
 
   &__label {
-    display: block;
-  }
-
-  &__badge {
-    display: inline-block;
-    height: 0.5rem;
-    width: 0.5rem;
-    border-radius: 50%;
-    background-color: rgb(var(--app-primary));
-    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    @apply block;
   }
 }
 
 .tab-indicator {
-  position: absolute;
+  @apply absolute text-app-primary;
   bottom: -1px;
   left: 0;
   height: 3px;
 
   background: linear-gradient(90deg, currentColor, currentColor);
-
   border-radius: 2px;
 
   transition:

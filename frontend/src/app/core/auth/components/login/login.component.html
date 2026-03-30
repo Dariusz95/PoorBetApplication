@@ -1,11 +1,10 @@
 <ng-container *transloco="let t; prefix: 'auth.login'">
   <div class="login-container">
     <app-pb-card stylesCss="w-96">
-      <div class="header">
+      <div pbCardHeader class="header">
         <h2 class="base-clamp font-bold">{{ t("title") }}</h2>
       </div>
-
-      <form [formGroup]="form">
+      <form pbCardBody [formGroup]="form">
         <pb-form-field>
           <pb-label> {{ t("email") }}</pb-label>
           <pb-input formControlName="email"></pb-input>
@@ -31,7 +30,12 @@
         <div class="text-center">
           {{ t("dontHaveAccount") }}
 
-          <pb-button size="sm" type="link" variant="link" [routerLink]="RoutePath.Register">
+          <pb-button
+            size="sm"
+            type="link"
+            variant="link"
+            [routerLink]="RoutePath.Register"
+          >
             {{ t("register") }}
           </pb-button>
         </div>

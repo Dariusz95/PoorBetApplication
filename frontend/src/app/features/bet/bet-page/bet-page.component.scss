@@ -94,23 +94,6 @@
   }
 }
 
-// .tab-indicator {
-//   position: absolute;
-//   bottom: -1px;
-//   left: 0;
-//   height: 3px;
-//   background: linear-gradient(
-//     90deg,
-//     rgb(var(--app-primary)),
-//     rgb(var(--app-primary))
-//   );
-//   border-radius: 2px;
-//   transition:
-//     left 300ms cubic-bezier(0.34, 1.56, 0.64, 1),
-//     width 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
-//   box-shadow: 0 0 12px rgba(var(--app-primary), 0.4);
-// }
-
 .tab-indicator {
   position: absolute;
   bottom: -1px;
@@ -128,9 +111,6 @@
   box-shadow: 0 0 12px currentColor;
 }
 
-// ===== MAIN CONTENT =====
-
-// ===== SECTIONS =====
 .matches-section {
   display: flex;
   flex-direction: column;
@@ -161,7 +141,6 @@
   gap: 1rem;
 }
 
-// ===== EMPTY STATE =====
 .empty-state {
   border-radius: 0.5rem;
   border: 1px dashed rgb(var(--app-border));
@@ -184,7 +163,6 @@
   }
 }
 
-// ===== RESPONSIVE =====
 @media (min-width: 1280px) {
   .bet-page-layout {
     grid-template-columns: 1fr 22rem;

@@ -20,32 +20,16 @@
           @if (tab.value === LIVE_TAB_NAME) {
             <span class="live-badge">🔴 Live</span>
           } @else {
-            <span class="tab-button__time">{{
-              tab.label | timeRemaining: true | async
-            }}</span>
+            <app-icon icon="timelapse" size="s"></app-icon>
+            <span class="text-app-textMuted">{{tab.label | date:'HH:mm:ss'}}</span>
+            <span class="tab-button__time">
+              {{ tab.label | timeRemaining: true | async }}</span
+            >
           }
         </ng-template>
 
         <pb-tab-content [value]="LIVE_TAB_NAME">
-          <div class="matches-section">
-            @if ((liveMatches | keyvalue).length === 0) {
-              <div class="empty-state">
-                <p class="empty-state__title">Brak aktywnych meczów</p>
-                <p class="empty-state__text">
-                  Nie ma teraz żadnych meczów na żywo. Sprawdź dostępne pule w
-                  innych datach.
-                </p>
-              </div>
-            } @else {
-              <div class="matches-grid">
-                @for (entry of liveMatches | keyvalue; track entry.key) {
-                  <app-live-match-card
-                    [liveMatch]="entry.value"
-                  ></app-live-match-card>
-                }
-              </div>
-            }
-          </div>
+          <app-live-matches></app-live-matches>
         </pb-tab-content>
 
         @if (futureGrouped$ | async; as grouped) {
@@ -57,21 +41,9 @@
                   <p class="section-header__subtitle">{{ entry.key }}</p>
                 </div>
 
-                @if (entry.value && entry.value.length > 0) {
-                  <div class="matches-grid">
-                    @for (pool of entry.value; track pool.id) {
-                      <app-pool-card [pool]="pool"></app-pool-card>
-                    }
-                  </div>
-                } @else {
-                  <div class="empty-state">
-                    <p class="empty-state__title">Brak pul w tej dacie</p>
-                    <p class="empty-state__text">
-                      Nie ma dostępnych pul na {{ entry.key }}. Spróbuj innej
-                      daty.
-                    </p>
-                  </div>
-                }
+                <div class="matches-grid">
+                  <app-pool-card [pool]="entry.value"></app-pool-card>
+                </div>
               </div>
             </pb-tab-content>
           }

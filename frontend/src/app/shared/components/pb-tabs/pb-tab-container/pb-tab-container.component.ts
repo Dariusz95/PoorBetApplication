@@ -3,12 +3,13 @@ import {
   afterNextRender,
   Component,
   contentChildren,
+  effect,
   input,
   signal,
   TemplateRef,
   ViewEncapsulation,
 } from '@angular/core';
-import { isNotNil } from '@shared/utils/is-not-nil';
+import { isNotNil } from '@shared/utils/is-not-nil.util';
 import { PbTabContentComponent } from '../pb-tab-content/pb-tab-content.component';
 import { PbTabsComponent } from '../pb-tabs/pb-tabs.component';
 import { TabConfig } from '../tab-config.model';
@@ -49,11 +50,31 @@ export class PbTabContainerComponent<T> {
 
       this.setDefaultTab();
     });
+
+    effect(() => {
+      const currentTabs = this.tabs();
+
+      if (
+        currentTabs.length > 0 &&
+        !currentTabs.some((tab) => tab.value === this.selectedTab())
+      ) {
+        this.setSelected(currentTabs[0].value);
+      } else {
+        this.updateContentVisibility();
+      }
+    });
   }
 
   private setDefaultTab(): void {
     const tabList = this.tabs();
     const initial = this.defaultTab() ?? tabList?.[0]?.value;
+    const active = tabList.find((tab) => tab.value === this.selectedTab());
+
+    if (isNotNil(active)) {
+      this.setSelected(active.value);
+
+      return;
+    }
 
     if (isNotNil(initial)) {
       this.setSelected(initial as T);

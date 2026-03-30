@@ -1,19 +1,14 @@
-<div class="pool-card">
-  <header class="pool-card__header">
+<app-pb-card>
+  <div pbCardHeader>
     <div>
       <p class="pool-card__eyebrow">Pool</p>
       <p class="pool-card__time">
         {{ pool().scheduledStartTime | date: "HH:mm:ss" }}
       </p>
     </div>
+  </div>
 
-    <!-- <div class="pool-card__status">
-      <p class="pool-card__status-label">{{ pool().status }}</p>
-      <p class="pool-card__status-value">{{ timeRemaining() }}</p>
-    </div> -->
-  </header>
-
-  <div class="pool-card__body">
+  <div pbCardBody>
     @for (match of pool().matches; track trackByMatchId($index, match)) {
       <section class="pool-card__match">
         <div class="pool-card__teams">
@@ -57,7 +52,7 @@
       </section>
     }
   </div>
+</app-pb-card>
 
-  <!-- <footer class="pool-card__footer">
+<!-- <footer class="pool-card__footer">
   </footer> -->
-</div>

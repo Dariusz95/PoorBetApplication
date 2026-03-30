@@ -24,6 +24,7 @@ export class PbTabsComponent<T> {
   tabButtonContent = input<TemplateRef<{ $implicit: TabConfig<T> }> | null>(
     null,
   );
+  
   selectedTabChange = output<T>();
 
   tabsContainer = viewChild<ElementRef>('tabsContainer');

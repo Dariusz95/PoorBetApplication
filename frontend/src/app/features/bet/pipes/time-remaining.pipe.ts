@@ -7,10 +7,6 @@ import { interval, map, Observable, startWith } from 'rxjs';
   pure: false,
 })
 export class TimeRemainingPipe implements PipeTransform {
-  /**
-   * @param scheduledStartTime ISO string of pool start time
-   * @param withTime If true, include formatted time (hh:mm) + timer, else just timer
-   */
   transform(
     scheduledStartTime: string,
     withTime: boolean = false,
@@ -24,14 +20,9 @@ export class TimeRemainingPipe implements PipeTransform {
           return remaining;
         }
 
-        // Include time in format: "14:44 - 1h 20m"
         const date = new Date(scheduledStartTime);
-        const timeStr = date.toLocaleTimeString('pl-PL', {
-          hour: '2-digit',
-          minute: '2-digit',
-        });
 
-        return `${timeStr} - ${remaining}`;
+        return `${remaining}`;
       }),
     );
   }
@@ -40,10 +31,6 @@ export class TimeRemainingPipe implements PipeTransform {
     const now = new Date().getTime();
     const startTime = new Date(scheduledStartTime).getTime();
     const diff = startTime - now;
-
-    if (diff <= 0) {
-      return 'Rozpoczyna się';
-    }
 
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
     const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));

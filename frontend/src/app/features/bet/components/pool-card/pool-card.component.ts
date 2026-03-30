@@ -1,23 +1,33 @@
 import { AsyncPipe, DatePipe, SlicePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, input, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  input,
+  signal,
+} from '@angular/core';
+import { PbCardComponent } from '@shared/components/pb-card/pb-card.component';
 import { Observable, shareReplay, tap } from 'rxjs';
-import { PbButtonComponent } from '../../../../shared/components/pb-button/pb-button.component';
-import { TeamService } from '../../services/team.service';
-import { MatchDto, PoolMatch } from '../../services/match.service';
 import { BetSlipService } from '../../services/bet-slip.service';
+import { TeamService } from '../../services/team.service';
+import { MatchDto, PoolMatch, ShortTeamInfo } from '../../types/match.types';
 import { OddsButtonComponent } from '../odds-button/odds-button.component';
-import { ShortTeamInfo } from '../live-match-card/live-match.component';
 
 @Component({
   selector: 'app-pool-card',
-  imports: [AsyncPipe, DatePipe, SlicePipe, OddsButtonComponent],
+  imports: [
+    AsyncPipe,
+    DatePipe,
+    SlicePipe,
+    OddsButtonComponent,
+    PbCardComponent,
+  ],
   templateUrl: './pool-card.component.html',
   styleUrl: './pool-card.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PoolCardComponent {
   pool = input.required<PoolMatch>();
-  // timeRemaining = input.required<string>();
 
   private readonly teamService = inject(TeamService);
   private readonly betSlipService = inject(BetSlipService);
@@ -45,7 +55,12 @@ export class PoolCardComponent {
     return this.teamCache.get(teamId)!;
   }
 
-  toggleBet(match: MatchDto, optionValue: string, optionLabel: string, odds: number): void {
+  toggleBet(
+    match: MatchDto,
+    optionValue: string,
+    optionLabel: string,
+    odds: number,
+  ): void {
     this.betSlipService.toggleSelection({
       matchId: match.matchId,
       matchLabel: `${this.getTeamLabel(match.homeTeamId)} vs ${this.getTeamLabel(match.awayTeamId)}`,
@@ -63,4 +78,3 @@ export class PoolCardComponent {
     return this.teamNames()[teamId] ?? teamId.slice(0, 8);
   }
 }
-

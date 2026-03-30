@@ -2,14 +2,6 @@
   @apply block;
 }
 
-.pool-card {
-  @apply overflow-hidden rounded-xl border border-app-border bg-app-surface shadow-surface;
-}
-
-.pool-card__header {
-  @apply flex items-center justify-between border-b border-app-border bg-app-surfaceSoft px-4 py-3;
-}
-
 .pool-card__eyebrow {
   @apply text-xs uppercase tracking-wide text-app-textMuted;
 }
