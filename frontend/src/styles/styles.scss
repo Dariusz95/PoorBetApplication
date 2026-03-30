@@ -2,9 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --app-header-height: 100px;
+}
+
+
 @layer utilities {
   .scrollbar-hide {
-    /* Hide scrollbar */
     &::-webkit-scrollbar {
       display: none;
     }

@@ -28,5 +28,35 @@
     "email": "Please enter a valid email address",
     "password": "Password must be at least 6 characters long",
     "confirmPassword": "Passwords must match"
+  },
+  "bet": {
+    "page": {
+      "availablePools": "Available pools",
+      "live": "Live",
+      "upcomingPools": "Upcoming pools"
+    },
+    "liveMatches": {
+      "emptyTitle": "No active matches",
+      "emptyText": "There are no live matches right now. Check available pools on other dates."
+    },
+    "liveMatchCard": {
+      "live": "LIVE",
+      "matchFinished": "Match finished",
+      "matchInProgress": "Match in progress"
+    },
+    "coupon": {
+      "eyebrow": "Your coupon",
+      "title": "Building coupon",
+      "emptyTitle": "No events selected yet.",
+      "emptyText": "Click odds in a match to add it to the coupon on the right.",
+      "oddsLabel": "Odds",
+      "removeAria": "Remove event from coupon",
+      "totalOdds": "Total odds",
+      "amount": "Amount",
+      "submit": "Place coupon"
+    },
+    "poolCard": {
+      "eyebrow": "Pool"
+    }
   }
 }

@@ -1,9 +1,8 @@
 .tabs-container {
-  @apply relative flex border-b overflow-x-auto;
+  @apply relative flex border-b overflow-x-auto bg-app-surface gap-0 rounded-3xl;
 
   border-color: rgb(var(--app-border));
   border-bottom: 1px solid rgb(var(--app-border));
-  gap: 0;
 
   &::-webkit-scrollbar {
     display: none;
@@ -13,7 +12,7 @@
 }
 
 .tab-button {
-  @apply relative flex items-center gap-2 whitespace-nowrap px-6 py-3 text-sm font-medium transition-colors shrink-0 cursor-pointer;
+  @apply relative flex flex-1 items-center justify-center gap-2 px-4 py-3 text-sm font-medium transition-colors cursor-pointer;
 
   color: rgb(var(--app-textMuted));
   background: none;
@@ -25,12 +24,14 @@
   }
 
   &.active {
+    @apply bg-app-gradient;
+
     color: rgb(var(--app-primary));
     background-color: rgba(var(--app-primary), 0.05);
   }
 
   &__label {
-    @apply block;
+    @apply block text-center;
   }
 }
 

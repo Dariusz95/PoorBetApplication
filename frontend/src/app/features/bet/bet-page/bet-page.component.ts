@@ -7,6 +7,7 @@ import {
   inject,
   OnDestroy,
 } from '@angular/core';
+import { TranslocoDirective } from '@jsverse/transloco';
 import { IconComponent } from '@shared/components/icon/icon.component';
 import { PbTabContainerComponent } from '@shared/components/pb-tabs/pb-tab-container/pb-tab-container.component';
 import { PbTabContentComponent } from '@shared/components/pb-tabs/pb-tab-content/pb-tab-content.component';
@@ -36,6 +37,7 @@ import { BetTabValue, LiveTabName } from './bet-tab-config';
     TabTemplateDirective,
     IconComponent,
     DatePipe,
+    TranslocoDirective,
   ],
   templateUrl: './bet-page.component.html',
   styleUrl: './bet-page.component.scss',

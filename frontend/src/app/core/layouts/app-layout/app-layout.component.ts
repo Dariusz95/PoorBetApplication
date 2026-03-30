@@ -7,5 +7,6 @@ import { MobileMenuComponent } from '../../components/mobile-header/mobile-menu.
   selector: 'app-layout',
   imports: [RouterOutlet, HeaderComponent, MobileMenuComponent],
   templateUrl: './app-layout.component.html',
+  styleUrls: ['./app-layout.component.scss'],
 })
 export class AppLayoutComponent {}

@@ -1,58 +1,58 @@
-<app-pb-card>
-  <div pbCardHeader>
-    <div>
-      <p class="pool-card__eyebrow">Pool</p>
-      <p class="pool-card__time">
-        {{ pool().scheduledStartTime | date: "HH:mm:ss" }}
-      </p>
+<ng-container *transloco="let t; prefix: 'bet.poolCard'">
+  <app-pb-card>
+    <div pbCardHeader>
+      <div>
+        <p class="pool-card__eyebrow">{{ t("eyebrow") }}</p>
+        <p class="pool-card__time">
+          {{ pool().scheduledStartTime | date: "HH:mm:ss" }}
+        </p>
+      </div>
     </div>
-  </div>
 
-  <div pbCardBody>
-    @for (match of pool().matches; track trackByMatchId($index, match)) {
-      <section class="pool-card__match">
-        <div class="pool-card__teams">
-          <span class="pool-card__team">
-            @if (getTeamName(match.homeTeamId) | async; as homeTeam) {
-              {{ homeTeam.name }}
-            } @else {
-              {{ match.homeTeamId | slice: 0 : 8 }}
-            }
-          </span>
-          <span class="pool-card__versus">vs</span>
-          <span class="pool-card__team pool-card__team--away">
-            @if (getTeamName(match.awayTeamId) | async; as awayTeam) {
-              {{ awayTeam.name }}
-            } @else {
-              {{ match.awayTeamId | slice: 0 : 8 }}
-            }
-          </span>
-        </div>
+    <div pbCardBody>
+      @for (match of pool().matches; track match.matchId) {
+        <section class="pool-card__match">
+          <div class="pool-card__teams">
+            <span class="pool-card__team">
 
-        <div class="grid grid-cols-3 gap-2">
-          <app-odds-button
-            label="1"
-            [value]="match.odds.homeWin"
-            [selected]="isSelected(match.matchId, 'HOME_WIN')"
-            (oddsClick)="toggleBet(match, 'HOME_WIN', '1', match.odds.homeWin)"
-          ></app-odds-button>
-          <app-odds-button
-            label="X"
-            [value]="match.odds.draw"
-            [selected]="isSelected(match.matchId, 'DRAW')"
-            (oddsClick)="toggleBet(match, 'DRAW', 'X', match.odds.draw)"
-          ></app-odds-button>
-          <app-odds-button
-            label="2"
-            [value]="match.odds.awayWin"
-            [selected]="isSelected(match.matchId, 'AWAY_WIN')"
-            (oddsClick)="toggleBet(match, 'AWAY_WIN', '2', match.odds.awayWin)"
-          ></app-odds-button>
-        </div>
-      </section>
-    }
-  </div>
-</app-pb-card>
+              @if (getTeamName(match.homeTeamId) | async; as homeTeam) {
+                {{ homeTeam.name }}
+              } @else {
+                {{ match.homeTeamId | slice: 0 : 8 }}
+              }
+            </span>
+            <span class="pool-card__versus">vs</span>
+            <span class="pool-card__team pool-card__team--away">
+              @if (getTeamName(match.awayTeamId) | async; as awayTeam) {
+                {{ awayTeam.name }}
+              } @else {
+                {{ match.awayTeamId | slice: 0 : 8 }}
+              }
+            </span>
+          </div>
 
-<!-- <footer class="pool-card__footer">
-  </footer> -->
+          <div class="grid grid-cols-3 gap-2">
+            <app-odds-button
+              label="1"
+              [value]="match.odds.homeWin"
+              [selected]="isSelected(match.matchId, 'HOME_WIN')"
+              (oddsClick)="toggleBet(match, 'HOME_WIN', '1', match.odds.homeWin)"
+            ></app-odds-button>
+            <app-odds-button
+              label="X"
+              [value]="match.odds.draw"
+              [selected]="isSelected(match.matchId, 'DRAW')"
+              (oddsClick)="toggleBet(match, 'DRAW', 'X', match.odds.draw)"
+            ></app-odds-button>
+            <app-odds-button
+              label="2"
+              [value]="match.odds.awayWin"
+              [selected]="isSelected(match.matchId, 'AWAY_WIN')"
+              (oddsClick)="toggleBet(match, 'AWAY_WIN', '2', match.odds.awayWin)"
+            ></app-odds-button>
+          </div>
+        </section>
+      }
+    </div>
+  </app-pb-card>
+</ng-container>

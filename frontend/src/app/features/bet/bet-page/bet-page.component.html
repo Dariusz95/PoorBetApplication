@@ -1,56 +1,66 @@
-<section class="bet-page-layout">
-  <div class="bet-page-main">
-    <div class="bet-page-header">
-      <div class="bet-page-header__content">
-        <h1 class="bet-page-header__title">Dostępne pule</h1>
+<ng-container *transloco="let t; prefix: 'bet.page'">
+  <section class="bet-page-layout">
+    <div class="bet-page-main">
+      <div class="bet-page-header">
+        <div class="bet-page-header__content">
+          <h1 class="bet-page-header__title">{{ t('availablePools') }}</h1>
+        </div>
       </div>
+
+      @if (tabs$ | async; as tabs) {
+        <pb-tab-container
+          [tabButtonContent]="tabButtonContent"
+          [tabs]="tabs"
+          [defaultTab]="'live'"
+        >
+          <ng-template
+            #tabButtonContent
+            let-tab
+            [appTabTemplate]="tabTemplateType"
+          >
+            @if (tab.value === LIVE_TAB_NAME) {
+              <span class="live-badge">🔴 {{ t('live') }}</span>
+            } @else {
+              <span class="tab-button__content">
+                <span class="tab-button__header">
+                  <app-icon icon="timelapse" size="s"></app-icon>
+                  <span class="tab-button__clock">{{
+                    tab.label | date: "HH:mm:ss"
+                  }}</span>
+                </span>
+                <span class="tab-button__time">
+                  {{ tab.label | timeRemaining: true | async }}
+                </span>
+              </span>
+            }
+          </ng-template>
+
+          <pb-tab-content [value]="LIVE_TAB_NAME">
+            <app-live-matches></app-live-matches>
+          </pb-tab-content>
+
+          @if (futureGrouped$ | async; as grouped) {
+            @for (entry of grouped | keyvalue; track entry.key) {
+              <pb-tab-content [value]="entry.key">
+                <div class="matches-section">
+                  <div class="section-header">
+                    <h2 class="section-header__title">
+                      {{ t('upcomingPools') }}
+                    </h2>
+                    <p class="section-header__subtitle">{{ entry.key }}</p>
+                  </div>
+
+                  <div class="matches-grid">
+                    <app-pool-card [pool]="entry.value"></app-pool-card>
+                  </div>
+                </div>
+              </pb-tab-content>
+            }
+          }
+        </pb-tab-container>
+      }
     </div>
 
-    @if (tabs$ | async; as tabs) {
-      <pb-tab-container
-        [tabButtonContent]="tabButtonContent"
-        [tabs]="tabs"
-        [defaultTab]="'live'"
-      >
-        <ng-template
-          #tabButtonContent
-          let-tab
-          [appTabTemplate]="tabTemplateType"
-        >
-          @if (tab.value === LIVE_TAB_NAME) {
-            <span class="live-badge">🔴 Live</span>
-          } @else {
-            <app-icon icon="timelapse" size="s"></app-icon>
-            <span class="text-app-textMuted">{{tab.label | date:'HH:mm:ss'}}</span>
-            <span class="tab-button__time">
-              {{ tab.label | timeRemaining: true | async }}</span
-            >
-          }
-        </ng-template>
-
-        <pb-tab-content [value]="LIVE_TAB_NAME">
-          <app-live-matches></app-live-matches>
-        </pb-tab-content>
-
-        @if (futureGrouped$ | async; as grouped) {
-          @for (entry of grouped | keyvalue; track entry.key) {
-            <pb-tab-content [value]="entry.key">
-              <div class="matches-section">
-                <div class="section-header">
-                  <h2 class="section-header__title">Nadchodzące pule</h2>
-                  <p class="section-header__subtitle">{{ entry.key }}</p>
-                </div>
-
-                <div class="matches-grid">
-                  <app-pool-card [pool]="entry.value"></app-pool-card>
-                </div>
-              </div>
-            </pb-tab-content>
-          }
-        }
-      </pb-tab-container>
-    }
-  </div>
-
-  <app-bet-coupon-card></app-bet-coupon-card>
-</section>
+    <app-bet-coupon-card></app-bet-coupon-card>
+  </section>
+</ng-container>

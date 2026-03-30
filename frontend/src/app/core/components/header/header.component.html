@@ -1,17 +1,17 @@
 <ng-container *transloco="let t">
   <header class="app-header">
-    <div class="header-content">
-      <div class="header-left">
-        <a routerLink="/" class="logo-link">
-          <img src="assets/logo.png" alt="Logo Aplikacji" class="app-logo" />
+    <div class="app-header__content">
+      <div class="app-header__left">
+        <a routerLink="/" class="app-header__logo-link">
+          <img src="assets/logo.png" alt="Logo" class="app-header__logo" />
         </a>
 
         @if (true) {
-          <nav class="header-nav-desktop">
-            <ul>
+          <nav class="app-header__nav hidden md:block">
+            <ul class="app-header__nav-list">
               @for (item of menuItems; track item.link) {
                 <li>
-                  <a [routerLink]="item.link">
+                  <a [routerLink]="item.link" class="app-header__nav-link">
                     {{ t(item.labelKey) }}
                   </a>
                 </li>
@@ -21,7 +21,7 @@
         }
       </div>
 
-      <div class="header-right">
+      <div class="app-header__right hidden md:flex">
         <app-language-switcher />
         <app-user-dropdown />
       </div>

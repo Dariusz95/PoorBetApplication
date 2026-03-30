@@ -28,5 +28,35 @@
     "email": "Proszę podać poprawny adres e-mail",
     "password": "Hasło musi mieć co najmniej 6 znaków",
     "confirmPassword": "Hasła muszą być takie same"
+  },
+  "bet": {
+    "page": {
+      "availablePools": "Dostępne pule",
+      "live": "Live",
+      "upcomingPools": "Nadchodzące pule"
+    },
+    "liveMatches": {
+      "emptyTitle": "Brak aktywnych meczów",
+      "emptyText": "Nie ma teraz żadnych meczów na żywo. Sprawdź dostępne pule w innych datach."
+    },
+    "liveMatchCard": {
+      "live": "LIVE",
+      "matchFinished": "Koniec meczu",
+      "matchInProgress": "Mecz trwa"
+    },
+    "coupon": {
+      "eyebrow": "Twój kupon",
+      "title": "Dodawanie kuponu",
+      "emptyTitle": "Nie wybrano jeszcze żadnych zdarzeń.",
+      "emptyText": "Kliknij kurs przy meczu, aby dodać go do kuponu po prawej stronie.",
+      "oddsLabel": "Kurs",
+      "removeAria": "Usuń zdarzenie z kuponu",
+      "totalOdds": "Łączny kurs",
+      "amount": "Kwota",
+      "submit": "Postaw kupon"
+    },
+    "poolCard": {
+      "eyebrow": "Pula"
+    }
   }
 }

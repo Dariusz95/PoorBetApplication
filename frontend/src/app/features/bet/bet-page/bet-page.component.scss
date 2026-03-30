@@ -38,77 +38,20 @@
   color: rgb(var(--app-text));
 }
 
-.tabs-container {
-  position: relative;
-  display: flex;
-  gap: 0;
-  border-bottom: 1px solid rgb(var(--app-border));
-  background-color: rgb(var(--app-surface));
-  overflow-x: auto;
-
-  &::-webkit-scrollbar {
-    display: none;
-  }
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+.tab-button__content {
+  @apply flex flex-col items-center gap-1;
 }
 
-.tab-button {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  white-space: nowrap;
-  padding: 0.75rem 1.5rem;
-  font-size: 0.875rem;
-  line-height: 1.25rem;
-  font-weight: 500;
-  color: rgb(var(--app-textMuted));
-  background: none;
-  border: none;
-  cursor: pointer;
-  transition: color 200ms;
-  flex-shrink: 0;
-
-  &:hover {
-    color: rgb(var(--app-text));
-    background-color: rgb(var(--app-surfaceSoft));
-  }
-
-  &.active {
-    color: rgb(var(--app-primary));
-    background-color: rgba(var(--app-primary), 0.05);
-  }
-
-  &__label {
-    display: block;
-  }
-
-  &__badge {
-    display: inline-block;
-    height: 0.5rem;
-    width: 0.5rem;
-    border-radius: 50%;
-    background-color: rgb(var(--app-primary));
-    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  }
+.tab-button__header {
+  @apply flex items-center gap-1 text-app-textMuted;
 }
 
-.tab-indicator {
-  position: absolute;
-  bottom: -1px;
-  left: 0;
-  height: 3px;
+.tab-button__clock {
+  @apply text-xs font-medium;
+}
 
-  background: linear-gradient(90deg, currentColor, currentColor);
-
-  border-radius: 2px;
-
-  transition:
-    left 300ms cubic-bezier(0.34, 1.56, 0.64, 1),
-    width 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
-
-  box-shadow: 0 0 12px currentColor;
+.tab-button__time {
+  @apply rounded-full bg-app-surfaceSoft px-2 py-0.5 text-xs font-semibold text-app-primary;
 }
 
 .matches-section {
@@ -191,12 +134,7 @@
   }
 
   .tabs-container {
-    gap: 0;
-  }
-
-  .tab-button {
-    flex: 1;
-    justify-content: center;
-    padding: 0.75rem 1rem;
+    margin-left: -1rem;
+    margin-right: -1rem;
   }
 }

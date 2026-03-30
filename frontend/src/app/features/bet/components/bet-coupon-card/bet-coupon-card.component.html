@@ -1,76 +1,85 @@
-<aside class="bet-coupon-card">
-  <header class="bet-coupon-card__header">
-    <div>
-      <p class="bet-coupon-card__eyebrow">Twój kupon</p>
-      <h2 class="bet-coupon-card__title">Dodawanie kuponu</h2>
-    </div>
-    <span class="bet-coupon-card__badge">{{
-      betSlipService.selectedCount()
-    }}</span>
-  </header>
-
-  <div class="bet-coupon-card__body">
-    @if (betSlipService.selectedCount() === 0) {
-      <div class="bet-coupon-card__empty-state">
-        <p class="bet-coupon-card__empty-title">
-          Nie wybrano jeszcze żadnych zdarzeń.
-        </p>
-        <p class="bet-coupon-card__empty-text">
-          Kliknij kurs przy meczu, aby dodać go do kuponu po prawej stronie.
-        </p>
+<ng-container *transloco="let t; prefix: 'bet.coupon'">
+  <aside class="bet-coupon-card">
+    <header class="bet-coupon-card__header">
+      <div>
+        <p class="bet-coupon-card__eyebrow">{{ t("eyebrow") }}</p>
+        <h2 class="bet-coupon-card__title">{{ t("title") }}</h2>
       </div>
-    } @else {
-      <div class="bet-coupon-card__list">
-        @for (bet of betSlipService.selectedBets(); track bet.matchId) {
-          <article class="bet-coupon-card__item">
-            <div class="bet-coupon-card__item-details">
-              <p class="bet-coupon-card__match">{{ bet.matchLabel }}</p>
-              <p class="bet-coupon-card__meta">
-                <span>{{ bet.optionLabel }}</span>
-                <span class="bet-coupon-card__separator">•</span>
-                <span>Kurs {{ bet.odds | number: "1.2-2" }}</span>
-              </p>
-            </div>
-
-            <pb-button
-              variant="link"
-              size="sm"
-              ariaLabel="Usuń zdarzenie z kuponu"
-              (buttonClick)="betSlipService.removeSelection(bet.matchId)"
-            >
-              X
-            </pb-button>
-          </article>
-        }
-      </div>
-    }
-  </div>
-
-  <footer class="bet-coupon-card__footer">
-    <div class="bet-coupon-card__summary">
-      <span class="bet-coupon-card__summary-label">Łączny kurs</span>
-      <span class="bet-coupon-card__summary-value">{{
-        betSlipService.totalOdds() | number: "1.2-2"
+      <span class="bet-coupon-card__badge">{{
+        betSlipService.selectedCount()
       }}</span>
+    </header>
+
+    <div class="bet-coupon-card__body">
+      @if (betSlipService.selectedCount() === 0) {
+        <div class="bet-coupon-card__empty-state">
+          <p class="bet-coupon-card__empty-title">
+            {{ t("emptyTitle") }}
+          </p>
+          <p class="bet-coupon-card__empty-text">
+            {{ t("emptyText") }}
+          </p>
+        </div>
+      } @else {
+        <div class="bet-coupon-card__list">
+          @for (bet of betSlipService.selectedBets(); track bet.matchId) {
+            <article class="bet-coupon-card__item">
+              <div class="bet-coupon-card__item-details">
+                <p class="bet-coupon-card__match">{{ bet.matchLabel }}</p>
+                <p class="bet-coupon-card__meta">
+                  <span>{{ bet.optionLabel }}</span>
+                  <span class="bet-coupon-card__separator">•</span>
+                  <span
+                    >{{ t("oddsLabel") }}
+                    {{ bet.odds | number: "1.2-2" }}</span
+                  >
+                </p>
+              </div>
+
+              <pb-button
+                variant="link"
+                size="sm"
+                [ariaLabel]="t('removeAria')"
+                (buttonClick)="betSlipService.removeSelection(bet.matchId)"
+              >
+                X
+              </pb-button>
+            </article>
+          }
+        </div>
+      }
     </div>
 
-    <div class="bet-coupon-card__amount">
-      <label for="amount" class="bet-coupon-card__amount-label">Kwota</label>
-      <pb-form-field>
-        <pb-input
-          id="amount"
-          type="number"
-          placeholder="0.00"
-          [formControl]="amountCtrl"
-        ></pb-input>
-      </pb-form-field>
-    </div>
+    <footer class="bet-coupon-card__footer">
+      <div class="bet-coupon-card__summary">
+        <span class="bet-coupon-card__summary-label">{{
+          t("totalOdds")
+        }}</span>
+        <span class="bet-coupon-card__summary-value">{{
+          betSlipService.totalOdds() | number: "1.2-2"
+        }}</span>
+      </div>
 
-    <pb-button
-      [fullWidth]="true"
-      [disabled]="betSlipService.selectedCount() === 0"
-    >
-      Postaw kupon
-    </pb-button>
-  </footer>
-</aside>
+      <div class="bet-coupon-card__amount">
+        <label for="amount" class="bet-coupon-card__amount-label">{{
+          t("amount")
+        }}</label>
+        <pb-form-field>
+          <pb-input
+            id="amount"
+            type="number"
+            placeholder="0.00"
+            [formControl]="amountCtrl"
+          ></pb-input>
+        </pb-form-field>
+      </div>
+
+      <pb-button
+        [fullWidth]="true"
+        [disabled]="betSlipService.selectedCount() === 0"
+      >
+        {{ t("submit") }}
+      </pb-button>
+    </footer>
+  </aside>
+</ng-container>

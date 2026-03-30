@@ -6,6 +6,7 @@ import {
   input,
   OnInit,
 } from '@angular/core';
+import { TranslocoDirective } from '@jsverse/transloco';
 import { Observable } from 'rxjs';
 import { TeamService } from '../../services/team.service';
 import {
@@ -18,7 +19,7 @@ import { PbCardComponent } from '@shared/components/pb-card/pb-card.component';
 @Component({
   selector: 'app-live-match-card',
   standalone: true,
-  imports: [AsyncPipe, PbCardComponent],
+  imports: [AsyncPipe, PbCardComponent, TranslocoDirective],
   templateUrl: './live-match.component.html',
   styleUrl: './live-match.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

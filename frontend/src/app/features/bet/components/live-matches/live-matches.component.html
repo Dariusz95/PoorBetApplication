@@ -1,17 +1,18 @@
-<div class="matches-section">
-  @if ((liveMatches$ | async | keyvalue)?.length === 0) {
-    <div class="empty-state">
-      <p class="empty-state__title">Brak aktywnych meczów</p>
-      <p class="empty-state__text">
-        Nie ma teraz żadnych meczów na żywo. Sprawdź dostępne pule w innych
-        datach.
-      </p>
-    </div>
-  } @else {
-    <div class="matches-grid">
-      @for (entry of liveMatches$ | async | keyvalue; track entry.key) {
-        <app-live-match-card [liveMatch]="entry.value"></app-live-match-card>
-      }
-    </div>
-  }
-</div>
+<ng-container *transloco="let t; prefix: 'bet.liveMatches'">
+  <div class="matches-section">
+    @if ((liveMatches$ | async | keyvalue)?.length === 0) {
+      <div class="empty-state">
+        <p class="empty-state__title">{{ t("emptyTitle") }}</p>
+        <p class="empty-state__text">
+          {{ t("emptyText") }}
+        </p>
+      </div>
+    } @else {
+      <div class="matches-grid">
+        @for (entry of liveMatches$ | async | keyvalue; track entry.key) {
+          <app-live-match-card [liveMatch]="entry.value"></app-live-match-card>
+        }
+      </div>
+    }
+  </div>
+</ng-container>

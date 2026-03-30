@@ -6,6 +6,7 @@ import {
   input,
   signal,
 } from '@angular/core';
+import { TranslocoDirective } from '@jsverse/transloco';
 import { PbCardComponent } from '@shared/components/pb-card/pb-card.component';
 import { Observable, shareReplay, tap } from 'rxjs';
 import { BetSlipService } from '../../services/bet-slip.service';
@@ -21,6 +22,7 @@ import { OddsButtonComponent } from '../odds-button/odds-button.component';
     SlicePipe,
     OddsButtonComponent,
     PbCardComponent,
+    TranslocoDirective,
   ],
   templateUrl: './pool-card.component.html',
   styleUrl: './pool-card.component.scss',
@@ -33,8 +35,6 @@ export class PoolCardComponent {
   private readonly betSlipService = inject(BetSlipService);
   private readonly teamCache = new Map<string, Observable<ShortTeamInfo>>();
   private readonly teamNames = signal<Record<string, string>>({});
-
-  trackByMatchId = (_index: number, match: MatchDto): string => match.matchId;
 
   getTeamName(teamId: string): Observable<ShortTeamInfo> {
     if (!this.teamCache.has(teamId)) {
