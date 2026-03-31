@@ -1,41 +1,65 @@
 package com.poorbet.couponservice.config;
 
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.BindingBuilder;
-import org.springframework.amqp.core.FanoutExchange;
-import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.*;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Configuration
+@EnableConfigurationProperties(MessagingProperties.class)
 public class RabbitConfig {
 
-    public static final String MATCH_EVENTS_EXCHANGE = "match.events";
-    public static final String MATCH_FINISHED_QUEUE =
-            "match.finished.coupon.queue";
+//    @Bean
+//    public TopicExchange matchFinishedExchange(MessagingProperties messagingProperties) {
+//        return new TopicExchange(messagingProperties.getMatchFinished().getExchange(), true, false);
+//    }
+//
+//    @Bean
+//    public Queue matchFinishedQueue(MessagingProperties messagingProperties) {
+//        return new Queue(messagingProperties.getMatchFinished().getQueue(), true);
+//    }
+//
+//    @Bean
+//    public Binding matchFinishedBinding(
+//            Queue matchFinishedQueue,
+//            TopicExchange matchFinishedExchange) {
+//        return BindingBuilder
+//                .bind(matchFinishedQueue)
+//                .to(matchFinishedExchange)
+//                .with(MatchEvents.MATCH_FINISHED.routingKey());
+//    }
 
     @Bean
-    public Queue matchFinishedQueue() {
-        return new Queue(MATCH_FINISHED_QUEUE, true);
-    }
+    public Declarables declarables(MessagingProperties properties) {
 
+        List<Declarable> declarables = new ArrayList<>();
 
-    @Bean
-    public FanoutExchange matchEventsExchange() {
-        return new FanoutExchange(MATCH_EVENTS_EXCHANGE, true, false);
-    }
+        properties.getConsumers().forEach((name, consumer) -> {
 
+            TopicExchange exchange = new TopicExchange(
+                    properties.getExchanges().get(consumer.getExchange()),
+                    true,
+                    false
+            );
 
-    @Bean
-    public Binding bindCouponQueueToExchange(
-            Queue matchFinishedQueue,
-            FanoutExchange matchEventsExchange) {
+            Queue queue = new Queue(consumer.getQueue(), true);
 
-        return BindingBuilder
-                .bind(matchFinishedQueue)
-                .to(matchEventsExchange);
+            Binding binding = BindingBuilder
+                    .bind(queue)
+                    .to(exchange)
+                    .with(consumer.getRoutingKey());
+
+            declarables.add(exchange);
+            declarables.add(queue);
+            declarables.add(binding);
+        });
+
+        return new Declarables(declarables);
     }
 
     @Bean

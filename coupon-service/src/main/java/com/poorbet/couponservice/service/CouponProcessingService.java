@@ -1,13 +1,13 @@
 package com.poorbet.couponservice.service;
 
-import com.poorbet.couponservice.client.MatchClient;
-import com.poorbet.couponservice.domain.*;
+import com.poorbet.couponservice.domain.Bet;
+import com.poorbet.couponservice.domain.BetStatus;
+import com.poorbet.couponservice.domain.Coupon;
+import com.poorbet.couponservice.domain.CouponStatus;
 import com.poorbet.couponservice.dto.MatchResultDto;
 import com.poorbet.couponservice.dto.MatchesFinishedEvent;
-import com.poorbet.couponservice.projections.BetProjection;
 import com.poorbet.couponservice.repository.BetRepository;
 import com.poorbet.couponservice.repository.CouponRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +29,7 @@ public class CouponProcessingService {
     @Transactional
     public void processFinishedMatch(MatchesFinishedEvent event) {
 
-        Map<UUID, MatchResultDto> matchResults  = event.results().stream()
+        Map<UUID, MatchResultDto> matchResults = event.results().stream()
                 .collect(Collectors.toMap(
                         MatchResultDto::getId,
                         Function.identity()

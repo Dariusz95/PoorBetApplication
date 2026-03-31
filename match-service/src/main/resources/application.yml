@@ -42,3 +42,8 @@ auth:
     timeout:
       connect: ${AUTH_SERVICE_CONNECT_TIMEOUT:2s}
       read: ${AUTH_SERVICE_READ_TIMEOUT:3s}
+
+messaging:
+  source-service: match-service
+  exchanges:
+    match: match.events

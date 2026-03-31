@@ -1,10 +1,11 @@
 package com.poorbet.matchservice.match.matchpool.service;
 
-import com.poorbet.matchservice.match.config.rabbitmq.RabbitConfig;
-import com.poorbet.matchservice.match.match.dto.MatchResultDto;
-import com.poorbet.matchservice.match.match.dto.MatchesFinishedEvent;
+import com.poorbet.commons.rabbit.events.match.MatchEvents;
+import com.poorbet.commons.rabbit.events.match.MatchesFinishedEvent;
+import com.poorbet.commons.rabbit.events.match.dto.MatchResultEventDto;
+import com.poorbet.matchservice.match.config.rabbitmq.MessagingProperties;
+import com.poorbet.matchservice.match.config.rabbitmq.RabbitDomainEventPublisher;
 import lombok.AllArgsConstructor;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,12 +14,16 @@ import java.util.List;
 @AllArgsConstructor
 public class MatchPoolEventPublisher {
 
-    private final RabbitTemplate rabbitTemplate;
+    private final RabbitDomainEventPublisher rabbitDomainEventPublisher;
+    private final MessagingProperties messagingProperties;
 
-    public void publishMatchesFinished(List<MatchResultDto> results) {
-        rabbitTemplate.convertAndSend(
-                RabbitConfig.MATCH_EVENTS_EXCHANGE,
-                "",
+    public void publishMatchesFinished(List<MatchResultEventDto> results) {
+        rabbitDomainEventPublisher.publish(
+                messagingProperties.getExchanges().get("match"),
+                MatchEvents.MATCH_FINISHED.routingKey(),
+                MatchEvents.MATCH_FINISHED.eventType(),
+                MatchEvents.MATCH_FINISHED.version(),
+                messagingProperties.getSourceService(),
                 new MatchesFinishedEvent(results)
         );
     }

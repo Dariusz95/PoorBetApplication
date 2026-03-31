@@ -40,3 +40,14 @@ match:
     timeout:
       connect: 2s
       read: 3s
+
+messaging:
+  source-service: coupon-service
+  exchanges:
+    match: match.events
+
+  consumers:
+    match-finished:
+      exchange: match
+      queue: match.finished.coupon.queue
+      routing-key: match.finished.v1

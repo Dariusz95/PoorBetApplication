@@ -77,6 +77,11 @@ match-pool:
   pool-interval-minutes: 3
   schedule-rate-ms: 60000
 
+messaging:
+  source-service: match-service
+  exchanges:
+    match: match.events
+
 auth:
   service:
     url: ${AUTH_SERVICE_URL:http://user-service:8080}
