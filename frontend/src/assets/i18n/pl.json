@@ -29,6 +29,9 @@
     "password": "Hasło musi mieć co najmniej 6 znaków",
     "confirmPassword": "Hasła muszą być takie same"
   },
+  "header": {
+    "wallet": "Saldo"
+  },
   "bet": {
     "page": {
       "availablePools": "Dostępne pule",

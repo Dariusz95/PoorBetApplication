@@ -25,6 +25,16 @@ spring:
           predicates:
             - Path=/api/coupons/**
 
+        - id: wallet-service
+          uri: http://wallet-service:8080
+          predicates:
+            - Path=/api/wallet/**
+
+        - id: notification-service
+          uri: http://notification-service:8080
+          predicates:
+            - Path=/api/notifications/**
+
 poorbet:
   security:
     enabled: false
@@ -35,3 +45,4 @@ poorbet:
       - /api/users/register
       - /api/match-pool/**
       - /api/teams/public/**
+      - /api/notifications/**

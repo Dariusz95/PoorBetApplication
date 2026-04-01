@@ -29,6 +29,9 @@
     "password": "Password must be at least 6 characters long",
     "confirmPassword": "Passwords must match"
   },
+  "header": {
+    "wallet": "Balance"
+  },
   "bet": {
     "page": {
       "availablePools": "Available pools",

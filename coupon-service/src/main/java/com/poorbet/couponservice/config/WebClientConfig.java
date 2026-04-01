@@ -16,6 +16,7 @@ import reactor.netty.http.client.HttpClient;
 public class WebClientConfig {
 
     private final MatchProperties matchProperties;
+    private final WalletProperties walletProperties;
 
     @Bean
     public WebClient matchServiceWebClientBuilder(ServiceJwtForwardingFilter serviceJwtForwardingFilter) {
@@ -30,6 +31,24 @@ public class WebClientConfig {
         return WebClient.builder()
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .baseUrl(matchProperties.url())
+                .clientConnector(new ReactorClientHttpConnector(httpClient))
+                .filter(serviceJwtForwardingFilter)
+                .build();
+    }
+
+    @Bean
+    public WebClient walletServiceWebClient(ServiceJwtForwardingFilter serviceJwtForwardingFilter) {
+
+        HttpClient httpClient = HttpClient.create()
+                .responseTimeout(walletProperties.timeout().read())
+                .option(
+                        ChannelOption.CONNECT_TIMEOUT_MILLIS,
+                        (int) walletProperties.timeout().connect().toMillis()
+                );
+
+        return WebClient.builder()
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .baseUrl(walletProperties.url())
                 .clientConnector(new ReactorClientHttpConnector(httpClient))
                 .filter(serviceJwtForwardingFilter)
                 .build();

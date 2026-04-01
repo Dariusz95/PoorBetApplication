@@ -63,3 +63,9 @@ gate-dev:
 
 front-dev:
 	$(COMPOSE_DEV) up -d --build frontend
+
+wallet-dev:
+	$(COMPOSE_DEV) up -d --build wallet-service
+
+notification-dev:
+	$(COMPOSE_DEV) up -d --build notification-service

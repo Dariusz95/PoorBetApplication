@@ -162,6 +162,47 @@ services:
       - "8086:8080"
       - "5076:5076"
 
+  wallet-service:
+    build:
+      context: ./wallet-service
+      dockerfile: Dockerfile.dev
+    container_name: wallet-service-dev
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://wallet-db:5432/${POSTGRES_WALLET_DB}
+      - POSTGRES_USER=${POSTGRES_WALLET_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_WALLET_PASSWORD}
+      - RABBITMQ_USER=${RABBITMQ_USER}
+      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+      - RABBITMQ_PORT=${RABBITMQ_PORT}
+      - RABBITMQ_HOST=rabbitmq
+      - AUTH_ISSUER_URI=${AUTH_ISSUER_URI}
+      - AUTH_JWKS_URI=${AUTH_JWKS_URI}
+    volumes:
+      - ./wallet-service:/app
+      - ~/.m2:/root/.m2
+    ports:
+      - "8087:8080"
+      - "5077:5077"
+
+  notification-service:
+    build:
+      context: ./notification-service
+      dockerfile: Dockerfile.dev
+    container_name: notification-service-dev
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - RABBITMQ_USER=${RABBITMQ_USER}
+      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+      - RABBITMQ_PORT=${RABBITMQ_PORT}
+      - RABBITMQ_HOST=rabbitmq
+    volumes:
+      - ./notification-service:/app
+      - ~/.m2:/root/.m2
+    ports:
+      - "8088:8080"
+      - "5078:5078"
+
   gateway:
     build:
       context: ./gateway

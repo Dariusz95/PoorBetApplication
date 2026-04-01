@@ -14,26 +14,6 @@ import java.util.List;
 @EnableConfigurationProperties(MessagingProperties.class)
 public class RabbitConfig {
 
-//    @Bean
-//    public TopicExchange matchFinishedExchange(MessagingProperties messagingProperties) {
-//        return new TopicExchange(messagingProperties.getMatchFinished().getExchange(), true, false);
-//    }
-//
-//    @Bean
-//    public Queue matchFinishedQueue(MessagingProperties messagingProperties) {
-//        return new Queue(messagingProperties.getMatchFinished().getQueue(), true);
-//    }
-//
-//    @Bean
-//    public Binding matchFinishedBinding(
-//            Queue matchFinishedQueue,
-//            TopicExchange matchFinishedExchange) {
-//        return BindingBuilder
-//                .bind(matchFinishedQueue)
-//                .to(matchFinishedExchange)
-//                .with(MatchEvents.MATCH_FINISHED.routingKey());
-//    }
-
     @Bean
     public Declarables declarables(MessagingProperties properties) {
 

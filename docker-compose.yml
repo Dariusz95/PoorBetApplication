@@ -205,6 +205,30 @@ services:
     networks:
       - main_network
 
+  wallet-service:
+    build:
+      context: ./wallet-service
+      dockerfile: Dockerfile
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://wallet-db:5432/${POSTGRES_WALLET_DB}
+      - POSTGRES_USER=${POSTGRES_WALLET_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_WALLET_PASSWORD}
+      - RABBITMQ_USER=${RABBITMQ_USER}
+      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+      - RABBITMQ_PORT=${RABBITMQ_PORT}
+      - RABBITMQ_HOST=rabbitmq
+      - AUTH_ISSUER_URI=${AUTH_ISSUER_URI}
+      - AUTH_JWKS_URI=${AUTH_JWKS_URI}
+    depends_on:
+      - redis
+      - wallet-db
+      - rabbitmq
+    ports:
+      - "8087:8080"
+      - "5077:5077"
+    networks:
+      - main_network
+
   user-db:
     build:
       context: ./user-db
@@ -236,6 +260,20 @@ services:
       - "5434:5432"
     volumes:
       - match_data:/var/lib/postgresql/data
+    networks:
+      - main_network
+
+  wallet-db:
+    build:
+      context: ./wallet-db
+    environment:
+      POSTGRES_USER: ${POSTGRES_WALLET_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_WALLET_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_WALLET_DB}
+    ports:
+      - "5437:5432"
+    volumes:
+      - wallet_data:/var/lib/postgresql/data
     networks:
       - main_network
 
@@ -297,3 +335,4 @@ volumes:
   coupon_data:
   cache:
   rabbitmq_data:
+  wallet_data:

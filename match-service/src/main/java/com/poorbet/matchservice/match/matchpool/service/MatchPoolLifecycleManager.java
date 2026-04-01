@@ -75,7 +75,7 @@ public class MatchPoolLifecycleManager {
             List<MatchResultEventDto> eventResults = results.stream()
                     .map(this::toEventDto)
                     .toList();
-
+            log.info("eventResults - {}", eventResults);
             matchPoolEventPublisher.publishMatchesFinished(eventResults);
 
             liveMatchSimulationManager.notifyPoolFinished(poolId);

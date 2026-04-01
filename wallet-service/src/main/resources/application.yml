@@ -1,0 +1,34 @@
+spring:
+  application:
+    name: wallet-service
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  rabbitmq:
+    host: ${RABBITMQ_HOST}
+    port: 5672
+    username: ${RABBITMQ_USER}
+    password: ${RABBITMQ_PASSWORD}
+
+poorbet:
+  security:
+    enabled: true
+    issuer: ${AUTH_ISSUER_URI}
+    jwk-set-uri: ${AUTH_JWKS_URI}
+
+messaging:
+  source-service: wallet-service
+  exchanges:
+    wallet: wallet.events
+
+  consumers:
+    wallet-update:
+      exchange: wallet
+      queue: wallet.update.queue
+      routing-key: wallet.balance.updated.v1

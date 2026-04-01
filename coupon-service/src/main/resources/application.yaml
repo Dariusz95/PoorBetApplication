@@ -41,6 +41,13 @@ match:
       connect: 2s
       read: 3s
 
+wallet:
+  service:
+    url: http://wallet-service:8080
+    timeout:
+      connect: 2s
+      read: 3s
+
 messaging:
   source-service: coupon-service
   exchanges:
