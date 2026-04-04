@@ -34,7 +34,6 @@ import { LoginFormValue } from './types/login-form-value';
     FormsModule,
     ReactiveFormsModule,
     CommonModule,
-    PbFormFieldComponent,
     TranslocoDirective,
     PbCardComponent,
     PbLabel,

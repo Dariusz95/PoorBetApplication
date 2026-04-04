@@ -2,20 +2,22 @@ package com.poorbet.users.user.service;
 
 
 import com.poorbet.users.exception.ResourceAlreadyExistsException;
+import com.poorbet.users.security.JwtUtil;
 import com.poorbet.users.user.dto.UserRegisterDto;
 import com.poorbet.users.user.dto.UserResponseDto;
+import com.poorbet.users.user.mapper.UserMapper;
 import com.poorbet.users.user.model.Role;
 import com.poorbet.users.user.model.User;
-import com.poorbet.users.security.JwtUtil;
 import com.poorbet.users.user.repository.UserRepository;
-import com.poorbet.users.user.mapper.UserMapper;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -53,16 +55,19 @@ class UserServiceTest {
                 "Password123"
         );
 
+        UUID uuid = UUID.randomUUID();
+        String email = "test@example.com";
+
         mockUser = new User();
-        mockUser.setId(1L);
-        mockUser.setEmail("test@example.com");
+        mockUser.setId(uuid);
+        mockUser.setEmail(email);
         mockUser.setRole(Role.USER);
         mockUser.setActive(true);
 
         mockResponseDto = new UserResponseDto(
-                1L,
-                "test@example.com",
-                "USER",
+                uuid,
+                email,
+                Role.USER,
                 mockUser.getCreatedAt()
         );
     }

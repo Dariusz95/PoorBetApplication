@@ -1,13 +1,5 @@
 package com.poorbet.users.user.service;
 
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.poorbet.commons.security.PoorbetTokenTypes;
 import com.poorbet.users.exception.ResourceAlreadyExistsException;
 import com.poorbet.users.security.JwtUtil;
@@ -18,9 +10,20 @@ import com.poorbet.users.user.dto.UserResponseDto;
 import com.poorbet.users.user.mapper.UserMapper;
 import com.poorbet.users.user.model.User;
 import com.poorbet.users.user.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
+
+import java.util.List;
 
 @Service
-public class UserServiceImpl implements UserService  {
+@RequiredArgsConstructor
+public class UserServiceImpl implements UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     private final UserRepository userRepository;
@@ -28,16 +31,7 @@ public class UserServiceImpl implements UserService  {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final AuthorizationPolicyService authorizationPolicyService;
-
-    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper,
-                           PasswordEncoder passwordEncoder, JwtUtil jwtUtil,
-                           AuthorizationPolicyService authorizationPolicyService) {
-        this.userRepository = userRepository;
-        this.userMapper = userMapper;
-        this.passwordEncoder = passwordEncoder;
-        this.jwtUtil = jwtUtil;
-        this.authorizationPolicyService = authorizationPolicyService;
-    }
+    private final UserCreatedEventPublisher publisher;
 
     @Override
     @Transactional
@@ -53,6 +47,18 @@ public class UserServiceImpl implements UserService  {
         User savedUser = userRepository.save(user);
 
         logger.info("User successfully registered: {}", savedUser.getEmail());
+
+        TransactionSynchronizationManager.registerSynchronization(
+                new TransactionSynchronization() {
+                    @Override
+                    public void afterCommit() {
+                        logger.info("UserCreatedEvent sent to Rabbit. userId={}", savedUser.getId());
+
+                        publisher.publishUserCreated(savedUser.getId());
+                    }
+                }
+        );
+
         return userMapper.toDto(savedUser);
     }
 

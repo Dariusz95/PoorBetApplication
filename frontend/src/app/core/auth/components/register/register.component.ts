@@ -70,7 +70,7 @@ export class RegisterComponent implements OnInit {
             Validators.required,
             Validators.minLength(8),
             Validators.pattern(
-              /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
+              /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
             ),
           ],
         }),
@@ -81,7 +81,7 @@ export class RegisterComponent implements OnInit {
       },
       {
         validators: passwordMatchValidator,
-      }
+      },
     );
   }
 
@@ -107,7 +107,7 @@ export class RegisterComponent implements OnInit {
       .pipe(
         finalize(() => {
           this.pending.set(false);
-        })
+        }),
       )
       .subscribe({
         next: (response) => {

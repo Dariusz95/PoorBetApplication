@@ -55,6 +55,4 @@ messaging:
 
   consumers:
     match-finished:
-      exchange: match
-      queue: match.finished.coupon.queue
-      routing-key: match.finished.v1
+      queue: coupon.match-finished.queue

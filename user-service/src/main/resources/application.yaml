@@ -17,6 +17,12 @@ spring:
     properties:
       hibernate.default_schema: public
 
+  rabbitmq:
+    host: ${RABBITMQ_HOST}
+    port: 5672
+    username: ${RABBITMQ_USER}
+    password: ${RABBITMQ_PASSWORD}
+
 web:
   cors:
     allowedOriginPatterns:
@@ -75,3 +81,10 @@ poorbet:
       - /api/users/register
       - /oauth/token
       - /.well-known/jwks.json
+
+messaging:
+  source-service: user-service
+
+  exchanges:
+    match: user.events
+

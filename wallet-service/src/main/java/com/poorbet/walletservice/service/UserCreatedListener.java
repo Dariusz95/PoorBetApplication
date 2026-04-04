@@ -10,15 +10,14 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class WalletChangeListener {
+public class UserCreatedListener {
 
-    @RabbitListener(queues = "${messaging.consumers.wallet-update.queue}")
-    public void handleWalletChange(EventEnvelope<WalletBalanceChangedEvent> envelope) {
+    @RabbitListener(queues = "${messaging.consumers.user-created.queue}")
+    public void handleWalletChange(EventEnvelope<WalletBalanceChangedEvent> event) {
         log.info("📨 [WALLET] Received eventType={} version={} source={}",
-                envelope.eventType(),
-                envelope.eventVersion(),
-                envelope.sourceService());
+                event.eventType(),
+                event.version(),
+                event.source());
 
-        //TODO
     }
 }

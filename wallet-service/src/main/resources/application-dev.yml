@@ -30,12 +30,9 @@ poorbet:
 
 messaging:
   source-service: wallet-service
-
   exchanges:
-    wallet: wallet.events
+    user: user.events
 
   consumers:
-    wallet-update:
-      exchange: wallet
-      queue: wallet.update.queue
-      routing-key: wallet.balance.updated.v1
+    user-created:
+      queue: wallet.user-created.queue

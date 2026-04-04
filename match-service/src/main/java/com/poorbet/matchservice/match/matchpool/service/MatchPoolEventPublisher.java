@@ -14,17 +14,15 @@ import java.util.List;
 @AllArgsConstructor
 public class MatchPoolEventPublisher {
 
-    private final RabbitDomainEventPublisher rabbitDomainEventPublisher;
-    private final MessagingProperties messagingProperties;
+    private final RabbitDomainEventPublisher publisher;
+    private final MessagingProperties properties;
 
     public void publishMatchesFinished(List<MatchResultEventDto> results) {
-        rabbitDomainEventPublisher.publish(
-                messagingProperties.getExchanges().get("match"),
-                MatchEvents.MATCH_FINISHED.routingKey(),
-                MatchEvents.MATCH_FINISHED.eventType(),
-                MatchEvents.MATCH_FINISHED.version(),
-                messagingProperties.getSourceService(),
-                new MatchesFinishedEvent(results)
+        publisher.publish(
+                MatchEvents.MATCH_FINISHED,
+                new MatchesFinishedEvent(results),
+                properties.getSourceService()
+
         );
     }
 }

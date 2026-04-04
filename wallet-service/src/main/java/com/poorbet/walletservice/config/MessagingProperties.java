@@ -30,12 +30,6 @@ public class MessagingProperties {
     public static class Consumer {
 
         @NotBlank
-        private String exchange;
-
-        @NotBlank
         private String queue;
-
-        @NotBlank
-        private String routingKey;
     }
 }

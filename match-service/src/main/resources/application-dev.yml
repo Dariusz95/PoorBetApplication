@@ -79,6 +79,7 @@ match-pool:
 
 messaging:
   source-service: match-service
+
   exchanges:
     match: match.events
 

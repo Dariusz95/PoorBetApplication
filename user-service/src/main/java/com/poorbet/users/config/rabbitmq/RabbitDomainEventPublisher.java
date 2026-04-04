@@ -1,4 +1,4 @@
-package com.poorbet.matchservice.match.config.rabbitmq;
+package com.poorbet.users.config.rabbitmq;
 
 import com.poorbet.commons.rabbit.EventDefinition;
 import com.poorbet.commons.rabbit.EventEnvelope;

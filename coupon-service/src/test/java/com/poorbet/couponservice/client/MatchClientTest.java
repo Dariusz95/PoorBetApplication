@@ -1,6 +1,6 @@
 package com.poorbet.couponservice.client;
 
-import com.poorbet.couponservice.domain.OddsType;
+import com.poorbet.couponservice.domain.BetType;
 import com.poorbet.couponservice.dto.MatchResultMapDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -84,7 +84,7 @@ class MatchClientTest {
         setupWebClientChainForGet(expectedOdd);
 
         // Act
-        Double result = matchClient.getOdd(matchId, OddsType.HOME_WIN);
+        Double result = matchClient.getOdd(matchId, BetType.HOME_WIN);
 
         // Assert
         assertThat(result).isEqualTo(expectedOdd);
@@ -97,7 +97,7 @@ class MatchClientTest {
         setupWebClientChainForGet(1.5);
 
         // Act
-        matchClient.getOdd(matchId, OddsType.HOME_WIN);
+        matchClient.getOdd(matchId, BetType.HOME_WIN);
 
         // Assert
         verify(webClient).get();
@@ -113,7 +113,7 @@ class MatchClientTest {
         setupWebClientChainForGet(expectedOdd);
 
         // Act
-        Double result = matchClient.getOdd(matchId, OddsType.HOME_WIN);
+        Double result = matchClient.getOdd(matchId, BetType.HOME_WIN);
 
         // Assert
         assertThat(result).isNotNull().isEqualTo(expectedOdd);
