@@ -1,6 +1,7 @@
 package com.poorbet.users.config.rabbitmq;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,4 +21,16 @@ public class MessagingProperties {
 
     @NotNull
     private Map<String, String> exchanges;
+
+    @NotEmpty
+    private Map<String, Consumer> consumers;
+
+
+    @Getter
+    @Setter
+    public static class Consumer {
+
+        @NotBlank
+        private String queue;
+    }
 }

@@ -83,8 +83,12 @@ poorbet:
       - /.well-known/jwks.json
 
 
-  messaging:
-    source-service: user-service
+messaging:
+  source-service: user-service
 
-    exchanges:
-      match: user.events
+  exchanges:
+    match: user.events
+
+  consumers:
+    wallet-created:
+      queue: user.wallet-created.queue

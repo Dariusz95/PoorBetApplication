@@ -88,3 +88,7 @@ messaging:
   exchanges:
     match: user.events
 
+  consumers:
+    wallet-created:
+      queue: user.wallet-created.queue
+
