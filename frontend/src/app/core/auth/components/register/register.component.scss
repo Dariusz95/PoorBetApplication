@@ -1,12 +1,12 @@
 .registration-container {
-  @apply flex min-h-screen items-center justify-center bg-transparent p-8 text-slate-100;
+  @apply flex min-h-screen items-center justify-center bg-transparent px-4 pb-8 pt-24 text-slate-100;
 
   app-pb-card {
-    @apply w-full max-w-[600px] text-slate-900 dark:text-slate-100;
+    @apply w-full text-slate-900 dark:text-slate-100;
   }
 
-  .header {
-    @apply mb-6 flex items-center justify-between;
+  .auth-header {
+    @apply mb-4 border-b border-app-border pb-3;
 
     h2 {
       @apply m-0 text-slate-900 dark:text-slate-100;
@@ -34,7 +34,7 @@
   }
 
   .form-actions {
-    @apply mt-6;
+    @apply mt-8 mb-6;
 
     .btn {
       @apply w-full;

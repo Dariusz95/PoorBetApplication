@@ -35,6 +35,7 @@ public class ClientCredentialsAuthService {
                 List.of(),
                 clientRegistration.getPermissions(),
                 PoorbetTokenTypes.SERVICE,
+                null,
                 request.clientId(),
                 clientRegistration.getAudiences()
         );

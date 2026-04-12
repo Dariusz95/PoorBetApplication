@@ -21,7 +21,7 @@ spring:
             - Path=/api/teams/**
 
         - id: coupon-service
-          uri: http://coupon-service:8086
+          uri: http://coupon-service:8080
           predicates:
             - Path=/api/coupons/**
 

@@ -36,12 +36,12 @@ export class WalletBalanceService {
       `/api/notifications/wallet/live?subject=${encodeURIComponent(subject)}`,
     );
 
-    this.eventSource.onmessage = (event) => {
+    this.eventSource.addEventListener('wallet-balance-updated', (event) => {
       this.ngZone.run(() => {
-        const data: WalletBalanceEvent = JSON.parse(event.data);
+        const data: WalletBalanceEvent = JSON.parse((event as MessageEvent).data);
         this.balance.set(data.balance);
       });
-    };
+    });
 
     this.eventSource.onerror = () => {
       this.eventSource?.close();

@@ -19,13 +19,23 @@ public class OutboxService {
     private final ObjectMapper objectMapper;
 
     public void saveEvent(EventDefinition<?> definition, Object payload) {
+        saveEvent(
+                definition.exchange(),
+                definition.routingKey(),
+                definition.eventType(),
+                definition.version(),
+                payload
+        );
+    }
+
+    public void saveEvent(String exchange, String routingKey, String eventType, String version, Object payload) {
 
         OutboxEvent event = OutboxEvent.builder()
                 .id(UUID.randomUUID())
-                .exchange(definition.exchange())
-                .routingKey(definition.routingKey())
-                .eventType(definition.eventType())
-                .version(definition.version())
+                .exchange(exchange)
+                .routingKey(routingKey)
+                .eventType(eventType)
+                .version(version)
                 .payload(toJson(payload))
                 .status("NEW")
                 .createdAt(Instant.now())

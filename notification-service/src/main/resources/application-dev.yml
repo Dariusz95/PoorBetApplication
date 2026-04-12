@@ -11,3 +11,7 @@ messaging:
   wallet-exchange: wallet.events
   wallet-queue: notification.wallet.updated.queue
   wallet-routing-key: wallet.balance.updated.v1
+
+poorbet:
+  security:
+    enabled: false

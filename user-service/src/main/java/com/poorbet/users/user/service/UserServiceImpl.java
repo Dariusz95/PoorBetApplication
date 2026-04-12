@@ -84,6 +84,7 @@ public class UserServiceImpl implements UserService {
                 roles,
                 permissions,
                 PoorbetTokenTypes.USER,
+                user.getId().toString(),
                 null,
                 List.of()
         );

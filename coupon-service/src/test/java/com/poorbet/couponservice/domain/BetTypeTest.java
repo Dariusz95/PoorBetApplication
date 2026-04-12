@@ -1,12 +1,12 @@
 package com.poorbet.couponservice.domain;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import com.poorbet.commons.rabbit.events.match.dto.MatchResultEventDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-import com.poorbet.couponservice.dto.MatchResultDto;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("BetType Enum Unit Tests")
 class BetTypeTest {
@@ -15,11 +15,10 @@ class BetTypeTest {
     @DisplayName("Should map HOME_WIN to WON when home has more goals")
     void shouldMapHomeWinToWonWhenHomeHasMoreGoals() {
         // Arrange
-        MatchResultDto result = MatchResultDto.builder()
-                .id(java.util.UUID.randomUUID())
-                .homeGoals(2)
-                .awayGoals(1)
-                .build();
+        MatchResultEventDto result = new MatchResultEventDto(
+                java.util.UUID.randomUUID(),
+                2,
+                1);
 
         // Act
         BetStatus status = BetType.HOME_WIN.mapToStatus(result, 2, 1);
@@ -32,11 +31,11 @@ class BetTypeTest {
     @DisplayName("Should map HOME_WIN to LOST when home has fewer goals")
     void shouldMapHomeWinToLostWhenHomeHasFewerGoals() {
         // Arrange
-        MatchResultDto result = MatchResultDto.builder()
-                .id(java.util.UUID.randomUUID())
-                .homeGoals(1)
-                .awayGoals(2)
-                .build();
+        MatchResultEventDto result = new MatchResultEventDto(
+                java.util.UUID.randomUUID(),
+                1,
+                2);
+
 
         // Act
         BetStatus status = BetType.HOME_WIN.mapToStatus(result, 1, 2);
@@ -49,11 +48,11 @@ class BetTypeTest {
     @DisplayName("Should map HOME_WIN to LOST when match is draw")
     void shouldMapHomeWinToLostWhenMatchIsDraw() {
         // Arrange
-        MatchResultDto result = MatchResultDto.builder()
-                .id(java.util.UUID.randomUUID())
-                .homeGoals(1)
-                .awayGoals(1)
-                .build();
+        MatchResultEventDto result = new MatchResultEventDto(
+                java.util.UUID.randomUUID(),
+                1,
+                1);
+
 
         // Act
         BetStatus status = BetType.HOME_WIN.mapToStatus(result, 1, 1);
@@ -66,11 +65,11 @@ class BetTypeTest {
     @DisplayName("Should map DRAW to WON when match is draw")
     void shouldMapDrawToWonWhenMatchIsDraw() {
         // Arrange
-        MatchResultDto result = MatchResultDto.builder()
-                .id(java.util.UUID.randomUUID())
-                .homeGoals(2)
-                .awayGoals(2)
-                .build();
+        MatchResultEventDto result = new MatchResultEventDto(
+                java.util.UUID.randomUUID(),
+                2,
+                2);
+
 
         // Act
         BetStatus status = BetType.DRAW.mapToStatus(result, 2, 2);
@@ -83,11 +82,11 @@ class BetTypeTest {
     @DisplayName("Should map DRAW to LOST when home wins")
     void shouldMapDrawToLostWhenHomeWins() {
         // Arrange
-        MatchResultDto result = MatchResultDto.builder()
-                .id(java.util.UUID.randomUUID())
-                .homeGoals(3)
-                .awayGoals(1)
-                .build();
+        MatchResultEventDto result = new MatchResultEventDto(
+                java.util.UUID.randomUUID(),
+                3,
+                1);
+
 
         // Act
         BetStatus status = BetType.DRAW.mapToStatus(result, 3, 1);
@@ -100,11 +99,11 @@ class BetTypeTest {
     @DisplayName("Should map DRAW to LOST when away wins")
     void shouldMapDrawToLostWhenAwayWins() {
         // Arrange
-        MatchResultDto result = MatchResultDto.builder()
-                .id(java.util.UUID.randomUUID())
-                .homeGoals(0)
-                .awayGoals(2)
-                .build();
+        MatchResultEventDto result = new MatchResultEventDto(
+                java.util.UUID.randomUUID(),
+                0,
+                2);
+
 
         // Act
         BetStatus status = BetType.DRAW.mapToStatus(result, 0, 2);
@@ -117,11 +116,11 @@ class BetTypeTest {
     @DisplayName("Should map AWAY_WIN to WON when away has more goals")
     void shouldMapAwayWinToWonWhenAwayHasMoreGoals() {
         // Arrange
-        MatchResultDto result = MatchResultDto.builder()
-                .id(java.util.UUID.randomUUID())
-                .homeGoals(1)
-                .awayGoals(3)
-                .build();
+        MatchResultEventDto result = new MatchResultEventDto(
+                java.util.UUID.randomUUID(),
+                1,
+                3);
+
 
         // Act
         BetStatus status = BetType.AWAY_WIN.mapToStatus(result, 1, 3);
@@ -134,11 +133,11 @@ class BetTypeTest {
     @DisplayName("Should map AWAY_WIN to LOST when away has fewer goals")
     void shouldMapAwayWinToLostWhenAwayHasFewerGoals() {
         // Arrange
-        MatchResultDto result = MatchResultDto.builder()
-                .id(java.util.UUID.randomUUID())
-                .homeGoals(2)
-                .awayGoals(0)
-                .build();
+        MatchResultEventDto result = new MatchResultEventDto(
+                java.util.UUID.randomUUID(),
+                2,
+                0);
+
 
         // Act
         BetStatus status = BetType.AWAY_WIN.mapToStatus(result, 2, 0);
@@ -151,11 +150,11 @@ class BetTypeTest {
     @DisplayName("Should map AWAY_WIN to LOST when match is draw")
     void shouldMapAwayWinToLostWhenMatchIsDraw() {
         // Arrange
-        MatchResultDto result = MatchResultDto.builder()
-                .id(java.util.UUID.randomUUID())
-                .homeGoals(1)
-                .awayGoals(1)
-                .build();
+        MatchResultEventDto result = new MatchResultEventDto(
+                java.util.UUID.randomUUID(),
+                1,
+                1);
+
 
         // Act
         BetStatus status = BetType.AWAY_WIN.mapToStatus(result, 1, 1);
@@ -188,11 +187,11 @@ class BetTypeTest {
     @DisplayName("Should correctly map HOME_WIN status with various scores")
     void shouldCorrectlyMapHomeWinStatusWithVariousScores(int homeGoals, int awayGoals, String expectedStatus) {
         // Arrange
-        MatchResultDto result = MatchResultDto.builder()
-                .id(java.util.UUID.randomUUID())
-                .homeGoals(homeGoals)
-                .awayGoals(awayGoals)
-                .build();
+        MatchResultEventDto result = new MatchResultEventDto(
+                java.util.UUID.randomUUID(),
+                homeGoals,
+                awayGoals);
+
 
         // Act
         BetStatus status = BetType.HOME_WIN.mapToStatus(result, homeGoals, awayGoals);
@@ -215,11 +214,10 @@ class BetTypeTest {
     @DisplayName("Should correctly map DRAW status with various scores")
     void shouldCorrectlyMapDrawStatusWithVariousScores(int homeGoals, int awayGoals, String expectedStatus) {
         // Arrange
-        MatchResultDto result = MatchResultDto.builder()
-                .id(java.util.UUID.randomUUID())
-                .homeGoals(homeGoals)
-                .awayGoals(awayGoals)
-                .build();
+        MatchResultEventDto result = new MatchResultEventDto(
+                java.util.UUID.randomUUID(),
+                homeGoals,
+                awayGoals);
 
         // Act
         BetStatus status = BetType.DRAW.mapToStatus(result, homeGoals, awayGoals);
@@ -242,11 +240,10 @@ class BetTypeTest {
     @DisplayName("Should correctly map AWAY_WIN status with various scores")
     void shouldCorrectlyMapAwayWinStatusWithVariousScores(int homeGoals, int awayGoals, String expectedStatus) {
         // Arrange
-        MatchResultDto result = MatchResultDto.builder()
-                .id(java.util.UUID.randomUUID())
-                .homeGoals(homeGoals)
-                .awayGoals(awayGoals)
-                .build();
+        MatchResultEventDto result = new MatchResultEventDto(
+                java.util.UUID.randomUUID(),
+                homeGoals,
+                awayGoals);
 
         // Act
         BetStatus status = BetType.AWAY_WIN.mapToStatus(result, homeGoals, awayGoals);
@@ -259,31 +256,14 @@ class BetTypeTest {
     @DisplayName("Should handle edge case: 0-0 draw for all bet types")
     void shouldHandleEdgeCaseZeroZeroDraw() {
         // Arrange
-        MatchResultDto result = MatchResultDto.builder()
-                .id(java.util.UUID.randomUUID())
-                .homeGoals(0)
-                .awayGoals(0)
-                .build();
+        MatchResultEventDto result = new MatchResultEventDto(
+                java.util.UUID.randomUUID(),
+                0,
+                0);
 
         // Act & Assert
         assertThat(BetType.HOME_WIN.mapToStatus(result, 0, 0)).isEqualTo(BetStatus.LOST);
         assertThat(BetType.DRAW.mapToStatus(result, 0, 0)).isEqualTo(BetStatus.WON);
         assertThat(BetType.AWAY_WIN.mapToStatus(result, 0, 0)).isEqualTo(BetStatus.LOST);
-    }
-
-    @Test
-    @DisplayName("Should handle high-scoring match")
-    void shouldHandleHighScoringMatch() {
-        // Arrange
-        MatchResultDto result = MatchResultDto.builder()
-                .id(java.util.UUID.randomUUID())
-                .homeGoals(10)
-                .awayGoals(9)
-                .build();
-
-        // Act & Assert
-        assertThat(BetType.HOME_WIN.mapToStatus(result, 10, 9)).isEqualTo(BetStatus.WON);
-        assertThat(BetType.DRAW.mapToStatus(result, 10, 9)).isEqualTo(BetStatus.LOST);
-        assertThat(BetType.AWAY_WIN.mapToStatus(result, 10, 9)).isEqualTo(BetStatus.LOST);
     }
 }

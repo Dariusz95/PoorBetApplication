@@ -6,6 +6,7 @@ import com.poorbet.couponservice.domain.Coupon;
 import com.poorbet.couponservice.domain.CouponStatus;
 import com.poorbet.couponservice.dto.CreateBetDto;
 import com.poorbet.couponservice.dto.CreateCouponDto;
+import com.poorbet.couponservice.security.CurrentUserProvider;
 import com.poorbet.couponservice.service.CouponService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -43,6 +44,8 @@ class CouponControllerTest {
 
     @MockitoBean
     private CouponService couponService;
+    @MockitoBean
+    private CurrentUserProvider currentUserProvider;
 
     private static final BigDecimal VALID_STAKE = new BigDecimal("50.00");
     private static final String COUPONS_ENDPOINT = "/api/coupons";
@@ -52,6 +55,7 @@ class CouponControllerTest {
 
     @BeforeEach
     void setUp() {
+        when(currentUserProvider.getUserId()).thenReturn(UUID.randomUUID());
         validCreateCouponDto = createValidCouponDto();
         couponResponse = Coupon.builder()
                 .id(UUID.randomUUID())

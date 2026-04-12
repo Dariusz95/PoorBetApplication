@@ -1,6 +1,6 @@
 package com.poorbet.notificationservice.service;
 
-import com.poorbet.notificationservice.dto.WalletBalanceChangedEvent;
+import com.poorbet.commons.rabbit.events.wallet.WalletBalanceChangedEvent;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 

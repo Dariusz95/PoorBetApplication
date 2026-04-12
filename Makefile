@@ -69,3 +69,6 @@ wallet-dev:
 
 notification-dev:
 	$(COMPOSE_DEV) up -d --build notification-service
+
+match-db:
+	$(COMPOSE_DEV) up -d --build match-db

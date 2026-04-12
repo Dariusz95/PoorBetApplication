@@ -24,14 +24,14 @@ public class TeamsClient {
     }
 
     public List<TeamStatsDto> getStatsByIds(List<UUID> teamIds) {
-
         try {
-        return teamsWebClient.post()
-                .uri("/internal/teams/stats")
-                .bodyValue(new TeamStatsRequest(teamIds))
-                .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<List<TeamStatsDto>>() {})
-                .block();
+            return teamsWebClient.post()
+                    .uri("/internal/teams/stats")
+                    .bodyValue(new TeamStatsRequest(teamIds))
+                    .retrieve()
+                    .bodyToMono(new ParameterizedTypeReference<List<TeamStatsDto>>() {
+                    })
+                    .block();
         } catch (WebClientResponseException ex) {
             log.error("Teams service returned {}: {}", ex.getStatusCode(), ex.getResponseBodyAsString());
             return Collections.emptyList();
@@ -42,7 +42,8 @@ public class TeamsClient {
     }
 
     public List<TeamStatsDto> randomTeams(int count) {
-        ParameterizedTypeReference<List<TeamStatsDto>> typeRef = new ParameterizedTypeReference<List<TeamStatsDto>>() {};
+        ParameterizedTypeReference<List<TeamStatsDto>> typeRef = new ParameterizedTypeReference<List<TeamStatsDto>>() {
+        };
 
         try {
             return teamsWebClient.get()

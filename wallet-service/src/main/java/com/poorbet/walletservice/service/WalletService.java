@@ -1,8 +1,10 @@
 package com.poorbet.walletservice.service;
 
+import com.poorbet.commons.rabbit.events.wallet.WalletBalanceChangedEvent;
 import com.poorbet.commons.rabbit.events.wallet.WalletCreatedEvent;
 import com.poorbet.commons.rabbit.events.wallet.WalletEvents;
 import com.poorbet.walletservice.domain.Wallet;
+import com.poorbet.walletservice.exception.InsufficientFundsException;
 import com.poorbet.walletservice.repository.WalletRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +22,10 @@ public class WalletService {
 
     private final WalletRepository walletRepository;
     private final OutboxService outboxService;
+    private static final String WALLET_EXCHANGE = "wallet.events";
+    private static final String WALLET_BALANCE_ROUTING_KEY = "wallet.balance.updated.v1";
+    private static final String WALLET_BALANCE_EVENT_TYPE = "wallet.balance.changed";
+    private static final String EVENT_VERSION = "v1";
 
 
     @Transactional
@@ -28,7 +34,7 @@ public class WalletService {
             log.info("userId = {}", userId);
             Wallet wallet = Wallet.builder()
                     .userId(userId)
-                    .balance(BigDecimal.ZERO)
+                    .balance(BigDecimal.valueOf(100))
                     .build();
 
             walletRepository.save(wallet);
@@ -41,5 +47,34 @@ public class WalletService {
         } catch (DataIntegrityViolationException e) {
             log.info("exists = {}", e.getMessage());
         }
+    }
+
+    @Transactional(readOnly = true)
+    public Wallet getWallet(UUID userId) {
+        return walletRepository.findByUserId(userId)
+                .orElseThrow(() -> new IllegalStateException("Wallet not found for user: " + userId));
+    }
+
+    @Transactional
+    public Wallet debit(UUID userId, BigDecimal amount) {
+        Wallet wallet = walletRepository.findByUserId(userId)
+                .orElseThrow(() -> new IllegalStateException("Wallet not found for user: " + userId));
+
+        if (wallet.getBalance().compareTo(amount) < 0) {
+            throw new InsufficientFundsException();
+        }
+
+        wallet.setBalance(wallet.getBalance().subtract(amount));
+        Wallet updatedWallet = walletRepository.save(wallet);
+
+        outboxService.saveEvent(
+                WALLET_EXCHANGE,
+                WALLET_BALANCE_ROUTING_KEY,
+                WALLET_BALANCE_EVENT_TYPE,
+                EVENT_VERSION,
+                new WalletBalanceChangedEvent(updatedWallet.getUserId(), updatedWallet.getBalance())
+        );
+
+        return updatedWallet;
     }
 }

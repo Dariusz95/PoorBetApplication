@@ -1,7 +1,7 @@
 <ng-container *transloco="let t; prefix: 'auth.login'">
   <div class="login-container">
-    <app-pb-card stylesCss="w-96">
-      <div pbCardHeader class="header">
+    <app-pb-card stylesCss="w-full max-w-[420px]">
+      <div pbCardHeader class="auth-header">
         <h2 class="base-clamp font-bold">{{ t("title") }}</h2>
       </div>
       <form pbCardBody [formGroup]="form">
@@ -15,7 +15,7 @@
           <pb-input formControlName="password"></pb-input>
         </pb-form-field>
 
-        <div class="my-6">
+        <div class="form-actions">
           <pb-button
             [disabled]="!form.valid"
             variant="primary"
@@ -27,7 +27,7 @@
           </pb-button>
         </div>
 
-        <div class="text-center">
+        <div class="auth-footer">
           {{ t("dontHaveAccount") }}
 
           <pb-button

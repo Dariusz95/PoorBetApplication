@@ -3,6 +3,7 @@ package com.poorbet.walletservice.infrastructure.scheduler;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.poorbet.commons.rabbit.EventEnvelope;
+import com.poorbet.commons.rabbit.events.wallet.WalletBalanceChangedEvent;
 import com.poorbet.commons.rabbit.events.wallet.WalletCreatedEvent;
 import com.poorbet.walletservice.config.MessagingProperties;
 import com.poorbet.walletservice.infrastructure.persistence.OutboxRepository;
@@ -26,7 +27,8 @@ public class OutboxPublisher {
     private final MessagingProperties messagingProperties;
     private final ObjectMapper objectMapper;
     private final Map<String, Class<?>> eventTypeMap = Map.of(
-            "wallet.created", WalletCreatedEvent.class
+            "wallet.created", WalletCreatedEvent.class,
+            "wallet.balance.changed", WalletBalanceChangedEvent.class
     );
 
     @Scheduled(fixedDelay = 5000)

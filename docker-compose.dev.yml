@@ -1,9 +1,57 @@
+version: "3.9"
+
+x-resource-light: &resource-light
+  mem_limit: 256m
+  cpus: 0.3
+
+x-resource-medium: &resource-medium
+  mem_limit: 512m
+  cpus: 0.5
+
+x-resource-heavy: &resource-heavy
+  mem_limit: 1g
+  cpus: 0.8
+
+x-resource-db: &resource-db
+  mem_limit: 1g
+  cpus: 0.8
+
 services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "4200:4200"
+    volumes:
+      - ./frontend:/app:cached
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    restart: unless-stopped
+
+
+  gateway:
+    <<: [ *resource-light ]
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile.dev
+    ports:
+      - "8081:8081"
+      - "5081:5081"
+    volumes:
+      - ./gateway:/app
+      - ~/.m2:/root/.m2
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=75.0
+    restart: unless-stopped
+
   odds-training:
+    <<: [ *resource-medium ]
     build:
       context: ./odds-training
       dockerfile: Dockerfile.dev
-    container_name: odds-training
     ports:
       - "8090:8080"
     volumes:
@@ -12,209 +60,224 @@ services:
       - ~/.m2:/root/.m2
     environment:
       - SPRING_PROFILES_ACTIVE=dev
-      - AUTH_SERVICE_URL=${AUTH_SERVICE_URL}
-      - AUTH_SERVICE_CLIENT_ID=odds-training
-      - AUTH_SERVICE_CLIENT_SECRET=${AUTH_SERVICE_CLIENT_SECRET}
-
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile.dev
-    container_name: frontend-dev
-    ports:
-      - "4200:4200"
-    volumes:
-      - ./frontend:/app:cached
-      - /app/node_modules
-    environment:
-      - CHOKIDAR_USEPOLLING=true
+      - JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=75.0
 
   odds-service:
+    <<: [ *resource-medium ]
     build:
       context: ./odds-service
       dockerfile: Dockerfile.dev
-    environment:
-      - SPRING_PROFILES_ACTIVE=dev
-      - MODEL_PATH=/app/data/models/match_predictor.onnx
-      - AUTH_ISSUER_URI=${AUTH_ISSUER_URI}
-      - AUTH_JWKS_URI=${AUTH_JWKS_URI}
-    volumes:
-      - ./odds-service:/app
-      - ./data/models:/app/data/models
-      - ~/.m2:/root/.m2
     ports:
       - "8085:8080"
       - "5072:5072"
+    volumes:
+      - ./odds-service:/app
+      - ~/.m2:/root/.m2
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=75.0
+      - MODEL_PATH=/app/data/models/match_predictor.onnx
+
 
   simulation-service:
+    <<: [ *resource-medium ]
     build:
       context: ./simulation-service
       dockerfile: Dockerfile.dev
-    environment:
-      - SPRING_PROFILES_ACTIVE=dev
-      - AUTH_ISSUER_URI=${AUTH_ISSUER_URI}
-      - AUTH_JWKS_URI=${AUTH_JWKS_URI}
-    volumes:
-      - ./simulation-service:/app
-      - ~/.m2:/root/.m2
     ports:
       - "8084:8080"
       - "5073:5073"
-    depends_on:
-      - user-service
+    volumes:
+      - ./simulation-service:/app
+      - ~/.m2:/root/.m2
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=75.0
+  #      - AUTH_ISSUER_URI=${AUTH_ISSUER_URI}
+  #      - AUTH_JWKS_URI=${AUTH_JWKS_URI}
 
   user-service:
+    <<: [ *resource-medium ]
     build:
       context: .
       dockerfile: user-service/Dockerfile.dev
-    container_name: dev-user-service
     working_dir: /app/user-service
-    environment:
-      - SPRING_PROFILES_ACTIVE=dev
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://user-db:5432/${POSTGRES_DB}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - AUTH_ISSUER_URI=${AUTH_ISSUER_URI}
-      - AUTH_JWKS_URI=${AUTH_JWKS_URI}
-      - JWT_KEY_ID=${JWT_KEY_ID}
-      - MATCH_SERVICE_CLIENT_SECRET=${MATCH_SERVICE_CLIENT_SECRET}
-      - COUPON_SERVICE_CLIENT_SECRET=${COUPON_SERVICE_CLIENT_SECRET}
-      - RABBITMQ_USER=${RABBITMQ_USER}
-      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
-      - RABBITMQ_PORT=${RABBITMQ_PORT}
-      - RABBITMQ_HOST=rabbitmq
-    volumes:
-      - ./:/app
-      - ~/.m2:/root/.m2
-      - ./.mvn:/app/.mvn
     ports:
       - "8089:8080"
       - "5079:5079"
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health/readiness" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 20s
+    volumes:
+      - ./:/app
+      - ./.mvn:/app/.mvn
+      - ~/.m2:/root/.m2
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=75.0
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://user-db:5432/${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - JWT_KEY_ID=${JWT_KEY_ID}
+      - MATCH_SERVICE_CLIENT_SECRET=${MATCH_SERVICE_CLIENT_SECRET}
+      - COUPON_SERVICE_CLIENT_SECRET=${COUPON_SERVICE_CLIENT_SECRET}
+  #      - RABBITMQ_HOST=rabbitmq
+  #      - RABBITMQ_PORT=${RABBITMQ_PORT}
+  #      - RABBITMQ_USER=${RABBITMQ_USER}
+  #      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
 
   teams-service:
+    <<: [ *resource-medium ]
     build:
       context: ./teams-service
       dockerfile: Dockerfile.dev
-    environment:
-      - SPRING_PROFILES_ACTIVE=dev
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://teams-db:5432/${POSTGRES_TEAMS_DB}
-      - POSTGRES_USER=${POSTGRES_TEAMS_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_TEAMS_PASSWORD}
-      - AUTH_ISSUER_URI=${AUTH_ISSUER_URI}
-      - AUTH_JWKS_URI=${AUTH_JWKS_URI}
-    volumes:
-      - ./teams-service:/app
-      - ~/.m2:/root/.m2
     ports:
       - "8082:8080"
       - "5071:5071"
+    volumes:
+      - ./teams-service:/app
+      - ~/.m2:/root/.m2
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=75.0
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://teams-db:5432/${POSTGRES_TEAMS_DB}
+      - POSTGRES_USER=${POSTGRES_TEAMS_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_TEAMS_PASSWORD}
+  #      - AUTH_ISSUER_URI=${AUTH_ISSUER_URI}
+  #      - AUTH_JWKS_URI=${AUTH_JWKS_URI}
 
   match-service:
+    <<: [ *resource-heavy ]
     build:
       context: ./match-service
       dockerfile: Dockerfile.dev
+    ports:
+      - "8083:8080"
+      - "5070:5070"
+    volumes:
+      - ./match-service:/app
+      - ~/.m2:/root/.m2
     environment:
-      - SPRING_PROFILES_ACTIVE=dev
       - SPRING_DATASOURCE_URL=jdbc:postgresql://match-db:5432/${POSTGRES_MATCH_DB}
       - POSTGRES_USER=${POSTGRES_MATCH_USER}
       - POSTGRES_PASSWORD=${POSTGRES_MATCH_PASSWORD}
       - INSTANCE_ID=match-1
-      - RABBITMQ_USER=${RABBITMQ_USER}
-      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
-      - RABBITMQ_PORT=${RABBITMQ_PORT}
-      - RABBITMQ_HOST=rabbitmq
-      - AUTH_ISSUER_URI=${AUTH_ISSUER_URI}
-      - AUTH_JWKS_URI=${AUTH_JWKS_URI}
+      #      - RABBITMQ_HOST=rabbitmq
+      #      - RABBITMQ_PORT=${RABBITMQ_PORT}
+      #      - RABBITMQ_USER=${RABBITMQ_USER}
+      #      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+      #      - AUTH_ISSUER_URI=${AUTH_ISSUER_URI}
+      #      - AUTH_JWKS_URI=${AUTH_JWKS_URI}
       - AUTH_SERVICE_URL=${AUTH_SERVICE_URL}
       - AUTH_SERVICE_CLIENT_ID=match-service
       - AUTH_SERVICE_CLIENT_SECRET=${AUTH_SERVICE_CLIENT_SECRET}
-    volumes:
-      - ./match-service:/app
-      - ~/.m2:/root/.m2
-    ports:
-      - "8083:8080"
-      - "5070:5070"
 
   coupon-service:
+    <<: [ *resource-medium ]
     build:
       context: ./coupon-service
       dockerfile: Dockerfile.dev
-    environment:
-      - SPRING_PROFILES_ACTIVE=dev
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://coupon-db:5432/${POSTGRES_COUPON_DB}
-      - POSTGRES_USER=${POSTGRES_COUPON_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_COUPON_PASSWORD}
-      - RABBITMQ_USER=${RABBITMQ_USER}
-      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
-      - RABBITMQ_PORT=${RABBITMQ_PORT}
-      - RABBITMQ_HOST=rabbitmq
-      - AUTH_ISSUER_URI=${AUTH_ISSUER_URI}
-      - AUTH_JWKS_URI=${AUTH_JWKS_URI}
-      - AUTH_SERVICE_URL=${AUTH_SERVICE_URL}
-      - AUTH_SERVICE_CLIENT_ID=coupon-service
-      - AUTH_SERVICE_CLIENT_SECRET=${AUTH_SERVICE_CLIENT_SECRET}
-    volumes:
-      - ./coupon-service:/app
-      - ~/.m2:/root/.m2
     ports:
       - "8086:8080"
       - "5076:5076"
+    volumes:
+      - ./coupon-service:/app
+      - ~/.m2:/root/.m2
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=75.0
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://coupon-db:5432/${POSTGRES_COUPON_DB}
+      - POSTGRES_USER=${POSTGRES_COUPON_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_COUPON_PASSWORD}
+  #      - RABBITMQ_HOST=rabbitmq
+  #      - RABBITMQ_PORT=${RABBITMQ_PORT}
+  #      - RABBITMQ_USER=${RABBITMQ_USER}
+  #      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
 
   wallet-service:
+    <<: [ *resource-medium ]
     build:
       context: ./wallet-service
       dockerfile: Dockerfile.dev
-    container_name: wallet-service-dev
-    environment:
-      - SPRING_PROFILES_ACTIVE=dev
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://wallet-db:5432/${POSTGRES_WALLET_DB}
-      - POSTGRES_USER=${POSTGRES_WALLET_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_WALLET_PASSWORD}
-      - RABBITMQ_USER=${RABBITMQ_USER}
-      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
-      - RABBITMQ_PORT=${RABBITMQ_PORT}
-      - RABBITMQ_HOST=rabbitmq
-      - AUTH_ISSUER_URI=${AUTH_ISSUER_URI}
-      - AUTH_JWKS_URI=${AUTH_JWKS_URI}
-    volumes:
-      - ./wallet-service:/app
-      - ~/.m2:/root/.m2
     ports:
       - "8087:8080"
       - "5077:5077"
+    volumes:
+      - ./wallet-service:/app
+      - ~/.m2:/root/.m2
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=75.0
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://wallet-db:5432/${POSTGRES_WALLET_DB}
+      - POSTGRES_USER=${POSTGRES_WALLET_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_WALLET_PASSWORD}
+  #      - RABBITMQ_HOST=rabbitmq
+  #      - RABBITMQ_PORT=${RABBITMQ_PORT}
+  #      - RABBITMQ_USER=${RABBITMQ_USER}
+  #      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
 
   notification-service:
+    <<: [ *resource-medium ]
     build:
       context: ./notification-service
       dockerfile: Dockerfile.dev
-    container_name: notification-service-dev
-    environment:
-      - SPRING_PROFILES_ACTIVE=dev
-      - RABBITMQ_USER=${RABBITMQ_USER}
-      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
-      - RABBITMQ_PORT=${RABBITMQ_PORT}
-      - RABBITMQ_HOST=rabbitmq
-    volumes:
-      - ./notification-service:/app
-      - ~/.m2:/root/.m2
     ports:
       - "8088:8080"
       - "5078:5078"
-
-  gateway:
-    build:
-      context: ./gateway
-      dockerfile: Dockerfile.dev
-    container_name: dev-gateway
     volumes:
-      - ./gateway:/app
+      - ./notification-service:/app
       - ~/.m2:/root/.m2
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=75.0
+  #      - RABBITMQ_HOST=rabbitmq
+  #      - RABBITMQ_PORT=${RABBITMQ_PORT}
+  #      - RABBITMQ_USER=${RABBITMQ_USER}
+  #      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+
+
+  redis:
+    <<: [ *resource-light ]
+
+  rabbitmq:
+    <<: [ *resource-medium ]
     ports:
-      - "8081:8081"
-      - "5081:5081"
+      - "5672:5672"
+      - "15672:15672"
+
+  match-db:
+    build:
+      context: ./match-db
+      dockerfile: Dockerfile
+    ports:
+      - "5434:5432"
+    <<: [ *resource-db ]
+
+  user-db:
+    build:
+      context: ./user-db
+      dockerfile: Dockerfile
+    ports:
+      - "5432:5432"
+    <<: [ *resource-db ]
+
+  wallet-db:
+    build:
+      context: ./wallet-db
+      dockerfile: Dockerfile
+    ports:
+      - "5437:5432"
+    <<: [ *resource-db ]
+
+  teams-db:
+    build:
+      context: ./teams-db
+      dockerfile: Dockerfile
+    ports:
+      - "5433:5432"
+    <<: [ *resource-db ]
+
+  coupon-db:
+    build:
+      context: ./coupon-db
+      dockerfile: Dockerfile
+    ports:
+      - "5435:5432"
+    <<: [ *resource-db ]

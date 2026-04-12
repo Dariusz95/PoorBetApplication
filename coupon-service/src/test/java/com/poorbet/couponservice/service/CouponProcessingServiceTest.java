@@ -1,40 +1,27 @@
 package com.poorbet.couponservice.service;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
+import com.poorbet.commons.rabbit.events.match.MatchesFinishedEvent;
+import com.poorbet.commons.rabbit.events.match.dto.MatchResultEventDto;
+import com.poorbet.couponservice.domain.*;
+import com.poorbet.couponservice.repository.BetRepository;
+import com.poorbet.couponservice.repository.CouponRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anySet;
-import static org.mockito.ArgumentMatchers.argThat;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.poorbet.couponservice.domain.Bet;
-import com.poorbet.couponservice.domain.BetStatus;
-import com.poorbet.couponservice.domain.BetType;
-import com.poorbet.couponservice.domain.Coupon;
-import com.poorbet.couponservice.domain.CouponStatus;
-import com.poorbet.couponservice.dto.MatchResultDto;
-import com.poorbet.couponservice.dto.MatchesFinishedEvent;
-import com.poorbet.couponservice.repository.BetRepository;
-import com.poorbet.couponservice.repository.CouponRepository;
+import java.math.BigDecimal;
+import java.util.*;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("CouponProcessingService Unit Tests")
@@ -190,17 +177,16 @@ class CouponProcessingServiceTest {
     @DisplayName("Should process finished matches event and update bet statuses")
     void shouldProcessFinishedMatchesEventAndUpdateBetStatuses() {
         // Arrange
-        MatchResultDto result1 = MatchResultDto.builder()
-                .id(matchId1)
-                .homeGoals(2)
-                .awayGoals(1)
-                .build();
+        MatchResultEventDto result1 = new MatchResultEventDto(
+                matchId1,
+                2,
+                2);
 
-        MatchResultDto result2 = MatchResultDto.builder()
-                .id(matchId2)
-                .homeGoals(1)
-                .awayGoals(1)
-                .build();
+        MatchResultEventDto result2 = new MatchResultEventDto(
+                matchId2,
+                1,
+                2);
+
 
         MatchesFinishedEvent event = new MatchesFinishedEvent(Arrays.asList(result1, result2));
 
@@ -258,11 +244,10 @@ class CouponProcessingServiceTest {
     @DisplayName("Should extract unique coupon IDs from bets")
     void shouldExtractUniqueCouponIdsFromBets() {
         // Arrange
-        MatchResultDto result1 = MatchResultDto.builder()
-                .id(matchId1)
-                .homeGoals(2)
-                .awayGoals(1)
-                .build();
+        MatchResultEventDto result1 = new MatchResultEventDto(
+                matchId1,
+                2,
+                1);
 
         MatchesFinishedEvent event = new MatchesFinishedEvent(Collections.singletonList(result1));
 
@@ -315,11 +300,10 @@ class CouponProcessingServiceTest {
             coupons.add(coupon);
         }
 
-        MatchResultDto result = MatchResultDto.builder()
-                .id(matchId1)
-                .homeGoals(2)
-                .awayGoals(1)
-                .build();
+        MatchResultEventDto result = new MatchResultEventDto(
+                matchId1,
+                2,
+                1);
 
         MatchesFinishedEvent event = new MatchesFinishedEvent(Collections.singletonList(result));
 
@@ -354,11 +338,10 @@ class CouponProcessingServiceTest {
 
         coupon.setBets(Collections.singletonList(bet));
 
-        MatchResultDto result = MatchResultDto.builder()
-                .id(matchId1)
-                .homeGoals(3)
-                .awayGoals(1)
-                .build();
+        MatchResultEventDto result = new MatchResultEventDto(
+                matchId1,
+                3,
+                1);
 
         MatchesFinishedEvent event = new MatchesFinishedEvent(Collections.singletonList(result));
 
@@ -394,11 +377,10 @@ class CouponProcessingServiceTest {
 
         coupon.setBets(Collections.singletonList(bet));
 
-        MatchResultDto result = MatchResultDto.builder()
-                .id(matchId1)
-                .homeGoals(1)
-                .awayGoals(1)
-                .build();
+        MatchResultEventDto result = new MatchResultEventDto(
+                matchId1,
+                1,
+                1);
 
         MatchesFinishedEvent event = new MatchesFinishedEvent(Collections.singletonList(result));
 
@@ -434,11 +416,10 @@ class CouponProcessingServiceTest {
 
         coupon.setBets(Collections.singletonList(bet));
 
-        MatchResultDto result = MatchResultDto.builder()
-                .id(matchId1)
-                .homeGoals(1)
-                .awayGoals(3)
-                .build();
+        MatchResultEventDto result = new MatchResultEventDto(
+                matchId1,
+                3,
+                1);
 
         MatchesFinishedEvent event = new MatchesFinishedEvent(Collections.singletonList(result));
 

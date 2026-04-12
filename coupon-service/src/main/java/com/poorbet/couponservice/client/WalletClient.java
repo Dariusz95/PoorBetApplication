@@ -19,7 +19,7 @@ public class WalletClient {
     public void debit(UUID userId, DebitWalletRequest request) {
         walletServiceWebClient
                 .post()
-                .uri("/api/wallet/internal/users/{userId}/debit", userId)
+                .uri("/internal/wallet/users/{userId}/debit", userId)
                 .bodyValue(request)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, response -> response.bodyToMono(String.class)

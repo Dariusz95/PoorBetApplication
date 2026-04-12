@@ -20,3 +20,7 @@
     @apply text-white;
   }
 }
+
+.odds-button-content--disabled {
+  @apply opacity-50;
+}

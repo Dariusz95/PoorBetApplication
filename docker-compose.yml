@@ -1,15 +1,24 @@
-version: "3.3"
+x-auth-config: &auth-config
+  AUTH_ISSUER_URI: ${AUTH_ISSUER_URI}
+  AUTH_JWKS_URI: ${AUTH_JWKS_URI}
 
 services:
-  odds-training:
-    build:
-      context: ./odds-training
-      dockerfile: Dockerfile
-    container_name: odds-training
-    ports:
-      - "8090:8080"
+
+  frontend:
+    networks:
+      - main_network
+
+  gateway:
     environment:
-      - SPRING_PROFILES_ACTIVE=prod
+      <<: *auth-config
+    depends_on:
+      - user-service
+      - user-db
+    networks:
+      - main_network
+
+  odds-training:
+    environment:
       - AUTH_SERVICE_URL=${AUTH_SERVICE_URL}
       - AUTH_SERVICE_CLIENT_ID=odds-training
       - AUTH_SERVICE_CLIENT_SECRET=${AUTH_SERVICE_CLIENT_SECRET}
@@ -19,36 +28,6 @@ services:
     networks:
       - main_network
 
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile.dev
-    container_name: frontend
-    ports:
-      - "4200:4200"
-    volumes:
-      - ./frontend:/app
-    environment:
-      - CHOKIDAR_USEPOLLING=true
-    networks:
-      - main_network
-
-  gateway:
-    build:
-      context: ./gateway
-      dockerfile: Dockerfile
-    container_name: gateway
-    ports:
-      - "8081:8081"
-    environment:
-      - AUTH_ISSUER_URI=${AUTH_ISSUER_URI}
-      - AUTH_JWKS_URI=${AUTH_JWKS_URI}
-    networks:
-      - main_network
-    depends_on:
-      - user-service
-      - user-db
-
   python-trainer:
     build: ./odds-training/python-scripts
     volumes:
@@ -57,269 +36,115 @@ services:
       - main_network
 
   odds-service:
-    build:
-      context: ./odds-service
-      dockerfile: Dockerfile
-    container_name: odds-service
-    ports:
-      - "8085:8080"
+    depends_on:
+      - user-service
+    volumes:
+      #      - models_data:/app/data/models
+      - ./data/models:/app/data/models
     environment:
-      - SPRING_PROFILES_ACTIVE=prod
-      - MODEL_PATH=/app/data/models/match_predictor.onnx
-      - AUTH_ISSUER_URI=${AUTH_ISSUER_URI}
-      - AUTH_JWKS_URI=${AUTH_JWKS_URI}
+      <<: *auth-config
     networks:
       - main_network
 
   simulation-service:
-    build:
-      context: ./simulation-service
-      dockerfile: Dockerfile
-    container_name: simulation-service
-    ports:
-      - "8084:8080"
-    environment:
-      - AUTH_ISSUER_URI=${AUTH_ISSUER_URI}
-      - AUTH_JWKS_URI=${AUTH_JWKS_URI}
-    networks:
-      - main_network
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8080/health" ]
-      interval: 5s
-      retries: 5
     depends_on:
       - user-service
+    environment:
+      <<: *auth-config
+    networks:
+      - main_network
 
   user-service:
-    build:
-      context: .
-      dockerfile: user-service/Dockerfile
-    container_name: user-service
-    environment:
-      - SPRING_PROFILES_ACTIVE=prod
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/${POSTGRES_DB}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - AUTH_ISSUER_URI=${AUTH_ISSUER_URI}
-      - AUTH_JWKS_URI=${AUTH_JWKS_URI}
-      - JWT_KEY_ID=${JWT_KEY_ID}
-      - MATCH_SERVICE_CLIENT_SECRET=${MATCH_SERVICE_CLIENT_SECRET}
-      - COUPON_SERVICE_CLIENT_SECRET=${COUPON_SERVICE_CLIENT_SECRET}
-      - RABBITMQ_USER=${RABBITMQ_USER}
-      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
-      - RABBITMQ_PORT=${RABBITMQ_PORT}
-      - RABBITMQ_HOST=rabbitmq
     depends_on:
       - user-db
+    environment:
+      <<: *auth-config
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: ${RABBITMQ_PORT}
+      RABBITMQ_USER: ${RABBITMQ_USER}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
     networks:
       - main_network
-
-  redis:
-    image: redis:7.4-alpine
-    container_name: redis-dev
-    ports:
-      - "6379:6379"
-    restart: unless-stopped
     healthcheck:
-      test: [ "CMD-SHELL", "redis-cli ping | grep PONG" ]
-      interval: 1s
-      timeout: 3s
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health/readiness" ]
+      interval: 10s
+      timeout: 5s
       retries: 5
-    command: [ "redis-server" ]
-    volumes:
-      - cache:/data
-    networks:
-      - main_network
+      start_period: 20s
+
 
   teams-service:
-    build:
-      context: ./teams-service
-      dockerfile: Dockerfile
-    container_name: teams-service
     environment:
-      - SPRING_PROFILES_ACTIVE=prod
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://teams-db:5432/${POSTGRES_TEAMS_DB}
-      - POSTGRES_USER=${POSTGRES_TEAMS_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_TEAMS_PASSWORD}
-      - AUTH_ISSUER_URI=${AUTH_ISSUER_URI}
-      - AUTH_JWKS_URI=${AUTH_JWKS_URI}
-    ports:
-      - "8082:8080"
+      <<: *auth-config
     depends_on:
-      - redis
       - teams-db
+      - redis
     networks:
       - main_network
 
   match-service:
-    build:
-      context: .
-      dockerfile: match-service/Dockerfile
-    container_name: match-service
     environment:
-      - SPRING_PROFILES_ACTIVE=prod
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://match-db:5432/${POSTGRES_MATCH_DB}
-      - POSTGRES_USER=${POSTGRES_MATCH_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_MATCH_PASSWORD}
-      - INSTANCE_ID=match-1
-      - RABBITMQ_USER=${RABBITMQ_USER}
-      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
-      - RABBITMQ_PORT=${RABBITMQ_PORT}
-      - RABBITMQ_HOST=rabbitmq
-      - AUTH_ISSUER_URI=${AUTH_ISSUER_URI}
-      - AUTH_JWKS_URI=${AUTH_JWKS_URI}
-      - AUTH_SERVICE_URL=${AUTH_SERVICE_URL}
-      - AUTH_SERVICE_CLIENT_ID=match-service
-      - AUTH_SERVICE_CLIENT_SECRET=${AUTH_SERVICE_CLIENT_SECRET}
-    ports:
-      - "8083:8080"
+      <<: *auth-config
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: ${RABBITMQ_PORT}
+      RABBITMQ_USER: ${RABBITMQ_USER}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
     depends_on:
-      - redis
-      - teams-db
       - match-db
+      - teams-db
       - rabbitmq
+      - redis
+      - user-service
     networks:
       - main_network
 
   coupon-service:
-    build:
-      context: ./coupon-service
-      dockerfile: Dockerfile
-    container_name: coupon-service
     environment:
-      - SPRING_PROFILES_ACTIVE=prod
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://coupon-db:5432/${POSTGRES_COUPON_DB}
-      - POSTGRES_USER=${POSTGRES_COUPON_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_COUPON_PASSWORD}
-      - RABBITMQ_USER=${RABBITMQ_USER}
-      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
-      - RABBITMQ_PORT=${RABBITMQ_PORT}
-      - RABBITMQ_HOST=rabbitmq
-      - AUTH_ISSUER_URI=${AUTH_ISSUER_URI}
-      - AUTH_JWKS_URI=${AUTH_JWKS_URI}
-      - AUTH_SERVICE_URL=${AUTH_SERVICE_URL}
-      - AUTH_SERVICE_CLIENT_ID=coupon-service
-      - AUTH_SERVICE_CLIENT_SECRET=${AUTH_SERVICE_CLIENT_SECRET}
-    ports:
-      - "8086:8080"
+      <<: *auth-config
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: ${RABBITMQ_PORT}
+      RABBITMQ_USER: ${RABBITMQ_USER}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
     depends_on:
-      - redis
       - coupon-db
       - rabbitmq
+      - redis
     networks:
       - main_network
 
   wallet-service:
-    build:
-      context: ./wallet-service
-      dockerfile: Dockerfile
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://wallet-db:5432/${POSTGRES_WALLET_DB}
-      - POSTGRES_USER=${POSTGRES_WALLET_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_WALLET_PASSWORD}
-      - RABBITMQ_USER=${RABBITMQ_USER}
-      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
-      - RABBITMQ_PORT=${RABBITMQ_PORT}
-      - RABBITMQ_HOST=rabbitmq
-      - AUTH_ISSUER_URI=${AUTH_ISSUER_URI}
-      - AUTH_JWKS_URI=${AUTH_JWKS_URI}
+      <<: *auth-config
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: ${RABBITMQ_PORT}
+      RABBITMQ_USER: ${RABBITMQ_USER}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
     depends_on:
-      - redis
       - wallet-db
       - rabbitmq
-    ports:
-      - "8087:8080"
-      - "5077:5077"
+      - redis
     networks:
       - main_network
 
-  user-db:
-    build:
-      context: ./user-db
-      dockerfile: Dockerfile
-    container_name: user-db
-    restart: always
+  notification-service:
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
-    ports:
-      - "5432:5432"
-    volumes:
-      - user_data:/var/lib/postgresql/data
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=${RABBITMQ_PORT}
+      - RABBITMQ_USER=${RABBITMQ_USER}
+      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
     networks:
       - main_network
 
-  match-db:
-    build:
-      context: ./match-db
-      dockerfile: Dockerfile
-    container_name: match-db
-    restart: always
-    environment:
-      POSTGRES_USER: ${POSTGRES_MATCH_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_MATCH_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_MATCH_DB}
-    ports:
-      - "5434:5432"
-    volumes:
-      - match_data:/var/lib/postgresql/data
-    networks:
-      - main_network
 
-  wallet-db:
-    build:
-      context: ./wallet-db
-    environment:
-      POSTGRES_USER: ${POSTGRES_WALLET_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_WALLET_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_WALLET_DB}
-    ports:
-      - "5437:5432"
+  redis:
+    image: redis:7.4-alpine
     volumes:
-      - wallet_data:/var/lib/postgresql/data
-    networks:
-      - main_network
-
-  coupon-db:
-    build:
-      context: ./coupon-db
-      dockerfile: Dockerfile
-    restart: always
-    environment:
-      POSTGRES_USER: ${POSTGRES_COUPON_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_COUPON_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_COUPON_DB}
-    ports:
-      - "5435:5432"
-    volumes:
-      - coupon_data:/var/lib/postgresql/data
-    networks:
-      - main_network
-
-  teams-db:
-    build:
-      context: ./teams-db
-      dockerfile: Dockerfile
-    container_name: teams-db
-    restart: always
-    environment:
-      POSTGRES_USER: ${POSTGRES_TEAMS_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_TEAMS_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_TEAMS_DB}
-    ports:
-      - "5433:5432"
-    volumes:
-      - teams_data:/var/lib/postgresql/data
+      - redis_data:/data
     networks:
       - main_network
 
   rabbitmq:
     image: rabbitmq:3-management
-    container_name: rabbitmq
-    ports:
-      - "5672:5672"
-      - "15672:15672"
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
@@ -328,15 +153,74 @@ services:
     networks:
       - main_network
 
+  user-db:
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - user_data:/var/lib/postgresql/data
+    networks:
+      - main_network
+
+  match-db:
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_MATCH_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_MATCH_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_MATCH_DB}
+    volumes:
+      - match_data:/var/lib/postgresql/data
+    networks:
+      - main_network
+
+  wallet-db:
+    environment:
+      POSTGRES_USER: ${POSTGRES_WALLET_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_WALLET_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_WALLET_DB}
+    volumes:
+      - wallet_data:/var/lib/postgresql/data
+    networks:
+      - main_network
+
+  coupon-db:
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_COUPON_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_COUPON_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_COUPON_DB}
+    volumes:
+      - coupon_data:/var/lib/postgresql/data
+    networks:
+      - main_network
+
+  teams-db:
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_TEAMS_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_TEAMS_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_TEAMS_DB}
+    volumes:
+      - teams_data:/var/lib/postgresql/data
+    networks:
+      - main_network
+
 networks:
   main_network:
     driver: bridge
 
 volumes:
-  user_data:
-  teams_data:
-  match_data:
-  coupon_data:
-  cache:
+  frontend_node_modules:
+  training_data:
+  models_data:
+
+  redis_data:
   rabbitmq_data:
+
+  user_data:
+  match_data:
   wallet_data:
+  coupon_data:
+  teams_data:
