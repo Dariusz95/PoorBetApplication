@@ -1,4 +1,4 @@
-package com.poorbet.walletservice.exception;
+package com.poorbet.walletservice.domain.exception;
 
 public class InsufficientFundsException extends RuntimeException {
     public InsufficientFundsException() {

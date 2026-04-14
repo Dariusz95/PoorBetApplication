@@ -1,4 +1,4 @@
-package com.poorbet.walletservice.domain;
+package com.poorbet.walletservice.domain.model;
 
 import jakarta.persistence.*;
 import lombok.*;

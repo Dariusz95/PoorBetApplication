@@ -82,7 +82,6 @@ poorbet:
       - /oauth/token
       - /.well-known/jwks.json
 
-
 messaging:
   source-service: user-service
 

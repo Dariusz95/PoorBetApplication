@@ -30,4 +30,6 @@ poorbet:
       - teams-service
     unprotected-paths:
       - /api/teams/public/**
+      - /internal/teams/stats
+      - /internal/teams/random
     jwk-set-uri: ${AUTH_JWKS_URI}

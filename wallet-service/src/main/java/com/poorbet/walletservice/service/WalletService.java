@@ -3,9 +3,12 @@ package com.poorbet.walletservice.service;
 import com.poorbet.commons.rabbit.events.wallet.WalletBalanceChangedEvent;
 import com.poorbet.commons.rabbit.events.wallet.WalletCreatedEvent;
 import com.poorbet.commons.rabbit.events.wallet.WalletEvents;
-import com.poorbet.walletservice.domain.Wallet;
-import com.poorbet.walletservice.exception.InsufficientFundsException;
+import com.poorbet.walletservice.domain.exception.InsufficientFundsException;
+import com.poorbet.walletservice.domain.exception.WalletNotFoundException;
+import com.poorbet.walletservice.domain.model.Wallet;
+import com.poorbet.walletservice.domain.model.WalletReservation;
 import com.poorbet.walletservice.repository.WalletRepository;
+import com.poorbet.walletservice.repository.WalletReservationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -21,6 +24,7 @@ import java.util.UUID;
 public class WalletService {
 
     private final WalletRepository walletRepository;
+    private final WalletReservationRepository walletReservationRepository;
     private final OutboxService outboxService;
     private static final String WALLET_EXCHANGE = "wallet.events";
     private static final String WALLET_BALANCE_ROUTING_KEY = "wallet.balance.updated.v1";
@@ -76,5 +80,24 @@ public class WalletService {
         );
 
         return updatedWallet;
+    }
+
+    @Transactional
+    public void reserve(UUID userId, BigDecimal amount, UUID reservationId) {
+
+        Wallet wallet = walletRepository.findByUserIdForUpdate(userId)
+                .orElseThrow(() -> new WalletNotFoundException(userId));
+
+        if (wallet.getBalance().compareTo(amount) < 0) {
+            throw new InsufficientFundsException();
+        }
+
+        wallet.setBalance(wallet.getBalance().subtract(amount));
+
+        WalletReservation walletReservation = WalletReservation.create(reservationId, userId, amount);
+
+        walletReservationRepository.save(
+                walletReservation
+        );
     }
 }

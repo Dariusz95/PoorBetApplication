@@ -1,13 +1,15 @@
 package com.poorbet.couponservice.service;
 
+import com.poorbet.commons.commons.wallet.contract.ReserveRequest;
 import com.poorbet.couponservice.client.MatchClient;
-import com.poorbet.couponservice.client.WalletClient;
+import com.poorbet.couponservice.client.wallet.WalletBusinessException;
+import com.poorbet.couponservice.client.wallet.WalletClient;
+import com.poorbet.couponservice.client.wallet.WalletTechnicalException;
 import com.poorbet.couponservice.domain.Bet;
 import com.poorbet.couponservice.domain.BetStatus;
 import com.poorbet.couponservice.domain.Coupon;
 import com.poorbet.couponservice.domain.CouponStatus;
 import com.poorbet.couponservice.dto.CreateCouponDto;
-import com.poorbet.couponservice.dto.DebitWalletRequest;
 import com.poorbet.couponservice.repository.CouponRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,34 +28,59 @@ public class CouponService {
 
     @Transactional
     public Coupon createCoupon(CreateCouponDto dto, UUID userId) {
-        Coupon coupon = Coupon.builder()
+
+        UUID reservationId = UUID.randomUUID();
+
+        try {
+            walletClient.reserve(
+                    userId,
+                    new ReserveRequest(reservationId, dto.getStake())
+            );
+
+            Coupon coupon = buildCoupon(dto, userId, reservationId);
+            dto.getBets().forEach(betDto -> {
+
+                Double odd = matchClient.getOdd(
+                        betDto.getMatchId(),
+                        betDto.getBetType()
+                );
+
+                Bet bet = Bet.builder()
+                        .betType(betDto.getBetType())
+                        .matchId(betDto.getMatchId())
+                        .odds(BigDecimal.valueOf(odd))
+                        .status(BetStatus.PENDING)
+                        .build();
+
+                coupon.addBet(bet);
+
+            });
+            Coupon saved = couponRepository.save(coupon);
+
+
+            return saved;
+
+        } catch (WalletBusinessException ex) {
+            throw ex;
+
+        } catch (WalletTechnicalException ex) {
+
+
+            //TODO dodanie outbox + obsluga w wallecie
+//            outboxService.saveEvent(
+//                    "CouponCreationFailed",
+//                    new CouponCreationFailedEvent(userId, reservationId)
+//            );
+
+            throw ex;
+        }
+    }
+
+    private Coupon buildCoupon(CreateCouponDto dto, UUID userId, UUID reservationId) {
+        return Coupon.builder()
                 .stake(dto.getStake())
                 .userId(userId)
                 .status(CouponStatus.OPEN)
                 .build();
-
-        walletClient.debit(userId, new DebitWalletRequest(dto.getStake()));
-
-        dto.getBets().forEach(betDto -> {
-
-            Double odd = matchClient.getOdd(
-                    betDto.getMatchId(),
-                    betDto.getBetType()
-            );
-
-            Bet bet = Bet.builder()
-                    .betType(betDto.getBetType())
-                    .matchId(betDto.getMatchId())
-                    .odds(BigDecimal.valueOf(odd))
-                    .status(BetStatus.PENDING)
-                    .build();
-
-            coupon.addBet(bet);
-
-        });
-
-        return couponRepository.save(coupon);
     }
-
-
 }

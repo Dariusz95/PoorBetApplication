@@ -1,5 +1,6 @@
 package com.poorbet.matchservice.match.client;
 
+import com.poorbet.commons.auth.webclient.ServiceJwtForwardingFilter;
 import com.poorbet.matchservice.match.match.dto.TeamStatsDto;
 import com.poorbet.matchservice.match.match.dto.request.TeamStatsRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +29,7 @@ public class TeamsClient {
             return teamsWebClient.post()
                     .uri("/internal/teams/stats")
                     .bodyValue(new TeamStatsRequest(teamIds))
+                    .attribute(ServiceJwtForwardingFilter.SKIP_AUTH, true)
                     .retrieve()
                     .bodyToMono(new ParameterizedTypeReference<List<TeamStatsDto>>() {
                     })
@@ -52,6 +54,7 @@ public class TeamsClient {
                             .queryParam("count", count)
                             .build()
                     )
+                    .attribute(ServiceJwtForwardingFilter.SKIP_AUTH, true)
                     .retrieve()
                     .bodyToMono(typeRef)
                     .block();
