@@ -39,7 +39,6 @@ services:
     depends_on:
       - user-service
     volumes:
-      #      - models_data:/app/data/models
       - ./data/models:/app/data/models
     environment:
       <<: *auth-config
@@ -128,10 +127,11 @@ services:
 
   notification-service:
     environment:
-      - RABBITMQ_HOST=rabbitmq
-      - RABBITMQ_PORT=${RABBITMQ_PORT}
-      - RABBITMQ_USER=${RABBITMQ_USER}
-      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+      <<: *auth-config
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: ${RABBITMQ_PORT}
+      RABBITMQ_USER: ${RABBITMQ_USER}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
     networks:
       - main_network
 

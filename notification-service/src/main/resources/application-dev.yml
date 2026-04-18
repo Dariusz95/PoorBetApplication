@@ -8,10 +8,12 @@ spring:
     password: ${RABBITMQ_PASSWORD}
 
 messaging:
-  wallet-exchange: wallet.events
-  wallet-queue: notification.wallet.updated.queue
-  wallet-routing-key: wallet.balance.updated.v1
+  consumers:
+    WALLET_BALANCE_CHANGED:
+      queue: notification.wallet.updated.queue
+
 
 poorbet:
   security:
-    enabled: false
+    issuer: ${AUTH_ISSUER_URI}
+    jwk-set-uri: ${AUTH_JWKS_URI}

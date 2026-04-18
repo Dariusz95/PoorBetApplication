@@ -13,6 +13,8 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.UUID;
 
+import static com.poorbet.teams.fixture.TeamFixtures.BARCELONA;
+import static com.poorbet.teams.fixture.TeamFixtures.BARCELONA_ID;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -33,8 +35,8 @@ class TeamControllerTest {
 
     @Test
     void shouldReturnTeam_whenIdExists() throws Exception {
-        UUID id = UUID.randomUUID();
-        String name = "FC Barceluna";
+        UUID id = BARCELONA_ID;
+        String name = BARCELONA;
         TeamShortDto team = new TeamShortDto(id, name);
 
         when(teamService.getById(id)).thenReturn(team);

@@ -93,8 +93,6 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=dev
       - JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=75.0
-  #      - AUTH_ISSUER_URI=${AUTH_ISSUER_URI}
-  #      - AUTH_JWKS_URI=${AUTH_JWKS_URI}
 
   user-service:
     <<: [ *resource-medium ]
@@ -118,10 +116,6 @@ services:
       - JWT_KEY_ID=${JWT_KEY_ID}
       - MATCH_SERVICE_CLIENT_SECRET=${MATCH_SERVICE_CLIENT_SECRET}
       - COUPON_SERVICE_CLIENT_SECRET=${COUPON_SERVICE_CLIENT_SECRET}
-  #      - RABBITMQ_HOST=rabbitmq
-  #      - RABBITMQ_PORT=${RABBITMQ_PORT}
-  #      - RABBITMQ_USER=${RABBITMQ_USER}
-  #      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
 
   teams-service:
     <<: [ *resource-medium ]
@@ -140,8 +134,6 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://teams-db:5432/${POSTGRES_TEAMS_DB}
       - POSTGRES_USER=${POSTGRES_TEAMS_USER}
       - POSTGRES_PASSWORD=${POSTGRES_TEAMS_PASSWORD}
-  #      - AUTH_ISSUER_URI=${AUTH_ISSUER_URI}
-  #      - AUTH_JWKS_URI=${AUTH_JWKS_URI}
 
   match-service:
     <<: [ *resource-heavy ]
@@ -159,12 +151,6 @@ services:
       - POSTGRES_USER=${POSTGRES_MATCH_USER}
       - POSTGRES_PASSWORD=${POSTGRES_MATCH_PASSWORD}
       - INSTANCE_ID=match-1
-      #      - RABBITMQ_HOST=rabbitmq
-      #      - RABBITMQ_PORT=${RABBITMQ_PORT}
-      #      - RABBITMQ_USER=${RABBITMQ_USER}
-      #      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
-      #      - AUTH_ISSUER_URI=${AUTH_ISSUER_URI}
-      #      - AUTH_JWKS_URI=${AUTH_JWKS_URI}
       - AUTH_SERVICE_URL=${AUTH_SERVICE_URL}
       - AUTH_SERVICE_CLIENT_ID=match-service
       - AUTH_SERVICE_CLIENT_SECRET=${AUTH_SERVICE_CLIENT_SECRET}
@@ -186,10 +172,6 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://coupon-db:5432/${POSTGRES_COUPON_DB}
       - POSTGRES_USER=${POSTGRES_COUPON_USER}
       - POSTGRES_PASSWORD=${POSTGRES_COUPON_PASSWORD}
-  #      - RABBITMQ_HOST=rabbitmq
-  #      - RABBITMQ_PORT=${RABBITMQ_PORT}
-  #      - RABBITMQ_USER=${RABBITMQ_USER}
-  #      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
 
   wallet-service:
     <<: [ *resource-medium ]
@@ -208,10 +190,6 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://wallet-db:5432/${POSTGRES_WALLET_DB}
       - POSTGRES_USER=${POSTGRES_WALLET_USER}
       - POSTGRES_PASSWORD=${POSTGRES_WALLET_PASSWORD}
-  #      - RABBITMQ_HOST=rabbitmq
-  #      - RABBITMQ_PORT=${RABBITMQ_PORT}
-  #      - RABBITMQ_USER=${RABBITMQ_USER}
-  #      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
 
   notification-service:
     <<: [ *resource-medium ]
@@ -227,11 +205,6 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=dev
       - JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=75.0
-  #      - RABBITMQ_HOST=rabbitmq
-  #      - RABBITMQ_PORT=${RABBITMQ_PORT}
-  #      - RABBITMQ_USER=${RABBITMQ_USER}
-  #      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
-
 
   redis:
     <<: [ *resource-light ]

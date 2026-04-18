@@ -1,5 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, NgZone, inject, signal } from '@angular/core';
+import { Observable } from 'rxjs/internal/Observable';
+import { environment } from 'src/environments/environment.development';
 import { JwtAuthStateService } from '../../auth/services/jwt-auth-state.service';
 import { WalletBalanceEvent, WalletResponse } from '../types/wallet.types';
 
@@ -15,6 +17,8 @@ export class WalletBalanceService {
 
   private eventSource: EventSource | null = null;
 
+  private BASE_URL = `${environment.backend.baseURL}/api`;
+
   init(): void {
     const subject = this.jwtAuthStateService.getSubject();
 
@@ -27,18 +31,19 @@ export class WalletBalanceService {
     });
 
     this.connectToLiveUpdates(subject);
+    this.conn().subscribe((v) => console.log(v));
   }
 
   private connectToLiveUpdates(subject: string): void {
     this.eventSource?.close();
+    console.log('here');
+    this.eventSource = new EventSource(`/api/notifications/stream`);
 
-    this.eventSource = new EventSource(
-      `/api/notifications/wallet/live?subject=${encodeURIComponent(subject)}`,
-    );
-
-    this.eventSource.addEventListener('wallet-balance-updated', (event) => {
+    this.eventSource.addEventListener('wallet.balance-changed', (event) => {
       this.ngZone.run(() => {
-        const data: WalletBalanceEvent = JSON.parse((event as MessageEvent).data);
+        const data: WalletBalanceEvent = JSON.parse(
+          (event as MessageEvent).data,
+        );
         this.balance.set(data.balance);
       });
     });
@@ -47,5 +52,31 @@ export class WalletBalanceService {
       this.eventSource?.close();
       this.eventSource = null;
     };
+  }
+
+  conn(): Observable<any> {
+    return new Observable<any>((observer) => {
+      const eventSource = new EventSource(
+        `${this.BASE_URL}/notifications/stream`,
+      );
+
+      eventSource.onmessage = (event) => {
+        this.ngZone.run(() => {
+          const data: any = JSON.parse(event.data);
+          observer.next(data);
+        });
+      };
+
+      eventSource.onerror = (error) => {
+        this.ngZone.run(() => {
+          observer.error(error);
+        });
+        eventSource.close();
+      };
+
+      return () => {
+        eventSource.close();
+      };
+    });
   }
 }

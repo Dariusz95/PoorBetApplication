@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Map;
 
+import static com.poorbet.commons.rabbit.events.wallet.WalletEvents.WALLET_BALANCE_CHANGED;
 import static com.poorbet.commons.rabbit.events.wallet.WalletEvents.WALLET_CREATED;
 
 @Component
@@ -30,7 +31,7 @@ public class OutboxPublisher {
     private final ObjectMapper objectMapper;
     private final Map<String, Class<?>> eventTypeMap = Map.of(
             WALLET_CREATED.eventType(), WalletCreatedEvent.class,
-            "wallet.balance.changed", WalletBalanceChangedEvent.class
+            WALLET_BALANCE_CHANGED.eventType(), WalletBalanceChangedEvent.class
     );
 
     @Scheduled(fixedDelay = 5000)

@@ -1,6 +1,5 @@
 package com.poorbet.notificationservice.service;
 
-import com.poorbet.commons.rabbit.events.wallet.WalletBalanceChangedEvent;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -11,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 @Service
-public class WalletNotificationService {
+public class SseNotificationService {
 
     private final ConcurrentHashMap<UUID, CopyOnWriteArrayList<SseEmitter>> emitters = new ConcurrentHashMap<>();
 
@@ -26,11 +25,11 @@ public class WalletNotificationService {
         return emitter;
     }
 
-    public void publish(WalletBalanceChangedEvent event) {
-        List<SseEmitter> userEmitters = emitters.getOrDefault(event.userId(), new CopyOnWriteArrayList<>());
+    public void publish(UUID userId, String sseEventName, Object payload) {
+        List<SseEmitter> userEmitters = emitters.getOrDefault(userId, new CopyOnWriteArrayList<>());
         userEmitters.forEach(emitter -> {
             try {
-                emitter.send(SseEmitter.event().name("wallet-balance-updated").data(event));
+                emitter.send(SseEmitter.event().name(sseEventName).data(payload));
             } catch (IOException e) {
                 emitter.completeWithError(e);
             }

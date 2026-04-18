@@ -26,10 +26,6 @@ public class WalletService {
     private final WalletRepository walletRepository;
     private final WalletReservationRepository walletReservationRepository;
     private final OutboxService outboxService;
-    private static final String WALLET_EXCHANGE = "wallet.events";
-    private static final String WALLET_BALANCE_ROUTING_KEY = "wallet.balance.updated.v1";
-    private static final String WALLET_BALANCE_EVENT_TYPE = "wallet.balance.changed";
-    private static final String EVENT_VERSION = "v1";
 
 
     @Transactional
@@ -72,10 +68,7 @@ public class WalletService {
         Wallet updatedWallet = walletRepository.save(wallet);
 
         outboxService.saveEvent(
-                WALLET_EXCHANGE,
-                WALLET_BALANCE_ROUTING_KEY,
-                WALLET_BALANCE_EVENT_TYPE,
-                EVENT_VERSION,
+                WalletEvents.WALLET_BALANCE_CHANGED,
                 new WalletBalanceChangedEvent(updatedWallet.getUserId(), updatedWallet.getBalance())
         );
 
@@ -98,6 +91,11 @@ public class WalletService {
 
         walletReservationRepository.save(
                 walletReservation
+        );
+
+        outboxService.saveEvent(
+                WalletEvents.WALLET_BALANCE_CHANGED,
+                new WalletBalanceChangedEvent(wallet.getUserId(), wallet.getBalance())
         );
     }
 }
