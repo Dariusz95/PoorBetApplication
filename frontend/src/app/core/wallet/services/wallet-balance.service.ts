@@ -1,8 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, NgZone, inject, signal } from '@angular/core';
-import { Observable } from 'rxjs/internal/Observable';
-import { environment } from 'src/environments/environment.development';
-import { JwtAuthStateService } from '../../auth/services/jwt-auth-state.service';
+import { SseClient } from 'ngx-sse-client';
+import { environment } from 'src/environments/environment';
 import { WalletBalanceEvent, WalletResponse } from '../types/wallet.types';
 
 @Injectable({
@@ -11,72 +10,52 @@ import { WalletBalanceEvent, WalletResponse } from '../types/wallet.types';
 export class WalletBalanceService {
   private readonly http = inject(HttpClient);
   private readonly ngZone = inject(NgZone);
-  private readonly jwtAuthStateService = inject(JwtAuthStateService);
+  private readonly sseClient = inject(SseClient);
 
   readonly balance = signal<number | null>(null);
-
-  private eventSource: EventSource | null = null;
 
   private BASE_URL = `${environment.backend.baseURL}/api`;
 
   init(): void {
-    const subject = this.jwtAuthStateService.getSubject();
-
-    if (!subject) {
-      return;
-    }
-
     this.http.get<WalletResponse>('/api/wallet/me').subscribe({
       next: (wallet) => this.balance.set(wallet.balance),
     });
 
-    this.connectToLiveUpdates(subject);
-    this.conn().subscribe((v) => console.log(v));
+    this.connectToLiveUpdates();
   }
 
-  private connectToLiveUpdates(subject: string): void {
-    this.eventSource?.close();
-    console.log('here');
-    this.eventSource = new EventSource(`/api/notifications/stream`);
-
-    this.eventSource.addEventListener('wallet.balance-changed', (event) => {
-      this.ngZone.run(() => {
-        const data: WalletBalanceEvent = JSON.parse(
-          (event as MessageEvent).data,
-        );
-        this.balance.set(data.balance);
-      });
-    });
-
-    this.eventSource.onerror = () => {
-      this.eventSource?.close();
-      this.eventSource = null;
-    };
-  }
-
-  conn(): Observable<any> {
-    return new Observable<any>((observer) => {
-      const eventSource = new EventSource(
+  private connectToLiveUpdates(): void {
+    this.sseClient
+      .stream(
         `${this.BASE_URL}/notifications/stream`,
-      );
+        {
+          keepAlive: true,
+          reconnectionDelay: 1000,
+          responseType: 'event',
+        },
+        {},
+        'GET',
+      )
+      .subscribe({
+        next: (event) => {
+          if (event.type === 'error') {
+            const errorEvent = event as ErrorEvent;
+            console.error(errorEvent.error, errorEvent.message);
+            return;
+          }
 
-      eventSource.onmessage = (event) => {
-        this.ngZone.run(() => {
-          const data: any = JSON.parse(event.data);
-          observer.next(data);
-        });
-      };
+          const messageEvent = event as MessageEvent;
 
-      eventSource.onerror = (error) => {
-        this.ngZone.run(() => {
-          observer.error(error);
-        });
-        eventSource.close();
-      };
-
-      return () => {
-        eventSource.close();
-      };
-    });
+          if (messageEvent.type === 'wallet.balance-changed') {
+            this.ngZone.run(() => {
+              const data: WalletBalanceEvent = JSON.parse(messageEvent.data);
+              this.balance.set(data.balance);
+            });
+          }
+        },
+        error: (err) => {
+          console.error('SSE error:', err);
+        },
+      });
   }
 }

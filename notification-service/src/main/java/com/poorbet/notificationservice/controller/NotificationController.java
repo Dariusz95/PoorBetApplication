@@ -3,6 +3,7 @@ package com.poorbet.notificationservice.controller;
 import com.poorbet.notificationservice.security.CurrentUserProvider;
 import com.poorbet.notificationservice.service.SseNotificationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,7 +17,7 @@ public class NotificationController {
     private final SseNotificationService sseNotificationService;
     private final CurrentUserProvider currentUserProvider;
 
-    @GetMapping("/stream")
+    @GetMapping(value = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter stream() {
         return sseNotificationService.register(currentUserProvider.getUserId());
     }

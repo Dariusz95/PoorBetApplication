@@ -5,8 +5,8 @@ import { TranslocoDirective } from '@jsverse/transloco';
 import { Observable } from 'rxjs';
 import { LanguageSwitcherComponent } from '../../../shared/components/language-switcher/language-switcher.component';
 import { AuthService } from '../../auth/services/auth.service';
-import { WalletBalanceService } from '../../wallet/services/wallet-balance.service';
 import { RoutePath } from '../../routing/route-path';
+import { WalletBalanceService } from '../../wallet/services/wallet-balance.service';
 import { UserDropdownComponent } from '../user-dropdown/user-dropdown.component';
 import { MENU_ITEMS } from './models/menu-items';
 

@@ -89,6 +89,7 @@ export class JwtAuthStateService {
 
   getSubject(): string | null {
     const payload = this.getUserPayload();
+
     return payload?.sub ?? null;
   }
 }

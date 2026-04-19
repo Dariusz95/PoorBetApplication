@@ -13,7 +13,7 @@ public class WalletBalanceListener {
 
     private final SseNotificationService sseNotificationService;
 
-    @RabbitListener(queues = "${messaging.consumers.wallet-balance-changed.queue}")
+    @RabbitListener(queues = "${messaging.consumers.WALLET_BALANCE_CHANGED.queue}")
     public void onWalletUpdated(EventEnvelope<WalletBalanceChangedEvent> eventEnvelope) {
         sseNotificationService.publish(
                 eventEnvelope.payload().userId(),

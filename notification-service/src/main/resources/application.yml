@@ -9,7 +9,7 @@ spring:
 
 messaging:
   consumers:
-    wallet-balance-changed:
+    WALLET_BALANCE_CHANGED:
       queue: notification.wallet.updated.queue
 
 poorbet:
