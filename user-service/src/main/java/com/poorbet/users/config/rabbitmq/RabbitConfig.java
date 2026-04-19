@@ -1,7 +1,8 @@
 package com.poorbet.users.config.rabbitmq;
 
 import com.poorbet.commons.rabbit.EventDefinition;
-import com.poorbet.commons.rabbit.events.wallet.WalletEvents;
+import com.poorbet.commons.rabbit.EventRegistry;
+import com.poorbet.commons.rabbit.MessagingProperties;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -21,39 +22,34 @@ import java.util.Map;
 public class RabbitConfig {
 
     @Bean
-    public Declarables declarables(MessagingProperties properties) {
+    public Declarables declarables(MessagingProperties properties,
+                                   EventRegistry eventRegistry) {
 
+        Map<String, TopicExchange> exchangeCache = new HashMap<>();
         List<Declarable> declarables = new ArrayList<>();
-        Map<String, TopicExchange> exchanges = new HashMap<>();
 
-        Map<String, EventDefinition<?>> eventMap = Map.of(
-                "wallet-created", WalletEvents.WALLET_CREATED
-        );
+        properties.getConsumers().forEach((eventKey, consumer) -> {
 
-        properties.getConsumers().forEach((name, consumer) -> {
-
-            EventDefinition<?> event = eventMap.get(name);
+            EventDefinition<?> event = eventRegistry.get(eventKey);
 
             if (event == null) {
-                throw new IllegalStateException("No event definition for consumer: " + name);
+                throw new IllegalStateException("Unknown event key: " + eventKey);
             }
 
-            TopicExchange exchange = exchanges.computeIfAbsent(
+            TopicExchange exchange = exchangeCache.computeIfAbsent(
                     event.exchange(),
-                    ex -> {
-                        TopicExchange e = new TopicExchange(ex, true, false);
-                        declarables.add(e);
-                        return e;
-                    }
+                    name -> new TopicExchange(name, true, false)
             );
 
-            Queue queue = new Queue(consumer.getQueue(), true);
+            Queue queue = QueueBuilder.durable(consumer.getQueue())
+                    .build();
 
             Binding binding = BindingBuilder
                     .bind(queue)
                     .to(exchange)
                     .with(event.routingKey());
 
+            declarables.add(exchange);
             declarables.add(queue);
             declarables.add(binding);
         });

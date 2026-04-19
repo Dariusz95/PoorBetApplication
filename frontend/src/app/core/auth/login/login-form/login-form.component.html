@@ -1,0 +1,23 @@
+<form pbCardBody [formGroup]="form">
+  <pb-form-field>
+    <pb-label> {{ "auth.login.email" | transloco }}</pb-label>
+    <pb-input formControlName="email"></pb-input>
+  </pb-form-field>
+
+  <pb-form-field>
+    <pb-label> {{ "auth.login.password" | transloco }}</pb-label>
+    <pb-input formControlName="password"></pb-input>
+  </pb-form-field>
+
+  <div class="form-actions">
+    <pb-button
+      [disabled]="!form.valid"
+      variant="primary"
+      size="md"
+      [fullWidth]="true"
+      (click)="onSubmit()"
+    >
+      {{ "auth.login.login" | transloco }}
+    </pb-button>
+  </div>
+</form>

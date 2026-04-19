@@ -1,6 +1,7 @@
 package com.poorbet.walletservice.config;
 
 import com.poorbet.commons.rabbit.EventDefinition;
+import com.poorbet.commons.rabbit.MessagingProperties;
 import com.poorbet.commons.rabbit.events.user.UserEvents;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.core.Queue;

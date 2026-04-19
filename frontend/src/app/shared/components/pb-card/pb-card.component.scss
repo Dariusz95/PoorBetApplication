@@ -7,13 +7,14 @@
 }
 
 .pb-card__header {
-  @apply flex items-center justify-between border-b border-app-border bg-app-surfaceSoft px-4 py-3;
+  @apply flex items-center justify-between px-8 py-4 text-center;
 }
 
 .pb-card__body {
-  @apply space-y-3 p-4;
+  @apply space-y-3 px-8 py-4;
 }
 
 .pb-card__footer {
-  @apply border-t border-app-border p-4;
+  @apply px-8 py-4;
+  // @apply border-t border-app-border p-8;
 }

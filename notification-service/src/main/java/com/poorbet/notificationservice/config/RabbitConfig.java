@@ -11,7 +11,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Configuration
 @EnableConfigurationProperties(MessagingProperties.class)
@@ -21,18 +23,24 @@ public class RabbitConfig {
     public Declarables declarables(MessagingProperties properties,
                                    EventRegistry eventRegistry) {
 
+        Map<String, TopicExchange> exchangeCache = new HashMap<>();
         List<Declarable> declarables = new ArrayList<>();
 
-        properties.getConsumers().forEach((key, consumer) -> {
+        properties.getConsumers().forEach((eventKey, consumer) -> {
 
-            EventDefinition<?> event = eventRegistry.get(key);
+            EventDefinition<?> event = eventRegistry.get(eventKey);
 
             if (event == null) {
-                throw new IllegalStateException("Unknown event key: " + key);
+                throw new IllegalStateException("Unknown event key: " + eventKey);
             }
 
-            TopicExchange exchange = new TopicExchange(event.exchange(), true, false);
-            Queue queue = new Queue(consumer.getQueue(), true);
+            TopicExchange exchange = exchangeCache.computeIfAbsent(
+                    event.exchange(),
+                    name -> new TopicExchange(name, true, false)
+            );
+
+            Queue queue = QueueBuilder.durable(consumer.getQueue())
+                    .build();
 
             Binding binding = BindingBuilder
                     .bind(queue)

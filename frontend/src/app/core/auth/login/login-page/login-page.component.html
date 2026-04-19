@@ -1,0 +1,26 @@
+<div class="login-container">
+  <app-pb-card stylesCss="w-full max-w-[420px]">
+    <ng-content pbCardHeader>
+      <h2 class="base-clamp font-bold w-full text-center m-0">
+        {{ "auth.login.title" | transloco }}
+      </h2>
+    </ng-content>
+
+    <div pbCardBody>
+      <app-login-form (submitForm)="onSubmitForm($event)"></app-login-form>
+
+      <div class="auth-footer">
+        {{ "auth.login.dontHaveAccount" | transloco }}
+
+        <pb-button
+          size="sm"
+          type="link"
+          variant="link"
+          [routerLink]="RoutePath.Register"
+        >
+          {{ "auth.login.register" | transloco }}
+        </pb-button>
+      </div>
+    </div>
+  </app-pb-card>
+</div>

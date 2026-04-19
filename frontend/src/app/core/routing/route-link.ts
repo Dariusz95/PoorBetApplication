@@ -15,4 +15,5 @@ export const RouteLink: Record<RoutePath, RouteData[]> = {
     RouteFragment.Login,
   ],
   [RoutePath.Home]: [RouteFragment.Slash, RouteParam.anyId],
+  [RoutePath.App]: [RouteFragment.Slash, RouteFragment.App],
 };

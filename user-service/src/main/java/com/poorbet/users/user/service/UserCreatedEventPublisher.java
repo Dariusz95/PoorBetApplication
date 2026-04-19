@@ -1,8 +1,8 @@
 package com.poorbet.users.user.service;
 
+import com.poorbet.commons.rabbit.MessagingProperties;
 import com.poorbet.commons.rabbit.events.user.UserCreatedEvent;
 import com.poorbet.commons.rabbit.events.user.UserEvents;
-import com.poorbet.users.config.rabbitmq.MessagingProperties;
 import com.poorbet.users.config.rabbitmq.RabbitDomainEventPublisher;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;

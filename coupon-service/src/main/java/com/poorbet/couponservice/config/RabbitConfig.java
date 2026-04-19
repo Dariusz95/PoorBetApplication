@@ -1,46 +1,53 @@
 package com.poorbet.couponservice.config;
 
 import com.poorbet.commons.rabbit.EventDefinition;
-import com.poorbet.commons.rabbit.events.match.MatchEvents;
+import com.poorbet.commons.rabbit.EventRegistry;
+import com.poorbet.commons.rabbit.MessagingProperties;
 import org.springframework.amqp.core.*;
-import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Configuration
 @EnableConfigurationProperties(MessagingProperties.class)
 public class RabbitConfig {
 
     @Bean
-    public Declarables declarables(MessagingProperties properties) {
+    public Declarables declarables(MessagingProperties properties,
+                                   EventRegistry eventRegistry) {
 
+        Map<String, TopicExchange> exchangeCache = new HashMap<>();
         List<Declarable> declarables = new ArrayList<>();
-        Set<String> declaredExchanges = new HashSet<>();
 
-        Map<String, EventDefinition<?>> eventMap = Map.of(
-                "match-finished", MatchEvents.MATCH_FINISHED
-        );
+        properties.getConsumers().forEach((eventKey, consumer) -> {
 
-        properties.getConsumers().forEach((name, consumer) -> {
+            EventDefinition<?> event = eventRegistry.get(eventKey);
 
-            EventDefinition<?> event = eventMap.get(name);
-
-            Queue queue = new Queue(consumer.getQueue(), true);
-
-            if (declaredExchanges.add(event.exchange())) {
-                declarables.add(new TopicExchange(event.exchange(), true, false));
+            if (event == null) {
+                throw new IllegalStateException("Unknown event key: " + eventKey);
             }
+
+            TopicExchange exchange = exchangeCache.computeIfAbsent(
+                    event.exchange(),
+                    name -> new TopicExchange(name, true, false)
+            );
+
+            Queue queue = QueueBuilder.durable(consumer.getQueue())
+                    .build();
 
             Binding binding = BindingBuilder
                     .bind(queue)
-                    .to(new TopicExchange(event.exchange()))
+                    .to(exchange)
                     .with(event.routingKey());
 
+            declarables.add(exchange);
             declarables.add(queue);
             declarables.add(binding);
         });

@@ -54,5 +54,5 @@ messaging:
     match: match.events
 
   consumers:
-    match-finished:
+    MATCH_FINISHED:
       queue: coupon.match-finished.queue
