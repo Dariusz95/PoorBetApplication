@@ -1,8 +1,10 @@
 package com.poorbet.couponservice.config;
 
 import com.poorbet.commons.rabbit.EventDefinition;
+import com.poorbet.commons.rabbit.EventKey;
 import com.poorbet.commons.rabbit.EventRegistry;
 import com.poorbet.commons.rabbit.MessagingProperties;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
@@ -15,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Configuration
 @EnableConfigurationProperties(MessagingProperties.class)
 public class RabbitConfig {
@@ -25,6 +28,13 @@ public class RabbitConfig {
 
         Map<String, TopicExchange> exchangeCache = new HashMap<>();
         List<Declarable> declarables = new ArrayList<>();
+
+        Map<EventKey, MessagingProperties.ConsumerConfig> list = properties.getConsumers();
+
+        if (list == null || list.isEmpty()) {
+            log.info("No RabbitMQ consumers configured for this service");
+            return new Declarables(declarables);
+        }
 
         properties.getConsumers().forEach((eventKey, consumer) -> {
 

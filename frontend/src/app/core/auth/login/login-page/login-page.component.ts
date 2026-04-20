@@ -51,12 +51,11 @@ export class LoginPageComponent {
       .pipe(finalize(() => this.submitted.set(false)))
       .subscribe({
         next: (response) => {
-          console.log('Logowanie zakończone sukcesem:', response);
-          // this.router.createUrlTree(RouteLink[RoutePath.App]);
+          console.log('[LOGIN RES]: ', response);
           this.router.navigate(RouteLink[RoutePath.App]);
         },
         error: (error) => {
-          console.error('Błąd logowania:', error);
+          console.error('[LOGIN ERR]: ', error);
         },
       });
   }

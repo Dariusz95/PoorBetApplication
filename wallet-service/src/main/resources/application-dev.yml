@@ -34,5 +34,5 @@ messaging:
     user: user.events
 
   consumers:
-    user-created:
+    USER_CREATED:
       queue: wallet.user-created.queue
