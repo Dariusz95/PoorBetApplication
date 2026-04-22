@@ -53,10 +53,9 @@ public class CouponService {
                         .build();
 
                 coupon.addBet(bet);
-
             });
-            Coupon saved = couponRepository.save(coupon);
 
+            Coupon saved = couponRepository.save(coupon);
 
             return saved;
 

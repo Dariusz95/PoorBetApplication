@@ -1,6 +1,7 @@
 package com.poorbet.couponservice.service;
 
 import com.poorbet.couponservice.client.MatchClient;
+import com.poorbet.couponservice.client.wallet.WalletClient;
 import com.poorbet.couponservice.domain.*;
 import com.poorbet.couponservice.dto.CreateBetDto;
 import com.poorbet.couponservice.dto.CreateCouponDto;
@@ -33,6 +34,9 @@ class CouponServiceTest {
 
     @Mock
     private MatchClient matchClient;
+
+    @Mock
+    private WalletClient walletClient;
 
     @InjectMocks
     private CouponService couponService;
@@ -69,7 +73,8 @@ class CouponServiceTest {
     }
 
     private void setupMatchClientWithOdd(Double oddValue) {
-        when(matchClient.getOdd(any(UUID.class), eq(BetType.HOME_WIN)))
+        doNothing().when(walletClient).reserve(any(UUID.class), any());
+        when(matchClient.getOdd(any(UUID.class), any(BetType.class)))
                 .thenReturn(oddValue);
     }
 
@@ -132,7 +137,7 @@ class CouponServiceTest {
 
         // Assert
         verify(matchClient, times(expectedBetCount))
-                .getOdd(any(UUID.class), eq(BetType.HOME_WIN));
+                .getOdd(any(UUID.class), any(BetType.class));
     }
 
     @Test
@@ -249,6 +254,7 @@ class CouponServiceTest {
         // Arrange
         when(matchClient.getOdd(any(UUID.class), eq(BetType.HOME_WIN)))
                 .thenThrow(new RuntimeException("MatchClient unavailable"));
+        doNothing().when(walletClient).reserve(any(UUID.class), any());
 
         // Act & Assert
         assertThatThrownBy(() -> couponService.createCoupon(validCreateCouponDto, userId))

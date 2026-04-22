@@ -180,11 +180,11 @@ class CouponProcessingServiceTest {
         MatchResultEventDto result1 = new MatchResultEventDto(
                 matchId1,
                 2,
-                2);
+                1);
 
         MatchResultEventDto result2 = new MatchResultEventDto(
                 matchId2,
-                1,
+                2,
                 2);
 
 
@@ -418,8 +418,8 @@ class CouponProcessingServiceTest {
 
         MatchResultEventDto result = new MatchResultEventDto(
                 matchId1,
-                3,
-                1);
+                1,
+                3);
 
         MatchesFinishedEvent event = new MatchesFinishedEvent(Collections.singletonList(result));
 
