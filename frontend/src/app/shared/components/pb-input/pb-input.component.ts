@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  contentChild,
   effect,
   forwardRef,
   inject,
@@ -19,6 +20,7 @@ import {
   FORM_FIELD_CONTROL,
   FormFieldControl,
 } from '../pb-form-field/directives/pb-form-field-control';
+import { PbInputIconDirective } from './directives/pb-input-icon.directive';
 
 @Component({
   selector: 'pb-input',
@@ -44,9 +46,12 @@ export class PbInputComponent
   placeholder = input<string>('');
   type = input<string>('text');
 
+  icon = contentChild(PbInputIconDirective);
+
   private readonly injector = inject(Injector);
 
   private ngControl: NgControl | null = null;
+  readonly stateChanges: Subject<void> = new Subject<void>();
 
   errors = signal<ErrorValueMap | null>(null);
   disabled = signal<boolean>(false);
@@ -58,7 +63,9 @@ export class PbInputComponent
   onChange = (_: any) => {};
   onTouched = () => {};
 
-  readonly stateChanges: Subject<void> = new Subject<void>();
+  get hasIcon(): boolean {
+    return !!this.icon();
+  }
 
   constructor() {
     effect(() => {
@@ -80,31 +87,32 @@ export class PbInputComponent
     this.invalid.set(!!errors);
   }
 
-  handleInput(event: Event) {
+  handleInput(event: Event): void {
     const val = (event.target as HTMLInputElement).value;
+
     this.value.set(val);
     this.onChange(val);
   }
 
-  onFocus() {
+  onFocus(): void {
     this.focused.set(true);
   }
 
-  onBlur() {
+  onBlur(): void {
     this.focused.set(false);
     this.touched.set(true);
     this.onTouched();
   }
 
-  writeValue(val: string) {
+  writeValue(val: string): void {
     this.value.set(val || '');
   }
 
-  registerOnChange(fn: any) {
+  registerOnChange(fn: any): void {
     this.onChange = fn;
   }
 
-  registerOnTouched(fn: any) {
+  registerOnTouched(fn: any): void {
     this.onTouched = fn;
   }
 }

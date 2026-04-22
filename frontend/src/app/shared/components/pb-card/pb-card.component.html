@@ -1,13 +1,17 @@
-<div class="pb-card card">
-  <div class="card__border"></div>
-
-  <header class="pb-card__header">
-    <ng-content select="[pbCardHeader]"></ng-content>
-  </header>
-  <div class="pb-card__body">
-    <ng-content select="[pbCardBody]"></ng-content>
+<div class="card-wrap">
+  <div class="card__border">
+    <div class="card__border-sweep"></div>
   </div>
-  <!-- <footer class="pb-card__footer">
-    <ng-content select="[pbCardFooter]"></ng-content>
-  </footer> -->
+
+  <div class="pb-card">
+    <header class="pb-card__header">
+      <ng-content select="[pbCardHeader]"></ng-content>
+    </header>
+    <div class="pb-card__body">
+      <ng-content select="[pbCardBody]"></ng-content>
+    </div>
+    <footer class="pb-card__footer">
+      <ng-content select="[pbCardFooter]"></ng-content>
+    </footer>
+  </div>
 </div>

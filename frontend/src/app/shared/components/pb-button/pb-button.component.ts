@@ -13,8 +13,8 @@ import { RouteParam } from '../../../core/routing/route-param';
 import { RoutePath } from '../../../core/routing/route-path';
 import { RoutingService } from '../../../core/routing/routing.service';
 import { PbIconComponent } from '../pb-icon/pb-icon.component';
-import { IconType } from '../pb-icon/pb-icon.model';
 import { ButtonSize, ButtonVariant } from './pb-button.model';
+import { IconType } from '../pb-icon/icon-type.model';
 
 @Component({
   selector: 'pb-button',
@@ -60,9 +60,6 @@ export class PbButtonComponent {
       return;
     }
 
-    // if(this.routePath()){
-      
-    // }
     this.buttonClick.emit(event);
   }
 

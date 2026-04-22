@@ -1,20 +1,31 @@
 <form pbCardBody [formGroup]="form">
   <pb-form-field>
-    <pb-label> {{ "auth.login.email" | transloco }}</pb-label>
-    <pb-input formControlName="email"></pb-input>
+    <pb-label> {{ "auth.email.label" | transloco }}</pb-label>
+    <pb-input
+      formControlName="email"
+      [placeholder]="'auth.email.placeholder' | transloco"
+    >
+      <app-icon icon="mail" size="m" pbInputIcon></app-icon>
+    </pb-input>
   </pb-form-field>
 
   <pb-form-field>
-    <pb-label> {{ "auth.login.password" | transloco }}</pb-label>
-    <pb-input formControlName="password"></pb-input>
+    <pb-label> {{ "auth.password.label" | transloco }}</pb-label>
+    <pb-input
+      formControlName="password"
+      type="password"
+      [placeholder]="'auth.password.placeholder' | transloco"
+    >
+      <app-icon icon="lock" size="m" pbInputIcon></app-icon>
+    </pb-input>
   </pb-form-field>
 
   <div class="form-actions">
     <pb-button
-      [disabled]="!form.valid"
       variant="primary"
       size="md"
       [fullWidth]="true"
+      [disabled]="!form.valid"
       (click)="onSubmit()"
     >
       {{ "auth.login.login" | transloco }}

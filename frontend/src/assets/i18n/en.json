@@ -4,6 +4,15 @@
     "en": "English"
   },
   "auth": {
+    "email": {
+      "label": "E-mail",
+      "placeholder": "Enter your email"
+    },
+    "password": {
+      "label": "Password",
+      "placeholder": "Enter your password"
+    },
+
     "register": {
       "title": "Register",
       "email": "E-mail",
@@ -15,10 +24,12 @@
     },
     "login": {
       "title": "Login",
+      "subtitle": "Welcome back to PoorBet!",
       "email": "E-mail",
       "password": "Password",
       "login": "Log in",
       "forgotPassword": "Forgot password?",
+      "dontHaveAccount": "Don't have an account yet?",
       "register": "Register"
     }
   },

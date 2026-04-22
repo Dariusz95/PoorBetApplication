@@ -1,3 +1,38 @@
 .login-container {
   @apply flex min-h-screen w-full items-center justify-center px-4 pb-8;
 }
+
+.card-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  margin-bottom: 0.5rem;
+}
+
+.card-title {
+  @apply text-app-text font-medium;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  text-align: center;
+  margin: 0 0 4px;
+}
+
+.card-subtitle {
+  @apply text-app-textMuted;
+  font-size: 13px;
+  color: hsl(0, 0%, 48%);
+  text-align: center;
+  margin: 0;
+}
+
+.auth-footer {
+  @apply text-app-textMuted;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 0.5rem;
+  font-size: 13px;
+}

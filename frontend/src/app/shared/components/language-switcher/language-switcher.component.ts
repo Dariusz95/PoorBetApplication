@@ -10,7 +10,7 @@ import {
 import { DropdownOption } from '../pb-dropdown/dropdown-option';
 import { PbDropdownComponent } from '../pb-dropdown/pb-dropdown.component';
 import { PbIconComponent } from '../pb-icon/pb-icon.component';
-import { IconType } from '../pb-icon/pb-icon.model';
+import { IconType } from '../pb-icon/icon-type.model';
 
 @Component({
   selector: 'app-language-switcher',

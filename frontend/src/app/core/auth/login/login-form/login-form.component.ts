@@ -9,8 +9,11 @@ import {
 } from '@angular/forms';
 import { RoutePath } from '@core/routing/route-path';
 import { TranslocoPipe } from '@jsverse/transloco';
+import { IconComponent } from '@shared/components/icon/icon.component';
 import { PbLabel } from '@shared/components/pb-form-field/directives/pb-label';
 import { PbFormFieldComponent } from '@shared/components/pb-form-field/pb-form-field.component';
+import { IconType } from '@shared/components/pb-icon/icon-type.model';
+import { PbInputIconDirective } from '@shared/components/pb-input/directives/pb-input-icon.directive';
 import { PbInputComponent } from '@shared/components/pb-input/pb-input.component';
 import { PbButtonComponent } from '@shared/index';
 import { PASSWORD_REGEX } from '@shared/validators/regexes/passwordRegex';
@@ -28,6 +31,8 @@ import { LoginModel } from '../types/login.model';
     PbLabel,
     PbInputComponent,
     PbButtonComponent,
+    PbInputIconDirective,
+    IconComponent,
   ],
   templateUrl: './login-form.component.html',
   styleUrl: './login-form.component.scss',
@@ -36,6 +41,7 @@ export class LoginFormComponent {
   private readonly fb = inject(FormBuilder);
 
   readonly RoutePath = RoutePath;
+  readonly IconType = IconType;
 
   submitForm = output<LoginModel>();
 

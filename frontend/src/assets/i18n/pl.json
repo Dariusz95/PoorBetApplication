@@ -4,6 +4,15 @@
     "en": "Angielski"
   },
   "auth": {
+    "email": {
+      "label": "E-mail",
+      "placeholder": "Podaj swój e-mail"
+    },
+    "password": {
+      "label": "Hasło",
+      "placeholder": "Podaj swoje hasło"
+    },
+
     "register": {
       "title": "Rejestracja",
       "email": "E-mail",
@@ -14,11 +23,13 @@
       "login": "Zaloguj się"
     },
     "login": {
-      "title": "Logowanie",
+      "title": "Zaloguj się",
+      "subtitle": "Witaj spowrotem w PoorBet!",
       "email": "E-mail",
       "password": "Hasło",
       "login": "Zaloguj się",
       "forgotPassword": "Nie pamiętasz hasła?",
+      "dontHaveAccount": "Nie masz jeszcze konta?",
       "register": "Zarejestruj się"
     }
   },

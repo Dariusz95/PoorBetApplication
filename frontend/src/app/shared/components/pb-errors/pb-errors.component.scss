@@ -1,14 +1,15 @@
 :host {
   position: absolute;
   left: 0;
+  top: 100%;
   width: 100%;
   z-index: 1;
-  top: 100%;
 }
 
 .error-container {
+  @apply text-app-danger;
+
   padding-top: 4px;
-  color: #f44336;
   font-size: 12px;
   line-height: 1.2;
 }
