@@ -10,12 +10,24 @@
   </pb-form-field>
 
   <pb-form-field>
-    <pb-label> {{ "auth.password.label" | transloco }}</pb-label>
+    <pb-label> {{ "auth.register.password" | transloco }}</pb-label>
     <pb-input
       formControlName="password"
       type="password"
-      autocomplete="current-password"
-      [placeholder]="'auth.password.placeholder' | transloco"
+      autocomplete="new-password"
+      [placeholder]="'auth.register.passwordPlaceholder' | transloco"
+    >
+      <app-icon icon="lock" size="m" pbInputIcon></app-icon>
+    </pb-input>
+  </pb-form-field>
+
+  <pb-form-field>
+    <pb-label> {{ "auth.register.confirmPassword" | transloco }}</pb-label>
+    <pb-input
+      formControlName="confirmPassword"
+      type="password"
+      autocomplete="new-password"
+      [placeholder]="'auth.register.confirmPasswordPlaceholder' | transloco"
     >
       <app-icon icon="lock" size="m" pbInputIcon></app-icon>
     </pb-input>
@@ -29,7 +41,7 @@
       [disabled]="!form.valid"
       (click)="onSubmit()"
     >
-      {{ "auth.login.login" | transloco }}
+      {{ "auth.register.register" | transloco }}
     </pb-button>
   </div>
 </form>

@@ -13,7 +13,7 @@ export class WalletBalanceService {
 
   readonly balance = signal<number | null>(null);
 
-  private BASE_URL = `${environment.backend.baseURL}/api`;
+  private BASE_URL = `${environment.backend.baseURL}/api/notifications/stream`;
 
   init(): void {
     return;

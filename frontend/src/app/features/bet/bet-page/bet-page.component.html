@@ -43,13 +43,6 @@
             @for (entry of grouped | keyvalue; track entry.key) {
               <pb-tab-content [value]="entry.key">
                 <div class="matches-section">
-                  <div class="section-header">
-                    <h2 class="section-header__title">
-                      {{ t('upcomingPools') }}
-                    </h2>
-                    <p class="section-header__subtitle">{{ entry.key }}</p>
-                  </div>
-
                   <div class="matches-grid">
                     <app-pool-card [pool]="entry.value"></app-pool-card>
                   </div>

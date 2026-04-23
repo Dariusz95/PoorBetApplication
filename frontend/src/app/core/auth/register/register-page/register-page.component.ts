@@ -14,15 +14,15 @@ import { PbButtonComponent } from '../../../../shared/components/pb-button/pb-bu
 import { PbCardComponent } from '../../../../shared/components/pb-card/pb-card.component';
 import { RoutePath } from '../../../routing/route-path';
 import { AuthCardHeaderComponent } from '../../components/auth-card-header/auth-card-header.component';
-import { LoginRequest } from '../../requests/login-request';
+import { RegisterRequest } from '../../requests/register-request';
 import { AuthService } from '../../services/auth.service';
-import { LoginFormComponent } from '../login-form/login-form.component';
-import { LoginModel } from '../types/login.model';
+import { RegisterFormComponent } from '../register-form/register-form.component';
+import { RegisterModel } from '../types/register.model';
 
 @Component({
-  selector: 'app-login-page',
-  templateUrl: './login-page.component.html',
-  styleUrls: ['./login-page.component.scss'],
+  selector: 'app-register-page',
+  templateUrl: './register-page.component.html',
+  styleUrls: ['./register-page.component.scss'],
   imports: [
     FormsModule,
     ReactiveFormsModule,
@@ -30,39 +30,39 @@ import { LoginModel } from '../types/login.model';
     PbCardComponent,
     PbButtonComponent,
     TranslocoPipe,
-    LoginFormComponent,
+    RegisterFormComponent,
     AuthCardHeaderComponent,
   ],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LoginPageComponent {
+export class RegisterPageComponent {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
 
   readonly RoutePath = RoutePath;
   readonly submitted = signal(false);
 
-  onSubmitForm(event: LoginModel): void {
+  onSubmitForm(event: RegisterModel): void {
     this.submitted.set(true);
 
-    const request = this.getLoginRequest(event);
+    const request = this.getRegisterRequest(event);
 
     this.authService
-      .login(request)
+      .register(request)
       .pipe(finalize(() => this.submitted.set(false)))
       .subscribe({
         next: (response) => {
-          console.log('[LOGIN RES]: ', response);
-          this.router.navigate(RouteLink[RoutePath.App]);
+          console.log('[REGISTER RES]: ', response);
+          this.router.navigate(RouteLink[RoutePath.Login]);
         },
         error: (error) => {
-          console.error('[LOGIN ERR]: ', error);
+          console.error('[REGISTER ERR]: ', error);
         },
       });
   }
 
-  private getLoginRequest(event: LoginModel): LoginRequest {
+  private getRegisterRequest(event: RegisterModel): RegisterRequest {
     return {
       email: event.email,
       password: event.password,

@@ -12,8 +12,8 @@ export const AUTH_ROUTES: Routes = [
   {
     path: RouteFragment.Register,
     loadComponent: () =>
-      import('./components/register/register.component').then(
-        (m) => m.RegisterComponent,
+      import('./register/register-page/register-page.component').then(
+        (m) => m.RegisterPageComponent,
       ),
   },
   {

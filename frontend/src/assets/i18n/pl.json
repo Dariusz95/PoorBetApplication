@@ -15,9 +15,12 @@
 
     "register": {
       "title": "Rejestracja",
+      "subtitle": "Dołącz do PoorBet i zacznij stawiać zakłady już dziś!",
       "email": "E-mail",
       "password": "Hasło",
+      "passwordPlaceholder": "Podaj swoje hasło",
       "confirmPassword": "Potwierdź hasło",
+      "confirmPasswordPlaceholder": "Potwierdź swoje hasło",
       "register": "Zarejestruj się",
       "alreadyHaveAccount": "Masz już konto?",
       "login": "Zaloguj się"
@@ -72,5 +75,11 @@
     "poolCard": {
       "eyebrow": "Pula"
     }
+  },
+  "user": {
+    "settings": "Ustawienia",
+    "login": "Zaloguj się",
+    "register": "Zarejestruj się",
+    "logout": "Wyloguj się"
   }
 }

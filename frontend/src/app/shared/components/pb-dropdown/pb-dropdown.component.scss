@@ -3,9 +3,13 @@
 }
 
 .dropdown-trigger {
-  @apply flex items-center justify-between rounded-lg border border-app-border bg-app-surface px-3 py-2 text-sm text-app-text shadow-surface transition duration-200 ease-out;
+  @apply flex items-center justify-between rounded-lg border border-app-border bg-app-surface text-sm text-app-text shadow-surface transition duration-200 ease-out;
+  height: var(--dropdown-trigger-height, 40px);
+  padding: 0 12px;
   cursor: pointer;
   user-select: none;
+  min-width: 40px;
+  gap: 8px;
 }
 
 .dropdown-trigger:hover,

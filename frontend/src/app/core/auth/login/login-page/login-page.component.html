@@ -1,12 +1,10 @@
 <div class="login-container">
   <app-pb-card stylesCss="w-full max-w-[420px]">
-    <ng-content pbCardHeader>
-      <div class="card-logo">
-        <!-- <img src="assets/logo.png" alt="PoorBet Logo" class="logo-image" /> -->
-      </div>
-      <h2 class="card-title">{{ "auth.login.title" | transloco }}</h2>
-      <p class="card-subtitle">{{ "auth.login.subtitle" | transloco }}</p>
-    </ng-content>
+    <app-auth-card-header
+      pbCardHeader
+      titleKey="auth.login.title"
+      subtitleKey="auth.login.subtitle"
+    ></app-auth-card-header>
 
     <div pbCardBody>
       <app-login-form (submitForm)="onSubmitForm($event)"></app-login-form>
