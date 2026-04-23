@@ -1,0 +1,27 @@
+<div class="login-container">
+  <app-pb-card stylesCss="w-full max-w-[420px]">
+    <ng-content pbCardHeader>
+      <div class="card-logo">
+        <!-- <img src="assets/logo.png" alt="PoorBet Logo" class="logo-image" /> -->
+      </div>
+      <h2 class="card-title">{{ "auth.login.title" | transloco }}</h2>
+      <p class="card-subtitle">{{ "auth.login.subtitle" | transloco }}</p>
+    </ng-content>
+
+    <div pbCardBody>
+      <app-login-form (submitForm)="onSubmitForm($event)"></app-login-form>
+
+      <div class="auth-footer">
+        {{ "auth.login.dontHaveAccount" | transloco }}
+        <pb-button
+          size="sm"
+          type="link"
+          variant="link"
+          [routerLink]="RoutePath.Register"
+        >
+          {{ "auth.login.register" | transloco }}
+        </pb-button>
+      </div>
+    </div>
+  </app-pb-card>
+</div>

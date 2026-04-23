@@ -1,24 +1,23 @@
 package com.poorbet.matchservice.match.matchpool.service;
 
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
-
+import com.poorbet.commons.rabbit.events.match.dto.MatchResultEventDto;
+import com.poorbet.matchservice.match.match.domain.Match;
+import com.poorbet.matchservice.match.match.domain.MatchStatus;
 import com.poorbet.matchservice.match.match.dto.MatchResultDto;
+import com.poorbet.matchservice.match.match.repository.MatchRepository;
+import com.poorbet.matchservice.match.matchpool.domain.PoolStatus;
+import com.poorbet.matchservice.match.matchpool.repository.MatchPoolRepository;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.poorbet.matchservice.match.match.domain.Match;
-import com.poorbet.matchservice.match.match.domain.MatchStatus;
-import com.poorbet.matchservice.match.matchpool.domain.PoolStatus;
-import com.poorbet.matchservice.match.matchpool.repository.MatchPoolRepository;
-import com.poorbet.matchservice.match.match.repository.MatchRepository;
-
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
@@ -71,14 +70,26 @@ public class MatchPoolLifecycleManager {
         sendPoolFinishedEventsAsync(poolId, results);
     }
 
-    private void sendPoolFinishedEventsAsync(UUID poolId, List<MatchResultDto> matchIds) {
+    private void sendPoolFinishedEventsAsync(UUID poolId, List<MatchResultDto> results) {
         try {
-            matchPoolEventPublisher.publishMatchesFinished(matchIds);
+            List<MatchResultEventDto> eventResults = results.stream()
+                    .map(this::toEventDto)
+                    .toList();
+            log.info("eventResults - {}", eventResults);
+            matchPoolEventPublisher.publishMatchesFinished(eventResults);
 
             liveMatchSimulationManager.notifyPoolFinished(poolId);
 
         } catch (Exception e) {
             log.error("Failed to notify about finished pool {}", poolId, e);
         }
+    }
+
+    public MatchResultEventDto toEventDto(MatchResultDto dto) {
+        return new MatchResultEventDto(
+                dto.getId(),
+                dto.getHomeGoals(),
+                dto.getAwayGoals()
+        );
     }
 }

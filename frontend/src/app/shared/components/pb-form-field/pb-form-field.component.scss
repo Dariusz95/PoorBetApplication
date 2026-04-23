@@ -1,22 +1,22 @@
-.form-field-container {
+.form-field {
   @apply relative mb-6;
 
-  .input-wrapper {
+  &__control-wrapper {
     @apply flex items-center w-full;
   }
 
-  .form-field-label {
+  &__label {
     @apply text-app-text transition-colors duration-200;
   }
 
   &.focused {
-    .form-field-label {
+    .form-field__label {
       @apply text-app-accent;
     }
   }
 
   &.invalid {
-    .form-field-label {
+    .form-field__label {
       @apply text-app-danger;
     }
   }

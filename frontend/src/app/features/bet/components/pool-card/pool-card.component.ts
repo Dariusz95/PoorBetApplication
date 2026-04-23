@@ -61,6 +61,10 @@ export class PoolCardComponent {
     optionLabel: string,
     odds: number,
   ): void {
+    if (this.hasStarted()) {
+      return;
+    }
+
     this.betSlipService.toggleSelection({
       matchId: match.matchId,
       matchLabel: `${this.getTeamLabel(match.homeTeamId)} vs ${this.getTeamLabel(match.awayTeamId)}`,
@@ -72,6 +76,10 @@ export class PoolCardComponent {
 
   isSelected(matchId: string, optionValue: string): boolean {
     return this.betSlipService.isSelected(matchId, optionValue);
+  }
+
+  hasStarted(): boolean {
+    return new Date(this.pool().scheduledStartTime).getTime() <= Date.now();
   }
 
   private getTeamLabel(teamId: string): string {

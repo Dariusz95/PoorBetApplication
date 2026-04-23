@@ -2,10 +2,15 @@
   [variant]="selected() ? 'primary' : 'secondary'"
   size="sm"
   [fullWidth]="true"
+  [disabled]="disabled()"
   [ariaLabel]="'Typ ' + label() + ' z kursem ' + value()"
   (buttonClick)="oddsClick.emit()"
 >
-  <div class="odds-button-content" [class.odds-button-content--selected]="selected()">
+  <div
+    class="odds-button-content"
+    [class.odds-button-content--selected]="selected()"
+    [class.odds-button-content--disabled]="disabled()"
+  >
     <span class="odds-button-content__label">{{ label() }}</span>
     <span class="odds-button-content__value">{{ value() }}</span>
   </div>

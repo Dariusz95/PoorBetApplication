@@ -1,7 +1,7 @@
 package com.poorbet.couponservice.client;
 
+import com.poorbet.couponservice.domain.BetType;
 import com.poorbet.couponservice.dto.MatchResultMapDto;
-import com.poorbet.couponservice.domain.OddsType;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
@@ -32,7 +32,7 @@ public class MatchClient {
                 .block();
     }
 
-    public Double getOdd(UUID matchId, OddsType type) {
+    public Double getOdd(UUID matchId, BetType type) {
         return matchServiceWebClientBuilder
                 .get()
                 .uri(uriBuilder -> uriBuilder

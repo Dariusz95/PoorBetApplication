@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, input } from '@angular/core';
 import { IconPathPipe } from '../../pipes/icon-path.pipe';
-import { IconSize, IconType } from './pb-icon.model';
+import { IconType } from './icon-type.model';
+import { IconSize } from './pb-icon.model';
 
 @Component({
   selector: 'pb-icon',

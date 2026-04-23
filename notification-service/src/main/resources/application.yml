@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: notification-service
+  rabbitmq:
+    host: ${RABBITMQ_HOST}
+    port: 5672
+    username: ${RABBITMQ_USER}
+    password: ${RABBITMQ_PASSWORD}
+
+messaging:
+  consumers:
+    WALLET_BALANCE_CHANGED:
+      queue: notification.wallet.updated.queue
+
+poorbet:
+  security:
+    issuer: ${AUTH_ISSUER_URI}
+    jwk-set-uri: ${AUTH_JWKS_URI}

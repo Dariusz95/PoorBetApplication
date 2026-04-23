@@ -1,5 +1,6 @@
 package com.poorbet.matchservice.match.client;
 
+import com.poorbet.commons.auth.webclient.ServiceJwtForwardingFilter;
 import com.poorbet.matchservice.match.match.dto.TeamStatsDto;
 import com.poorbet.matchservice.match.match.dto.request.TeamStatsRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -24,14 +25,15 @@ public class TeamsClient {
     }
 
     public List<TeamStatsDto> getStatsByIds(List<UUID> teamIds) {
-
         try {
-        return teamsWebClient.post()
-                .uri("/internal/teams/stats")
-                .bodyValue(new TeamStatsRequest(teamIds))
-                .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<List<TeamStatsDto>>() {})
-                .block();
+            return teamsWebClient.post()
+                    .uri("/internal/teams/stats")
+                    .bodyValue(new TeamStatsRequest(teamIds))
+                    .attribute(ServiceJwtForwardingFilter.SKIP_AUTH, true)
+                    .retrieve()
+                    .bodyToMono(new ParameterizedTypeReference<List<TeamStatsDto>>() {
+                    })
+                    .block();
         } catch (WebClientResponseException ex) {
             log.error("Teams service returned {}: {}", ex.getStatusCode(), ex.getResponseBodyAsString());
             return Collections.emptyList();
@@ -42,7 +44,8 @@ public class TeamsClient {
     }
 
     public List<TeamStatsDto> randomTeams(int count) {
-        ParameterizedTypeReference<List<TeamStatsDto>> typeRef = new ParameterizedTypeReference<List<TeamStatsDto>>() {};
+        ParameterizedTypeReference<List<TeamStatsDto>> typeRef = new ParameterizedTypeReference<List<TeamStatsDto>>() {
+        };
 
         try {
             return teamsWebClient.get()
@@ -51,6 +54,7 @@ public class TeamsClient {
                             .queryParam("count", count)
                             .build()
                     )
+                    .attribute(ServiceJwtForwardingFilter.SKIP_AUTH, true)
                     .retrieve()
                     .bodyToMono(typeRef)
                     .block();

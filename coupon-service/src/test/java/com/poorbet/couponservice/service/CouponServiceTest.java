@@ -1,5 +1,19 @@
 package com.poorbet.couponservice.service;
 
+import com.poorbet.couponservice.client.MatchClient;
+import com.poorbet.couponservice.client.wallet.WalletClient;
+import com.poorbet.couponservice.domain.*;
+import com.poorbet.couponservice.dto.CreateBetDto;
+import com.poorbet.couponservice.dto.CreateCouponDto;
+import com.poorbet.couponservice.repository.CouponRepository;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
@@ -7,29 +21,9 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import com.poorbet.couponservice.client.MatchClient;
-import com.poorbet.couponservice.domain.Bet;
-import com.poorbet.couponservice.domain.BetStatus;
-import com.poorbet.couponservice.domain.BetType;
-import com.poorbet.couponservice.domain.Coupon;
-import com.poorbet.couponservice.domain.CouponStatus;
-import com.poorbet.couponservice.domain.OddsType;
-import com.poorbet.couponservice.dto.CreateBetDto;
-import com.poorbet.couponservice.dto.CreateCouponDto;
-import com.poorbet.couponservice.repository.CouponRepository;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("CouponService Unit Tests")
@@ -40,6 +34,9 @@ class CouponServiceTest {
 
     @Mock
     private MatchClient matchClient;
+
+    @Mock
+    private WalletClient walletClient;
 
     @InjectMocks
     private CouponService couponService;
@@ -76,7 +73,8 @@ class CouponServiceTest {
     }
 
     private void setupMatchClientWithOdd(Double oddValue) {
-        when(matchClient.getOdd(any(UUID.class), eq(OddsType.HOME_WIN)))
+        doNothing().when(walletClient).reserve(any(UUID.class), any());
+        when(matchClient.getOdd(any(UUID.class), any(BetType.class)))
                 .thenReturn(oddValue);
     }
 
@@ -139,7 +137,7 @@ class CouponServiceTest {
 
         // Assert
         verify(matchClient, times(expectedBetCount))
-                .getOdd(any(UUID.class), eq(OddsType.HOME_WIN));
+                .getOdd(any(UUID.class), any(BetType.class));
     }
 
     @Test
@@ -254,8 +252,9 @@ class CouponServiceTest {
     @DisplayName("Should propagate MatchClient exceptions")
     void shouldPropagateMatchClientExceptions() {
         // Arrange
-        when(matchClient.getOdd(any(UUID.class), eq(OddsType.HOME_WIN)))
+        when(matchClient.getOdd(any(UUID.class), eq(BetType.HOME_WIN)))
                 .thenThrow(new RuntimeException("MatchClient unavailable"));
+        doNothing().when(walletClient).reserve(any(UUID.class), any());
 
         // Act & Assert
         assertThatThrownBy(() -> couponService.createCoupon(validCreateCouponDto, userId))

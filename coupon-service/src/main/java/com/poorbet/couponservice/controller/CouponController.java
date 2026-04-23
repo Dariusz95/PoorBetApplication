@@ -2,6 +2,7 @@ package com.poorbet.couponservice.controller;
 
 import com.poorbet.couponservice.dto.CreateCouponDto;
 import com.poorbet.couponservice.domain.Coupon;
+import com.poorbet.couponservice.security.CurrentUserProvider;
 import com.poorbet.couponservice.service.CouponService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -13,22 +14,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.UUID;
-
 @RestController
 @RequestMapping("/api/coupons")
 @RequiredArgsConstructor
 public class CouponController {
 
     private final CouponService couponService;
+    private final CurrentUserProvider currentUserProvider;
 
     @PostMapping
     @PreAuthorize("hasAuthority(T(com.poorbet.commons.security.PoorbetPermissions).COUPON_CREATE)")
-    public ResponseEntity<Coupon> createCoupon(
-            @RequestBody @Valid CreateCouponDto createCouponDto
-
-    ) {
-        Coupon coupon = couponService.createCoupon(createCouponDto, UUID.randomUUID());
+    public ResponseEntity<Coupon> createCoupon(@RequestBody @Valid CreateCouponDto createCouponDto) {
+        Coupon coupon = couponService.createCoupon(createCouponDto, currentUserProvider.getUserId());
         return new ResponseEntity<>(coupon, HttpStatus.CREATED);
     }
 }

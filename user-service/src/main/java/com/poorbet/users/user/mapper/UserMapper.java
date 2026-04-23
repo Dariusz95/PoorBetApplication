@@ -4,19 +4,17 @@ import com.poorbet.users.user.dto.UserRegisterDto;
 import com.poorbet.users.user.dto.UserResponseDto;
 import com.poorbet.users.user.model.Role;
 import com.poorbet.users.user.model.User;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
 @Component
+@RequiredArgsConstructor
 public class UserMapper {
 
     private final PasswordEncoder passwordEncoder;
-
-    public UserMapper(PasswordEncoder passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
-    }
 
     public User toEntity(UserRegisterDto dto) {
         User user = new User();
@@ -32,7 +30,7 @@ public class UserMapper {
         return new UserResponseDto(
                 user.getId(),
                 user.getEmail(),
-                user.getRole().name(),
+                user.getRole(),
                 user.getCreatedAt()
         );
     }

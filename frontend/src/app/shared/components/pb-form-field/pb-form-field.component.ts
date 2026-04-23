@@ -3,7 +3,6 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  ContentChild,
   contentChild,
   inject,
   signal,
@@ -11,10 +10,7 @@ import {
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PbErrorsComponent } from '../pb-errors/pb-errors.component';
 import { ErrorValueMap } from '../pb-errors/types/error-value-map';
-import {
-  FORM_FIELD_CONTROL,
-  FormFieldControl,
-} from './directives/pb-form-field-control';
+import { FORM_FIELD_CONTROL } from './directives/pb-form-field-control';
 import { PbLabel } from './directives/pb-label';
 
 @Component({
@@ -27,9 +23,9 @@ import { PbLabel } from './directives/pb-label';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PbFormFieldComponent {
-  private readonly _changeDetectorRef = inject(ChangeDetectorRef);
+  private readonly _cdr = inject(ChangeDetectorRef);
 
-  @ContentChild(FORM_FIELD_CONTROL) control!: FormFieldControl;
+  control = contentChild.required(FORM_FIELD_CONTROL);
 
   labelRef = contentChild(PbLabel);
 
@@ -41,41 +37,41 @@ export class PbFormFieldComponent {
   invalid = signal(false);
   _labelId = '';
 
-  ngAfterContentInit() {
-    this.control.stateChanges.subscribe(() => {
+  ngAfterContentInit(): void {
+    this.control().stateChanges.subscribe(() => {
       this._updateFocusState();
       this._updateErrorsState();
       this._updateTouchedState();
       this._updateInvalidState();
 
-      this._changeDetectorRef.markForCheck();
+      this._cdr.markForCheck();
     });
   }
 
-  private _updateInvalidState() {
-    this.invalid.set(!!this.control.errors());
+  private _updateInvalidState(): void {
+    this.invalid.set(!!this.control().errors());
   }
 
-  private _updateFocusState() {
-    this.focused.set(this.control.focused());
+  private _updateFocusState(): void {
+    this.focused.set(this.control().focused());
   }
 
-  private _updateTouchedState() {
-    this.touched.set(this.control.touched());
-    if (this.control.touched()) {
+  private _updateTouchedState(): void {
+    this.touched.set(this.control().touched());
+    if (this.control().touched()) {
       this.touched.set(true);
     }
   }
 
-  private _updateErrorsState() {
-    const errors = this.control.errors();
+  private _updateErrorsState(): void {
+    const errors = this.control().errors();
 
     if (!errors) {
       this.errors.set(null);
-      
+
       return;
     }
 
-    this.errors.set(errors as ErrorValueMap);
+    this.errors.set(errors);
   }
 }

@@ -24,11 +24,13 @@ export class AuthService {
 
   register(request: RegisterRequest): Observable<any> {
     const url = `${this.apiBaseUrl}/register`;
+
     return this.http.post(url, request);
   }
 
   login(request: LoginRequest): Observable<LoginResponse> {
     const url = `${this.apiBaseUrl}/login`;
+    
     return this.http.post<LoginResponse>(url, request).pipe(
       tap((response) => {
         if (response.token) {

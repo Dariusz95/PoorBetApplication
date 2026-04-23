@@ -12,6 +12,7 @@ export class OddsButtonComponent {
   label = input.required<string>();
   value = input.required<number>();
   selected = input(false);
+  disabled = input(false);
 
   oddsClick = output<void>();
 }

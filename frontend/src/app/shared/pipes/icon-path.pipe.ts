@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { IconType } from '../components/pb-icon/pb-icon.model';
+import { IconType } from '@shared/components/pb-icon/icon-type.model';
 
 @Pipe({
   name: 'iconPath',

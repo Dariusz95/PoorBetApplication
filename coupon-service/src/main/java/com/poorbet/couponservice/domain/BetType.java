@@ -1,6 +1,6 @@
 package com.poorbet.couponservice.domain;
 
-import com.poorbet.couponservice.dto.MatchResultDto;
+import com.poorbet.commons.rabbit.events.match.dto.MatchResultEventDto;
 
 public enum BetType {
     HOME_WIN,
@@ -8,7 +8,7 @@ public enum BetType {
     AWAY_WIN;
 
 
-    public BetStatus mapToStatus(MatchResultDto result, int homeGoals, int awayGoals) {
+    public BetStatus mapToStatus(MatchResultEventDto result, int homeGoals, int awayGoals) {
         if (result == null) return BetStatus.PENDING;
 
         return switch (this) {

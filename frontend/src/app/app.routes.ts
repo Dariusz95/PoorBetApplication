@@ -1,18 +1,28 @@
 import { Routes } from '@angular/router';
+import { guestGuard } from '@core/auth/guards/guest.guard';
 import { AppLayoutComponent } from './core/layouts/app-layout/app-layout.component';
 import { RouteFragment } from './core/routing/route-fragment';
 
 export const routes: Routes = [
-  // {
-  //   path: '',
-  //   // canActivate: [rootRedirectGuard],
-  //   children: [],
-  // },
   {
-    path: '',
-    // path: RouteFragment.App,
+    path: RouteFragment.Auth,
     component: AppLayoutComponent,
-    //     canActivate: [authGuard],
+    canActivate: [guestGuard],
+    children: [
+      {
+        path: '',
+        loadChildren: () =>
+          import('./core/auth/auth.routes').then((m) => m.AUTH_ROUTES),
+      },
+      {
+        path: '**',
+        redirectTo: RouteFragment.Auth,
+      },
+    ],
+  },
+  {
+    path: RouteFragment.App,
+    component: AppLayoutComponent,
     children: [
       {
         path: '',
@@ -24,23 +34,7 @@ export const routes: Routes = [
     ],
   },
   {
-    path: RouteFragment.Auth,
-    component: AppLayoutComponent,
-    children: [
-      {
-        path: '',
-        loadChildren: () =>
-          import('./core/auth/auth.routes').then((m) => m.AUTH_ROUTES),
-      },
-    ],
-  },
-  //   {
-  //     path: RouteFragment.Auth,
-  //     loadChildren: () =>
-  //       import('./core/auth/auth.routes').then((m) => m.AUTH_ROUTES),
-  //   },
-  {
     path: '**',
-    redirectTo: '',
+    redirectTo: RouteFragment.App,
   },
 ];

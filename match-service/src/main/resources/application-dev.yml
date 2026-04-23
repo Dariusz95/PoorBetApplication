@@ -58,6 +58,7 @@ spring:
   flyway:
     enabled: true
     locations: classpath:db/migration
+
   data:
     redis:
       host: redis
@@ -76,6 +77,12 @@ match-pool:
   pools-in-advance: 5
   pool-interval-minutes: 3
   schedule-rate-ms: 60000
+
+messaging:
+  source-service: match-service
+
+  exchanges:
+    match: match.events
 
 auth:
   service:

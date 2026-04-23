@@ -1,31 +1,68 @@
 package com.poorbet.matchservice.match.config.rabbitmq;
 
-import org.springframework.amqp.core.FanoutExchange;
-import org.springframework.amqp.rabbit.connection.ConnectionFactory;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import com.poorbet.commons.rabbit.EventDefinition;
+import com.poorbet.commons.rabbit.EventKey;
+import com.poorbet.commons.rabbit.EventRegistry;
+import com.poorbet.commons.rabbit.MessagingProperties;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.core.*;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+@Slf4j
 @Configuration
+@EnableConfigurationProperties(MessagingProperties.class)
 public class RabbitConfig {
 
-    public static final String MATCH_EVENTS_EXCHANGE = "match.events";
-
     @Bean
-    public FanoutExchange finishedMatchesExchange() {
-        return new FanoutExchange(MATCH_EVENTS_EXCHANGE, true, false);
-    }
+    public Declarables declarables(MessagingProperties properties,
+                                   EventRegistry eventRegistry) {
 
-    @Bean
-    public RabbitTemplate rabbitTemplate(
-            ConnectionFactory connectionFactory,
-            MessageConverter messageConverter) {
+        Map<String, TopicExchange> exchangeCache = new HashMap<>();
+        List<Declarable> declarables = new ArrayList<>();
 
-        RabbitTemplate template = new RabbitTemplate(connectionFactory);
-        template.setMessageConverter(messageConverter);
-        return template;
+        Map<EventKey, MessagingProperties.ConsumerConfig> list = properties.getConsumers();
+
+        if (list == null || list.isEmpty()) {
+            log.info("No RabbitMQ consumers configured for this service");
+            return new Declarables(declarables);
+        }
+
+        properties.getConsumers().forEach((eventKey, consumer) -> {
+
+            EventDefinition<?> event = eventRegistry.get(eventKey);
+
+            if (event == null) {
+                throw new IllegalStateException("Unknown event key: " + eventKey);
+            }
+
+            TopicExchange exchange = exchangeCache.computeIfAbsent(
+                    event.exchange(),
+                    name -> new TopicExchange(name, true, false)
+            );
+
+            Queue queue = QueueBuilder.durable(consumer.getQueue())
+                    .build();
+
+            Binding binding = BindingBuilder
+                    .bind(queue)
+                    .to(exchange)
+                    .with(event.routingKey());
+
+            declarables.add(exchange);
+            declarables.add(queue);
+            declarables.add(binding);
+        });
+
+        return new Declarables(declarables);
     }
 
     @Bean

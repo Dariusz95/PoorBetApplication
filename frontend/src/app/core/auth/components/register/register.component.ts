@@ -19,7 +19,6 @@ import { PbButtonComponent } from '../../../../shared/components/pb-button/pb-bu
 import { PbCardComponent } from '../../../../shared/components/pb-card/pb-card.component';
 import { PbLabel } from '../../../../shared/components/pb-form-field/directives/pb-label';
 import { PbFormFieldComponent } from '../../../../shared/components/pb-form-field/pb-form-field.component';
-import { IconType } from '../../../../shared/components/pb-icon/pb-icon.model';
 import { PbInputComponent } from '../../../../shared/components/pb-input/pb-input.component';
 import { RoutePath } from '../../../routing/route-path';
 import { RegisterRequest } from '../../requests/register-request';
@@ -27,6 +26,7 @@ import { AuthService } from '../../services/auth.service';
 import { passwordMatchValidator } from '../../utils/password-match-validator';
 import { RegistrationFormGroup } from './types/registration-form-group';
 import { RegistrationFormValue } from './types/registration-form-value';
+import { IconType } from '@shared/components/pb-icon/icon-type.model';
 
 @Component({
   selector: 'app-register',
@@ -70,7 +70,7 @@ export class RegisterComponent implements OnInit {
             Validators.required,
             Validators.minLength(8),
             Validators.pattern(
-              /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
+              /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
             ),
           ],
         }),
@@ -81,7 +81,7 @@ export class RegisterComponent implements OnInit {
       },
       {
         validators: passwordMatchValidator,
-      }
+      },
     );
   }
 
@@ -107,7 +107,7 @@ export class RegisterComponent implements OnInit {
       .pipe(
         finalize(() => {
           this.pending.set(false);
-        })
+        }),
       )
       .subscribe({
         next: (response) => {

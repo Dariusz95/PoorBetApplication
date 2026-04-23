@@ -1,26 +1,23 @@
 import { Routes } from '@angular/router';
 import { RouteFragment } from '../routing/route-fragment';
-import { guestGuard } from './guards/guest.guard';
 
 export const AUTH_ROUTES: Routes = [
   {
     path: RouteFragment.Login,
-    canActivate: [guestGuard],
     loadComponent: () =>
-      import('./components/login/login.component').then(
-        (m) => m.LoginComponent
+      import('./login/login-page/login-page.component').then(
+        (m) => m.LoginPageComponent,
       ),
   },
   {
     path: RouteFragment.Register,
-    canActivate: [guestGuard],
     loadComponent: () =>
       import('./components/register/register.component').then(
-        (m) => m.RegisterComponent
+        (m) => m.RegisterComponent,
       ),
   },
   {
     path: RouteFragment.WildCard,
-    redirectTo: `${RouteFragment.Auth}/${RouteFragment.Register}`,
+    redirectTo: RouteFragment.Login,
   },
 ];

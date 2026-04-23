@@ -28,6 +28,9 @@ public class Coupon {
     @DecimalMin("1.00")
     private BigDecimal stake;
 
+    @Column(nullable = false)
+    private UUID userId;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private CouponStatus status;

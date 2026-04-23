@@ -47,12 +47,12 @@ import { FormError } from './types/form-error';
   ],
 })
 export class PbErrorsComponent {
-  errors = input.required<ErrorValueMap>();
+  errors = input.required<ErrorValueMap | null>();
   showErrors = input(true);
   displaySingleError = input(true);
 
   readonly formErrors: Signal<FormError[]> = computed(() => {
-    const errorEntries = Object.entries(this.errors());
+    const errorEntries = Object.entries(this.errors() || {});
 
     if (errorEntries.length === 0) return [];
 

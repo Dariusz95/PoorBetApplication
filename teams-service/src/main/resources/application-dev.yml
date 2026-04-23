@@ -26,8 +26,10 @@ poorbet:
   security:
     enabled: true
     issuer: ${AUTH_ISSUER_URI}
+    jwk-set-uri: ${AUTH_JWKS_URI}
     internal-audience:
       - teams-service
     unprotected-paths:
       - /api/teams/public/**
-    jwk-set-uri: ${AUTH_JWKS_URI}
+      - /internal/teams/stats
+      - /internal/teams/random

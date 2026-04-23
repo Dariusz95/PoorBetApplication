@@ -2,7 +2,6 @@
   <app-pb-card>
     <div pbCardHeader>
       <div>
-        <p class="pool-card__eyebrow">{{ t("eyebrow") }}</p>
         <p class="pool-card__time">
           {{ pool().scheduledStartTime | date: "HH:mm:ss" }}
         </p>
@@ -11,7 +10,7 @@
 
     <div pbCardBody>
       @for (match of pool().matches; track match.matchId) {
-        <section class="pool-card__match">
+        <section class="pool-card__match" [class.pool-card__match--disabled]="hasStarted()">
           <div class="pool-card__teams">
             <span class="pool-card__team">
 
@@ -36,18 +35,21 @@
               label="1"
               [value]="match.odds.homeWin"
               [selected]="isSelected(match.matchId, 'HOME_WIN')"
+              [disabled]="hasStarted()"
               (oddsClick)="toggleBet(match, 'HOME_WIN', '1', match.odds.homeWin)"
             ></app-odds-button>
             <app-odds-button
               label="X"
               [value]="match.odds.draw"
               [selected]="isSelected(match.matchId, 'DRAW')"
+              [disabled]="hasStarted()"
               (oddsClick)="toggleBet(match, 'DRAW', 'X', match.odds.draw)"
             ></app-odds-button>
             <app-odds-button
               label="2"
               [value]="match.odds.awayWin"
               [selected]="isSelected(match.matchId, 'AWAY_WIN')"
+              [disabled]="hasStarted()"
               (oddsClick)="toggleBet(match, 'AWAY_WIN', '2', match.odds.awayWin)"
             ></app-odds-button>
           </div>

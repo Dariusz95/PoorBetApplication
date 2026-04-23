@@ -33,6 +33,7 @@ public class JwtUtil {
                                       List<String> roles,
                                       List<String> permissions,
                                       String tokenType,
+                                      String userId,
                                       String clientId,
                                       List<String> audience) {
         Map<String, Object> claims = new HashMap<>();
@@ -42,6 +43,10 @@ public class JwtUtil {
 
         if (StringUtils.hasText(clientId)) {
             claims.put("client_id", clientId);
+        }
+
+        if (StringUtils.hasText(userId)) {
+            claims.put("uid", userId);
         }
 
         if (audience != null && !audience.isEmpty()) {

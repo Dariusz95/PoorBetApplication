@@ -2,12 +2,8 @@
   @apply block;
 }
 
-.pool-card__eyebrow {
-  @apply text-xs uppercase tracking-wide text-app-textMuted;
-}
-
 .pool-card__time {
-  @apply text-sm text-app-textMuted;
+  @apply text-sm font-semibold text-app-textMuted;
 }
 
 .pool-card__status {
@@ -28,6 +24,10 @@
 
 .pool-card__match {
   @apply rounded-lg border border-app-border bg-app-surfaceSoft p-3;
+}
+
+.pool-card__match--disabled {
+  @apply opacity-55 grayscale;
 }
 
 .pool-card__teams {
