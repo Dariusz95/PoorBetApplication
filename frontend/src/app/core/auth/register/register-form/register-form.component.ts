@@ -9,12 +9,12 @@ import {
 } from '@angular/forms';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { IconComponent } from '@shared/components/icon/icon.component';
+import { PbButtonComponent } from '@shared/components/pb-button/pb-button.component';
 import { PbLabel } from '@shared/components/pb-form-field/directives/pb-label';
 import { PbFormFieldComponent } from '@shared/components/pb-form-field/pb-form-field.component';
 import { IconType } from '@shared/components/pb-icon/icon-type.model';
 import { PbInputIconDirective } from '@shared/components/pb-input/directives/pb-input-icon.directive';
 import { PbInputComponent } from '@shared/components/pb-input/pb-input.component';
-import { PbButtonComponent } from '@shared/index';
 import { PASSWORD_REGEX } from '@shared/validators/regexes/passwordRegex';
 import { passwordMatchValidator } from '../../utils/password-match-validator';
 import { RegisterForm } from '../types/register-form';

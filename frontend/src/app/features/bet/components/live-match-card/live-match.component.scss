@@ -2,4 +2,60 @@
   @apply block;
 }
 
+.live-match-card {
+  &__header {
+    @apply flex w-full justify-between pb-4;
+  }
 
+  &__status {
+    @apply flex items-center gap-2;
+  }
+
+  &__live-dot {
+    @apply relative flex h-2.5 w-2.5;
+  }
+
+  &__live-dot-ping {
+    @apply absolute inline-flex h-full w-full animate-ping rounded-full bg-app-danger opacity-80;
+  }
+
+  &__live-dot-core {
+    @apply relative inline-flex h-2.5 w-2.5 rounded-full bg-app-danger;
+  }
+
+  &__status-label {
+    @apply text-xs font-semibold uppercase tracking-wide text-app-text;
+  }
+
+  &__minute {
+    @apply text-sm font-semibold text-app-primary;
+  }
+
+  &__body-grid {
+    @apply grid grid-cols-[1fr_auto_1fr] items-center gap-3 px-4;
+  }
+
+  &__team {
+    @apply text-center;
+  }
+
+  &__team-name {
+    @apply mb-2 line-clamp-2 text-sm font-medium text-app-text;
+  }
+
+  &__score {
+    @apply text-3xl font-bold;
+  }
+
+  &__score--home {
+    @apply text-app-accent;
+  }
+
+  &__score--away {
+    @apply text-app-primary;
+  }
+
+  &__vs {
+    @apply text-xs font-semibold uppercase tracking-wide text-app-textMuted;
+  }
+}

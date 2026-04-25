@@ -1,0 +1,3 @@
+@if ((isLoggedIn$ | async) && balance() !== null) {
+  <span class="user-dropdown__balance">{{ balance() | number: "1.2-2" }}</span>
+}

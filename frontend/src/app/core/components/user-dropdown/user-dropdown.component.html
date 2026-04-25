@@ -4,7 +4,12 @@
     [optionTemplate]="userMenuTpl"
     [highlightedOption]="false"
   >
-    <app-icon dropdownLabel icon="account_circle" size="lg"></app-icon>
+    <div dropdownLabel class="user-dropdown__trigger">
+      <div class="user-dropdown__balance">
+        <app-user-balance />
+      </div>
+      <app-icon icon="account_circle" size="lg"></app-icon>
+    </div>
   </app-pb-dropdown>
 
   <ng-template #userMenuTpl let-option>

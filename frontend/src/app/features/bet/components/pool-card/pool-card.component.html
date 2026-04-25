@@ -1,29 +1,23 @@
 <ng-container *transloco="let t; prefix: 'bet.poolCard'">
   <app-pb-card>
-    <div pbCardHeader>
-      <div>
-        <p class="pool-card__time">
-          {{ pool().scheduledStartTime | date: "HH:mm:ss" }}
-        </p>
-      </div>
-    </div>
-
     <div pbCardBody>
       @for (match of pool().matches; track match.matchId) {
-        <section class="pool-card__match" [class.pool-card__match--disabled]="hasStarted()">
+        <section
+          class="pool-card__match"
+          [class.pool-card__match--disabled]="hasStarted()"
+        >
           <div class="pool-card__teams">
             <span class="pool-card__team">
-
-              @if (getTeamName(match.homeTeamId) | async; as homeTeam) {
-                {{ homeTeam.name }}
+              @if (getTeamName(match.homeTeamId) | async; as homeTeamName) {
+                {{ homeTeamName }}
               } @else {
                 {{ match.homeTeamId | slice: 0 : 8 }}
               }
             </span>
             <span class="pool-card__versus">vs</span>
             <span class="pool-card__team pool-card__team--away">
-              @if (getTeamName(match.awayTeamId) | async; as awayTeam) {
-                {{ awayTeam.name }}
+              @if (getTeamName(match.awayTeamId) | async; as awayTeamName) {
+                {{ awayTeamName }}
               } @else {
                 {{ match.awayTeamId | slice: 0 : 8 }}
               }
@@ -36,7 +30,9 @@
               [value]="match.odds.homeWin"
               [selected]="isSelected(match.matchId, 'HOME_WIN')"
               [disabled]="hasStarted()"
-              (oddsClick)="toggleBet(match, 'HOME_WIN', '1', match.odds.homeWin)"
+              (oddsClick)="
+                toggleBet(match, 'HOME_WIN', '1', match.odds.homeWin)
+              "
             ></app-odds-button>
             <app-odds-button
               label="X"
@@ -50,7 +46,9 @@
               [value]="match.odds.awayWin"
               [selected]="isSelected(match.matchId, 'AWAY_WIN')"
               [disabled]="hasStarted()"
-              (oddsClick)="toggleBet(match, 'AWAY_WIN', '2', match.odds.awayWin)"
+              (oddsClick)="
+                toggleBet(match, 'AWAY_WIN', '2', match.odds.awayWin)
+              "
             ></app-odds-button>
           </div>
         </section>

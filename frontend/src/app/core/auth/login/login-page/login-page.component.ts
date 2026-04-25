@@ -18,6 +18,7 @@ import { LoginRequest } from '../../requests/login-request';
 import { AuthService } from '../../services/auth.service';
 import { LoginFormComponent } from '../login-form/login-form.component';
 import { LoginModel } from '../types/login.model';
+import { PbCardHeaderDirective } from "@shared/components/pb-card/pb-card-header.directive";
 
 @Component({
   selector: 'app-login-page',
@@ -32,7 +33,8 @@ import { LoginModel } from '../types/login.model';
     TranslocoPipe,
     LoginFormComponent,
     AuthCardHeaderComponent,
-  ],
+    PbCardHeaderDirective
+],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

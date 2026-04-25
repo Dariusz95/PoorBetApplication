@@ -1,16 +1,18 @@
 import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TranslocoDirective } from '@jsverse/transloco';
-import { map, takeUntil } from 'rxjs';
+import { map } from 'rxjs';
 import { IconComponent } from '../../../shared/components/icon/icon.component';
 import { DropdownOption } from '../../../shared/components/pb-dropdown/dropdown-option';
 import { PbDropdownComponent } from '../../../shared/components/pb-dropdown/pb-dropdown.component';
+import { LiveEventsService } from '../../../shared/services/live-events.service';
 import { AuthService } from '../../auth/services/auth.service';
 import { RoutePath } from '../../routing/route-path';
 import { RoutingService } from '../../routing/routing.service';
+import { UserBalanceComponent } from '../user-balance/user-balance.component';
 import { UserMenuAction } from './user-menu-action';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 interface UserDropdownOption extends DropdownOption<UserMenuAction> {
   visible: (isLoggedIn: boolean) => boolean;
@@ -25,12 +27,13 @@ interface UserDropdownOption extends DropdownOption<UserMenuAction> {
     PbDropdownComponent,
     ReactiveFormsModule,
     IconComponent,
+    UserBalanceComponent,
   ],
   templateUrl: './user-dropdown.component.html',
   styleUrl: './user-dropdown.component.scss',
 })
 export class UserDropdownComponent {
-  private readonly isLoggedIn$ = inject(AuthService).isLoggedIn$;
+  protected readonly isLoggedIn$ = inject(AuthService).isLoggedIn$;
   private readonly routingService = inject(RoutingService);
   private readonly authService = inject(AuthService);
   private readonly destroyRef = inject(DestroyRef);

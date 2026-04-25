@@ -8,10 +8,11 @@ import {
 } from '@angular/core';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { PbCardComponent } from '@shared/components/pb-card/pb-card.component';
-import { Observable, shareReplay, tap } from 'rxjs';
+import { Uuid } from '@shared/types/uuid.type';
+import { map, Observable } from 'rxjs';
 import { BetSlipService } from '../../services/bet-slip.service';
 import { TeamService } from '../../services/team.service';
-import { MatchDto, PoolMatch, ShortTeamInfo } from '../../types/match.types';
+import { MatchDto, PoolMatch } from '../../types/match.types';
 import { OddsButtonComponent } from '../odds-button/odds-button.component';
 
 @Component({
@@ -33,26 +34,10 @@ export class PoolCardComponent {
 
   private readonly teamService = inject(TeamService);
   private readonly betSlipService = inject(BetSlipService);
-  private readonly teamCache = new Map<string, Observable<ShortTeamInfo>>();
   private readonly teamNames = signal<Record<string, string>>({});
 
-  getTeamName(teamId: string): Observable<ShortTeamInfo> {
-    if (!this.teamCache.has(teamId)) {
-      this.teamCache.set(
-        teamId,
-        this.teamService.getTeam(teamId).pipe(
-          tap((team) =>
-            this.teamNames.update((current) => ({
-              ...current,
-              [teamId]: (team as ShortTeamInfo).name,
-            })),
-          ),
-          shareReplay(1),
-        ),
-      );
-    }
-
-    return this.teamCache.get(teamId)!;
+  getTeamName(teamId: Uuid): Observable<string> {
+    return this.teamService.getDetails(teamId).pipe(map((team) => team.name));
   }
 
   toggleBet(

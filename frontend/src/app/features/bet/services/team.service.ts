@@ -14,7 +14,7 @@ export class TeamService {
 
   private BASE_URL = `${environment.backend.baseURL}/api/teams/public`;
 
-  getTeam(teamId: string): Observable<ShortTeamInfo> {
+  getDetails(teamId: string): Observable<ShortTeamInfo> {
     if (!teamId) {
       throw new Error('Team ID is required');
     }

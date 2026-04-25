@@ -1,10 +1,16 @@
-<div class="card-wrap">
-  <div class="card__border">
-    <div class="card__border-sweep"></div>
-  </div>
+<div
+  class="card-wrap"
+  [class.card-wrap--highlighted]="variant() === 'highlighted'"
+  [class.card-wrap--default]="variant() === 'default'"
+>
+  @if (variant() === "highlighted") {
+    <div class="card__border">
+      <div class="card__border-sweep"></div>
+    </div>
+  }
 
   <div class="pb-card">
-    <header class="pb-card__header">
+    <header class="pb-card__header" [class.header-exists]="!!header()">
       <ng-content select="[pbCardHeader]"></ng-content>
     </header>
     <div class="pb-card__body">

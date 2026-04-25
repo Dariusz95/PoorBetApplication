@@ -3,66 +3,68 @@
 }
 
 .card-wrap {
-  position: relative;
-}
+  @apply relative;
 
-.card__border {
-  position: absolute;
-  inset: -1px;
-  // @apply border-radius-xl;
-  border-radius: 24px;
-  overflow: hidden;
-  z-index: 0;
+  .card__border {
+    position: absolute;
+    inset: -1px;
+    border-radius: 24px;
+    overflow: hidden;
+    z-index: 0;
 
-  background: linear-gradient(
-    160deg,
-    hsl(0, 0%, 28%) 0%,
-    hsla(277, 60%, 38%, 0.8) 55%,
-    hsla(306, 60%, 38%, 0.7) 100%
-  );
-}
+    background: linear-gradient(
+      160deg,
+      hsl(0, 0%, 28%) 0%,
+      hsla(277, 60%, 38%, 0.8) 55%,
+      hsla(306, 60%, 38%, 0.7) 100%
+    );
 
-.card__border-sweep {
-  pointer-events: none;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 200%;
-  height: 10rem;
-  transform: translate(-50%, -50%) rotate(0deg);
-  transform-origin: center center;
-  background: linear-gradient(
-    0deg,
-    hsla(0, 0%, 100%, 0) 0%,
-    hsla(277, 95%, 65%, 0.7) 40%,
-    hsla(277, 95%, 65%, 0.7) 60%,
-    hsla(0, 0%, 100%, 0) 100%
-  );
-  animation: card-sweep 8s linear infinite;
-}
-
-@keyframes card-sweep {
-  to {
-    transform: translate(-50%, -50%) rotate(360deg);
+    &-sweep {
+      pointer-events: none;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 200%;
+      height: 10rem;
+      transform: translate(-50%, -50%) rotate(0deg);
+      transform-origin: center center;
+      background: linear-gradient(
+        0deg,
+        hsla(0, 0%, 100%, 0) 0%,
+        hsla(277, 95%, 65%, 0.7) 40%,
+        hsla(277, 95%, 65%, 0.7) 60%,
+        hsla(0, 0%, 100%, 0) 100%
+      );
+      animation: card-sweep 8s linear infinite;
+    }
   }
-}
 
-.pb-card {
-  @apply overflow-hidden rounded-xl  px-8 py-6;
-  position: relative;
-  z-index: 1;
-  background-color: hsl(240, 13%, 10%);
-  // box-shadow: 0px -16px 24px 0px rgba(255, 255, 255, 0.06) inset;
+  @keyframes card-sweep {
+    to {
+      transform: translate(-50%, -50%) rotate(360deg);
+    }
+  }
 
-  // box-shadow: theme("boxShadow.surface");
-  @apply shadow-surface;
-}
+  .pb-card {
+    @apply relative overflow-hidden rounded-xl px-8 py-6 shadow-surface z-10;
+    background-color: hsl(240, 13%, 10%);
 
-.pb-card__header {
-  @apply flex flex-col items-center justify-center text-center py-6;
-  @apply border-b-[1px] border-app-border;
-}
+    &__header {
+      @apply flex flex-col items-center justify-center text-center;
+    }
 
-.pb-card__body {
-  @apply space-y-3 py-6;
+    &__header.header-exists {
+      @apply border-b-[1px] border-app-border;
+    }
+
+    &__body {
+      @apply space-y-3 py-6;
+    }
+  }
+
+  &--default {
+    .pb-card {
+      @apply bg-app-surface;
+    }
+  }
 }
