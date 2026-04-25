@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -6,7 +5,6 @@ import {
   signal,
 } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
 import { RouteLink } from '@core/routing/route-link';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { finalize } from 'rxjs';
@@ -18,6 +16,7 @@ import { RegisterRequest } from '../../requests/register-request';
 import { AuthService } from '../../services/auth.service';
 import { RegisterFormComponent } from '../register-form/register-form.component';
 import { RegisterModel } from '../types/register.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register-page',
@@ -26,7 +25,6 @@ import { RegisterModel } from '../types/register.model';
   imports: [
     FormsModule,
     ReactiveFormsModule,
-    CommonModule,
     PbCardComponent,
     PbButtonComponent,
     TranslocoPipe,
@@ -52,11 +50,11 @@ export class RegisterPageComponent {
       .register(request)
       .pipe(finalize(() => this.submitted.set(false)))
       .subscribe({
-        next: (response) => {
+        next: (response: unknown) => {
           console.log('[REGISTER RES]: ', response);
           this.router.navigate(RouteLink[RoutePath.Login]);
         },
-        error: (error) => {
+        error: (error: unknown) => {
           console.error('[REGISTER ERR]: ', error);
         },
       });

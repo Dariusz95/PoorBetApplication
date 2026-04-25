@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -15,8 +14,7 @@ import { PbLabel } from './directives/pb-label';
 
 @Component({
   selector: 'pb-form-field',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, PbErrorsComponent],
-  standalone: true,
+  imports: [FormsModule, ReactiveFormsModule, PbErrorsComponent],
   templateUrl: './pb-form-field.component.html',
   styleUrl: './pb-form-field.component.scss',
 

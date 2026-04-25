@@ -1,6 +1,4 @@
-import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { Observable } from 'rxjs';
 import { LanguageSwitcherComponent } from '../../../shared/components/language-switcher/language-switcher.component';
@@ -8,12 +6,12 @@ import { AuthService } from '../../auth/services/auth.service';
 import { RoutePath } from '../../routing/route-path';
 import { UserDropdownComponent } from '../user-dropdown/user-dropdown.component';
 import { MENU_ITEMS } from './models/menu-items';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-header',
   standalone: true,
   imports: [
-    CommonModule,
     RouterLink,
     LanguageSwitcherComponent,
     TranslocoDirective,

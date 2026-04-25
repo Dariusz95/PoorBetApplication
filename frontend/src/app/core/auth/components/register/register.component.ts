@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -14,6 +13,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { TranslocoDirective } from '@jsverse/transloco';
+import { IconType } from '@shared/components/pb-icon/icon-type.model';
 import { finalize } from 'rxjs';
 import { PbButtonComponent } from '../../../../shared/components/pb-button/pb-button.component';
 import { PbCardComponent } from '../../../../shared/components/pb-card/pb-card.component';
@@ -26,7 +26,6 @@ import { AuthService } from '../../services/auth.service';
 import { passwordMatchValidator } from '../../utils/password-match-validator';
 import { RegistrationFormGroup } from './types/registration-form-group';
 import { RegistrationFormValue } from './types/registration-form-value';
-import { IconType } from '@shared/components/pb-icon/icon-type.model';
 
 @Component({
   selector: 'app-register',
@@ -36,7 +35,6 @@ import { IconType } from '@shared/components/pb-icon/icon-type.model';
     PbFormFieldComponent,
     FormsModule,
     ReactiveFormsModule,
-    CommonModule,
     PbFormFieldComponent,
     TranslocoDirective,
     PbCardComponent,
@@ -110,11 +108,11 @@ export class RegisterComponent implements OnInit {
         }),
       )
       .subscribe({
-        next: (response) => {
+        next: (response: unknown) => {
           console.log('Rejestracja zakończona sukcesem:', response);
           this.form.reset();
         },
-        error: (error) => {
+        error: (error: unknown) => {
           console.error('Błąd rejestracji:', error);
         },
       });

@@ -1,6 +1,4 @@
-import { CommonModule } from '@angular/common';
 import { Component, computed, inject, OnInit } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import {
   LangDefinition,
@@ -9,13 +7,13 @@ import {
 } from '@jsverse/transloco';
 import { DropdownOption } from '../pb-dropdown/dropdown-option';
 import { PbDropdownComponent } from '../pb-dropdown/pb-dropdown.component';
-import { PbIconComponent } from '../pb-icon/pb-icon.component';
 import { IconType } from '../pb-icon/icon-type.model';
+import { PbIconComponent } from '../pb-icon/pb-icon.component';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-language-switcher',
   imports: [
-    CommonModule,
     PbDropdownComponent,
     ReactiveFormsModule,
     TranslocoPipe,

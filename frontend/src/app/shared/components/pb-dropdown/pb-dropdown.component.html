@@ -4,7 +4,7 @@
   class="dropdown-trigger"
   [class.dropdown-trigger--open]="isOpen()"
   (click)="toggleDropdown()"
->
+  >
   <ng-content select="[dropdownLabel]"></ng-content>
 </div>
 
@@ -17,28 +17,29 @@
   cdkConnectedOverlayBackdropClass="pb-dropdown-backdrop"
   (backdropClick)="closeDropdown()"
   (detach)="closeDropdown()"
->
+  >
   <div class="dropdown-panel" [@dropdownAnimation]>
     <ul class="dropdown-list">
-      <li
-        *ngFor="let option of options()"
-        (click)="selectOption(option)"
-        class="dropdown-list-item"
+      @for (option of options(); track option) {
+        <li
+          (click)="selectOption(option)"
+          class="dropdown-list-item"
         [class.dropdown-list-item--selected]="
           highlightedOption() && option.value === value()
         "
-      >
-        @if (optionTemplate()) {
-          <ng-container
+          >
+          @if (optionTemplate()) {
+            <ng-container
             *ngTemplateOutlet="
               optionTemplate()!;
               context: { $implicit: option }
             "
-          ></ng-container>
-        } @else {
-          {{ option.label | transloco }}
-        }
-      </li>
+            ></ng-container>
+          } @else {
+            {{ option.label | transloco }}
+          }
+        </li>
+      }
     </ul>
   </div>
 </ng-template>

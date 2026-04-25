@@ -1,3 +1,12 @@
+import { TranslocoPipe } from '@jsverse/transloco';
+import { MaxLengthError, MinLengthError } from './constants/error-types';
+import { ErrorType } from './types/error-type';
+import { ErrorValue, ErrorValueMap } from './types/error-value-map';
+import { FormError } from './types/form-error';
+import { Signal,   ChangeDetectionStrategy,
+  Component,
+  computed,
+  input, } from '@angular/core';
 import {
   animate,
   state,
@@ -5,23 +14,10 @@ import {
   transition,
   trigger,
 } from '@angular/animations';
-import { CommonModule } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  input,
-  Signal,
-} from '@angular/core';
-import { TranslocoPipe } from '@jsverse/transloco';
-import { MaxLengthError, MinLengthError } from './constants/error-types';
-import { ErrorType } from './types/error-type';
-import { ErrorValue, ErrorValueMap } from './types/error-value-map';
-import { FormError } from './types/form-error';
 
 @Component({
   selector: 'pb-errors',
-  imports: [CommonModule, TranslocoPipe],
+  imports: [TranslocoPipe],
   templateUrl: './pb-errors.component.html',
   styleUrl: './pb-errors.component.scss',
   standalone: true,

@@ -1,12 +1,10 @@
-import { CommonModule } from '@angular/common';
+
 import {
   ChangeDetectionStrategy,
   Component,
   inject,
   signal,
 } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
 import { RouteLink } from '@core/routing/route-link';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { finalize } from 'rxjs';
@@ -19,6 +17,8 @@ import { AuthService } from '../../services/auth.service';
 import { LoginFormComponent } from '../login-form/login-form.component';
 import { LoginModel } from '../types/login.model';
 import { PbCardHeaderDirective } from "@shared/components/pb-card/pb-card-header.directive";
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login-page',
@@ -27,7 +27,6 @@ import { PbCardHeaderDirective } from "@shared/components/pb-card/pb-card-header
   imports: [
     FormsModule,
     ReactiveFormsModule,
-    CommonModule,
     PbCardComponent,
     PbButtonComponent,
     TranslocoPipe,

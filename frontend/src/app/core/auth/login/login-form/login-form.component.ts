@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, inject, output } from '@angular/core';
 import {
   FormBuilder,
@@ -26,7 +25,6 @@ import { LoginModel } from '../types/login.model';
     PbFormFieldComponent,
     FormsModule,
     ReactiveFormsModule,
-    CommonModule,
     TranslocoPipe,
     PbLabel,
     PbInputComponent,

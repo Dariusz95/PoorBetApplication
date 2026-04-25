@@ -1,12 +1,5 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, inject, output } from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { IconComponent } from '@shared/components/icon/icon.component';
 import { PbButtonComponent } from '@shared/components/pb-button/pb-button.component';
@@ -19,6 +12,7 @@ import { PASSWORD_REGEX } from '@shared/validators/regexes/passwordRegex';
 import { passwordMatchValidator } from '../../utils/password-match-validator';
 import { RegisterForm } from '../types/register-form';
 import { RegisterModel } from '../types/register.model';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-register-form',
@@ -26,14 +20,13 @@ import { RegisterModel } from '../types/register.model';
     PbFormFieldComponent,
     FormsModule,
     ReactiveFormsModule,
-    CommonModule,
     TranslocoPipe,
     PbLabel,
     PbInputComponent,
     PbButtonComponent,
     PbInputIconDirective,
-    IconComponent,
-  ],
+    IconComponent
+],
   templateUrl: './register-form.component.html',
   styleUrl: './register-form.component.scss',
 })
