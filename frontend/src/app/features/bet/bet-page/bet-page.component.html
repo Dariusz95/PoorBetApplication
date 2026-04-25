@@ -1,11 +1,6 @@
 <ng-container *transloco="let t; prefix: 'bet.page'">
   <section class="bet-page-layout">
     <div class="bet-page-main">
-      <div class="bet-page-header">
-        <div class="bet-page-header__content">
-          <h1 class="bet-page-header__title">{{ t('availablePools') }}</h1>
-        </div>
-      </div>
 
       @if (tabs$ | async; as tabs) {
         <pb-tab-container

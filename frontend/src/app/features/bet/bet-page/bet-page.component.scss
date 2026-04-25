@@ -16,28 +16,6 @@
   min-height: 0;
 }
 
-.bet-page-header {
-  position: sticky;
-  top: 0;
-  z-index: 40;
-  background-color: transparent;
-  transition: all 300ms ease-out;
-}
-
-.bet-page-header__content {
-  padding: 1.5rem 1rem;
-  gap: 1rem;
-  display: flex;
-  flex-direction: column;
-}
-
-.bet-page-header__title {
-  font-size: 1.5rem;
-  line-height: 2rem;
-  font-weight: 700;
-  color: rgb(var(--app-text));
-}
-
 .tab-button__content {
   @apply flex flex-col items-center gap-1;
 }

@@ -48,7 +48,6 @@
   },
   "bet": {
     "page": {
-      "availablePools": "Dostępne pule",
       "live": "Live",
       "upcomingPools": "Nadchodzące pule"
     },
