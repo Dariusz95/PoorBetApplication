@@ -8,8 +8,9 @@ export interface FormFieldControl {
   touched: WritableSignal<boolean>;
   disabled: WritableSignal<boolean>;
   errors: WritableSignal<ErrorValueMap | null>;
+  labelId?: WritableSignal<string>;
 }
 
 export const FORM_FIELD_CONTROL = new InjectionToken<FormFieldControl>(
-  'FormFieldControl'
+  'FormFieldControl',
 );

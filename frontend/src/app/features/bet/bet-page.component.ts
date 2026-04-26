@@ -1,11 +1,9 @@
 import { AsyncPipe, DatePipe, KeyValuePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   DestroyRef,
   inject,
-  OnDestroy,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslocoDirective } from '@jsverse/transloco';
@@ -43,11 +41,9 @@ import { PoolRefreshService } from './services/pool-refresh.service';
   styleUrl: './bet-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BetPageComponent implements OnDestroy {
-  ngOnDestroy(): void {
-    throw new Error('Method not implemented.');
-  }
+export class BetPageComponent {
   private readonly poolRefreshService = inject(PoolRefreshService);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly LIVE_TAB_NAME: LiveTabName = 'live';
 
@@ -56,7 +52,7 @@ export class BetPageComponent implements OnDestroy {
   futureGrouped$ = this.poolRefreshService.futureGrouped$;
 
   tabs$ = this.futureGrouped$.pipe(
-    takeUntilDestroyed(),
+    takeUntilDestroyed(this.destroyRef),
     map((grouped): TabConfig<BetTabValue>[] => {
       const futureTabs: TabConfig<BetTabValue>[] = Object.values(grouped).map(
         (group) => ({

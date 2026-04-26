@@ -8,6 +8,7 @@ import {
   Injector,
   input,
   signal,
+  WritableSignal,
 } from '@angular/core';
 import {
   ControlValueAccessor,
@@ -59,6 +60,7 @@ export class PbInputComponent
   touched = signal<boolean>(false);
   invalid = signal<boolean>(false);
   value = signal<string>('');
+  labelId = signal<string>('');
 
   onChange = (_: any) => {};
   onTouched = () => {};

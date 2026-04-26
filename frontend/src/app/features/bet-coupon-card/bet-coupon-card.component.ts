@@ -9,6 +9,7 @@ import { PbFormFieldComponent } from '../../shared/components/pb-form-field/pb-f
 import { PbInputComponent } from '../../shared/components/pb-input/pb-input.component';
 import { BetSlipService } from '../bet/services/bet-slip.service';
 import { CreateCouponRequest } from './models/create-coupon-request';
+import { PbLabel } from "@shared/components/pb-form-field/directives/pb-label";
 
 @Component({
   selector: 'app-bet-coupon-card',
@@ -22,7 +23,8 @@ import { CreateCouponRequest } from './models/create-coupon-request';
     PbInputComponent,
     TranslocoDirective,
     IconComponent,
-  ],
+    PbLabel
+],
   templateUrl: './bet-coupon-card.component.html',
   styleUrl: './bet-coupon-card.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -3,9 +3,11 @@ import {
   ChangeDetectorRef,
   Component,
   contentChild,
+  DestroyRef,
   inject,
   signal,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PbErrorsComponent } from '../pb-errors/pb-errors.component';
 import { ErrorValueMap } from '../pb-errors/types/error-value-map';
@@ -22,6 +24,7 @@ import { PbLabel } from './directives/pb-label';
 })
 export class PbFormFieldComponent {
   private readonly _cdr = inject(ChangeDetectorRef);
+  private readonly destroyRef = inject(DestroyRef);
 
   control = contentChild.required(FORM_FIELD_CONTROL);
 
@@ -33,17 +36,21 @@ export class PbFormFieldComponent {
   value = signal<string>('');
   touched = signal(false);
   invalid = signal(false);
-  _labelId = '';
+  _labelId = crypto.randomUUID();
 
   ngAfterContentInit(): void {
-    this.control().stateChanges.subscribe(() => {
-      this._updateFocusState();
-      this._updateErrorsState();
-      this._updateTouchedState();
-      this._updateInvalidState();
+    this.control().labelId?.set(this._labelId);
 
-      this._cdr.markForCheck();
-    });
+    this.control()
+      .stateChanges.pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this._updateFocusState();
+        this._updateErrorsState();
+        this._updateTouchedState();
+        this._updateInvalidState();
+
+        this._cdr.markForCheck();
+      });
   }
 
   private _updateInvalidState(): void {

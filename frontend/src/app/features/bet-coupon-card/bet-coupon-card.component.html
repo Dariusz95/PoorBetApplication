@@ -58,10 +58,11 @@
       </div>
 
       <div class="bet-coupon-card__amount">
-        <label for="amount" class="bet-coupon-card__amount-label">{{
-          t("amount")
-        }}</label>
         <pb-form-field>
+          <pb-label class="bet-coupon-card__amount-label">
+            {{ t("amount") }}</pb-label
+          >
+
           <pb-input
             id="amount"
             type="number"
