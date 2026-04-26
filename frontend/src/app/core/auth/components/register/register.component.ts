@@ -12,6 +12,8 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { Router } from '@angular/router';
+import { RouteLink } from '@core/routing/route-link';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { IconType } from '@shared/components/pb-icon/icon-type.model';
 import { finalize } from 'rxjs';
@@ -48,6 +50,7 @@ import { RegistrationFormValue } from './types/registration-form-value';
 export class RegisterComponent implements OnInit {
   private readonly formBuilder = inject(FormBuilder);
   private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
 
   readonly IconType = IconType;
   readonly RoutePath = RoutePath;
@@ -108,9 +111,9 @@ export class RegisterComponent implements OnInit {
         }),
       )
       .subscribe({
-        next: (response: unknown) => {
-          console.log('Rejestracja zakończona sukcesem:', response);
+        next: () => {
           this.form.reset();
+          this.router.navigate(RouteLink[RoutePath.Login]);
         },
         error: (error: unknown) => {
           console.error('Błąd rejestracji:', error);

@@ -61,8 +61,6 @@ export class PbTabContainerComponent<T> {
   }
 
   private setDefaultTab(): void {
-    console.log('setDefaultTab');
-
     const tabList = this.tabs();
     const initial = this.defaultTab() ?? tabList?.[0]?.value;
     const active = tabList.find((tab) => tab.value === this.selectedTab());
@@ -92,7 +90,6 @@ export class PbTabContainerComponent<T> {
 
   private updateContentVisibility(): void {
     const current = this.selectedTab();
-    console.log('current', current);
 
     this.tabContents().forEach((content) => {
       content.active.set(content.value === current);

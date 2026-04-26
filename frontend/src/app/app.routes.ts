@@ -27,7 +27,7 @@ export const routes: Routes = [
       {
         path: '',
         loadComponent: () =>
-          import('./features/bet/bet-page/bet-page.component').then(
+          import('./features/bet/bet-page.component').then(
             (m) => m.BetPageComponent,
           ),
       },

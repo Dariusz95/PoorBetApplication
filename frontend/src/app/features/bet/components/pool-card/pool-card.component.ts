@@ -1,15 +1,16 @@
-import { AsyncPipe, DatePipe, SlicePipe } from '@angular/common';
+import { AsyncPipe, SlicePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
   inject,
   input,
-  signal,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { PbCardComponent } from '@shared/components/pb-card/pb-card.component';
+import { BetType } from '@shared/types/bet-type';
 import { Uuid } from '@shared/types/uuid.type';
-import { map, Observable } from 'rxjs';
+import { combineLatest, map, Observable } from 'rxjs';
 import { BetSlipService } from '../../services/bet-slip.service';
 import { TeamService } from '../../services/team.service';
 import { MatchDto, PoolMatch } from '../../types/match.types';
@@ -19,7 +20,6 @@ import { OddsButtonComponent } from '../odds-button/odds-button.component';
   selector: 'app-pool-card',
   imports: [
     AsyncPipe,
-    DatePipe,
     SlicePipe,
     OddsButtonComponent,
     PbCardComponent,
@@ -34,7 +34,8 @@ export class PoolCardComponent {
 
   private readonly teamService = inject(TeamService);
   private readonly betSlipService = inject(BetSlipService);
-  private readonly teamNames = signal<Record<string, string>>({});
+
+  readonly BetType = BetType;
 
   getTeamName(teamId: Uuid): Observable<string> {
     return this.teamService.getDetails(teamId).pipe(map((team) => team.name));
@@ -42,32 +43,36 @@ export class PoolCardComponent {
 
   toggleBet(
     match: MatchDto,
-    optionValue: string,
+    betType: BetType,
     optionLabel: string,
     odds: number,
   ): void {
     if (this.hasStarted()) {
       return;
     }
+    combineLatest([
+      this.getTeamName(match.homeTeamId),
+      this.getTeamName(match.awayTeamId),
+    ])
+      .pipe(takeUntilDestroyed())
+      .subscribe(([homeTeamName, awayTeamName]) => {
+        const matchLabel = `${homeTeamName} vs ${awayTeamName}`;
 
-    this.betSlipService.toggleSelection({
-      matchId: match.matchId,
-      matchLabel: `${this.getTeamLabel(match.homeTeamId)} vs ${this.getTeamLabel(match.awayTeamId)}`,
-      optionValue,
-      optionLabel,
-      odds,
-    });
+        this.betSlipService.toggleSelection({
+          matchId: match.matchId,
+          matchLabel,
+          betType,
+          optionLabel,
+          odds,
+        });
+      });
   }
 
-  isSelected(matchId: string, optionValue: string): boolean {
-    return this.betSlipService.isSelected(matchId, optionValue);
+  isSelected(matchId: Uuid, betType: BetType): boolean {
+    return this.betSlipService.isSelected(matchId, betType);
   }
 
   hasStarted(): boolean {
     return new Date(this.pool().scheduledStartTime).getTime() <= Date.now();
-  }
-
-  private getTeamLabel(teamId: string): string {
-    return this.teamNames()[teamId] ?? teamId.slice(0, 8);
   }
 }

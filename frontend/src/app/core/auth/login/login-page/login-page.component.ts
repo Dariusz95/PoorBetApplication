@@ -53,8 +53,7 @@ export class LoginPageComponent {
       .login(request)
       .pipe(finalize(() => this.submitted.set(false)))
       .subscribe({
-        next: (response) => {
-          console.log('[LOGIN RES]: ', response);
+        next: () => {
           this.router.navigate(RouteLink[RoutePath.App]);
         },
         error: (error) => {

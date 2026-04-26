@@ -1,9 +1,11 @@
 import { computed, Injectable, signal } from '@angular/core';
+import { BetType } from '@shared/types/bet-type';
+import { Uuid } from '@shared/types/uuid.type';
 
 export interface SelectedBet {
-  matchId: string;
+  matchId: Uuid;
   matchLabel: string;
-  optionValue: string;
+  betType: BetType;
   optionLabel: string;
   odds: number;
 }
@@ -29,7 +31,7 @@ export class BetSlipService {
       if (
         existingBet &&
         existingBet.matchId === bet.matchId &&
-        existingBet.optionValue === bet.optionValue
+        existingBet.betType === bet.betType
       ) {
         return currentBets.filter(
           (currentBet) => currentBet.matchId !== bet.matchId,
@@ -46,15 +48,15 @@ export class BetSlipService {
     });
   }
 
-  removeSelection(matchId: string): void {
+  removeSelection(matchId: Uuid): void {
     this.selectedBetsState.update((currentBets) =>
       currentBets.filter((bet) => bet.matchId !== matchId),
     );
   }
 
-  isSelected(matchId: string, optionValue: string): boolean {
+  isSelected(matchId: Uuid, betType: BetType): boolean {
     return this.selectedBetsState().some(
-      (bet) => bet.matchId === matchId && bet.optionValue === optionValue,
+      (bet) => bet.matchId === matchId && bet.betType === betType,
     );
   }
 

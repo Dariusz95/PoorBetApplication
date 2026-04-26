@@ -1,6 +1,6 @@
 <ng-container *transloco="let t; prefix: 'bet.poolCard'">
   <app-pb-card>
-    <div pbCardBody>
+    <div class="pool-card" pbCardBody>
       @for (match of pool().matches; track match.matchId) {
         <section
           class="pool-card__match"
@@ -28,26 +28,26 @@
             <app-odds-button
               label="1"
               [value]="match.odds.homeWin"
-              [selected]="isSelected(match.matchId, 'HOME_WIN')"
+              [selected]="isSelected(match.matchId, BetType.HomeWin)"
               [disabled]="hasStarted()"
               (oddsClick)="
-                toggleBet(match, 'HOME_WIN', '1', match.odds.homeWin)
+                toggleBet(match, BetType.HomeWin, '1', match.odds.homeWin)
               "
             ></app-odds-button>
             <app-odds-button
               label="X"
               [value]="match.odds.draw"
-              [selected]="isSelected(match.matchId, 'DRAW')"
+              [selected]="isSelected(match.matchId, BetType.Draw)"
               [disabled]="hasStarted()"
-              (oddsClick)="toggleBet(match, 'DRAW', 'X', match.odds.draw)"
+              (oddsClick)="toggleBet(match, BetType.Draw, 'X', match.odds.draw)"
             ></app-odds-button>
             <app-odds-button
               label="2"
               [value]="match.odds.awayWin"
-              [selected]="isSelected(match.matchId, 'AWAY_WIN')"
+              [selected]="isSelected(match.matchId, BetType.AwayWin)"
               [disabled]="hasStarted()"
               (oddsClick)="
-                toggleBet(match, 'AWAY_WIN', '2', match.odds.awayWin)
+                toggleBet(match, BetType.AwayWin, '2', match.odds.awayWin)
               "
             ></app-odds-button>
           </div>

@@ -9,18 +9,17 @@ type IconColor = 'primary' | 'success' | 'danger' | 'warning';
   standalone: true,
   template: `
     <span
-      [attr.aria-hidden]="true"
       class="material-icons"
-      [ngClass]="sizeClass() + ' ' + colorClass()"
+      [attr.aria-hidden]="true"
+      [class]="sizeClass() + ' ' + colorClass()"
       >{{ icon() }}</span
     >
   `,
   styles: [
     `
       :host {
-        @apply flex justify-center items-center;
+        @apply inline-flex justify-center items-center;
       }
-
       .icon-s {
         font-size: 16px;
       }

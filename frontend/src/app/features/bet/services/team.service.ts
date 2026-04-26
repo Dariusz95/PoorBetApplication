@@ -4,17 +4,18 @@ import { isNotNil } from '@shared/utils/is-not-nil.util';
 import { Observable, of, tap } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { ShortTeamInfo } from '../types/match.types';
+import { Uuid } from '@shared/types/uuid.type';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TeamService {
   private readonly http = inject(HttpClient);
-  private cache = new Map<string, ShortTeamInfo>();
 
+  private cache = new Map<Uuid, ShortTeamInfo>();
   private BASE_URL = `${environment.backend.baseURL}/api/teams/public`;
 
-  getDetails(teamId: string): Observable<ShortTeamInfo> {
+  getDetails(teamId: Uuid): Observable<ShortTeamInfo> {
     if (!teamId) {
       throw new Error('Team ID is required');
     }

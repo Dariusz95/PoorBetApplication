@@ -30,8 +30,7 @@
                   <span>{{ bet.optionLabel }}</span>
                   <span class="bet-coupon-card__separator">•</span>
                   <span
-                    >{{ t("oddsLabel") }}
-                    {{ bet.odds | number: "1.2-2" }}</span
+                    >{{ t("oddsLabel") }} {{ bet.odds | number: "1.2-2" }}</span
                   >
                 </p>
               </div>
@@ -42,7 +41,7 @@
                 [ariaLabel]="t('removeAria')"
                 (buttonClick)="betSlipService.removeSelection(bet.matchId)"
               >
-                X
+                <app-icon icon="close" size="s" />
               </pb-button>
             </article>
           }
@@ -52,9 +51,7 @@
 
     <footer class="bet-coupon-card__footer">
       <div class="bet-coupon-card__summary">
-        <span class="bet-coupon-card__summary-label">{{
-          t("totalOdds")
-        }}</span>
+        <span class="bet-coupon-card__summary-label">{{ t("totalOdds") }}</span>
         <span class="bet-coupon-card__summary-value">{{
           betSlipService.totalOdds() | number: "1.2-2"
         }}</span>

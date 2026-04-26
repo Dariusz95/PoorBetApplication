@@ -2,50 +2,54 @@
   @apply block;
 }
 
-.pool-card__time {
-  @apply text-sm font-semibold text-app-textMuted;
-}
+.pool-card {
+  @apply flex flex-col gap-4;
 
-.pool-card__status {
-  @apply text-right;
-}
+  &__time {
+    @apply text-sm font-semibold text-app-textMuted;
+  }
 
-.pool-card__status-label {
-  @apply text-xs font-medium text-app-primary;
-}
+  &__status {
+    @apply text-right;
+  }
 
-.pool-card__status-value {
-  @apply text-sm font-semibold text-app-text;
-}
+  &__status-label {
+    @apply text-xs font-medium text-app-primary;
+  }
 
-.pool-card__body {
-  @apply space-y-3 p-4;
-}
+  &__status-value {
+    @apply text-sm font-semibold text-app-text;
+  }
 
-.pool-card__match {
-  @apply rounded-lg border border-app-border bg-app-surfaceSoft p-3;
-}
+  &__body {
+    @apply space-y-3 p-4;
+  }
 
-.pool-card__match--disabled {
-  @apply opacity-55 grayscale;
-}
+  &__match {
+    @apply rounded-lg border border-app-border bg-app-surfaceSoft p-3;
+  }
 
-.pool-card__teams {
-  @apply mb-3 grid grid-cols-[1fr_auto_1fr] items-center gap-3 text-sm text-app-text;
-}
+  &__match--disabled {
+    @apply opacity-55 grayscale;
+  }
 
-.pool-card__team {
-  @apply truncate font-medium;
-}
+  &__teams {
+    @apply mb-3 grid grid-cols-[1fr_auto_1fr] items-center gap-3 text-sm text-app-text;
+  }
 
-.pool-card__team--away {
-  @apply text-right;
-}
+  &__team {
+    @apply truncate font-medium;
+  }
 
-.pool-card__versus {
-  @apply text-xs font-semibold uppercase tracking-wide text-app-textMuted;
-}
+  &__team--away {
+    @apply text-right;
+  }
 
-.pool-card__footer {
-  @apply border-t border-app-border p-4;
+  &__versus {
+    @apply text-xs font-semibold uppercase tracking-wide text-app-textMuted;
+  }
+
+  &__footer {
+    @apply border-t border-app-border p-4;
+  }
 }
