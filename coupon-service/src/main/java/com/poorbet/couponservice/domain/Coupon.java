@@ -3,10 +3,7 @@ package com.poorbet.couponservice.domain;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -15,7 +12,8 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "coupon")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -31,9 +29,15 @@ public class Coupon {
     @Column(nullable = false)
     private UUID userId;
 
+    @Column(nullable = false)
+    private UUID reservationId;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private CouponStatus status;
+
+    @Column(nullable = false)
+    private BigDecimal potentialPayout;
 
     @JsonManagedReference
     @OneToMany(mappedBy = "coupon", orphanRemoval = true, cascade = CascadeType.ALL)
@@ -43,5 +47,24 @@ public class Coupon {
     public void addBet(Bet bet) {
         bets.add(bet);
         bet.setCoupon(this);
+    }
+
+    public void recalculateStatus() {
+        boolean allWon = true;
+
+        for (Bet bet : bets) {
+            BetStatus status = bet.getStatus();
+
+            if (status == BetStatus.LOST) {
+                this.status = CouponStatus.LOST;
+                return;
+            }
+
+            if (status != BetStatus.WON) {
+                allWon = false;
+            }
+        }
+
+        this.status = allWon ? CouponStatus.WON : CouponStatus.OPEN;
     }
 }

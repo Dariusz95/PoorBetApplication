@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class WalletCreatedListener {
 
-    @RabbitListener(queues = "${messaging.consumers.wallet-created.queue}")
+    @RabbitListener(queues = "${messaging.consumers.WALLET_CREATED.queue}")
     public void handleWalletCreated(EventEnvelope<WalletCreatedEvent> event) {
         log.info("📨 [USER] Received eventType={} version={} source={}",
                 event.eventType(),

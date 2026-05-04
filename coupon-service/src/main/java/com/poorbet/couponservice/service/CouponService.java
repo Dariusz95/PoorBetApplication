@@ -1,6 +1,8 @@
 package com.poorbet.couponservice.service;
 
 import com.poorbet.commons.commons.wallet.contract.ReserveRequest;
+import com.poorbet.commons.rabbit.events.coupon.CouponCreationFailedEvent;
+import com.poorbet.commons.rabbit.events.coupon.CouponEvents;
 import com.poorbet.couponservice.client.MatchClient;
 import com.poorbet.couponservice.client.wallet.WalletBusinessException;
 import com.poorbet.couponservice.client.wallet.WalletClient;
@@ -25,6 +27,7 @@ public class CouponService {
     private final CouponRepository couponRepository;
     private final MatchClient matchClient;
     private final WalletClient walletClient;
+    private final OutboxService outboxService;
 
     @Transactional
     public Coupon createCoupon(CreateCouponDto dto, UUID userId) {
@@ -55,6 +58,14 @@ public class CouponService {
                 coupon.addBet(bet);
             });
 
+            BigDecimal totalOdds = coupon.getBets().stream()
+                    .map(Bet::getOdds)
+                    .reduce(BigDecimal.ONE, BigDecimal::multiply);
+
+            BigDecimal potentialPayout = dto.getStake().multiply(totalOdds);
+
+            coupon.setPotentialPayout(potentialPayout);
+
             Coupon saved = couponRepository.save(coupon);
 
             return saved;
@@ -63,13 +74,10 @@ public class CouponService {
             throw ex;
 
         } catch (WalletTechnicalException ex) {
-
-
-            //TODO dodanie outbox + obsluga w wallecie
-//            outboxService.saveEvent(
-//                    "CouponCreationFailed",
-//                    new CouponCreationFailedEvent(userId, reservationId)
-//            );
+            outboxService.saveEvent(
+                    CouponEvents.COUPON_CREATION_FAILED,
+                    new CouponCreationFailedEvent(reservationId)
+            );
 
             throw ex;
         }
@@ -79,6 +87,7 @@ public class CouponService {
         return Coupon.builder()
                 .stake(dto.getStake())
                 .userId(userId)
+                .reservationId(reservationId)
                 .status(CouponStatus.OPEN)
                 .build();
     }

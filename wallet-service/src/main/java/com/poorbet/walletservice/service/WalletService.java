@@ -1,10 +1,12 @@
 package com.poorbet.walletservice.service;
 
+import com.poorbet.commons.rabbit.events.coupon.CouponWonEvent;
 import com.poorbet.commons.rabbit.events.wallet.WalletBalanceChangedEvent;
 import com.poorbet.commons.rabbit.events.wallet.WalletCreatedEvent;
 import com.poorbet.commons.rabbit.events.wallet.WalletEvents;
 import com.poorbet.walletservice.domain.exception.InsufficientFundsException;
 import com.poorbet.walletservice.domain.exception.WalletNotFoundException;
+import com.poorbet.walletservice.domain.model.ReservationStatus;
 import com.poorbet.walletservice.domain.model.Wallet;
 import com.poorbet.walletservice.domain.model.WalletReservation;
 import com.poorbet.walletservice.repository.WalletRepository;
@@ -47,6 +49,30 @@ public class WalletService {
         } catch (DataIntegrityViolationException e) {
             log.info("exists = {}", e.getMessage());
         }
+    }
+
+    @Transactional
+    public void handleCouponWon(CouponWonEvent event) {
+        WalletReservation reservation = walletReservationRepository.findById(event.reservationId())
+                .orElseThrow(() -> new IllegalStateException("Reservation not found"));
+
+        if (reservation.getStatus() == ReservationStatus.COMMITTED) return;
+
+        if (reservation.getStatus() != ReservationStatus.RESERVED) {
+            throw new IllegalStateException("Reservation already processed");
+        }
+
+        Wallet wallet = walletRepository.findByUserIdForUpdate(event.userId())
+                .orElseThrow(() -> new IllegalStateException("Wallet not found: " + event.couponId()));
+
+        wallet.setBalance(wallet.getBalance().add(event.amount()));
+
+        reservation.setStatus(ReservationStatus.COMMITTED);
+
+        outboxService.saveEvent(
+                WalletEvents.WALLET_BALANCE_CHANGED,
+                new WalletBalanceChangedEvent(wallet.getUserId(), wallet.getBalance())
+        );
     }
 
     @Transactional(readOnly = true)

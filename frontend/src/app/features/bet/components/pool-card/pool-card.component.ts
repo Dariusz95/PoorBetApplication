@@ -2,6 +2,7 @@ import { AsyncPipe, SlicePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   inject,
   input,
 } from '@angular/core';
@@ -34,6 +35,7 @@ export class PoolCardComponent {
 
   private readonly teamService = inject(TeamService);
   private readonly betSlipService = inject(BetSlipService);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly BetType = BetType;
 
@@ -54,7 +56,7 @@ export class PoolCardComponent {
       this.getTeamName(match.homeTeamId),
       this.getTeamName(match.awayTeamId),
     ])
-      .pipe(takeUntilDestroyed())
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(([homeTeamName, awayTeamName]) => {
         const matchLabel = `${homeTeamName} vs ${awayTeamName}`;
 

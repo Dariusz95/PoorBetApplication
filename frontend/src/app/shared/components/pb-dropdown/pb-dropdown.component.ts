@@ -57,13 +57,19 @@ export class PbDropdownComponent<
   origin = input<CdkOverlayOrigin | undefined>(undefined);
   positions = input<ConnectedPosition[]>([
     {
-      originX: 'start',
+      originX: 'end',
       originY: 'bottom',
-      overlayX: 'center',
+      overlayX: 'end',
       overlayY: 'top',
     },
-    { originX: 'start', originY: 'top', overlayX: 'start', overlayY: 'bottom' },
+    {
+      originX: 'end',
+      originY: 'top',
+      overlayX: 'end',
+      overlayY: 'bottom',
+    },
   ]);
+
   optionTemplate = input<TemplateRef<{ $implicit: T }> | undefined>(undefined);
   closeOnSelect = input(true);
   highlightedOption = input(true);

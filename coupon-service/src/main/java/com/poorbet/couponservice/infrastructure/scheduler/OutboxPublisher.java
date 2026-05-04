@@ -1,13 +1,13 @@
-package com.poorbet.walletservice.infrastructure.scheduler;
+package com.poorbet.couponservice.infrastructure.scheduler;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.poorbet.commons.rabbit.EventEnvelope;
 import com.poorbet.commons.rabbit.MessagingProperties;
-import com.poorbet.commons.rabbit.events.wallet.WalletBalanceChangedEvent;
-import com.poorbet.commons.rabbit.events.wallet.WalletCreatedEvent;
-import com.poorbet.walletservice.infrastructure.persistence.OutboxRepository;
-import com.poorbet.walletservice.infrastructure.persistence.entity.OutboxEvent;
+import com.poorbet.commons.rabbit.events.coupon.CouponLostEvent;
+import com.poorbet.commons.rabbit.events.coupon.CouponWonEvent;
+import com.poorbet.couponservice.infrastructure.persistence.OutboxRepository;
+import com.poorbet.couponservice.infrastructure.persistence.entity.OutboxEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -17,9 +17,8 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Map;
 
-import static com.poorbet.commons.rabbit.events.wallet.WalletEvents.WALLET_BALANCE_CHANGED;
-import static com.poorbet.commons.rabbit.events.wallet.WalletEvents.WALLET_CREATED;
-
+import static com.poorbet.commons.rabbit.events.coupon.CouponEvents.COUPON_LOST;
+import static com.poorbet.commons.rabbit.events.coupon.CouponEvents.COUPON_WON;
 
 @Component
 @RequiredArgsConstructor
@@ -31,8 +30,8 @@ public class OutboxPublisher {
     private final MessagingProperties messagingProperties;
     private final ObjectMapper objectMapper;
     private final Map<String, Class<?>> eventTypeMap = Map.of(
-            WALLET_CREATED.eventType(), WalletCreatedEvent.class,
-            WALLET_BALANCE_CHANGED.eventType(), WalletBalanceChangedEvent.class
+            COUPON_WON.eventType(), CouponWonEvent.class,
+            COUPON_LOST.eventType(), CouponLostEvent.class
     );
 
     @Scheduled(fixedDelay = 5000)
