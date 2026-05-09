@@ -1,5 +1,5 @@
 {
-  "lang":{
+  "lang": {
     "pl": "Polski",
     "en": "Angielski"
   },
@@ -12,7 +12,6 @@
       "label": "Hasło",
       "placeholder": "Podaj swoje hasło"
     },
-
     "register": {
       "title": "Rejestracja",
       "subtitle": "Dołącz do PoorBet i zacznij stawiać zakłady już dziś!",
@@ -80,5 +79,13 @@
     "login": "Zaloguj się",
     "register": "Zarejestruj się",
     "logout": "Wyloguj się"
+  },
+  "menu": {
+    "home": "Strona główna",
+    "myCoupons": "Moje kupony"
+  },
+  "myCoupons": {
+    "title": "Moje kupony",
+    "empty": "Brak kuponów do wyświetlenia."
   }
 }

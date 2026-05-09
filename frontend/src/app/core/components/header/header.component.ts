@@ -5,6 +5,7 @@ import { LanguageSwitcherComponent } from '../../../shared/components/language-s
 import { AuthService } from '../../auth/services/auth.service';
 import { RoutePath } from '../../routing/route-path';
 import { UserDropdownComponent } from '../user-dropdown/user-dropdown.component';
+import { UserBalanceComponent } from '../user-balance/user-balance.component';
 import { MENU_ITEMS } from './models/menu-items';
 import { RouterLink } from '@angular/router';
 

@@ -31,6 +31,13 @@ export const routes: Routes = [
             (m) => m.BetPageComponent,
           ),
       },
+      {
+        path: RouteFragment.MyCoupons,
+        loadComponent: () =>
+          import('./features/my-coupons/my-coupons-page.component').then(
+            (m) => m.MyCouponsPageComponent,
+          ),
+      },
     ],
   },
   {

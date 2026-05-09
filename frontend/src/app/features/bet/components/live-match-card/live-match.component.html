@@ -1,4 +1,4 @@
-<ng-container *transloco="let t; prefix: 'bet.liveMatchCard'">
+
   <app-pb-card>
     <div pbCardHeader class="live-match-card__header">
       <div class="live-match-card__status">
@@ -6,7 +6,7 @@
           <span class="live-match-card__live-dot-ping"></span>
           <span class="live-match-card__live-dot-core"></span>
         </span>
-        <span class="live-match-card__status-label">{{ t("live") }}</span>
+        <span class="live-match-card__status-label">{{ 'bet.liveMatchCard.live' | transloco }}</span>
       </div>
 
       <span class="live-match-card__minute">{{ liveMatch().minute }}'</span>
@@ -42,10 +42,9 @@
 
     <div pbCardFooter>
       @if (liveMatch().eventType === MatchEventType.MatchEnded) {
-        {{ t("matchFinished") }}
+        {{ 'bet.liveMatchCard.matchFinished' | transloco }}
       } @else {
-        {{ t("matchInProgress") }}
+        {{ 'bet.liveMatchCard.matchInProgress' | transloco }}
       }
     </div>
   </app-pb-card>
-</ng-container>

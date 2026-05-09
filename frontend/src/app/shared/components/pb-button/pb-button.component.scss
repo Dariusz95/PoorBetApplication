@@ -24,8 +24,7 @@
 }
 
 .pb-button--responsive {
-  @apply px-3 sm:px-4 lg:px-6;
-  @apply text-sm lg:text-base;
+  @apply px-3 sm:px-4 lg:px-6 text-sm lg:text-base;
   min-height: 40px;
 }
 

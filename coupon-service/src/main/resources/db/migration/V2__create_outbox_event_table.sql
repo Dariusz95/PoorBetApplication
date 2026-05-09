@@ -7,5 +7,8 @@ CREATE TABLE outbox_event (
     payload JSONB NOT NULL,
     status VARCHAR(20) NOT NULL,
     created_at TIMESTAMP NOT NULL,
-    sent_at TIMESTAMP
+    sent_at TIMESTAMP,
+    CONSTRAINT chk_coupon_outbox_status CHECK (status IN ('PENDING', 'SENT', 'FAILED'))
 );
+
+CREATE INDEX idx_coupon_outbox_status_created_at ON outbox_event(status, created_at);

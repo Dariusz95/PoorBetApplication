@@ -3,12 +3,6 @@
   --dropdown-trigger-height: 40px;
 }
 
-.user-dropdown {
-  &__trigger {
-    @apply flex items-center gap-2;
-  }
-
-  &__balance {
-    @apply text-sm font-medium text-white;
-  }
+.user-dropdown__trigger {
+  @apply flex items-center;
 }

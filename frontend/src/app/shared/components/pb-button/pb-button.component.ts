@@ -29,7 +29,7 @@ export class PbButtonComponent {
 
   variant = input<ButtonVariant>('primary');
   size = input<ButtonSize>('responsive');
-  routerLink = input<RoutePath | null>(null);
+  routerPath = input<RoutePath | null>(null);
   routerParams = input<Partial<Record<RouteParam, string>> | null>(null);
   disabled = input<boolean>(false);
   type = input<'button' | 'submit' | 'reset' | 'link'>('button');
@@ -44,12 +44,12 @@ export class PbButtonComponent {
   readonly IconType = IconType;
 
   routePath = computed(() => {
-    if (!this.routerLink()) {
+    if (!this.routerPath()) {
       return null;
     }
 
     return this.routingService.createLink(
-      this.routerLink()!,
+      this.routerPath()!,
       this.routerParams(),
     );
   });

@@ -2,7 +2,8 @@
   @apply fixed top-0 left-0 right-0 z-[1000] px-4 md:px-5 box-border;
 
   height: var(--app-header-height);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  // background-color: theme('colors.app.surface');
+  border-bottom: 1px solid theme("colors.app.border");
 
   &__content {
     @apply flex justify-between items-center w-full h-full max-w-[1200px] mx-auto;
@@ -13,24 +14,20 @@
   }
 
   &__right {
-    @apply items-center gap-2;
+    @apply items-center gap-3;
   }
 
   &__logo-link {
     @apply h-full;
   }
-
   &__logo {
     @apply h-full mx-auto md:mx-0;
   }
 
-  &__nav {
-    &-list {
-      @apply flex list-none p-0 m-0 gap-4;
-    }
-
-    &-link {
-      @apply no-underline font-bold text-[#333] py-1;
-    }
+  &__nav-list {
+    @apply flex list-none p-0 m-0 gap-4;
+  }
+  &__nav-link {
+    @apply no-underline font-bold py-1 text-app-text;
   }
 }

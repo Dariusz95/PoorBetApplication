@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { BetPageComponent } from './bet-page.component';
+import { beforeEach, describe, expect, it } from 'vitest';
+import { getTranslocoModule } from '@shared/utils/get-transloco-module';
 
 describe('BetPageComponent', () => {
   let component: BetPageComponent;
@@ -8,7 +10,7 @@ describe('BetPageComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [BetPageComponent]
+      imports: [BetPageComponent, getTranslocoModule()]
     })
     .compileComponents();
 

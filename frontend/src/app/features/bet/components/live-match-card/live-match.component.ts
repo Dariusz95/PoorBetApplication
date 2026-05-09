@@ -6,7 +6,7 @@ import {
   input,
   OnInit,
 } from '@angular/core';
-import { TranslocoDirective } from '@jsverse/transloco';
+import { TranslocoDirective, TranslocoPipe } from '@jsverse/transloco';
 import { PbCardHeaderDirective } from '@shared/components/pb-card/pb-card-header.directive';
 import { PbCardComponent } from '@shared/components/pb-card/pb-card.component';
 import { Observable } from 'rxjs';
@@ -23,7 +23,7 @@ import {
   imports: [
     AsyncPipe,
     PbCardComponent,
-    TranslocoDirective,
+    TranslocoPipe,
     PbCardHeaderDirective,
   ],
   templateUrl: './live-match.component.html',

@@ -5,6 +5,7 @@ import {
   signal,
 } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { RouteLink } from '@core/routing/route-link';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { finalize } from 'rxjs';
@@ -16,7 +17,6 @@ import { RegisterRequest } from '../../requests/register-request';
 import { AuthService } from '../../services/auth.service';
 import { RegisterFormComponent } from '../register-form/register-form.component';
 import { RegisterModel } from '../types/register.model';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register-page',

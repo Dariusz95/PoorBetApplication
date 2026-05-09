@@ -3,4 +3,5 @@ export enum RoutePath {
   Login = 'LOGIN',
   Home = 'HOME',
   App = 'APP',
+  MyCoupons = 'MY_COUPONS',
 }

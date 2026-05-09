@@ -96,17 +96,8 @@
         "test": {
           "builder": "@angular/build:unit-test",
           "options": {
-            "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "tsconfig.spec.json",
-            "inlineStyleLanguage": "scss",
-            "assets": [
-              {
-                "glob": "**/*",
-                "input": "public"
-              }
-            ],
-            "styles": ["src/styles/styles.scss"],
-            "scripts": []
+            "runnerConfig": "vitest.config.ts"
           }
         }
       }
