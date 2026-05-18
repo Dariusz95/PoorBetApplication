@@ -1,0 +1,14 @@
+.bet-coupon {
+  &__header {
+    @apply flex items-center gap-3 border-b;
+    background-color: var(--color-surface-soft);
+    border-color: var(--color-border);
+  }
+
+  &__badge {
+    @apply inline-flex items-center justify-center rounded-full px-3 py-2 text-sm font-semibold;
+
+    background-color: rgb(from var(--color-primary) r g b / 0.15);
+    color: var(--color-primary);
+  }
+}

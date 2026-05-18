@@ -1,0 +1,80 @@
+.pb-card {
+  position: relative;
+
+  &__content {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-surface);
+    z-index: 10;
+    background-color: var(--color-bg);
+  }
+
+  &__body {
+    @apply flex flex-col gap-3;
+  }
+
+  &__header {
+    &--bordered {
+      border-bottom: 1px solid var(--color-border);
+    }
+  }
+
+  &__border {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    overflow: hidden;
+    border-radius: var(--radius-xl);
+
+    background: linear-gradient(
+      160deg,
+      hsl(0 0% 28%) 0%,
+      hsla(277 60% 38% / 0.8) 55%,
+      hsla(306 60% 38% / 0.7) 100%
+    );
+  }
+
+  &__sweep {
+    position: absolute;
+    inset: 50% auto auto 50%;
+
+    width: 200%;
+    height: 10rem;
+
+    transform: translate(-50%, -50%);
+    transform-origin: center;
+
+    pointer-events: none;
+
+    background: linear-gradient(
+      0deg,
+      transparent 0%,
+      hsla(277 95% 65% / 0.7) 40%,
+      hsla(277 95% 65% / 0.7) 60%,
+      transparent 100%
+    );
+
+    animation: pb-card-sweep 8s linear infinite;
+  }
+
+  &--default {
+    --card-bg: var(--color-surface);
+  }
+
+  &--highlighted {
+    padding: 1px;
+  }
+}
+
+@keyframes pb-card-sweep {
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pb-card__sweep {
+    animation: none;
+  }
+}

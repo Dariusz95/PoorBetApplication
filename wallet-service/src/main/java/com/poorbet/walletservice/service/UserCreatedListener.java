@@ -14,7 +14,7 @@ public class UserCreatedListener {
 
     private final WalletService walletService;
 
-    @RabbitListener(queues = "${messaging.consumers.user-created.queue}")
+    @RabbitListener(queues = "${messaging.consumers.USER_CREATED.queue}")
     public void handleUserCreated(EventEnvelope<UserCreatedEvent> event) {
         log.info("📨 [WALLET] Received eventType={} version={} source={}",
                 event.eventType(),

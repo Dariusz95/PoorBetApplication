@@ -1,0 +1,45 @@
+<pb-card class="bet-coupon">
+  <div pbCardHeader class="bet-coupon__header">
+    <span class="bet-coupon__badge">
+      {{ betSlipService.selectedCount() }}
+    </span>
+    <div>
+      <p class="t-eyebrow">{{ "bet.coupon.eyebrow" | transloco }}</p>
+    </div>
+  </div>
+
+  <div pbCardBody>
+    <app-coupon-selected-bets />
+  </div>
+
+  <div pbCardFooter>
+    <pb-form-field>
+      <pb-label>{{ "bet.coupon.amount" | transloco }}</pb-label>
+      <pb-input
+        id="amount"
+        type="number"
+        placeholder="0.00"
+        [formControl]="amountCtrl"
+      />
+    </pb-form-field>
+
+    <!-- <app-coupon-summary [amount]="amountCtrl.value" /> -->
+    <app-coupon-summary>
+      <span slot="amount-value">{{ amountCtrl.value | number: "1.2-2" }}</span>
+      <span slot="odds-value">{{
+        betSlipService.totalOdds() | number: "1.2-2"
+      }}</span>
+      <span slot="win-value">{{
+        betSlipService.potentialWin(amountCtrl.value) | number: "1.2-2"
+      }}</span>
+    </app-coupon-summary>
+
+    <pb-button
+      [fullWidth]="true"
+      [disabled]="betSlipService.selectedCount() === 0 || amountCtrl.invalid"
+      (buttonClick)="submitCoupon()"
+    >
+      {{ "bet.coupon.submit" | transloco }}
+    </pb-button>
+  </div>
+</pb-card>

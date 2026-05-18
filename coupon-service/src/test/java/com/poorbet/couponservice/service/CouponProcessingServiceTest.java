@@ -33,6 +33,9 @@ class CouponProcessingServiceTest {
     @Mock
     private CouponRepository couponRepository;
 
+    @Mock
+    private OutboxService outboxService;
+
     @InjectMocks
     private CouponProcessingService couponProcessingService;
 
@@ -79,7 +82,7 @@ class CouponProcessingServiceTest {
         coupon.setBets(Arrays.asList(bet1, bet2));
 
         // Act
-        couponProcessingService.updateCouponStatus(coupon);
+        coupon.recalculateStatus();
 
         // Assert
         assertThat(coupon.getStatus()).isEqualTo(CouponStatus.LOST);
@@ -95,7 +98,7 @@ class CouponProcessingServiceTest {
         coupon.setBets(Arrays.asList(bet1, bet2));
 
         // Act
-        couponProcessingService.updateCouponStatus(coupon);
+        coupon.recalculateStatus();
 
         // Assert
         assertThat(coupon.getStatus()).isEqualTo(CouponStatus.WON);
@@ -111,7 +114,7 @@ class CouponProcessingServiceTest {
         coupon.setBets(Arrays.asList(bet1, bet2));
 
         // Act
-        couponProcessingService.updateCouponStatus(coupon);
+        coupon.recalculateStatus();
 
         // Assert
         assertThat(coupon.getStatus()).isEqualTo(CouponStatus.OPEN);
@@ -139,7 +142,7 @@ class CouponProcessingServiceTest {
         coupon.setBets(Collections.singletonList(bet));
 
         // Act
-        couponProcessingService.updateCouponStatus(coupon);
+        coupon.recalculateStatus();
 
         // Assert
         assertThat(coupon.getStatus()).isEqualTo(CouponStatus.WON);
@@ -167,7 +170,7 @@ class CouponProcessingServiceTest {
         coupon.setBets(Collections.singletonList(bet));
 
         // Act
-        couponProcessingService.updateCouponStatus(coupon);
+        coupon.recalculateStatus();
 
         // Assert
         assertThat(coupon.getStatus()).isEqualTo(CouponStatus.LOST);

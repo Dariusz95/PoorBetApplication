@@ -1,0 +1,56 @@
+@switch (type()) {
+  @case ("link") {
+    <a
+      role="button"
+      [routerLink]="routePath()"
+      [ngClass]="getButtonClasses()"
+      [attr.aria-disabled]="disabled()"
+      [class.pointer-events-none]="disabled()"
+      [class.opacity-50]="disabled()"
+      [attr.aria-label]="ariaLabel()"
+    >
+      <ng-container *ngTemplateOutlet="buttonContent"></ng-container>
+    </a>
+  }
+
+  @default {
+    <button
+      [type]="type()"
+      [ngClass]="getButtonClasses()"
+      [disabled]="disabled()"
+      [attr.aria-label]="ariaLabel()"
+      (click)="onClick($event)"
+    >
+      <ng-container *ngTemplateOutlet="buttonContent"></ng-container>
+    </button>
+  }
+}
+
+<ng-template #buttonContent>
+  <span class="pb-button__content">
+    @if (type() === "icon") {
+      <ng-content select="pb-icon"></ng-content>
+    } @else {
+      <span class="pb-button__content">
+        <ng-content select="pb-icon"></ng-content>
+
+        <span
+          class="pb-button__text"
+          [class.pb-button__text--loading]="loading()"
+        >
+          <ng-content></ng-content>
+        </span>
+      </span>
+    }
+
+    <!-- @if (iconTemplate()) {
+      <ng-content select="pb-icon"></ng-content>
+    }
+    <span
+      class="button__text"
+      [ngClass]="{ 'pb-button__text--loading': loading() }"
+    >
+      <ng-content></ng-content>
+    </span> -->
+  </span>
+</ng-template>

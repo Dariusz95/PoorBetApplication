@@ -1,0 +1,15 @@
+.tab-button-time {
+  @apply flex flex-col items-center gap-1;
+
+  &__header {
+    @apply flex items-center gap-1 text-app-textMuted;
+  }
+
+  &__clock {
+    @apply text-xs font-medium;
+  }
+
+  &__remaining {
+    @apply rounded-full bg-app-surfaceSoft px-2 py-0.5 text-xs font-semibold text-app-primary;
+  }
+}

@@ -1,0 +1,25 @@
+<div class="auth-container">
+  <pb-card variant="highlighted" stylesCss="w-full max-w-[420px]">
+    <app-auth-card-header
+      pbCardHeader
+      titleKey="auth.register.title"
+      subtitleKey="auth.register.subtitle"
+    ></app-auth-card-header>
+
+    <div pbCardBody>
+      <app-register-form (submitForm)="onSubmitForm($event)" />
+    </div>
+
+    <div pbCardFooter class="auth-footer">
+      {{ "auth.register.alreadyHaveAccount" | transloco }}
+      <pb-button
+        size="sm"
+        type="link"
+        variant="link"
+        [routerPath]="RoutePath.Login"
+      >
+        {{ "auth.register.login" | transloco }}
+      </pb-button>
+    </div>
+  </pb-card>
+</div>

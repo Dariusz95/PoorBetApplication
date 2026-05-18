@@ -1,51 +1,54 @@
 :host {
-  @apply block;
+  display: block;
 }
 
-.pool-card__time {
-  @apply text-sm font-semibold text-app-textMuted;
-}
+.pool-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
 
-.pool-card__status {
-  @apply text-right;
-}
+  &__time {
+    color: var(--color-text-muted);
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
 
-.pool-card__status-label {
-  @apply text-xs font-medium text-app-primary;
-}
+  &__status { text-align: right; }
+  &__status-label { color: var(--color-primary); font-size: 0.75rem; font-weight: 500; }
+  &__status-value { color: var(--color-text); font-size: 0.875rem; font-weight: 600; }
 
-.pool-card__status-value {
-  @apply text-sm font-semibold text-app-text;
-}
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-4);
+  }
 
-.pool-card__body {
-  @apply space-y-3 p-4;
-}
+  &__match {
+    padding: var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background-color: var(--color-surface-soft);
+  }
 
-.pool-card__match {
-  @apply rounded-lg border border-app-border bg-app-surfaceSoft p-3;
-}
+  &__match--disabled { opacity: 0.55; filter: grayscale(1); }
 
-.pool-card__match--disabled {
-  @apply opacity-55 grayscale;
-}
+  &__teams {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-3);
+    color: var(--color-text);
+    font-size: 0.875rem;
+  }
 
-.pool-card__teams {
-  @apply mb-3 grid grid-cols-[1fr_auto_1fr] items-center gap-3 text-sm text-app-text;
-}
+  &__team { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500; }
+  &__team--away { text-align: right; }
+  &__versus { color: var(--color-text-muted); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
 
-.pool-card__team {
-  @apply truncate font-medium;
-}
-
-.pool-card__team--away {
-  @apply text-right;
-}
-
-.pool-card__versus {
-  @apply text-xs font-semibold uppercase tracking-wide text-app-textMuted;
-}
-
-.pool-card__footer {
-  @apply border-t border-app-border p-4;
+  &__footer {
+    padding: var(--space-4);
+    border-top: 1px solid var(--color-border);
+  }
 }

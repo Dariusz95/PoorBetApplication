@@ -26,7 +26,6 @@ export interface GroupedPools {
 export class PoolRefreshService {
   private readonly matchService = inject(MatchService);
   private readonly liveMatchService = inject(LiveMatchService);
-  // private readonly refreshTrigger = new Subject<void>();
   private readonly refreshTrigger = new BehaviorSubject<void>(undefined);
   private refreshSubscription: Subscription | null = null;
 

@@ -15,7 +15,7 @@ public class MatchesFinishedListener {
 
     private final CouponProcessingService couponProcessingService;
 
-    @RabbitListener(queues = "${messaging.consumers.match-finished.queue}")
+    @RabbitListener(queues = "${messaging.consumers.MATCH_FINISHED.queue}")
     public void handleFinishedMatches(EventEnvelope<MatchesFinishedEvent> event) {
 
         if (!event.eventType().equals(MatchEvents.MATCH_FINISHED.eventType())) {

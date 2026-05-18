@@ -1,0 +1,13 @@
+:host {
+  @apply block;
+}
+
+.coupon {
+  &__bets {
+    @apply mb-6;
+  }
+
+  &__bets-list {
+    @apply m-0 flex list-none flex-col gap-3 p-0;
+  }
+}

@@ -1,63 +1,51 @@
-<ng-container *transloco="let t; prefix: 'bet.liveMatchCard'">
-  <app-pb-card>
-    <div pbCardHeader class="flex justify-between w-full">
-      <div class="flex items-center gap-2">
-        <span class="relative flex h-2.5 w-2.5">
-          <span
-            class="absolute inline-flex h-full w-full animate-ping rounded-full bg-app-danger opacity-80"
-          ></span>
-          <span
-            class="relative inline-flex h-2.5 w-2.5 rounded-full bg-app-danger"
-          ></span>
-        </span>
-        <span class="text-xs font-semibold uppercase tracking-wide text-app-text"
-          >{{ t("live") }}</span
-        >
-      </div>
-
-      <span class="text-sm font-semibold text-app-primary"
-        >{{ liveMatch().minute }}'</span
-      >
+<pb-card>
+  <div pbCardHeader class="live-match-card__header">
+    <div class="live-match-card__status">
+      <span class="live-match-card__live-dot">
+        <span class="live-match-card__live-dot-ping"></span>
+        <span class="live-match-card__live-dot-core"></span>
+      </span>
+      <span class="live-match-card__status-label">{{
+        "bet.liveMatchCard.live" | transloco
+      }}</span>
     </div>
 
-    <div pbCardBody>
-      <div class="grid grid-cols-[1fr_auto_1fr] items-center gap-3 px-4">
-        <div class="text-center">
-          @if (homeTeam$ | async; as home) {
-            <p class="mb-2 line-clamp-2 text-sm font-medium text-app-text">
-              {{ home.name }}
-            </p>
-          }
-          <p class="text-3xl font-bold text-app-accent">
-            {{ liveMatch().homeScore }}
-          </p>
-        </div>
+    <span class="live-match-card__minute">{{ liveMatch().minute }}'</span>
+  </div>
 
-        <p
-          class="text-xs font-semibold uppercase tracking-wide text-app-textMuted"
-        >
-          vs
+  <div pbCardBody>
+    <div class="live-match-card__body-grid">
+      <div class="live-match-card__team">
+        @if (homeTeam$ | async; as home) {
+          <p class="live-match-card__team-name">
+            {{ home.name }}
+          </p>
+        }
+        <p class="live-match-card__score live-match-card__score--home">
+          {{ liveMatch().homeScore }}
         </p>
+      </div>
 
-        <div class="text-center">
-          @if (awayTeam$ | async; as away) {
-            <p class="mb-2 line-clamp-2 text-sm font-medium text-app-text">
-              {{ away.name }}
-            </p>
-          }
-          <p class="text-3xl font-bold text-app-primary">
-            {{ liveMatch().awayScore }}
+      <p class="live-match-card__vs">vs</p>
+
+      <div class="live-match-card__team">
+        @if (awayTeam$ | async; as away) {
+          <p class="live-match-card__team-name">
+            {{ away.name }}
           </p>
-        </div>
+        }
+        <p class="live-match-card__score live-match-card__score--away">
+          {{ liveMatch().awayScore }}
+        </p>
       </div>
     </div>
+  </div>
 
-    <div pbCardFooter>
-      @if (liveMatch().eventType === MatchEventType.MatchEnded) {
-        {{ t("matchFinished") }}
-      } @else {
-        {{ t("matchInProgress") }}
-      }
-    </div>
-  </app-pb-card>
-</ng-container>
+  <div pbCardFooter>
+    @if (liveMatch().eventType === MatchEventType.MatchEnded) {
+      {{ "bet.liveMatchCard.matchFinished" | transloco }}
+    } @else {
+      {{ "bet.liveMatchCard.matchInProgress" | transloco }}
+    }
+  </div>
+</pb-card>

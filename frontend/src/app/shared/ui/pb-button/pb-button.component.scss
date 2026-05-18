@@ -1,0 +1,119 @@
+.pb-button {
+  @apply inline-flex items-center justify-center relative select-none;
+  @apply font-medium transition duration-200 ease-out;
+  @apply focus:outline-none focus:ring-2 focus:ring-app-primary focus:ring-offset-2;
+  @apply disabled:cursor-not-allowed disabled:opacity-60;
+  @apply rounded-md;
+  min-height: 40px;
+  padding: 0 1.25rem;
+}
+
+.pb-button--sm {
+  @apply px-3 text-sm rounded-md;
+  min-height: 32px;
+}
+
+.pb-button--md {
+  @apply px-4 text-sm rounded-md;
+  min-height: 40px;
+}
+
+.pb-button--lg {
+  @apply px-6 text-base rounded-lg;
+  min-height: 48px;
+}
+
+.pb-button--responsive {
+  @apply px-3 sm:px-4 lg:px-6 text-sm lg:text-base;
+  min-height: 40px;
+}
+
+.pb-button--primary {
+  background: linear-gradient(
+    135deg,
+    theme("colors.app.primary"),
+    theme("colors.app.primaryDark")
+  );
+  @apply text-white shadow-glow;
+}
+
+.pb-button--primary:hover {
+  transform: translateY(-2px);
+  @apply shadow-elevated;
+}
+
+.pb-button--primary:active {
+  transform: translateY(0);
+}
+
+.pb-button--secondary {
+  @apply bg-app-surface text-app-text border border-app-border shadow-surface;
+}
+
+.pb-button--secondary:hover {
+  @apply bg-app-surfaceSoft;
+}
+
+.pb-button--outline {
+  @apply bg-transparent text-app-primary border border-app-primary;
+}
+
+.pb-button--outline:hover {
+  background: rgba(139, 92, 246, 0.08);
+}
+
+.pb-button--ghost {
+  @apply bg-transparent text-app-text;
+}
+
+.pb-button--ghost:hover {
+  @apply bg-app-surfaceSoft;
+}
+
+.pb-button--success {
+  background: linear-gradient(135deg, theme("colors.app.success"), #16a34a);
+  @apply text-white;
+}
+
+.pb-button--danger {
+  background: linear-gradient(135deg, theme("colors.app.danger"), #dc2626);
+  @apply text-white;
+}
+
+.pb-button--link {
+  background: transparent;
+  color: theme("colors.app.primary");
+  text-decoration: underline;
+  @apply shadow-none;
+}
+
+.pb-button--link:hover {
+  color: theme("colors.app.primaryDark");
+}
+
+.pb-button--full-width {
+  @apply w-full;
+}
+
+.pb-button--loading {
+  cursor: wait;
+}
+
+.pb-button__content {
+  @apply flex items-center justify-center gap-2;
+}
+
+.pb-button__text {
+  @apply truncate;
+}
+
+.pb-button__text--loading {
+  @apply opacity-70;
+}
+
+.pb-button--icon {
+  padding: 0 0.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}

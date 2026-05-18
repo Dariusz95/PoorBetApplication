@@ -1,5 +1,8 @@
 import { TestBed } from '@angular/core/testing';
-import { BetSlipService } from './bet-slip.service';
+import { BetType } from '@shared/types/bet-type';
+import { Uuid } from '@shared/types/uuid.type';
+import { beforeEach, describe, expect, it } from 'vitest';
+import { BetSlipService, SelectedBet } from './bet-slip.service';
 
 describe('BetSlipService', () => {
   let service: BetSlipService;
@@ -10,45 +13,45 @@ describe('BetSlipService', () => {
   });
 
   it('should add and remove the same selection on toggle', () => {
-    const bet = {
-      matchId: 'match-1',
+    const bet: SelectedBet = {
+      matchId: '550e8400-e29b-41d4-a716-446655440000' as Uuid,
       matchLabel: 'A vs B',
-      optionValue: 'HOME_WIN',
+      betType: BetType.HomeWin,
       optionLabel: '1',
       odds: 1.8,
     };
 
     service.toggleSelection(bet);
     expect(service.selectedBets()).toEqual([bet]);
-    expect(service.isSelected('match-1', 'HOME_WIN')).toBeTrue();
+    expect(service.isSelected(bet.matchId, BetType.HomeWin)).toBe(true);
 
     service.toggleSelection(bet);
     expect(service.selectedBets()).toEqual([]);
-    expect(service.isSelected('match-1', 'HOME_WIN')).toBeFalse();
+    expect(service.isSelected(bet.matchId, BetType.HomeWin)).toBe(false);
   });
 
   it('should replace selection for the same match with a different option', () => {
     service.toggleSelection({
-      matchId: 'match-1',
+      matchId: '550e8400-e29b-41d4-a716-446655440000' as Uuid,
       matchLabel: 'A vs B',
-      optionValue: 'HOME_WIN',
+      betType: BetType.HomeWin,
       optionLabel: '1',
       odds: 1.8,
     });
 
     service.toggleSelection({
-      matchId: 'match-1',
+      matchId: '550e8400-e29b-41d4-a716-446655440000' as Uuid,
       matchLabel: 'A vs B',
-      optionValue: 'DRAW',
+      betType: BetType.Draw,
       optionLabel: 'X',
       odds: 3.25,
     });
 
     expect(service.selectedBets()).toEqual([
       {
-        matchId: 'match-1',
+        matchId: '550e8400-e29b-41d4-a716-446655440000' as Uuid,
         matchLabel: 'A vs B',
-        optionValue: 'DRAW',
+        betType: BetType.Draw,
         optionLabel: 'X',
         odds: 3.25,
       },

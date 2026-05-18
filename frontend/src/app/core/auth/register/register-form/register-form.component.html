@@ -1,0 +1,47 @@
+<form pbCardBody [formGroup]="form">
+  <pb-form-field>
+    <pb-label> {{ "auth.email.label" | transloco }}</pb-label>
+    <pb-input
+      formControlName="email"
+      [placeholder]="'auth.email.placeholder' | transloco"
+    >
+      <pb-icon icon="mail" size="m" pbInputIcon></pb-icon>
+    </pb-input>
+  </pb-form-field>
+
+  <pb-form-field>
+    <pb-label> {{ "auth.register.password" | transloco }}</pb-label>
+    <pb-input
+      formControlName="password"
+      type="password"
+      autocomplete="new-password"
+      [placeholder]="'auth.register.passwordPlaceholder' | transloco"
+    >
+      <pb-icon icon="lock" size="m" pbInputIcon></pb-icon>
+    </pb-input>
+  </pb-form-field>
+
+  <pb-form-field>
+    <pb-label> {{ "auth.register.confirmPassword" | transloco }}</pb-label>
+    <pb-input
+      formControlName="confirmPassword"
+      type="password"
+      autocomplete="new-password"
+      [placeholder]="'auth.register.confirmPasswordPlaceholder' | transloco"
+    >
+      <pb-icon icon="lock" size="m" pbInputIcon></pb-icon>
+    </pb-input>
+  </pb-form-field>
+
+  <div class="mt-8">
+    <pb-button
+      variant="primary"
+      size="md"
+      [fullWidth]="true"
+      [disabled]="!form.valid"
+      (buttonClick)="onSubmit()"
+    >
+      {{ "auth.register.register" | transloco }}
+    </pb-button>
+  </div>
+</form>

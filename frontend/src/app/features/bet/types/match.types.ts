@@ -1,10 +1,10 @@
 import { Uuid } from '@shared/types/uuid.type';
 
 export interface LiveMatchEvent {
-  id: string;
+  id: Uuid;
   minute: number;
-  homeTeamId: string;
-  awayTeamId: string;
+  homeTeamId: Uuid;
+  awayTeamId: Uuid;
   homeScore: number;
   awayScore: number;
   eventType: MatchEventType;
@@ -20,16 +20,16 @@ export enum MatchEventType {
 }
 
 export interface OddsDto {
-  id: string;
+  id: Uuid;
   homeWin: number;
   draw: number;
   awayWin: number;
 }
 
 export interface MatchDto {
-  matchId: string;
-  homeTeamId: string;
-  awayTeamId: string;
+  matchId: Uuid;
+  homeTeamId: Uuid;
+  awayTeamId: Uuid;
   odds: OddsDto;
 }
 
@@ -41,6 +41,6 @@ export interface PoolMatch {
 }
 
 export interface ShortTeamInfo {
-  id: string;
+  id: Uuid;
   name: string;
 }

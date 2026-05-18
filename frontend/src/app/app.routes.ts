@@ -27,8 +27,15 @@ export const routes: Routes = [
       {
         path: '',
         loadComponent: () =>
-          import('./features/bet/bet-page/bet-page.component').then(
+          import('./features/bet/bet-page.component').then(
             (m) => m.BetPageComponent,
+          ),
+      },
+      {
+        path: RouteFragment.MyCoupons,
+        loadComponent: () =>
+          import('./features/coupons/pages/coupons-page/coupons-page.component').then(
+            (m) => m.CouponsPageComponent,
           ),
       },
     ],

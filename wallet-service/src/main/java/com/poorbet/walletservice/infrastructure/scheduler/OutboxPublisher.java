@@ -20,6 +20,7 @@ import java.util.Map;
 import static com.poorbet.commons.rabbit.events.wallet.WalletEvents.WALLET_BALANCE_CHANGED;
 import static com.poorbet.commons.rabbit.events.wallet.WalletEvents.WALLET_CREATED;
 
+
 @Component
 @RequiredArgsConstructor
 @Slf4j

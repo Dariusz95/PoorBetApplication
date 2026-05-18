@@ -7,8 +7,6 @@ import { AuthService } from '../services/auth.service';
 export const guestGuard: CanActivateFn = () => {
   const authService = inject(AuthService);
   const router = inject(Router);
-  console.log(authService.isLoggedIn());
-  console.log(RouteLink[RoutePath.App]);
 
   return authService.isLoggedIn()
     ? router.createUrlTree(RouteLink[RoutePath.App])

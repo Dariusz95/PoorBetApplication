@@ -4,22 +4,24 @@ module.exports = {
     extend: {
       colors: {
         app: {
-          bg: "#0e1117",
-          surface: "#1e222b",
-          surfaceSoft: "#252b38",
-          border: "rgba(255,255,255,0.06)",
+          bg: "var(--color-bg)",
+          surface: "var(--color-surface)",
+          surfaceSoft: "var(--color-surface-soft)",
+          border: "var(--color-border)",
 
-          primary: "#8B5CF6",
-          primaryDark: "#6D28D9",
+          primary: "var(--color-primary)",
+          primarySoft: "var(--color-primary-soft)",
+          primaryDark: "var(--color-primary-dark)",
 
-          accent: "#3B82F6",
-          accentDark: "#2563EB",
+          accent: "var(--color-accent)",
+          accentDark: "var(--color-accent-dark)",
 
-          success: "#22C55E",
-          danger: "#e16f67",
+          success: "var(--color-success)",
+          warning: "var(--color-warning)",
+          danger: "var(--color-danger)",
 
-          text: "#E5E7EB",
-          textMuted: "#9CA3AF",
+          text: "var(--color-text)",
+          textMuted: "var(--color-text-muted)",
         },
       },
 

@@ -1,5 +1,10 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
-import { PbButtonComponent } from '../../../../shared/components/pb-button/pb-button.component';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  input,
+  output,
+} from '@angular/core';
+import { PbButtonComponent } from '../../../../shared/ui/pb-button/pb-button.component';
 
 @Component({
   selector: 'app-odds-button',

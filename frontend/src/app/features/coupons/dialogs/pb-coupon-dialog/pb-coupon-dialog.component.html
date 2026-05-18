@@ -1,0 +1,33 @@
+<pb-card variant="highlighted" class="coupon-dialog">
+  <div pbCardHeader class="coupon-dialog__header">
+    <h2 class="coupon-dialog__title">{{ "coupon.title" | transloco }}</h2>
+
+    <pb-button
+      size="sm"
+      type="icon"
+      ariaLabel="{{ 'coupon.close' | transloco }}"
+      (buttonClick)="closeCoupon()"
+    >
+      <pb-icon color="warning" icon="close" size="s" />
+    </pb-button>
+  </div>
+
+  <div pbCardBody class="coupon-dialog__body">
+    <app-coupon-bets-list [bets]="couponData.bets" />
+
+    <section aria-labelledby="coupon-summary-title">
+      <app-coupon-summary>
+        <span slot="amount-value">{{
+          couponData.stake | number: "1.2-2"
+        }}</span>
+        <span slot="odds-value">
+          <!-- {{ couponData.totalOdds | number: "1.2-2" }} -->
+          {{ 222 | number: "1.2-2" }}
+        </span>
+        <span slot="win-value">{{
+          couponData.potentialWin | number: "1.2-2"
+        }}</span>
+      </app-coupon-summary>
+    </section>
+  </div>
+</pb-card>

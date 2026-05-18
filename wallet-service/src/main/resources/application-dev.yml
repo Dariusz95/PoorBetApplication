@@ -36,3 +36,9 @@ messaging:
   consumers:
     USER_CREATED:
       queue: wallet.user-created.queue
+    COUPON_CREATION_FAILED:
+      queue: wallet.coupon-creation-failed.queue
+    COUPON_WON:
+      queue: wallet.coupon-won.queue
+    COUPON_LOST:
+      queue: wallet.coupon-lost.queue

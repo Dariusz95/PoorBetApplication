@@ -1,0 +1,28 @@
+<div
+  class="input-container"
+  [class.focused]="focused()"
+  [class.has-value]="value() !== ''"
+  [class.has-icon-left]="hasIcon"
+>
+  @if (hasIcon) {
+    <div class="icon icon--left">
+      <ng-content select="[pbInputIcon]"></ng-content>
+    </div>
+  }
+
+  <input
+    class="pb-input"
+    [id]="labelId()"
+    [type]="type()"
+    [placeholder]="placeholder()"
+    [value]="value()"
+    (input)="handleInput($event)"
+    (focus)="onFocus()"
+    (blur)="onBlur()"
+  />
+
+  <div class="underline">
+    <div class="base-line"></div>
+    <div class="focus-line"></div>
+  </div>
+</div>

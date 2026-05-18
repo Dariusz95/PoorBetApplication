@@ -1,0 +1,44 @@
+@layer base {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inter", sans-serif;
+    line-height: 1.2;
+    @apply text-app-text;
+  }
+
+  h1 { @apply text-3xl font-bold; }
+  h2 { @apply text-2xl font-bold; }
+  h3 { @apply text-xl font-semibold; }
+}
+
+@layer components {
+  .t-eyebrow { @apply text-xs font-semibold uppercase tracking-[0.2em]; }
+
+  .t-heading-xl { @apply text-3xl font-bold tracking-tight; }
+  .t-heading-lg { @apply text-2xl font-bold tracking-tight; }
+  .t-heading-md { @apply text-lg font-semibold tracking-tight; }
+  .t-heading-sm { @apply text-base font-semibold; }
+  .t-heading-xs { @apply text-sm font-semibold; }
+
+  .t-body-lg { @apply text-lg leading-7; }
+  .t-body-md { @apply text-base leading-6; }
+  .t-body-sm { @apply text-sm leading-5; }
+  .t-body-xs { @apply text-xs leading-4; }
+
+  .t-caption { @apply text-xs leading-4; }
+  .t-label { @apply text-sm font-medium leading-5; }
+
+  .t-text { @apply text-app-text; }
+  .t-muted { @apply text-app-textMuted; }
+  .t-success { @apply text-app-success; }
+  .t-danger { @apply text-app-danger; }
+  .t-warning { @apply text-app-warning; }
+  .t-primary { @apply text-app-primary; }
+
+  .pb-surface { @apply rounded-md border border-[var(--color-border)] bg-[var(--color-surface-soft)] p-3; }
+  .pb-card-section { @apply px-4 py-3; }
+}

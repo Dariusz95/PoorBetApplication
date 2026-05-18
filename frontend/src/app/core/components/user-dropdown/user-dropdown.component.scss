@@ -1,3 +1,8 @@
 :host {
   @apply block;
+  --dropdown-trigger-height: 40px;
+}
+
+.user-dropdown__trigger {
+  @apply flex items-center;
 }

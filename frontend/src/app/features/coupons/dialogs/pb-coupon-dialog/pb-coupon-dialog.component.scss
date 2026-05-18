@@ -1,0 +1,40 @@
+:host {
+  display: block;
+  width: 100%;
+  max-width: 42rem;
+}
+
+.coupon-dialog {
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+
+  &__title {
+    margin: 0;
+    color: var(--color-text);
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1.4;
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  &__section-title {
+    margin: 0 0 var(--space-1);
+    color: var(--color-text);
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  &__footer {
+    padding-top: var(--space-2);
+    border-top: 1px solid var(--color-border);
+  }
+}

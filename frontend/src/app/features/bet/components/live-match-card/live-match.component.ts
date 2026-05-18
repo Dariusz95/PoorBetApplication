@@ -6,7 +6,9 @@ import {
   input,
   OnInit,
 } from '@angular/core';
-import { TranslocoDirective } from '@jsverse/transloco';
+import { TranslocoPipe } from '@jsverse/transloco';
+import { PbCardHeaderDirective } from '@shared/ui/pb-card/directives/pb-card-header.directive';
+import { PbCardComponent } from '@shared/ui/pb-card/pb-card.component';
 import { Observable } from 'rxjs';
 import { TeamService } from '../../services/team.service';
 import {
@@ -14,12 +16,13 @@ import {
   MatchEventType,
   ShortTeamInfo,
 } from '../../types/match.types';
-import { PbCardComponent } from '@shared/components/pb-card/pb-card.component';
+import { PbCardBodyDirective } from '@shared/ui/pb-card/directives/pb-card-body.directive';
+import { PbCardFooterDirective } from '@shared/ui/pb-card/directives/pb-card-footer.directive.';
 
 @Component({
   selector: 'app-live-match-card',
   standalone: true,
-  imports: [AsyncPipe, PbCardComponent, TranslocoDirective],
+  imports: [AsyncPipe, PbCardComponent, TranslocoPipe, PbCardHeaderDirective, PbCardBodyDirective, PbCardFooterDirective],
   templateUrl: './live-match.component.html',
   styleUrl: './live-match.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -35,7 +38,7 @@ export class LiveMatchComponent implements OnInit {
   MatchEventType = MatchEventType;
 
   ngOnInit(): void {
-    this.homeTeam$ = this.teamService.getTeam(this.liveMatch().homeTeamId);
-    this.awayTeam$ = this.teamService.getTeam(this.liveMatch().awayTeamId);
+    this.homeTeam$ = this.teamService.getDetails(this.liveMatch().homeTeamId);
+    this.awayTeam$ = this.teamService.getDetails(this.liveMatch().awayTeamId);
   }
 }

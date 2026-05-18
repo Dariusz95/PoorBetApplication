@@ -1,5 +1,5 @@
 {
-  "lang":{
+  "lang": {
     "pl": "Polski",
     "en": "Angielski"
   },
@@ -12,12 +12,14 @@
       "label": "Hasło",
       "placeholder": "Podaj swoje hasło"
     },
-
     "register": {
       "title": "Rejestracja",
+      "subtitle": "Dołącz do PoorBet i zacznij stawiać zakłady już dziś!",
       "email": "E-mail",
       "password": "Hasło",
+      "passwordPlaceholder": "Podaj swoje hasło",
       "confirmPassword": "Potwierdź hasło",
+      "confirmPasswordPlaceholder": "Potwierdź swoje hasło",
       "register": "Zarejestruj się",
       "alreadyHaveAccount": "Masz już konto?",
       "login": "Zaloguj się"
@@ -45,7 +47,6 @@
   },
   "bet": {
     "page": {
-      "availablePools": "Dostępne pule",
       "live": "Live",
       "upcomingPools": "Nadchodzące pule"
     },
@@ -67,10 +68,28 @@
       "removeAria": "Usuń zdarzenie z kuponu",
       "totalOdds": "Łączny kurs",
       "amount": "Kwota",
-      "submit": "Postaw kupon"
+      "submit": "Postaw kupon",
+      "stake": "Stawka",
+      "potentialWin": "Potencjalna wygrana",
+      "bets": "Zdarzenia",
+      "close": "Zamknij"
     },
     "poolCard": {
       "eyebrow": "Pula"
     }
+  },
+  "user": {
+    "settings": "Ustawienia",
+    "login": "Zaloguj się",
+    "register": "Zarejestruj się",
+    "logout": "Wyloguj się"
+  },
+  "menu": {
+    "home": "Strona główna",
+    "myCoupons": "Moje kupony"
+  },
+  "myCoupons": {
+    "title": "Moje kupony",
+    "empty": "Brak kuponów do wyświetlenia."
   }
 }

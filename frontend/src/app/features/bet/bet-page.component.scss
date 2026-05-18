@@ -1,0 +1,64 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+.bet-page-layout {
+  @apply grid h-full grid-cols-1 gap-6 overflow-y-auto xl:grid-cols-[1fr_22rem] xl:items-start;
+}
+
+.bet-page-main {
+  @apply flex min-h-0 flex-col;
+}
+
+.live-badge {
+  @apply t-heading-xs t-danger inline-flex items-center justify-center gap-1;
+}
+
+.matches-section {
+  @apply flex flex-col gap-6;
+}
+
+.section-header {
+  @apply py-2;
+
+  &__title {
+    @apply t-heading-lg text-2xl font-semibold text-app-text;
+  }
+
+  &__subtitle {
+    @apply t-body-sm mt-1 text-sm text-app-textMuted;
+  }
+}
+
+.matches-grid {
+  @apply flex flex-col gap-4;
+}
+
+.empty-state {
+  @apply rounded-md border border-dashed border-app-border bg-app-surface p-8 text-center;
+
+  &__title {
+    @apply t-heading-md text-lg font-semibold text-app-text;
+  }
+
+  &__text {
+    @apply t-body-sm mt-2 text-sm text-app-textMuted;
+  }
+  margin-right: -1.5rem;
+}
+
+.bet-page-content {
+  padding: 1.5rem 1.5rem;
+}
+
+@media (max-width: 1024px) {
+  .bet-page-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .tabs-container {
+    margin-left: -1rem;
+    margin-right: -1rem;
+  }
+}

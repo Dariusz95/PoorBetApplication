@@ -1,55 +1,12 @@
+@use "tokens";
+
+@import "ngx-toastr/toastr";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --app-header-height: 100px;
-}
-
-
-@layer utilities {
-  .scrollbar-hide {
-    &::-webkit-scrollbar {
-      display: none;
-    }
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-}
-
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-html,
-body {
-  min-height: 100vh;
-}
-
-body {
-  @apply bg-app-gradient bg-fixed font-sans text-app-text antialiased;
-}
-
-h1,
-h2,
-h3 {
-  font-family: "Inter", sans-serif;
-  font-weight: 700;
-  margin-bottom: 0.75rem;
-  line-height: 1.2;
-  @apply text-app-text;
-}
-
-h1 {
-  @apply text-3xl;
-}
-
-h2 {
-  @apply text-2xl;
-}
-
-h3 {
-  @apply text-xl;
-}
+@import "foundations/reset";
+@import "foundations/typography";
+@import "utilities/scrollbar";
+@import "components/auth";

@@ -1,9 +1,11 @@
 package com.poorbet.couponservice.service;
 
+import com.poorbet.commons.rabbit.events.coupon.CouponEvents;
+import com.poorbet.commons.rabbit.events.coupon.CouponLostEvent;
+import com.poorbet.commons.rabbit.events.coupon.CouponWonEvent;
 import com.poorbet.commons.rabbit.events.match.MatchesFinishedEvent;
 import com.poorbet.commons.rabbit.events.match.dto.MatchResultEventDto;
 import com.poorbet.couponservice.domain.Bet;
-import com.poorbet.couponservice.domain.BetStatus;
 import com.poorbet.couponservice.domain.Coupon;
 import com.poorbet.couponservice.domain.CouponStatus;
 import com.poorbet.couponservice.repository.BetRepository;
@@ -25,6 +27,7 @@ public class CouponProcessingService {
 
     private final BetRepository betRepository;
     private final CouponRepository couponRepository;
+    private final OutboxService outboxService;
 
     @Transactional
     public void processFinishedMatch(MatchesFinishedEvent event) {
@@ -39,7 +42,7 @@ public class CouponProcessingService {
 
         bets.forEach(bet -> {
             MatchResultEventDto result = matchResults.get(bet.getMatchId());
-            bet.setStatus(bet.getBetType().mapToStatus(result, result.homeGoals(), result.awayGoals()));
+            bet.settle(result);
         });
 
         Set<UUID> couponIds = bets.stream()
@@ -49,21 +52,30 @@ public class CouponProcessingService {
 
         List<Coupon> coupons = couponRepository.findAllWithBetsByIds(couponIds);
 
-        coupons.forEach(this::updateCouponStatus);
-    }
+        coupons.forEach(coupon -> {
+            CouponStatus previousStatus = coupon.getStatus();
 
-    public void updateCouponStatus(Coupon coupon) {
-        boolean hasLost = coupon.getBets().stream()
-                .anyMatch(bet -> bet.getStatus() == BetStatus.LOST);
+            coupon.recalculateStatus();
 
-        boolean allWon = coupon.getBets().stream()
-                .allMatch(bet -> bet.getStatus() == BetStatus.WON);
+            if (previousStatus != coupon.getStatus()) {
 
-        if (hasLost) {
-            coupon.setStatus(CouponStatus.LOST);
-        } else if (allWon) {
-            coupon.setStatus(CouponStatus.WON);
-        }
+                if (coupon.getStatus() == CouponStatus.WON) {
+                    CouponWonEvent wonEvent = new CouponWonEvent(coupon.getId(),
+                            coupon.getReservationId(),
+                            coupon.getUserId(),
+                            coupon.getPotentialPayout()
+                    );
+
+                    outboxService.saveEvent(CouponEvents.COUPON_WON, wonEvent);
+                }
+
+                if (coupon.getStatus() == CouponStatus.LOST) {
+                    CouponLostEvent lostEvent = new CouponLostEvent(coupon.getId());
+
+                    outboxService.saveEvent(CouponEvents.COUPON_LOST, lostEvent);
+                }
+            }
+        });
     }
 }
 
