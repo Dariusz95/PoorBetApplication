@@ -33,6 +33,9 @@ class CouponProcessingServiceTest {
     @Mock
     private CouponRepository couponRepository;
 
+    @Mock
+    private OutboxService outboxService;
+
     @InjectMocks
     private CouponProcessingService couponProcessingService;
 
