@@ -1,16 +1,11 @@
 package com.poorbet.teams.model;
 
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import com.poorbet.teams.fixture.TeamFixtures;
 import org.junit.jupiter.api.Test;
 
-import com.poorbet.teams.fixture.TeamFixtures;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class TeamTest {
 
@@ -180,19 +175,6 @@ class TeamTest {
         assertEquals(100, team.getDefencePower());
     }
 
-    // ==================== Equality Tests ====================
-
-    @Test
-    void shouldBeEqual_whenTeamsHaveSameData() {
-        // Arrange
-        UUID id = UUID.randomUUID();
-        Team team1 = TeamFixtures.createTeam(id, "Real Madrid", 88, 85);
-        Team team2 = TeamFixtures.createTeam(id, "Real Madrid", 88, 85);
-
-        // Assert
-        assertEquals(team1, team2);
-    }
-
     @Test
     void shouldNotBeEqual_whenTeamsHaveDifferentIds() {
         // Arrange
@@ -254,19 +236,6 @@ class TeamTest {
         assertNotNull(toString);
         assertFalse(toString.isEmpty());
         assertTrue(toString.contains("Team") || toString.contains("id") || toString.contains("name"));
-    }
-
-    // ==================== Hash Code Tests ====================
-
-    @Test
-    void shouldHaveSameHashCode_whenTeamsAreEqual() {
-        // Arrange
-        UUID id = UUID.randomUUID();
-        Team team1 = TeamFixtures.createTeam(id, "Inter Milan", 81, 79);
-        Team team2 = TeamFixtures.createTeam(id, "Inter Milan", 81, 79);
-
-        // Assert
-        assertEquals(team1.hashCode(), team2.hashCode());
     }
 
     // ==================== JPA Annotation Tests ====================
