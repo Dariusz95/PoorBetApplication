@@ -10,94 +10,35 @@
     @apply text-app-text;
   }
 
-  h1 {
-    @apply text-3xl font-bold;
-  }
-
-  h2 {
-    @apply text-2xl font-bold;
-  }
-
-  h3 {
-    @apply text-xl font-semibold;
-  }
+  h1 { @apply text-3xl font-bold; }
+  h2 { @apply text-2xl font-bold; }
+  h3 { @apply text-xl font-semibold; }
 }
 
 @layer components {
-  .t-eyebrow {
-    @apply text-xs font-semibold uppercase tracking-[0.2em] text-app-textMuted;
-  }
+  .t-eyebrow { @apply text-xs font-semibold uppercase tracking-[0.2em]; }
 
-  .t-heading-xl {
-    @apply text-3xl font-bold tracking-tight text-app-text;
-  }
+  .t-heading-xl { @apply text-3xl font-bold tracking-tight; }
+  .t-heading-lg { @apply text-2xl font-bold tracking-tight; }
+  .t-heading-md { @apply text-lg font-semibold tracking-tight; }
+  .t-heading-sm { @apply text-base font-semibold; }
+  .t-heading-xs { @apply text-sm font-semibold; }
 
-  .t-heading-lg {
-    @apply text-2xl font-bold tracking-tight text-app-text;
-  }
+  .t-body-lg { @apply text-lg leading-7; }
+  .t-body-md { @apply text-base leading-6; }
+  .t-body-sm { @apply text-sm leading-5; }
+  .t-body-xs { @apply text-xs leading-4; }
 
-  .t-heading-md {
-    @apply text-lg font-semibold tracking-tight text-app-text;
-  }
+  .t-caption { @apply text-xs leading-4; }
+  .t-label { @apply text-sm font-medium leading-5; }
 
-  .t-heading-sm {
-    @apply text-base font-semibold text-app-text;
-  }
+  .t-text { @apply text-app-text; }
+  .t-muted { @apply text-app-textMuted; }
+  .t-success { @apply text-app-success; }
+  .t-danger { @apply text-app-danger; }
+  .t-warning { @apply text-app-warning; }
+  .t-primary { @apply text-app-primary; }
 
-  .t-heading-xs {
-    @apply text-sm font-semibold text-app-text;
-  }
-
-  .t-body-lg {
-    @apply text-lg leading-7 text-app-text;
-  }
-
-  .t-body-md {
-    @apply text-base leading-6 text-app-text;
-  }
-
-  .t-body-sm {
-    @apply text-sm leading-5 text-app-text;
-  }
-
-  .t-body-xs {
-    @apply text-xs leading-4 text-app-text;
-  }
-
-  .t-caption {
-    @apply text-xs leading-4 text-app-textMuted;
-  }
-
-  .t-label {
-    @apply text-sm font-medium leading-5 text-app-text;
-  }
-
-  .t-muted {
-    @apply text-app-textMuted;
-  }
-
-  .t-success {
-    @apply text-green-500;
-  }
-
-  .t-danger {
-    @apply text-red-500;
-  }
-
-  .t-warning {
-    @apply text-yellow-500;
-  }
-
-  .t-primary {
-    @apply text-app-primary;
-  }
-
-  .pb-surface {
-    @apply p-3 rounded-md border border-[var(--color-border)]
-           bg-[var(--color-surface-soft)];
-  }
-
-   .pb-card-section {
-    @apply px-4 py-3;
-  }
+  .pb-surface { @apply rounded-md border border-[var(--color-border)] bg-[var(--color-surface-soft)] p-3; }
+  .pb-card-section { @apply px-4 py-3; }
 }

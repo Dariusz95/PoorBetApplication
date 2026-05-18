@@ -7,6 +7,7 @@
   --color-border: rgba(255, 255, 255, 0.06);
 
   --color-primary: #8b5cf6;
+  --color-primary-soft: rgba(139, 92, 246, 0.08);
   --color-primary-dark: #6d28d9;
   --color-accent: #3b82f6;
   --color-accent-dark: #2563eb;
@@ -55,6 +56,10 @@
   --space-8: 2rem;
   --space-10: 2.5rem;
   --space-12: 3rem;
+
+  --z-dropdown: 100;
+  --z-modal: 200;
+  --z-toast: 300;
 
   --dropdown-min-width: 180px;
 }

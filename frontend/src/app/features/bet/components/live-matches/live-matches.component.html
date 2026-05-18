@@ -3,7 +3,7 @@
     @if ((liveMatches$ | async | keyvalue)?.length === 0) {
       <div class="empty-state">
         <p class="empty-state__title">{{ t("emptyTitle") }}</p>
-        <p class="empty-state__text">
+        <p class="t-muted">
           {{ t("emptyText") }}
         </p>
       </div>

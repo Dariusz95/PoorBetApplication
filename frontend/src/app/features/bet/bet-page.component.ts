@@ -1,4 +1,4 @@
-import { AsyncPipe, DatePipe, KeyValuePipe } from '@angular/common';
+import { AsyncPipe, KeyValuePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -7,7 +7,6 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslocoDirective } from '@jsverse/transloco';
-import { PbIconComponent } from '@shared/ui/icon/pb-icon.component';
 import { PbTabContainerComponent } from '@shared/ui/pb-tabs/pb-tab-container/pb-tab-container.component';
 import { PbTabContentComponent } from '@shared/ui/pb-tabs/pb-tab-content/pb-tab-content.component';
 import { TabTemplateDirective } from '@shared/ui/pb-tabs/pb-tab-template.directive';
@@ -18,7 +17,6 @@ import { CouponCardComponent } from '../coupons/components/coupon-card/coupon-ca
 import { LiveMatchesComponent } from './components/live-matches/live-matches.component';
 import { PoolCardComponent } from './components/pool-card/pool-card.component';
 import { BetTabValue, LiveTabName } from './configs/bet-tab-config';
-import { TimeRemainingPipe } from './pipes/time-remaining.pipe';
 import { PoolRefreshService } from './services/pool-refresh.service';
 
 @Component({
@@ -32,11 +30,8 @@ import { PoolRefreshService } from './services/pool-refresh.service';
     CouponCardComponent,
     PbTabContainerComponent,
     PbTabContentComponent,
-    TimeRemainingPipe,
     TabTemplateDirective,
     TabButtonTimeComponent,
-    PbIconComponent,
-    DatePipe,
     TranslocoDirective,
     CouponCardComponent,
   ],

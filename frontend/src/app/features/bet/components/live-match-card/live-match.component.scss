@@ -28,7 +28,8 @@
   }
 
   &__minute {
-    @apply text-sm font-semibold text-app-primary;
+    @apply t-heading-xs text-app-primary;
+    // @apply text-sm font-semibold text-app-primary;
   }
 
   &__body-grid {

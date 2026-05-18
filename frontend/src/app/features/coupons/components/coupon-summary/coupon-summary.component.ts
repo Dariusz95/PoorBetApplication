@@ -15,7 +15,6 @@ export class CouponSummaryComponent {
   amount = input<number | null>(null);
 
   amountValue = computed(() => {
-    console.log(this.amount());
     return this.amount() || 0;
   });
 }

@@ -23,7 +23,16 @@
       />
     </pb-form-field>
 
-    <app-coupon-summary [amount]="amountCtrl.value" />
+    <!-- <app-coupon-summary [amount]="amountCtrl.value" /> -->
+    <app-coupon-summary>
+      <span slot="amount-value">{{ amountCtrl.value | number: "1.2-2" }}</span>
+      <span slot="odds-value">{{
+        betSlipService.totalOdds() | number: "1.2-2"
+      }}</span>
+      <span slot="win-value">{{
+        betSlipService.potentialWin(amountCtrl.value) | number: "1.2-2"
+      }}</span>
+    </app-coupon-summary>
 
     <pb-button
       [fullWidth]="true"

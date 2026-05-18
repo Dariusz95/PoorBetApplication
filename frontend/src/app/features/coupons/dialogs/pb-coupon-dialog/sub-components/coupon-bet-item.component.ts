@@ -15,23 +15,21 @@ export interface CouponBetDto extends BetInfo {
   imports: [CommonModule, DecimalPipe, TranslocoPipe],
   template: `
     <li
-      class="coupon__bet-item"
-      [class.coupon__bet-item--won]="status === 'WON'"
-      [class.coupon__bet-item--lost]="status === 'LOST'"
-      [class.coupon__bet-item--live]="status === 'LIVE'"
+      class="coupon-bet"
+      [class.coupon-bet--won]="status === 'WON'"
+      [class.coupon-bet--lost]="status === 'LOST'"
+      [class.coupon-bet--live]="status === 'LIVE'"
       role="listitem"
     >
-      <div class="coupon__bet-match">
-  
-        <div class="coupon__bet-info">
-          <p class="coupon__match-name">{{ bet.matchName }}</p>
-          <p class="coupon__bet-type">{{ bet.betType }}</p>
-          @if (status) {
-            <span class="coupon__bet-status">{{ status | transloco }}</span>
-          }
-        </div>
+      <div class="coupon-bet__info">
+        <p class="coupon-bet__match-name">Fc. Barcelona vs Bayern Monachium</p>
+        <!-- <p class="coupon-bet__match-name">{{ bet.matchName }}</p> -->
+        <p class="coupon-bet__bet-type">{{ bet.betType }}</p>
+        @if (status) {
+          <span class="coupon-bet__status">{{ status | transloco }}</span>
+        }
       </div>
-      <span class="coupon__bet-odds">{{ bet.odds | number: '1.2-2' }}</span>
+      <span class="coupon-bet__odds">{{ bet.odds | number: '1.2-2' }}</span>
     </li>
   `,
   styleUrl: './coupon-bet-item.component.scss',

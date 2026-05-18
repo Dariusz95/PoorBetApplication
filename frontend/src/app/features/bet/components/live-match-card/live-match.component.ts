@@ -16,11 +16,13 @@ import {
   MatchEventType,
   ShortTeamInfo,
 } from '../../types/match.types';
+import { PbCardBodyDirective } from '@shared/ui/pb-card/directives/pb-card-body.directive';
+import { PbCardFooterDirective } from '@shared/ui/pb-card/directives/pb-card-footer.directive.';
 
 @Component({
   selector: 'app-live-match-card',
   standalone: true,
-  imports: [AsyncPipe, PbCardComponent, TranslocoPipe, PbCardHeaderDirective],
+  imports: [AsyncPipe, PbCardComponent, TranslocoPipe, PbCardHeaderDirective, PbCardBodyDirective, PbCardFooterDirective],
   templateUrl: './live-match.component.html',
   styleUrl: './live-match.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

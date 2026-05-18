@@ -14,7 +14,6 @@ import {
   imports: [CommonModule, TranslocoPipe, CouponBetItemComponent],
   template: `
     <section class="coupon__bets">
-      <h2 class="coupon__bets-title">{{ 'coupon.bets' | transloco }}</h2>
       <ul class="coupon__bets-list" role="list">
         @for (bet of bets; track trackBet($index, bet); let i = $index) {
           <app-coupon-bet-item

@@ -49,7 +49,6 @@ export class PoolCardComponent {
     optionLabel: string,
     odds: number,
   ): void {
-    console.log('Toggling bet for match:', match, 'Bet type:', betType);
     if (this.hasStarted()) return;
 
     combineLatest([
@@ -71,7 +70,6 @@ export class PoolCardComponent {
   }
 
   isSelected(matchId: Uuid, betType: BetType): boolean {
-    console.log(this.betSlipService.selectedBets());
     return this.betSlipService.isSelected(matchId, betType);
   }
 

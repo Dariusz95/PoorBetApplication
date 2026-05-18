@@ -21,6 +21,7 @@ import { BetSlipService } from '../../../bet/services/bet-slip.service';
 import { CreateCouponRequest } from '../../models/create-coupon-request';
 import { CouponSelectedBetsComponent } from '../coupon-selected-bets/coupon-selected-bets.component';
 import { CouponSummaryComponent } from '../coupon-summary/coupon-summary.component';
+import { DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-coupon-card',
@@ -39,6 +40,7 @@ import { CouponSummaryComponent } from '../coupon-summary/coupon-summary.compone
     TranslocoPipe,
     CouponSelectedBetsComponent,
     CouponSummaryComponent,
+    DecimalPipe
   ],
   templateUrl: './coupon-card.component.html',
   styleUrl: './coupon-card.component.scss',

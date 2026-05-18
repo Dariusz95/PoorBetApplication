@@ -9,14 +9,15 @@ module.exports = {
           surfaceSoft: "var(--color-surface-soft)",
           border: "var(--color-border)",
 
-          // primary: "var(--color-primary)",
-          primary: "#8B5CF6",
+          primary: "var(--color-primary)",
+          primarySoft: "var(--color-primary-soft)",
           primaryDark: "var(--color-primary-dark)",
 
           accent: "var(--color-accent)",
           accentDark: "var(--color-accent-dark)",
 
           success: "var(--color-success)",
+          warning: "var(--color-warning)",
           danger: "var(--color-danger)",
 
           text: "var(--color-text)",

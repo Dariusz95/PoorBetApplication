@@ -1,93 +1,79 @@
-.coupon {
-  &__bet-item {
-    @apply relative flex list-none items-center justify-between rounded-md border-l-4 border-app-accent bg-app-surfaceSoft p-3 transition-all duration-200 ease-out hover:translate-x-0.5 hover:bg-app-surface;
+:host {
+  display: block;
+}
 
-    // Status variants
-    &--won {
-      @apply border-l-green-500 bg-green-500/5;
+.coupon-bet {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-left: 4px solid var(--color-accent);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface-soft);
 
-      .coupon__bet-odds {
-        @apply text-green-500;
-      }
-    }
-
-    &--lost {
-      @apply border-l-red-500 bg-red-500/5;
-
-      .coupon__bet-odds {
-        @apply text-red-500;
-      }
-    }
-
-    &--live {
-      @apply border-l-app-primary bg-app-primary/5;
-
-      .coupon__bet-number {
-        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-      }
-    }
-
-    &--cashed-out {
-      @apply border-l-app-accent opacity-70;
-    }
+  &--won {
+    border-left-color: var(--color-success);
   }
 
-  &__bet-match {
-    @apply flex min-w-0 flex-1 items-start gap-3;
+  &--lost {
+    border-left-color: var(--color-danger);
   }
 
-  &__bet-number {
-    @apply flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-sm font-semibold text-white;
-    background: linear-gradient(
-      135deg,
-      var(--color-accent),
-      var(--color-accent-dark)
-    );
+  &--live {
+    border-left-color: var(--color-primary);
   }
 
-  &__bet-info {
-    @apply min-w-0 flex-1;
+  &__info {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
   }
 
   &__match-name {
-    @apply t-body-sm m-0 break-words text-sm font-semibold text-app-text;
+    margin: 0;
+    color: var(--color-text);
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.25rem;
   }
 
   &__bet-type {
-    @apply t-body-xs mt-1 text-xs text-app-textMuted;
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: 0.75rem;
+    line-height: 1rem;
   }
 
-  &__bet-status {
-    @apply mt-1 inline-block rounded-sm px-2 py-0.5 text-xs font-semibold uppercase text-white;
+  &__status {
+    display: inline-flex;
+    align-self: flex-start;
+    padding: 0.125rem 0.5rem;
+    border-radius: var(--radius-sm);
+    color: #fff;
     background-color: var(--color-primary);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
   }
 
-  &__bet-odds {
-    @apply t-body-md flex-shrink-0 text-base font-semibold text-green-500;
-  }
-
-  // Responsive
-  @media (max-width: 640px) {
-    &__bet-item {
-      @apply flex-col items-start gap-3;
-    }
-
-    &__bet-match {
-      @apply w-full;
-    }
-
-    &__bet-odds {
-      @apply ml-10 self-start;
-    }
+  &__odds {
+    flex-shrink: 0;
+    color: var(--color-success);
+    font-size: 1rem;
+    font-weight: 700;
   }
 }
 
-@keyframes pulse {
-  0%,
-  100% {
-    box-shadow: 0 0 0 0 rgb(139, 92, 246, 0.7);
-  }
-  50% {
-    box-shadow: 0 0 0 6px rgb(139, 92, 246, 0);
+@media (max-width: 640px) {
+  .coupon-bet {
+    align-items: flex-start;
+    flex-direction: column;
+
+    &__odds {
+      align-self: flex-end;
+    }
   }
 }

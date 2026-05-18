@@ -12,7 +12,7 @@
 }
 
 .live-badge {
-  @apply inline-flex items-center justify-center gap-1 text-sm font-semibold text-red-500;
+  @apply t-heading-xs t-danger inline-flex items-center justify-center gap-1;
 }
 
 .matches-section {
