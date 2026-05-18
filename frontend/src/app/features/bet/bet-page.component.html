@@ -1,7 +1,6 @@
 <ng-container *transloco="let t; prefix: 'bet.page'">
   <section class="bet-page-layout">
     <div class="bet-page-main">
-
       @if (tabs$ | async; as tabs) {
         <pb-tab-container
           [tabButtonContent]="tabButtonContent"
@@ -14,19 +13,9 @@
             [appTabTemplate]="tabTemplateType"
           >
             @if (tab.value === LIVE_TAB_NAME) {
-              <span class="live-badge">🔴 {{ t('live') }}</span>
+              <span class="live-badge">🔴 {{ t("live") }}</span>
             } @else {
-              <span class="tab-button__content">
-                <span class="tab-button__header">
-                  <app-icon icon="timelapse" size="s"></app-icon>
-                  <span class="tab-button__clock">{{
-                    tab.label | date: "HH:mm:ss"
-                  }}</span>
-                </span>
-                <span class="tab-button__time">
-                  {{ tab.label | timeRemaining: true | async }}
-                </span>
-              </span>
+              <app-tab-button-time [tabConfig]="tab"></app-tab-button-time>
             }
           </ng-template>
 
@@ -49,6 +38,6 @@
       }
     </div>
 
-    <app-bet-coupon-card></app-bet-coupon-card>
+    <app-coupon-card></app-coupon-card>
   </section>
 </ng-container>

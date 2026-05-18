@@ -14,16 +14,36 @@ export interface SelectedBet {
   providedIn: 'root',
 })
 export class BetSlipService {
-  private readonly selectedBetsState = signal<SelectedBet[]>([]);
+  private readonly _selectedBets = signal<SelectedBet[]>([]);
+  private readonly _amount = signal<number>(0);
 
-  readonly selectedBets = this.selectedBetsState.asReadonly();
+  readonly selectedBets = this._selectedBets.asReadonly();
+
   readonly totalOdds = computed(() =>
-    this.selectedBetsState().reduce((total, bet) => total * bet.odds, 1),
+    this._selectedBets().reduce((total, bet) => total * bet.odds, 1),
   );
-  readonly selectedCount = computed(() => this.selectedBetsState().length);
+  readonly selectedCount = computed(() => this._selectedBets().length);
+  // readonly potentialWin = computed(() => {
+  //   const totalOdds = this.totalOdds();
+  //   const amount = this._amount();
+
+  //   return totalOdds * amount;
+  // });
+
+  potentialWin(amount: number | null): number {
+    const totalOdds = this.totalOdds();
+    const actualAmount = amount ?? 0;
+
+    return totalOdds * actualAmount;
+  }
+
+  setAmount(amount: number): void {
+    this._amount.set(amount);
+  }
 
   toggleSelection(bet: SelectedBet): void {
-    this.selectedBetsState.update((currentBets) => {
+    console.log('Toggling bet selection:', bet);
+    this._selectedBets.update((currentBets) => {
       const existingBet = currentBets.find(
         (currentBet) => currentBet.matchId === bet.matchId,
       );
@@ -49,18 +69,18 @@ export class BetSlipService {
   }
 
   removeSelection(matchId: Uuid): void {
-    this.selectedBetsState.update((currentBets) =>
+    this._selectedBets.update((currentBets) =>
       currentBets.filter((bet) => bet.matchId !== matchId),
     );
   }
 
   isSelected(matchId: Uuid, betType: BetType): boolean {
-    return this.selectedBetsState().some(
+    return this._selectedBets().some(
       (bet) => bet.matchId === matchId && bet.betType === betType,
     );
   }
 
   clearSelections(): void {
-    this.selectedBetsState.set([]);
+    this._selectedBets.set([]);
   }
 }

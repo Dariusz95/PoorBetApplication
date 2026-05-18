@@ -34,8 +34,8 @@ export const routes: Routes = [
       {
         path: RouteFragment.MyCoupons,
         loadComponent: () =>
-          import('./features/my-coupons/my-coupons-page.component').then(
-            (m) => m.MyCouponsPageComponent,
+          import('./features/coupons/pages/coupons-page/coupons-page.component').then(
+            (m) => m.CouponsPageComponent,
           ),
       },
     ],

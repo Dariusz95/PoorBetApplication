@@ -1,18 +1,23 @@
-
 import { Component, inject, output } from '@angular/core';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { IconComponent } from '@shared/components/icon/icon.component';
-import { PbButtonComponent } from '@shared/components/pb-button/pb-button.component';
-import { PbLabel } from '@shared/components/pb-form-field/directives/pb-label';
-import { PbFormFieldComponent } from '@shared/components/pb-form-field/pb-form-field.component';
-import { IconType } from '@shared/components/pb-icon/icon-type.model';
-import { PbInputIconDirective } from '@shared/components/pb-input/directives/pb-input-icon.directive';
-import { PbInputComponent } from '@shared/components/pb-input/pb-input.component';
+import { PbIconComponent } from '@shared/ui/icon/pb-icon.component';
+import { PbButtonComponent } from '@shared/ui/pb-button/pb-button.component';
+import { PbLabel } from '@shared/ui/pb-form-field/directives/pb-label';
+import { PbFormFieldComponent } from '@shared/ui/pb-form-field/pb-form-field.component';
+import { ImageType } from '@shared/ui/pb-image/image-type.model';
+import { PbInputIconDirective } from '@shared/ui/pb-input/directives/pb-input-icon.directive';
+import { PbInputComponent } from '@shared/ui/pb-input/pb-input.component';
 import { PASSWORD_REGEX } from '@shared/validators/regexes/passwordRegex';
 import { passwordMatchValidator } from '../../utils/password-match-validator';
 import { RegisterForm } from '../types/register-form';
 import { RegisterModel } from '../types/register.model';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-register-form',
@@ -25,15 +30,15 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
     PbInputComponent,
     PbButtonComponent,
     PbInputIconDirective,
-    IconComponent
-],
+    PbIconComponent,
+  ],
   templateUrl: './register-form.component.html',
   styleUrl: './register-form.component.scss',
 })
 export class RegisterFormComponent {
   private readonly fb = inject(FormBuilder);
 
-  readonly IconType = IconType;
+  readonly IconType = ImageType;
 
   submitForm = output<RegisterModel>();
 

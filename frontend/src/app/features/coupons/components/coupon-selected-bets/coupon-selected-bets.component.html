@@ -1,0 +1,30 @@
+@if (betSlipService.selectedCount() === 0) {
+  <app-coupon-empty />
+} @else {
+  <ul class="list" role="list">
+    @for (bet of betSlipService.selectedBets(); track bet.matchId) {
+      <li class="list__item pb-surface">
+        <div class="flex-1 min-w-0">
+          <p class="t-heading-xs t-truncate">
+            {{ bet.matchLabel }}
+          </p>
+          <p class="flex items-center gap-4 t-label mt-1">
+            <span class="t-muted"> {{ bet.optionLabel }} </span>
+            <span class="list__item--dot" aria-hidden="true">•</span>
+            <span class="t-primary">
+              {{ bet.odds | number: "1.2-2" }}
+            </span>
+          </p>
+        </div>
+        <pb-button
+          size="sm"
+          type="icon"
+          [ariaLabel]="'bet.coupon.removeAria' | transloco"
+          (buttonClick)="betSlipService.removeSelection(bet.matchId)"
+        >
+          <pb-icon color="warning" icon="close" size="s" />
+        </pb-button>
+      </li>
+    }
+  </ul>
+}

@@ -1,50 +1,51 @@
+<pb-card>
+  <div pbCardHeader class="live-match-card__header">
+    <div class="live-match-card__status">
+      <span class="live-match-card__live-dot">
+        <span class="live-match-card__live-dot-ping"></span>
+        <span class="live-match-card__live-dot-core"></span>
+      </span>
+      <span class="live-match-card__status-label">{{
+        "bet.liveMatchCard.live" | transloco
+      }}</span>
+    </div>
 
-  <app-pb-card>
-    <div pbCardHeader class="live-match-card__header">
-      <div class="live-match-card__status">
-        <span class="live-match-card__live-dot">
-          <span class="live-match-card__live-dot-ping"></span>
-          <span class="live-match-card__live-dot-core"></span>
-        </span>
-        <span class="live-match-card__status-label">{{ 'bet.liveMatchCard.live' | transloco }}</span>
+    <span class="live-match-card__minute">{{ liveMatch().minute }}'</span>
+  </div>
+
+  <div pbCardBody>
+    <div class="live-match-card__body-grid">
+      <div class="live-match-card__team">
+        @if (homeTeam$ | async; as home) {
+          <p class="live-match-card__team-name">
+            {{ home.name }}
+          </p>
+        }
+        <p class="live-match-card__score live-match-card__score--home">
+          {{ liveMatch().homeScore }}
+        </p>
       </div>
 
-      <span class="live-match-card__minute">{{ liveMatch().minute }}'</span>
-    </div>
+      <p class="live-match-card__vs">vs</p>
 
-    <div pbCardBody>
-      <div class="live-match-card__body-grid">
-        <div class="live-match-card__team">
-          @if (homeTeam$ | async; as home) {
-            <p class="live-match-card__team-name">
-              {{ home.name }}
-            </p>
-          }
-          <p class="live-match-card__score live-match-card__score--home">
-            {{ liveMatch().homeScore }}
+      <div class="live-match-card__team">
+        @if (awayTeam$ | async; as away) {
+          <p class="live-match-card__team-name">
+            {{ away.name }}
           </p>
-        </div>
-
-        <p class="live-match-card__vs">vs</p>
-
-        <div class="live-match-card__team">
-          @if (awayTeam$ | async; as away) {
-            <p class="live-match-card__team-name">
-              {{ away.name }}
-            </p>
-          }
-          <p class="live-match-card__score live-match-card__score--away">
-            {{ liveMatch().awayScore }}
-          </p>
-        </div>
+        }
+        <p class="live-match-card__score live-match-card__score--away">
+          {{ liveMatch().awayScore }}
+        </p>
       </div>
     </div>
+  </div>
 
-    <div pbCardFooter>
-      @if (liveMatch().eventType === MatchEventType.MatchEnded) {
-        {{ 'bet.liveMatchCard.matchFinished' | transloco }}
-      } @else {
-        {{ 'bet.liveMatchCard.matchInProgress' | transloco }}
-      }
-    </div>
-  </app-pb-card>
+  <div pbCardFooter>
+    @if (liveMatch().eventType === MatchEventType.MatchEnded) {
+      {{ "bet.liveMatchCard.matchFinished" | transloco }}
+    } @else {
+      {{ "bet.liveMatchCard.matchInProgress" | transloco }}
+    }
+  </div>
+</pb-card>

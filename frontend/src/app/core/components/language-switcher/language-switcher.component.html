@@ -1,0 +1,17 @@
+<app-pb-dropdown
+  [options]="languageDropdownOptions"
+  [optionTemplate]="optionTemplate"
+>
+  <span dropdownLabel>
+    @if (imageType()) {
+      <pb-image [type]="imageType()!"></pb-image>
+    }
+  </span>
+</app-pb-dropdown>
+
+<ng-template #optionTemplate let-option>
+  @if (option.imageType) {
+    <pb-image [type]="option.imageType"></pb-image>
+  }
+  <span>{{ option.label | transloco }}</span>
+</ng-template>

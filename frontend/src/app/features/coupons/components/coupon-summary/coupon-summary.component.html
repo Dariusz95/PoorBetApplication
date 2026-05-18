@@ -1,0 +1,24 @@
+   <div class="flex flex-col pb-surface gap-4 my-4">
+      <div class="flex justify-between">
+        <div class="flex flex-col">
+          <span class="t-label">{{ "bet.coupon.amount" | transloco }}</span>
+          <span class="t-warning font-semibold t-body-md">
+            {{ amountValue() | number: "1.2-2" }}
+          </span>
+        </div>
+
+        <div class="flex flex-col items-end">
+          <span class="t-label">{{ "bet.coupon.totalOdds" | transloco }}</span>
+          <span class="t-warning font-semibold t-body-md">
+            {{ betSlipService.totalOdds() | number: "1.2-2" }}
+          </span>
+        </div>
+      </div>
+
+      <div class="flex justify-between">
+        <span class="t-label">{{ "bet.coupon.potentialWin" | transloco }}</span>
+        <span class="t-success font-semibold t-body-md">
+          {{ betSlipService.potentialWin(amountValue()) | number: "1.2-2" }}
+        </span>
+      </div>
+    </div>

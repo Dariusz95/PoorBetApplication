@@ -1,0 +1,59 @@
+<pb-card variant="highlighted">
+  <div pbCardHeader class="coupon-header">
+    <div class="coupon-title">
+      <h2>{{ "coupon.title" | transloco }}</h2>
+      <pb-button (click)="closeCoupon()">
+        <pb-icon icon="close" size="s" />
+      </pb-button>
+    </div>
+  </div>
+
+  <div pbCardBody>
+    <h4>{{ "coupon.summary" | transloco }}</h4>
+
+    <app-coupon-summary-row>
+      <span summaryLabel>
+        {{ "coupon.totalStake" | transloco }}
+      </span>
+
+      <span summaryValue>
+        {{ couponData.stake | currency }}
+      </span>
+    </app-coupon-summary-row>
+
+    <app-coupon-summary-row>
+      <span summaryLabel>
+        {{ "coupon.possibleWin" | transloco }}
+      </span>
+
+      <span summaryValue>
+        {{ couponData.potentialWin | currency: "PLN" }}
+      </span>
+    </app-coupon-summary-row>
+
+    <h4>{{ "coupon.bets" | transloco }}</h4>
+    <div class="bets-list">
+      @for (bet of couponData.bets; track bet.matchId; let i = $index) {
+        <app-coupon-bet-item [bet]="bet" />
+
+        <!-- <div class="bet-item">
+            <div class="bet-match">
+              <span class="bet-number">{{ i + 1 }}</span>
+              <div class="bet-info">
+                <p class="match-name">{{ bet.matchName }}</p>
+                <p class="bet-type">{{ bet.betType }}</p>
+              </div>
+            </div>
+            <span class="bet-odds">{{ bet.odds | number: "1.2-2" }}</span>
+          </div> -->
+      }
+    </div>
+  </div>
+
+  <div pbCardFooter class="coupon-footer">
+    <app-coupon-footer (close)="(closeCoupon)" />
+    <!-- <pb-button (click)="closeCoupon()">
+      {{ "coupon.close" | transloco }}
+    </pb-button> -->
+  </div>
+</pb-card>

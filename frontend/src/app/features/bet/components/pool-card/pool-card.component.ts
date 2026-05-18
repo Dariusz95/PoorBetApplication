@@ -8,9 +8,9 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslocoDirective } from '@jsverse/transloco';
-import { PbCardComponent } from '@shared/components/pb-card/pb-card.component';
 import { BetType } from '@shared/types/bet-type';
 import { Uuid } from '@shared/types/uuid.type';
+import { PbCardComponent } from '@shared/ui/pb-card/pb-card.component';
 import { combineLatest, map, Observable } from 'rxjs';
 import { BetSlipService } from '../../services/bet-slip.service';
 import { TeamService } from '../../services/team.service';
@@ -49,9 +49,9 @@ export class PoolCardComponent {
     optionLabel: string,
     odds: number,
   ): void {
-    if (this.hasStarted()) {
-      return;
-    }
+    console.log('Toggling bet for match:', match, 'Bet type:', betType);
+    if (this.hasStarted()) return;
+
     combineLatest([
       this.getTeamName(match.homeTeamId),
       this.getTeamName(match.awayTeamId),
@@ -71,6 +71,7 @@ export class PoolCardComponent {
   }
 
   isSelected(matchId: Uuid, betType: BetType): boolean {
+    console.log(this.betSlipService.selectedBets());
     return this.betSlipService.isSelected(matchId, betType);
   }
 

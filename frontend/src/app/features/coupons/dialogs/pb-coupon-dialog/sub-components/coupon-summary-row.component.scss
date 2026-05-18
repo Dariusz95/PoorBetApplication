@@ -1,0 +1,15 @@
+:host {
+  @apply block;
+}
+
+.coupon-summary-row {
+  @apply border-app-border flex items-center justify-between border-b py-2 last:border-b-0;
+
+  &__label {
+    @apply t-body-sm text-sm font-medium text-app-textMuted;
+  }
+
+  &__value {
+    @apply t-body-sm text-sm font-semibold text-app-text;
+  }
+}

@@ -5,7 +5,7 @@
       formControlName="email"
       [placeholder]="'auth.email.placeholder' | transloco"
     >
-      <app-icon icon="mail" size="m" pbInputIcon></app-icon>
+      <pb-icon icon="mail" size="m" pbInputIcon></pb-icon>
     </pb-input>
   </pb-form-field>
 
@@ -17,17 +17,17 @@
       autocomplete="current-password"
       [placeholder]="'auth.password.placeholder' | transloco"
     >
-      <app-icon icon="lock" size="m" pbInputIcon></app-icon>
+      <pb-icon icon="lock" size="m" pbInputIcon></pb-icon>
     </pb-input>
   </pb-form-field>
 
-  <div class="form-actions">
+  <div class="mt-8">
     <pb-button
       variant="primary"
       size="md"
       [fullWidth]="true"
       [disabled]="!form.valid"
-      (click)="onSubmit()"
+      (buttonClick)="onSubmit()"
     >
       {{ "auth.login.login" | transloco }}
     </pb-button>

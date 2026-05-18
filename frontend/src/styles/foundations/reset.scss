@@ -1,0 +1,16 @@
+@layer base {
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html,
+  body {
+    min-height: 100vh;
+  }
+
+  body {
+    @apply bg-app-gradient bg-fixed font-sans text-app-text antialiased;
+  }
+}

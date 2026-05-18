@@ -1,0 +1,55 @@
+<!-- <div
+  class="card-wrap"
+  [class.card-wrap--highlighted]="variant() === 'highlighted'"
+  [class.card-wrap--default]="variant() === 'default'"
+>
+  @if (variant() === "highlighted") {
+    <div class="card__border">
+      <div class="card__border-sweep"></div>
+    </div>
+  }
+
+  <div class="pb-card">
+    <header
+      class="pb-card__header"
+      [class.pb-card__header--bordered]="!!header()"
+    >
+      <ng-content select="[pbCardHeader]"></ng-content>
+    </header>
+
+    <div class="pb-card__body">
+      <ng-content select="[pbCardBody]"></ng-content>
+    </div>
+
+    <footer class="pb-card__footer">
+      <ng-content select="[pbCardFooter]"></ng-content>
+    </footer>
+  </div>
+</div> -->
+<div
+  class="pb-card"
+  [class.pb-card--default]="variant() === 'default'"
+  [class.pb-card--highlighted]="variant() === 'highlighted'"
+>
+  @if (variant() === 'highlighted') {
+    <div class="pb-card__border">
+      <div class="pb-card__sweep"></div>
+    </div>
+  }
+
+  <div class="pb-card__content">
+    @if (header()) {
+      <header class="pb-card__header pb-card__header--bordered">
+        <ng-content select="[pbCardHeader]"></ng-content>
+      </header>
+    }
+
+    <div class="pb-card__body">
+      <ng-content select="[pbCardBody]"></ng-content>
+    </div>
+
+    <footer class="pb-card__footer">
+      <ng-content select="[pbCardFooter]"></ng-content>
+    </footer>
+  </div>
+</div>

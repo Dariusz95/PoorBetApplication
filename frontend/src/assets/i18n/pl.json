@@ -68,7 +68,11 @@
       "removeAria": "Usuń zdarzenie z kuponu",
       "totalOdds": "Łączny kurs",
       "amount": "Kwota",
-      "submit": "Postaw kupon"
+      "submit": "Postaw kupon",
+      "stake": "Stawka",
+      "potentialWin": "Potencjalna wygrana",
+      "bets": "Zdarzenia",
+      "close": "Zamknij"
     },
     "poolCard": {
       "eyebrow": "Pula"

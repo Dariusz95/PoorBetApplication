@@ -1,0 +1,17 @@
+:host {
+  @apply block;
+}
+
+.coupon {
+  &__footer {
+    @apply border-app-border flex items-center justify-end gap-3 border-t pt-6;
+
+    @media (max-width: 640px) {
+      @apply justify-stretch;
+
+      pb-button {
+        @apply flex-1;
+      }
+    }
+  }
+}

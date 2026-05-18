@@ -1,5 +1,5 @@
-<div class="login-container">
-  <app-pb-card variant="highlighted" stylesCss="w-full max-w-[420px]">
+<div class="auth-container">
+  <pb-card variant="highlighted" stylesCss="w-full max-w-[420px]">
     <app-auth-card-header
       pbCardHeader
       titleKey="auth.login.title"
@@ -8,18 +8,18 @@
 
     <div pbCardBody>
       <app-login-form (submitForm)="onSubmitForm($event)"></app-login-form>
-
-      <div class="auth-footer">
-        {{ "auth.login.dontHaveAccount" | transloco }}
-        <pb-button
-          size="sm"
-          type="link"
-          variant="link"
-          [routerPath]="RoutePath.Register"
-        >
-          {{ "auth.login.register" | transloco }}
-        </pb-button>
-      </div>
     </div>
-  </app-pb-card>
+
+    <div pbCardFooter class="auth-footer">
+      {{ "auth.login.dontHaveAccount" | transloco }}
+      <pb-button
+        size="sm"
+        type="link"
+        variant="link"
+        [routerPath]="RoutePath.Register"
+      >
+        {{ "auth.login.register" | transloco }}
+      </pb-button>
+    </div>
+  </pb-card>
 </div>

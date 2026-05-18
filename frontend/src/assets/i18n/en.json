@@ -68,7 +68,11 @@
       "removeAria": "Remove event from coupon",
       "totalOdds": "Total odds",
       "amount": "Amount",
-      "submit": "Place coupon"
+      "submit": "Place coupon",
+      "stake": "Stake",
+      "potentialWin": "Potential Win",
+      "bets": "Bets",
+      "close": "Close"
     },
     "poolCard": {
       "eyebrow": "Pool"

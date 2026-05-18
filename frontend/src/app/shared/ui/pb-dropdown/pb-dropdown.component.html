@@ -1,0 +1,45 @@
+<div
+  #trigger="cdkOverlayOrigin"
+  cdkOverlayOrigin
+  class="pb-dropdown"
+  [class.pb-dropdown--open]="isOpen()"
+  (click)="toggleDropdown()"
+  >
+  <ng-content select="[dropdownLabel]"></ng-content>
+</div>
+
+<ng-template
+  cdkConnectedOverlay
+  [cdkConnectedOverlayOrigin]="origin() || trigger"
+  [cdkConnectedOverlayOpen]="isOpen()"
+  [cdkConnectedOverlayPositions]="positions()"
+  [cdkConnectedOverlayHasBackdrop]="true"
+  cdkConnectedOverlayBackdropClass="pb-dropdown-backdrop"
+  (backdropClick)="closeDropdown()"
+  (detach)="closeDropdown()"
+  >
+  <div class="pb-dropdown__panel" [@dropdownAnimation]>
+    <ul class="pb-dropdown__list">
+      @for (option of options(); track option) {
+        <li
+          (click)="selectOption(option)"
+          class="pb-dropdown__list-item"
+        [class.pb-dropdown__list-item--selected]="
+          highlightedOption() && option.value === value()
+        "
+          >
+          @if (optionTemplate()) {
+            <ng-container
+            *ngTemplateOutlet="
+              optionTemplate()!;
+              context: { $implicit: option }
+            "
+            ></ng-container>
+          } @else {
+            {{ option.label | transloco }}
+          }
+        </li>
+      }
+    </ul>
+  </div>
+</ng-template>

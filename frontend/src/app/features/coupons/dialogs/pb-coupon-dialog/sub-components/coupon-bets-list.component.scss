@@ -1,0 +1,17 @@
+:host {
+  @apply block;
+}
+
+.coupon {
+  &__bets {
+    @apply mb-6;
+  }
+
+  &__bets-title {
+    @apply t-heading-md mb-3 text-lg font-semibold text-app-text;
+  }
+
+  &__bets-list {
+    @apply m-0 flex list-none flex-col gap-3 p-0;
+  }
+}

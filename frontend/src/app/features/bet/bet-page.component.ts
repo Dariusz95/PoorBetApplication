@@ -7,13 +7,14 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslocoDirective } from '@jsverse/transloco';
-import { IconComponent } from '@shared/components/icon/icon.component';
-import { PbTabContainerComponent } from '@shared/components/pb-tabs/pb-tab-container/pb-tab-container.component';
-import { PbTabContentComponent } from '@shared/components/pb-tabs/pb-tab-content/pb-tab-content.component';
-import { TabTemplateDirective } from '@shared/components/pb-tabs/pb-tab-template.directive';
-import { TabConfig } from '@shared/components/pb-tabs/tab-config.model';
+import { PbIconComponent } from '@shared/ui/icon/pb-icon.component';
+import { PbTabContainerComponent } from '@shared/ui/pb-tabs/pb-tab-container/pb-tab-container.component';
+import { PbTabContentComponent } from '@shared/ui/pb-tabs/pb-tab-content/pb-tab-content.component';
+import { TabTemplateDirective } from '@shared/ui/pb-tabs/pb-tab-template.directive';
+import { TabConfig } from '@shared/ui/pb-tabs/tab-config.model';
+import { TabButtonTimeComponent } from '@shared/ui/tab-button-time/tab-button-time.component';
 import { map } from 'rxjs';
-import { BetCouponCardComponent } from '../bet-coupon-card/bet-coupon-card.component';
+import { CouponCardComponent } from '../coupons/components/coupon-card/coupon-card.component';
 import { LiveMatchesComponent } from './components/live-matches/live-matches.component';
 import { PoolCardComponent } from './components/pool-card/pool-card.component';
 import { BetTabValue, LiveTabName } from './configs/bet-tab-config';
@@ -28,14 +29,16 @@ import { PoolRefreshService } from './services/pool-refresh.service';
     LiveMatchesComponent,
     AsyncPipe,
     PoolCardComponent,
-    BetCouponCardComponent,
+    CouponCardComponent,
     PbTabContainerComponent,
     PbTabContentComponent,
     TimeRemainingPipe,
     TabTemplateDirective,
-    IconComponent,
+    TabButtonTimeComponent,
+    PbIconComponent,
     DatePipe,
     TranslocoDirective,
+    CouponCardComponent,
   ],
   templateUrl: './bet-page.component.html',
   styleUrl: './bet-page.component.scss',

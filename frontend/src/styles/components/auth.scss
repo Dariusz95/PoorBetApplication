@@ -1,0 +1,11 @@
+.auth-container {
+  @apply flex w-full items-center justify-center px-4 pb-8 pt-0 lg:pt-10;
+}
+
+.auth-card {
+  @apply w-full max-w-md rounded-xl bg-app-surface p-6 shadow-xl;
+}
+
+.auth-footer {
+  @apply flex items-center justify-center pt-2 t-caption;
+}

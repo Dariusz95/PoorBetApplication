@@ -4,10 +4,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { map } from 'rxjs';
-import { IconComponent } from '../../../shared/components/icon/icon.component';
-import { DropdownOption } from '../../../shared/components/pb-dropdown/dropdown-option';
-import { PbDropdownComponent } from '../../../shared/components/pb-dropdown/pb-dropdown.component';
-import { LiveEventsService } from '../../../shared/services/live-events.service';
+import { PbIconComponent } from '../../../shared/ui/icon/pb-icon.component';
+import { DropdownOption } from '../../../shared/ui/pb-dropdown/dropdown-option';
+import { PbDropdownComponent } from '../../../shared/ui/pb-dropdown/pb-dropdown.component';
 import { AuthService } from '../../auth/services/auth.service';
 import { RoutePath } from '../../routing/route-path';
 import { RoutingService } from '../../routing/routing.service';
@@ -26,7 +25,7 @@ interface UserDropdownOption extends DropdownOption<UserMenuAction> {
     TranslocoDirective,
     PbDropdownComponent,
     ReactiveFormsModule,
-    IconComponent,
+    PbIconComponent,
     UserBalanceComponent,
   ],
   templateUrl: './user-dropdown.component.html',
