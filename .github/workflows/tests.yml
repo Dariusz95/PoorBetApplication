@@ -21,7 +21,6 @@ jobs:
           coupon-service,
           match-service,
           odds-engine-service,
-          odds-training,
           teams-service
         ]
 
