@@ -39,7 +39,6 @@ public class TrainingPipeline {
 
         List<MatchRecord> results = matchSimulationService.simulateBatch(request).stream()
                 .map(result -> {
-                    log.info("result {}", result);
                     SimulationRequestDto data = uuidSimulationRequestMap.get(result.matchId());
 
                     return new MatchRecord(

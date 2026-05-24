@@ -27,7 +27,7 @@ services:
       - "5090:5090"
     volumes:
       - ./odds-engine-service:/app
-      - ./data:/app/data
+      - ./odds-engine-service/data:/app/data
       - ~/.m2:/root/.m2
     environment:
       - SPRING_PROFILES_ACTIVE=dev

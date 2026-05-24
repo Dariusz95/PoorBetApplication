@@ -1,10 +1,9 @@
-package com.poorbet.odds_engine_service.oddsservice.service;
+package com.poorbet.odds_engine_service.ml;
 
-import com.poorbet.odds_engine_service.bootstrap.SystemState;
 import com.poorbet.odds_engine_service.config.ModelProperties;
+import com.poorbet.odds_engine_service.lifecycle.SystemState;
+import com.poorbet.odds_engine_service.ml.model.OddsModel;
 import com.poorbet.odds_engine_service.oddsservice.dto.OddsResponseDto;
-import com.poorbet.odds_engine_service.oddsservice.model.OddsModel;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,7 +22,6 @@ public class SmileOddsModel implements OddsModel {
     private final SystemState modelState;
     private final ModelProperties modelProperties;
 
-    @PostConstruct
     public void loadModel() {
 
         Path path = modelProperties.getPath();
@@ -40,12 +38,7 @@ public class SmileOddsModel implements OddsModel {
 
             this.model = (LogisticRegression) ois.readObject();
 
-            modelState.markReady();
-
         } catch (Exception e) {
-
-            log.error("Failed to load model", e);
-
             throw new IllegalStateException(
                     "Cannot load ML model",
                     e

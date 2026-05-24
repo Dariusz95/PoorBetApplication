@@ -1,9 +1,9 @@
 package com.poorbet.odssservice.service;
 
+import com.poorbet.odds_engine_service.ml.model.OddsModel;
 import com.poorbet.odds_engine_service.oddsservice.dto.OddsResponseDto;
 import com.poorbet.odds_engine_service.oddsservice.dto.request.MatchDto;
 import com.poorbet.odds_engine_service.oddsservice.dto.response.BatchOddsResponse;
-import com.poorbet.odds_engine_service.oddsservice.model.OddsModel;
 import com.poorbet.odds_engine_service.oddsservice.service.OddsServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
