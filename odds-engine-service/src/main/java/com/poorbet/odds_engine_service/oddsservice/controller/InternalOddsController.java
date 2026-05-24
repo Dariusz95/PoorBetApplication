@@ -1,5 +1,6 @@
 package com.poorbet.odds_engine_service.oddsservice.controller;
 
+import com.poorbet.odds_engine_service.lifecycle.SystemState;
 import com.poorbet.odds_engine_service.oddsservice.dto.OddsResponseDto;
 import com.poorbet.odds_engine_service.oddsservice.dto.PredictOddsRequest;
 import com.poorbet.odds_engine_service.oddsservice.dto.request.BatchPredictionRequest;
@@ -9,6 +10,7 @@ import com.poorbet.odds_engine_service.oddsservice.service.OddsService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,6 +26,7 @@ import java.util.List;
 public class InternalOddsController {
 
     private final OddsService oddsService;
+    private final SystemState systemState;
 
     @PostMapping("/predict")
     public ResponseEntity<OddsResponseDto> predictOdds(@Valid @RequestBody PredictOddsRequest request) {
@@ -43,7 +46,12 @@ public class InternalOddsController {
 
     @PostMapping("/predict/batch")
     public ResponseEntity<BatchPredictionResponseDto> predictBatchOdds(@RequestBody @Valid BatchPredictionRequest request) {
-
+        if (!systemState.isReady()) {
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+                    .header("Retry-After", "5")
+                    .build();
+        }
+        
         List<BatchOddsResponse> oddsList = oddsService.predictBatch(request.matches());
 
         BatchPredictionResponseDto response = new BatchPredictionResponseDto(oddsList);

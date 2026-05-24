@@ -11,5 +11,4 @@ public class OddsEngineServiceApplication {
     public static void main(String[] args) {
         SpringApplication.run(OddsEngineServiceApplication.class, args);
     }
-
 }
