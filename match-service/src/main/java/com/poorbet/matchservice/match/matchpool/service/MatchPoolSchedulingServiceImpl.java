@@ -1,19 +1,19 @@
 package com.poorbet.matchservice.match.matchpool.service;
 
 
-import com.poorbet.matchservice.match.client.OddsClient;
+import com.poorbet.matchservice.match.client.OddsEngineClient;
 import com.poorbet.matchservice.match.client.TeamsClient;
 import com.poorbet.matchservice.match.config.MatchPoolProperties;
+import com.poorbet.matchservice.match.match.domain.Match;
+import com.poorbet.matchservice.match.match.domain.MatchStatus;
+import com.poorbet.matchservice.match.match.domain.Odds;
+import com.poorbet.matchservice.match.match.dto.TeamStatsDto;
 import com.poorbet.matchservice.match.match.dto.WinProbabilityDto;
 import com.poorbet.matchservice.match.match.dto.request.PreMatchDto;
 import com.poorbet.matchservice.match.match.dto.request.PredictionBatchRequestDto;
-import com.poorbet.matchservice.match.match.dto.TeamStatsDto;
 import com.poorbet.matchservice.match.match.dto.response.BatchOddsResponse;
 import com.poorbet.matchservice.match.match.mapper.PredictionBatchMapper;
-import com.poorbet.matchservice.match.match.domain.Match;
 import com.poorbet.matchservice.match.matchpool.domain.MatchPool;
-import com.poorbet.matchservice.match.match.domain.Odds;
-import com.poorbet.matchservice.match.match.domain.MatchStatus;
 import com.poorbet.matchservice.match.matchpool.domain.PoolStatus;
 import com.poorbet.matchservice.match.matchpool.repository.MatchPoolRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,9 +22,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -44,7 +44,7 @@ public class MatchPoolSchedulingServiceImpl implements MatchPoolSchedulingServic
     private final TeamsClient teamsClient;
     private final MatchPoolService matchPoolService;
     private final TaskScheduler taskScheduler;
-    private final OddsClient oddsClient;
+    private final OddsEngineClient oddsEngineClient;
 
     @Value("${INSTANCE_ID:local}")
     private String instanceId;
@@ -142,7 +142,7 @@ public class MatchPoolSchedulingServiceImpl implements MatchPoolSchedulingServic
 
         PredictionBatchRequestDto batchRequest = PredictionBatchMapper.toPredictionBatchRequestDto(preMatches);
 
-        Map<UUID, BatchOddsResponse> oddsMap = oddsClient.getBatchPrediction(batchRequest)
+        Map<UUID, BatchOddsResponse> oddsMap = oddsEngineClient.getBatchPrediction(batchRequest)
                 .getMatches()
                 .stream()
                 .collect(Collectors.toMap(

@@ -20,16 +20,9 @@ teams:
       connect: ${TEAMS_SERVICE_CONNECT_TIMEOUT:2s}
       read: ${TEAMS_SERVICE_READ_TIMEOUT:3s}
 
-simulation:
-  service:
-    url: ${SIMULATION_SERVICE_URL:http://simulation-service:8080}
-    timeout:
-      connect: ${SIMULATION_SERVICE_CONNECT_TIMEOUT:2s}
-      read: ${SIMULATION_SERVICE_READ_TIMEOUT:3s}
-
 odds:
   service:
-    url: ${ODDS_SERVICE_URL:http://odds-service:8080}
+    url: ${ODDS_SERVICE_URL:http://odds-engine-service:8080}
     timeout:
       connect: ${ODDS_SERVICE_CONNECT_TIMEOUT:2s}
       read: ${ODDS_SERVICE_READ_TIMEOUT:3s}

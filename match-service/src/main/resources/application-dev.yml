@@ -5,16 +5,9 @@ teams:
       connect: 2s
       read: 3s
 
-simulation:
-  service:
-    url: http://simulation-service:8080
-    timeout:
-      connect: 2s
-      read: 3s
-
 odds:
   service:
-    url: http://odds-service:8080
+    url: http://odds-engine-service:8080
     timeout:
       connect: 2s
       read: 3s

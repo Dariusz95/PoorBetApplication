@@ -1,7 +1,4 @@
 spring:
-  application:
-    name: poor-bet-application
-
   flyway:
     enabled: true
     locations: classpath:db/migration
@@ -62,8 +59,7 @@ oauth:
         - internal
       audiences:
         - teams-service
-        - simulation-service
-        - odds-service
+        - odds-engine-service
     coupon-service:
       secret: ${COUPON_SERVICE_CLIENT_SECRET:secret}
       permissions:

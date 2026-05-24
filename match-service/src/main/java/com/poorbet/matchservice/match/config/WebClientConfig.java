@@ -16,7 +16,6 @@ import reactor.netty.http.client.HttpClient;
 public class WebClientConfig {
 
     private final TeamsServiceProperties teamsServiceProperties;
-    private final SimulationServiceProperties simulationServiceProperties;
     private final OddsServiceProperties oddsServiceProperties;
 
     @Bean
@@ -39,7 +38,7 @@ public class WebClientConfig {
     }
 
     @Bean
-    public WebClient oddsWebClient(ServiceJwtForwardingFilter serviceJwtForwardingFilter) {
+    public WebClient oddsEngineWebClient(ServiceJwtForwardingFilter serviceJwtForwardingFilter) {
         return WebClient.builder()
                 .baseUrl(oddsServiceProperties.url())
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
@@ -47,20 +46,6 @@ public class WebClientConfig {
                         HttpClient.create()
                                 .responseTimeout(oddsServiceProperties.timeout().read())
                                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, (int) oddsServiceProperties.timeout().connect().toMillis())
-                ))
-                .filter(serviceJwtForwardingFilter)
-                .build();
-    }
-
-    @Bean
-    public WebClient simulationWebClient(ServiceJwtForwardingFilter serviceJwtForwardingFilter) {
-        return WebClient.builder()
-                .baseUrl(simulationServiceProperties.url())
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .clientConnector(new ReactorClientHttpConnector(
-                        HttpClient.create()
-                                .responseTimeout(simulationServiceProperties.timeout().read())
-                                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, (int) simulationServiceProperties.timeout().connect().toMillis())
                 ))
                 .filter(serviceJwtForwardingFilter)
                 .build();

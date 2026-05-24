@@ -1,19 +1,13 @@
 package com.poorbet.oddsservice.service;
 
-import ai.onnxruntime.OnnxTensor;
-import ai.onnxruntime.OrtEnvironment;
-import ai.onnxruntime.OrtException;
-import ai.onnxruntime.OrtSession;
-import com.poorbet.oddsservice.dto.response.BatchOddsResponse;
 import com.poorbet.oddsservice.dto.OddsResponseDto;
 import com.poorbet.oddsservice.dto.request.MatchDto;
+import com.poorbet.oddsservice.dto.response.BatchOddsResponse;
 import com.poorbet.oddsservice.model.OddsModel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 
 @Slf4j

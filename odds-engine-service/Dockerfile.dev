@@ -1,0 +1,10 @@
+FROM eclipse-temurin:21-jdk-alpine
+
+WORKDIR /app
+
+COPY mvnw .
+RUN chmod +x mvnw
+
+EXPOSE 8090 5090
+
+CMD ["./mvnw", "spring-boot:run", "-Dspring-boot.run.jvmArguments=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5090"]

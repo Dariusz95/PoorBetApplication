@@ -1,13 +1,13 @@
 package com.poorbet.matchservice.match.matchpool.service;
 
-import com.poorbet.matchservice.match.client.SimulationClient;
+import com.poorbet.matchservice.match.client.OddsEngineClient;
 import com.poorbet.matchservice.match.client.TeamsClient;
-import com.poorbet.matchservice.match.match.dto.TeamStatsDto;
-import com.poorbet.matchservice.match.matchpool.dto.LiveMatchEventDto;
 import com.poorbet.matchservice.match.match.domain.Match;
-import com.poorbet.matchservice.match.match.repository.MatchRepository;
+import com.poorbet.matchservice.match.match.dto.TeamStatsDto;
 import com.poorbet.matchservice.match.match.dto.request.SimulationRequest;
 import com.poorbet.matchservice.match.match.dto.request.SimulationTeamStats;
+import com.poorbet.matchservice.match.match.repository.MatchRepository;
+import com.poorbet.matchservice.match.matchpool.dto.LiveMatchEventDto;
 import com.poorbet.matchservice.match.matchpool.simulation.LiveMatchSimulation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,7 +29,7 @@ public class MatchPoolSimulationServiceImpl implements MatchPoolSimulationServic
     private final LiveMatchSimulationManager liveManager;
     private final MatchRepository matchRepository;
     private final MatchFinishService matchFinishService;
-    private final SimulationClient simulationClient;
+    private final OddsEngineClient oddsEngineClient;
     private final TeamsClient teamsClient;
 
     public void startPoolSimulation(UUID poolId) {
@@ -67,7 +67,7 @@ public class MatchPoolSimulationServiceImpl implements MatchPoolSimulationServic
 
         SimulationRequest request = buildSimulationRequest(matchId, home, away);
 
-        return simulationClient.simulateMatch(request)
+        return oddsEngineClient.simulateMatch(request)
                 .map(event -> LiveMatchEventDto.fromEvent(event, home, away))
                 .doOnNext(event -> handleEvent(event, liveSimulation))
                 .then();
