@@ -1,4 +1,4 @@
-package com.poorbet.oddstraining;
+package com.poorbet.odds_engine_service.oddstraining;
 
 import com.poorbet.odds_engine_service.oddstraining.generator.TeamPowerGenerator;
 import com.poorbet.odds_engine_service.oddstraining.properties.TeamPowerProperties;

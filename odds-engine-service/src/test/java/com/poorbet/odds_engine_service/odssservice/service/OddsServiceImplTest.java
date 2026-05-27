@@ -1,6 +1,6 @@
-package com.poorbet.odssservice.service;
+package com.poorbet.odds_engine_service.odssservice.service;
 
-import com.poorbet.odds_engine_service.ml.model.OddsModel;
+import com.poorbet.odds_engine_service.ml.SmileOddsModel;
 import com.poorbet.odds_engine_service.oddsservice.dto.OddsResponseDto;
 import com.poorbet.odds_engine_service.oddsservice.dto.request.MatchDto;
 import com.poorbet.odds_engine_service.oddsservice.dto.response.BatchOddsResponse;
@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
 class OddsServiceImplTest {
 
     @Mock
-    private OddsModel oddsModel;
+    private SmileOddsModel oddsModel;
 
     @InjectMocks
     private OddsServiceImpl oddsService;

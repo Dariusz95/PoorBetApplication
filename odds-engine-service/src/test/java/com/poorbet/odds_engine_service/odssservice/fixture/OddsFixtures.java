@@ -1,4 +1,4 @@
-package com.poorbet.odssservice.fixture;
+package com.poorbet.odds_engine_service.odssservice.fixture;
 
 import com.poorbet.odds_engine_service.oddsservice.dto.OddsResponseDto;
 import com.poorbet.odds_engine_service.oddsservice.dto.PredictOddsRequest;

@@ -1,13 +1,14 @@
-package com.poorbet.odssservice.controller;
+package com.poorbet.odds_engine_service.odssservice.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.poorbet.odds_engine_service.lifecycle.SystemState;
 import com.poorbet.odds_engine_service.oddsservice.controller.InternalOddsController;
 import com.poorbet.odds_engine_service.oddsservice.dto.OddsResponseDto;
 import com.poorbet.odds_engine_service.oddsservice.dto.PredictOddsRequest;
 import com.poorbet.odds_engine_service.oddsservice.dto.request.BatchPredictionRequest;
 import com.poorbet.odds_engine_service.oddsservice.dto.response.BatchOddsResponse;
 import com.poorbet.odds_engine_service.oddsservice.service.OddsService;
-import com.poorbet.odssservice.fixture.OddsFixtures;
+import com.poorbet.odds_engine_service.odssservice.fixture.OddsFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(InternalOddsController.class)
 @AutoConfigureMockMvc(addFilters = false)
 @DisplayName("OddsController – WebMvcTest")
-class OddsControllerTest {
+class InternalOddsControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -40,6 +41,9 @@ class OddsControllerTest {
 
     @MockitoBean
     private OddsService oddsService;
+
+    @MockitoBean
+    private SystemState systemState;
 
     @Test
     void shouldPredictOddsSuccessfully() throws Exception {
@@ -88,6 +92,8 @@ class OddsControllerTest {
                         OddsFixtures.homeAdvantageOdds()
                 )
         );
+
+        when(systemState.isReady()).thenReturn(true);
 
         when(oddsService.predictBatch(request.matches()))
                 .thenReturn(responses);

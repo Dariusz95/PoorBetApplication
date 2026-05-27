@@ -1,7 +1,6 @@
 package com.poorbet.odds_engine_service.ml;
 
 import com.poorbet.odds_engine_service.config.ModelProperties;
-import com.poorbet.odds_engine_service.lifecycle.SystemState;
 import com.poorbet.odds_engine_service.ml.model.OddsModel;
 import com.poorbet.odds_engine_service.oddsservice.dto.OddsResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +18,6 @@ import java.nio.file.Path;
 public class SmileOddsModel implements OddsModel {
 
     private LogisticRegression model;
-    private final SystemState modelState;
     private final ModelProperties modelProperties;
 
     public void loadModel() {
