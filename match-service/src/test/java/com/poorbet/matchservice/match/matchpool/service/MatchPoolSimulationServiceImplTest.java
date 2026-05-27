@@ -1,5 +1,22 @@
 package com.poorbet.matchservice.match.matchpool.service;
 
+import com.poorbet.matchservice.fixture.MatchFixtures;
+import com.poorbet.matchservice.match.client.OddsEngineClient;
+import com.poorbet.matchservice.match.client.TeamsClient;
+import com.poorbet.matchservice.match.match.domain.Match;
+import com.poorbet.matchservice.match.match.domain.MatchStatus;
+import com.poorbet.matchservice.match.match.dto.TeamStatsDto;
+import com.poorbet.matchservice.match.match.repository.MatchRepository;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -7,28 +24,8 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import static org.mockito.ArgumentMatchers.any;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import com.poorbet.matchservice.fixture.MatchFixtures;
-import com.poorbet.matchservice.match.client.SimulationClient;
-import com.poorbet.matchservice.match.client.TeamsClient;
-import com.poorbet.matchservice.match.match.domain.Match;
-import com.poorbet.matchservice.match.match.domain.MatchStatus;
-import com.poorbet.matchservice.match.match.dto.TeamStatsDto;
-import com.poorbet.matchservice.match.match.repository.MatchRepository;
+import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -45,7 +42,7 @@ class MatchPoolSimulationServiceImplTest {
     private MatchFinishService matchFinishService;
 
     @Mock
-    private SimulationClient simulationClient;
+    private OddsEngineClient oddsEngineClient;
 
     @Mock
     private TeamsClient teamsClient;

@@ -27,12 +27,6 @@ run-app:
 # DEV ENV
 # ========================
 
-app-dev:
-	$(COMPOSE_DEV) up -d --build simulation-service user-service
-	$(COMPOSE_DEV) up -d --build odds-training
-	$(COMPOSE_DEV) run --rm python-trainer python train_model.py
-	$(COMPOSE_DEV) up -d --build
-
 dev:
 	$(COMPOSE_DEV) up -d --build
 
@@ -40,8 +34,8 @@ dev:
 # DEV
 # ========================
 
-odds-training-dev:
-	$(COMPOSE_DEV) up -d --build odds-training
+odds-engine-dev:
+	$(COMPOSE_DEV) up -d --build odds-engine-service
 
 user-dev:
 	$(COMPOSE_DEV) up -d --build user-service

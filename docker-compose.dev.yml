@@ -17,6 +17,29 @@ x-resource-db: &resource-db
   cpus: 0.8
 
 services:
+  odds-engine-service:
+    <<: [ *resource-medium ]
+    build:
+      context: ./odds-engine-service
+      dockerfile: Dockerfile.dev
+    ports:
+      - "8090:8080"
+      - "5090:5090"
+    volumes:
+      - ./odds-engine-service:/app
+      - ./odds-engine-service/data:/app/data
+      - ~/.m2:/root/.m2
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=75.0
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health/readiness" ]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 20s
+
+
   frontend:
     build:
       context: ./frontend
@@ -46,53 +69,6 @@ services:
       - SPRING_PROFILES_ACTIVE=dev
       - JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=75.0
     restart: unless-stopped
-
-  odds-training:
-    <<: [ *resource-medium ]
-    build:
-      context: ./odds-training
-      dockerfile: Dockerfile.dev
-    ports:
-      - "8090:8080"
-    volumes:
-      - ./data:/app/data
-      - ./odds-training:/app
-      - ~/.m2:/root/.m2
-    environment:
-      - SPRING_PROFILES_ACTIVE=dev
-      - JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=75.0
-
-  odds-service:
-    <<: [ *resource-medium ]
-    build:
-      context: ./odds-service
-      dockerfile: Dockerfile.dev
-    ports:
-      - "8085:8080"
-      - "5072:5072"
-    volumes:
-      - ./odds-service:/app
-      - ~/.m2:/root/.m2
-    environment:
-      - SPRING_PROFILES_ACTIVE=dev
-      - JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=75.0
-      - MODEL_PATH=/app/data/models/match_predictor.onnx
-
-
-  simulation-service:
-    <<: [ *resource-medium ]
-    build:
-      context: ./simulation-service
-      dockerfile: Dockerfile.dev
-    ports:
-      - "8084:8080"
-      - "5073:5073"
-    volumes:
-      - ./simulation-service:/app
-      - ~/.m2:/root/.m2
-    environment:
-      - SPRING_PROFILES_ACTIVE=dev
-      - JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=75.0
 
   user-service:
     <<: [ *resource-medium ]
