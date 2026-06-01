@@ -30,8 +30,6 @@ poorbet:
 
 messaging:
   source-service: wallet-service
-  exchanges:
-    user: user.events
 
   consumers:
     USER_CREATED:

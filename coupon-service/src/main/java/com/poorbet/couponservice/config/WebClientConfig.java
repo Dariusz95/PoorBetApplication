@@ -1,6 +1,6 @@
 package com.poorbet.couponservice.config;
 
-import com.poorbet.commons.auth.webclient.ServiceJwtForwardingFilter;
+import com.poorbet.authstarter.auth.webclient.ServiceJwtForwardingFilter;
 import io.netty.channel.ChannelOption;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;

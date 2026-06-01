@@ -32,7 +32,7 @@ poorbet:
 
 auth:
   service:
-    url: ${AUTH_SERVICE_URL:http://user-service:8080}
+    url: ${AUTH_SERVICE_URL:http://auth-service:8080}
     client-id: ${AUTH_SERVICE_CLIENT_ID:coupon-service}
     client-secret: ${AUTH_SERVICE_CLIENT_SECRET:secret}
     timeout:
@@ -53,11 +53,3 @@ wallet:
       connect: 2s
       read: 3s
 
-messaging:
-  source-service: coupon-service
-  exchanges:
-    match: match.events
-
-  consumers:
-    MATCH_FINISHED:
-      queue: coupon.match-finished.queue

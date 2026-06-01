@@ -1,0 +1,37 @@
+package com.poorbet.authservice.user.mapper;
+
+import com.poorbet.authservice.user.dto.UserRegisterDto;
+import com.poorbet.authservice.user.dto.UserResponseDto;
+import com.poorbet.authservice.user.model.Role;
+import com.poorbet.authservice.user.model.User;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
+
+import java.time.LocalDateTime;
+
+@Component
+@RequiredArgsConstructor
+public class UserMapper {
+
+    private final PasswordEncoder passwordEncoder;
+
+    public User toEntity(UserRegisterDto dto) {
+        User user = new User();
+        user.setEmail(dto.email());
+        user.setPassword(passwordEncoder.encode(dto.password()));
+        user.setRole(Role.USER);
+        user.setCreatedAt(LocalDateTime.now());
+        user.setActive(true);
+        return user;
+    }
+
+    public UserResponseDto toDto(User user) {
+        return new UserResponseDto(
+                user.getId(),
+                user.getEmail(),
+                user.getRole(),
+                user.getCreatedAt()
+        );
+    }
+}

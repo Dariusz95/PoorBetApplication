@@ -1,27 +1,5 @@
 COMPOSE = docker compose --env-file env
 COMPOSE_DEV = docker compose --env-file .env.dev -f docker-compose.yml -f docker-compose.dev.yml
-TRAIN = $(COMPOSE) run --rm python-trainer python train_model.py
-
-train:
-	$(TRAIN)
-
-train-clean:
-	$(COMPOSE) build --no-cache python-trainer
-	$(TRAIN)
-
-generate:
-	./generate-matches.sh
-	$(TRAIN)
-	$(COMPOSE) up -d odds-service
-
-# ========================
-# APP
-# ========================
-
-run-app:
-	$(COMPOSE) up -d --build simulation-service
-	$(MAKE) generate
-	$(COMPOSE) up -d --build
 
 # ========================
 # DEV ENV
@@ -37,8 +15,8 @@ dev:
 odds-engine-dev:
 	$(COMPOSE_DEV) up -d --build odds-engine-service
 
-user-dev:
-	$(COMPOSE_DEV) up -d --build user-service
+auth-dev:
+	$(COMPOSE_DEV) up -d --build auth-service
 
 simulation-dev:
 	$(COMPOSE_DEV) up -d --build simulation-service

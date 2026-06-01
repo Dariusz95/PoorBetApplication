@@ -1,8 +1,11 @@
 package com.poorbet.matchservice.match.config;
 
-import com.poorbet.commons.auth.webclient.ServiceJwtForwardingFilter;
+import com.poorbet.authstarter.auth.config.AuthServiceProperties;
+import com.poorbet.authstarter.auth.token.ServiceTokenProvider;
 import io.netty.channel.ChannelOption;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
@@ -15,7 +18,6 @@ import reactor.netty.http.client.HttpClient;
 @RequiredArgsConstructor
 public class WebClientConfig {
 
-    private final TeamsServiceProperties teamsServiceProperties;
     private final OddsServiceProperties oddsServiceProperties;
 
     @Bean
@@ -24,22 +26,15 @@ public class WebClientConfig {
     }
 
     @Bean
-    public WebClient teamsWebClient(WebClient.Builder builder, ServiceJwtForwardingFilter serviceJwtForwardingFilter) {
-        return builder
-                .baseUrl(teamsServiceProperties.url())
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .clientConnector(new ReactorClientHttpConnector(
-                        HttpClient.create()
-                                .responseTimeout(teamsServiceProperties.timeout().read())
-                                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, (int) teamsServiceProperties.timeout().connect().toMillis())
-                ))
-                .filter(serviceJwtForwardingFilter)
-                .build();
+    public ServiceJwtForwardingFilter serviceJwtForwardingFilter(ServiceTokenProvider provider) {
+        return new ServiceJwtForwardingFilter(provider);
     }
 
+
     @Bean
+    @Qualifier("oddsEngineWebClient")
     public WebClient oddsEngineWebClient(ServiceJwtForwardingFilter serviceJwtForwardingFilter) {
-        return WebClient.builder()
+        return webClientBuilder()
                 .baseUrl(oddsServiceProperties.url())
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .clientConnector(new ReactorClientHttpConnector(
