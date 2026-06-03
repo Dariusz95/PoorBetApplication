@@ -70,12 +70,12 @@ services:
       - JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=75.0
     restart: unless-stopped
 
-  user-service:
+  auth-service:
     <<: [ *resource-medium ]
     build:
       context: .
-      dockerfile: user-service/Dockerfile.dev
-    working_dir: /app/user-service
+      dockerfile: auth-service/Dockerfile.dev
+    working_dir: /app/auth-service
     ports:
       - "8089:8080"
       - "5079:5079"

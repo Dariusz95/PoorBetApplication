@@ -10,8 +10,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
+import org.springframework.web.client.RestClient;
 
 import java.util.Arrays;
 import java.util.List;
@@ -28,22 +27,22 @@ import static org.mockito.Mockito.when;
 class MatchClientTest {
 
     @Mock
-    private WebClient webClient;
+    private RestClient restClient;
 
     @Mock
-    private WebClient.RequestHeadersUriSpec<?> requestHeadersUriSpec;
+    private RestClient.RequestHeadersUriSpec<?> requestHeadersUriSpec;
 
     @Mock
-    private WebClient.RequestBodyUriSpec requestBodyUriSpec;
+    private RestClient.RequestBodyUriSpec requestBodyUriSpec;
 
     @Mock
-    private WebClient.RequestHeadersSpec<?> requestHeadersSpec;
+    private RestClient.RequestHeadersSpec<?> requestHeadersSpec;
 
     @Mock
-    private WebClient.RequestBodySpec requestBodySpec;
+    private RestClient.RequestBodySpec requestBodySpec;
 
     @Mock
-    private WebClient.ResponseSpec responseSpec;
+    private RestClient.ResponseSpec responseSpec;
 
     @InjectMocks
     private MatchClient matchClient;
@@ -58,22 +57,21 @@ class MatchClientTest {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     private void setupWebClientChainForGet(Double oddValue) {
-        when(webClient.get()).thenReturn((WebClient.RequestHeadersUriSpec) requestHeadersUriSpec);
+        when(restClient.get()).thenReturn((RestClient.RequestHeadersUriSpec) requestHeadersUriSpec);
         when(requestHeadersUriSpec.uri(any(Function.class))).thenReturn(requestHeadersSpec);
         when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
-        when(responseSpec.bodyToMono(Double.class))
-                .thenReturn(Mono.just(oddValue));
+        when(responseSpec.body(Double.class))
+                .thenReturn(oddValue);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     private void setupWebClientChainForPost(MatchResultMapDto results) {
-        when(webClient.post()).thenReturn(requestBodyUriSpec);
+        when(restClient.post()).thenReturn(requestBodyUriSpec);
         when(requestBodyUriSpec.uri("/internal/match/results")).thenReturn(requestBodySpec);
-        when(requestBodySpec.bodyValue(any())).thenReturn((WebClient.RequestHeadersSpec) requestHeadersSpec);
         when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
         when(responseSpec.onStatus(any(), any())).thenReturn(responseSpec);
-        when(responseSpec.bodyToMono(MatchResultMapDto.class))
-                .thenReturn(Mono.just(results));
+        when(responseSpec.body(MatchResultMapDto.class))
+                .thenReturn(results);
     }
 
     @Test
@@ -100,9 +98,9 @@ class MatchClientTest {
         matchClient.getOdd(matchId, BetType.HOME_WIN);
 
         // Assert
-        verify(webClient).get();
+        verify(restClient).get();
         verify(requestHeadersSpec).retrieve();
-        verify(responseSpec).bodyToMono(Double.class);
+        verify(responseSpec).body(Double.class);
     }
 
     @Test
@@ -146,7 +144,7 @@ class MatchClientTest {
         matchClient.getMatchResult(matchIds);
 
         // Assert
-        verify(webClient).post();
+        verify(restClient).post();
         verify(requestHeadersSpec).retrieve();
     }
 
@@ -164,7 +162,7 @@ class MatchClientTest {
         // Assert
         @SuppressWarnings("unchecked")
         ArgumentCaptor<List<UUID>> bodyCaptor = ArgumentCaptor.forClass(List.class);
-        verify(requestBodySpec).bodyValue(bodyCaptor.capture());
+        verify(requestBodySpec).body(bodyCaptor.capture());
         assertThat(bodyCaptor.getValue()).isEqualTo(matchIds);
     }
 

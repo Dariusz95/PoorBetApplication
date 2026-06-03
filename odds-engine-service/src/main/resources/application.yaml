@@ -16,7 +16,7 @@ management:
 
 auth:
   service:
-    url: ${AUTH_SERVICE_URL:http://user-service:8080}
+    url: ${AUTH_SERVICE_URL:http://auth-service:8080}
     client-id: ${AUTH_SERVICE_CLIENT_ID:odds-engine-service}
     client-secret: ${AUTH_SERVICE_CLIENT_SECRET:secret}
     timeout:

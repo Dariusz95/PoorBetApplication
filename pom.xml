@@ -14,14 +14,22 @@
         <java.version>21</java.version>
         <spring.boot.version>3.4.1</spring.boot.version>
         <poorbet.commons.version>0.0.1-SNAPSHOT</poorbet.commons.version>
-        <github.repository>Dariusz95/PoorBetComons</github.repository>
+        <poorbet.auth.starter.version>0.0.1-SNAPSHOT</poorbet.auth.starter.version>
+        <github.commons.repo>Dariusz95/PoorBetCommons</github.commons.repo>
+        <github.auth.repo>Dariusz95/PoorBetAuthStarter</github.auth.repo>
     </properties>
 
     <repositories>
         <repository>
-            <id>github</id>
-            <name>GitHub Packages</name>
-            <url>https://maven.pkg.github.com/${github.repository}</url>
+            <id>github-commons</id>
+            <name>GitHub Packages Commons</name>
+            <url>https://maven.pkg.github.com/${github.commons.repo}</url>
+        </repository>
+
+        <repository>
+            <id>github-auth</id>
+            <name>GitHub Packages Auth Starter</name>
+            <url>https://maven.pkg.github.com/${github.auth.repo}</url>
         </repository>
     </repositories>
 
@@ -38,6 +46,11 @@
                 <groupId>com.poorbet</groupId>
                 <artifactId>poorbet-commons</artifactId>
                 <version>${poorbet.commons.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.poorbet</groupId>
+                <artifactId>poorbet-auth-starter</artifactId>
+                <version>${poorbet.auth.starter.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.projectlombok</groupId>

@@ -2,45 +2,39 @@ package com.poorbet.couponservice.client;
 
 import com.poorbet.couponservice.domain.BetType;
 import com.poorbet.couponservice.dto.MatchResultMapDto;
-import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatusCode;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
+import org.springframework.web.client.RestClient;
 
-import javax.naming.ServiceUnavailableException;
 import java.util.List;
 import java.util.UUID;
 
 @Service
-@AllArgsConstructor
 public class MatchClient {
 
-    private final WebClient matchServiceWebClientBuilder;
+    private final RestClient restClient;
+
+    public MatchClient(@Qualifier("matchRestClient") RestClient restClient) {
+        this.restClient = restClient;
+    }
 
     public MatchResultMapDto getMatchResult(List<UUID> matchIds) {
-        return matchServiceWebClientBuilder
+        return restClient
                 .post()
                 .uri("/internal/match/results")
-                .bodyValue(matchIds)
+                .body(matchIds)
                 .retrieve()
-                .onStatus(
-                        HttpStatusCode::is5xxServerError,
-                        response -> Mono.error(new ServiceUnavailableException())
-                )
-                .bodyToMono(MatchResultMapDto.class)
-                .block();
+                .body(MatchResultMapDto.class);
     }
 
     public Double getOdd(UUID matchId, BetType type) {
-        return matchServiceWebClientBuilder
+        return restClient
                 .get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/internal/match/{matchId}/odds")
                         .queryParam("type", type)
                         .build(matchId))
                 .retrieve()
-                .bodyToMono(Double.class)
-                .block();
+                .body(Double.class);
     }
 }

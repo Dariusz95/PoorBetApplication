@@ -12,7 +12,7 @@ services:
     environment:
       <<: *auth-config
     depends_on:
-      - user-service
+      - auth-service
       - user-db
     networks:
       - main_network
@@ -23,7 +23,7 @@ services:
     networks:
       - main_network
 
-  user-service:
+  auth-service:
     depends_on:
       - user-db
     environment:
@@ -63,7 +63,7 @@ services:
       - teams-db
       - rabbitmq
       - redis
-      - user-service
+      - auth-service
       - odds-engine-service
     networks:
       - main_network

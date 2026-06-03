@@ -26,6 +26,7 @@ poorbet:
 logging:
   level:
     org.springframework.security: DEBUG
+    org.springframework.boot.autoconfigure: DEBUG
 
 spring:
   application:
@@ -74,12 +75,9 @@ match-pool:
 messaging:
   source-service: match-service
 
-  exchanges:
-    match: match.events
-
 auth:
   service:
-    url: ${AUTH_SERVICE_URL:http://user-service:8080}
+    url: ${AUTH_SERVICE_URL:http://auth-service:8080}
     client-id: ${AUTH_SERVICE_CLIENT_ID:match-service}
     client-secret: ${AUTH_SERVICE_CLIENT_SECRET:secret}
     timeout:

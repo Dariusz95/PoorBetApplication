@@ -1,7 +1,7 @@
 package com.poorbet.walletservice.service;
 
 import com.poorbet.commons.rabbit.EventEnvelope;
-import com.poorbet.commons.rabbit.events.user.UserCreatedEvent;
+import com.poorbet.commons.rabbit.events.auth.UserCreatedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;

@@ -23,7 +23,7 @@ public class CouponController {
     private final CurrentUserProvider currentUserProvider;
 
     @PostMapping
-    @PreAuthorize("hasAuthority(T(com.poorbet.commons.security.PoorbetPermissions).COUPON_CREATE)")
+    @PreAuthorize("hasAuthority(T(com.poorbet.auth-starter.security.PoorbetPermissions).COUPON_CREATE)")
     public ResponseEntity<Coupon> createCoupon(@RequestBody @Valid CreateCouponDto createCouponDto) {
         Coupon coupon = couponService.createCoupon(createCouponDto, currentUserProvider.getUserId());
         return new ResponseEntity<>(coupon, HttpStatus.CREATED);
