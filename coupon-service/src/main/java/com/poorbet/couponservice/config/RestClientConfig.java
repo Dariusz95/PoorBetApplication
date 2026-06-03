@@ -1,7 +1,7 @@
-package com.poorbet.matchservice.match.config;
+package com.poorbet.couponservice.config;
 
 import com.poorbet.authstarter.auth.webclient.ServiceJwtForwardingInterceptor;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,24 +13,24 @@ import org.springframework.web.client.RestClient;
 import java.time.Duration;
 
 @Configuration
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class RestClientConfig {
 
-    private final TeamsServiceProperties teamsServiceProperties;
-    private final OddsServiceProperties oddsServiceProperties;
+    private final MatchProperties matchProperties;
+    private final WalletProperties walletProperties;
     private final ServiceJwtForwardingInterceptor serviceJwtForwardingInterceptor;
 
 
     @Bean
-    @Qualifier("teamsInternalRestClient")
-    public RestClient teamsInternalRestClient() {
-        return buildClient(teamsServiceProperties.url(), teamsServiceProperties.timeout().connect(), teamsServiceProperties.timeout().read());
+    @Qualifier("matchRestClient")
+    public RestClient matchRestClient() {
+        return buildClient(matchProperties.url(), matchProperties.timeout().connect(), matchProperties.timeout().read());
     }
 
     @Bean
-    @Qualifier("oddsEngineRestClient")
-    public RestClient oddsEngineRestClient() {
-        return buildClient(oddsServiceProperties.url(), oddsServiceProperties.timeout().connect(), oddsServiceProperties.timeout().read());
+    @Qualifier("walletRestClient")
+    public RestClient walletRestClient() {
+        return buildClient(walletProperties.url(), walletProperties.timeout().connect(), walletProperties.timeout().read());
     }
 
     private RestClient buildClient(String baseUrl, Duration connect, Duration read) {

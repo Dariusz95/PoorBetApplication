@@ -21,7 +21,6 @@ public class CsvDatasetService {
     }
 
     public void generateIfMissing() {
-        log.info("csv exists - {}", datasetExists());
         if (!datasetExists()) {
             generate();
         }
