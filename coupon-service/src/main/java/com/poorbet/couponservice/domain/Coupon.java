@@ -6,6 +6,7 @@ import jakarta.validation.constraints.DecimalMin;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -43,6 +44,9 @@ public class Coupon {
     @OneToMany(mappedBy = "coupon", orphanRemoval = true, cascade = CascadeType.ALL)
     @Builder.Default
     private List<Bet> bets = new ArrayList<>();
+
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
 
     public void addBet(Bet bet) {
         bets.add(bet);

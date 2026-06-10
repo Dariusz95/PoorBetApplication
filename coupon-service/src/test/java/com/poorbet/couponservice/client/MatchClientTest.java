@@ -56,7 +56,7 @@ class MatchClientTest {
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private void setupWebClientChainForGet(Double oddValue) {
+    private void setupRestClientChainForGet(Double oddValue) {
         when(restClient.get()).thenReturn((RestClient.RequestHeadersUriSpec) requestHeadersUriSpec);
         when(requestHeadersUriSpec.uri(any(Function.class))).thenReturn(requestHeadersSpec);
         when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
@@ -64,12 +64,20 @@ class MatchClientTest {
                 .thenReturn(oddValue);
     }
 
+
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private void setupWebClientChainForPost(MatchResultMapDto results) {
+    private void setupRestClientChainForPost(MatchResultMapDto results) {
         when(restClient.post()).thenReturn(requestBodyUriSpec);
-        when(requestBodyUriSpec.uri("/internal/match/results")).thenReturn(requestBodySpec);
-        when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
-        when(responseSpec.onStatus(any(), any())).thenReturn(responseSpec);
+
+        when(requestBodyUriSpec.uri("/internal/match/results"))
+                .thenReturn(requestBodySpec);
+
+        when(requestBodySpec.body(any(Object.class)))
+                .thenReturn(requestBodySpec);
+
+        when(requestBodySpec.retrieve())
+                .thenReturn(responseSpec);
+
         when(responseSpec.body(MatchResultMapDto.class))
                 .thenReturn(results);
     }
@@ -79,7 +87,7 @@ class MatchClientTest {
     void shouldGetOddForMatchWithCorrectUri() {
         // Arrange
         Double expectedOdd = 1.5;
-        setupWebClientChainForGet(expectedOdd);
+        setupRestClientChainForGet(expectedOdd);
 
         // Act
         Double result = matchClient.getOdd(matchId, BetType.HOME_WIN);
@@ -92,7 +100,7 @@ class MatchClientTest {
     @DisplayName("Should call get request for odds endpoint")
     void shouldCallGetRequestForOddsEndpoint() {
         // Arrange
-        setupWebClientChainForGet(1.5);
+        setupRestClientChainForGet(1.5);
 
         // Act
         matchClient.getOdd(matchId, BetType.HOME_WIN);
@@ -108,7 +116,7 @@ class MatchClientTest {
     void shouldBlockOnGetOddResponse() {
         // Arrange
         Double expectedOdd = 3.0;
-        setupWebClientChainForGet(expectedOdd);
+        setupRestClientChainForGet(expectedOdd);
 
         // Act
         Double result = matchClient.getOdd(matchId, BetType.HOME_WIN);
@@ -123,7 +131,7 @@ class MatchClientTest {
         // Arrange
         List<UUID> matchIds = Arrays.asList(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID());
         MatchResultMapDto expectedResults = MatchResultMapDto.builder().build();
-        setupWebClientChainForPost(expectedResults);
+        setupRestClientChainForPost(expectedResults);
 
         // Act
         MatchResultMapDto result = matchClient.getMatchResult(matchIds);
@@ -138,14 +146,13 @@ class MatchClientTest {
         // Arrange
         List<UUID> matchIds = Arrays.asList(UUID.randomUUID(), UUID.randomUUID());
         MatchResultMapDto expectedResults = MatchResultMapDto.builder().build();
-        setupWebClientChainForPost(expectedResults);
+        setupRestClientChainForPost(expectedResults);
 
         // Act
         matchClient.getMatchResult(matchIds);
 
         // Assert
         verify(restClient).post();
-        verify(requestHeadersSpec).retrieve();
     }
 
     @Test
@@ -154,7 +161,7 @@ class MatchClientTest {
         // Arrange
         List<UUID> matchIds = Arrays.asList(UUID.randomUUID(), UUID.randomUUID());
         MatchResultMapDto expectedResults = MatchResultMapDto.builder().build();
-        setupWebClientChainForPost(expectedResults);
+        setupRestClientChainForPost(expectedResults);
 
         // Act
         matchClient.getMatchResult(matchIds);
@@ -172,7 +179,7 @@ class MatchClientTest {
         // Arrange
         List<UUID> matchIds = Arrays.asList(UUID.randomUUID(), UUID.randomUUID());
         MatchResultMapDto expectedResults = MatchResultMapDto.builder().build();
-        setupWebClientChainForPost(expectedResults);
+        setupRestClientChainForPost(expectedResults);
 
         // Act
         MatchResultMapDto result = matchClient.getMatchResult(matchIds);

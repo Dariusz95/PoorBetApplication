@@ -4,10 +4,14 @@ CREATE TABLE coupon (
     user_id UUID NOT NULL,
     reservation_id UUID NOT NULL,
     status VARCHAR(20) NOT NULL,
-    potential_payout NUMERIC(19, 2) NOT NULL
+    potential_payout NUMERIC(19, 2) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE INDEX idx_coupon_user_id ON coupon(user_id);
+
+CREATE INDEX idx_coupon_user_status_created_at
+ON coupon (user_id, status, created_at DESC);
 
 CREATE TABLE bet (
     id UUID PRIMARY KEY,

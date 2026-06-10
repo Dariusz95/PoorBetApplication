@@ -11,13 +11,23 @@ import com.poorbet.couponservice.domain.Bet;
 import com.poorbet.couponservice.domain.BetStatus;
 import com.poorbet.couponservice.domain.Coupon;
 import com.poorbet.couponservice.domain.CouponStatus;
+import com.poorbet.couponservice.dto.CouponDetailDto;
+import com.poorbet.couponservice.dto.CouponDto;
 import com.poorbet.couponservice.dto.CreateCouponDto;
+import com.poorbet.couponservice.mapper.CouponMapper;
 import com.poorbet.couponservice.repository.CouponRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.Locale;
+import java.util.Optional;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -28,6 +38,7 @@ public class CouponService {
     private final MatchClient matchClient;
     private final WalletClient walletClient;
     private final OutboxService outboxService;
+    private final CouponMapper couponMapper;
 
     @Transactional
     public Coupon createCoupon(CreateCouponDto dto, UUID userId) {
@@ -89,6 +100,18 @@ public class CouponService {
                 .userId(userId)
                 .reservationId(reservationId)
                 .status(CouponStatus.OPEN)
+                .createdAt(LocalDateTime.now())
                 .build();
+    }
+
+    public Page<CouponDto> getCoupons(UUID userId, CouponStatus status, Pageable pageable) {
+        return couponRepository.findByUserIdAndStatus(userId, status, pageable)
+                .map(couponMapper::toDto);
+    }
+
+    public CouponDetailDto getCouponDetails(UUID couponId) {
+        return this.couponRepository.findById(couponId)
+                .map(couponMapper::toDetailDto)
+                .orElseThrow(() -> new EntityNotFoundException("Coupon not found"));
     }
 }
