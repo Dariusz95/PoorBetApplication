@@ -16,16 +16,8 @@ import java.time.Duration;
 @RequiredArgsConstructor
 public class RestClientConfig {
 
-    private final TeamsServiceProperties teamsServiceProperties;
     private final OddsServiceProperties oddsServiceProperties;
     private final ServiceJwtForwardingInterceptor serviceJwtForwardingInterceptor;
-
-
-    @Bean
-    @Qualifier("teamsInternalRestClient")
-    public RestClient teamsInternalRestClient() {
-        return buildClient(teamsServiceProperties.url(), teamsServiceProperties.timeout().connect(), teamsServiceProperties.timeout().read());
-    }
 
     @Bean
     @Qualifier("oddsEngineRestClient")

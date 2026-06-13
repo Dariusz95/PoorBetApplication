@@ -36,6 +36,9 @@ public class CouponMapper {
         return new BetDto(
                 bet.getId(),
                 bet.getMatchId(),
+                bet.getHomeTeamName(),
+                bet.getAwayTeamName(),
+                bet.getMatchStartTime(),
                 bet.getStatus(),
                 bet.getBetType(),
                 bet.getOdds()

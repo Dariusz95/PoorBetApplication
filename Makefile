@@ -24,9 +24,6 @@ simulation-dev:
 coupon-dev:
 	$(COMPOSE_DEV) up -d --build coupon-service
 
-teams-dev:
-	$(COMPOSE_DEV) up -d --build teams-service
-
 match-dev:
 	$(COMPOSE_DEV) up -d --build match-service
 

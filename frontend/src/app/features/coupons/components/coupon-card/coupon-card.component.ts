@@ -1,3 +1,4 @@
+import { DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import {
   FormControl,
@@ -21,7 +22,6 @@ import { BetSlipService } from '../../../bet/services/bet-slip.service';
 import { CreateCouponRequest } from '../../models/create-coupon-request';
 import { CouponSelectedBetsComponent } from '../coupon-selected-bets/coupon-selected-bets.component';
 import { CouponSummaryComponent } from '../coupon-summary/coupon-summary.component';
-import { DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-coupon-card',
@@ -40,7 +40,7 @@ import { DecimalPipe } from '@angular/common';
     TranslocoPipe,
     CouponSelectedBetsComponent,
     CouponSummaryComponent,
-    DecimalPipe
+    DecimalPipe,
   ],
   templateUrl: './coupon-card.component.html',
   styleUrl: './coupon-card.component.scss',
@@ -55,6 +55,7 @@ export class CouponCardComponent {
   amountCtrl = new FormControl(0, [Validators.min(1)]);
 
   submitCoupon(): void {
+    console.log('xx');
     const data: any = {
       id: '0796685f-bb78-4cc5-ada3-f9ba43927d2f',
       stake: 2,
@@ -81,26 +82,26 @@ export class CouponCardComponent {
         },
       ],
     };
-    this.dialogService.openCouponDialog(data);
-    return;
+    // this.dialogService.openCouponDialog(data);
+    // return;
 
-    // if (!this.amountCtrl.valid) {
-    //   this.amountCtrl.markAsTouched();
+    if (!this.amountCtrl.valid) {
+      this.amountCtrl.markAsTouched();
 
-    //   return;
-    // }
+      return;
+    }
 
-    // const request = this.mapToRequest();
+    const request = this.mapToRequest();
 
-    // this.couponService.createCoupon(request).subscribe({
-    //   next: (coupon) => {
-    //     this.dialogService.openCouponDialog(coupon);
-    //     this.resetForm();
-    //   },
-    //   error: (error) => {
-    //     this.toastService.error('Błąd podczas tworzenia kuponu');
-    //   },
-    // });
+    this.couponService.create(request).subscribe({
+      next: (coupon) => {
+        // this.dialogService.openCouponDialog(coupon);
+        this.amountCtrl.reset(0);
+      },
+      error: (error) => {
+        this.toastService.error('Błąd podczas tworzenia kuponu');
+      },
+    });
   }
 
   private mapToRequest(): CreateCouponRequest {
@@ -111,9 +112,5 @@ export class CouponCardComponent {
         betType: bet.betType,
       })),
     };
-  }
-
-  private resetForm(): void {
-    this.amountCtrl.reset(0);
   }
 }

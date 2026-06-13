@@ -9,7 +9,8 @@ export interface CouponData {
 
 export interface BetInfo {
   matchId: string;
-  matchName: string;
+  home: string;
+  away: string;
   betType: string;
   odds: number;
 }

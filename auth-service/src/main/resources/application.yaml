@@ -61,7 +61,6 @@ oauth:
       permissions:
         - internal
       audiences:
-        - teams-service
         - odds-engine-service
     coupon-service:
       secret: ${COUPON_SERVICE_CLIENT_SECRET:secret}

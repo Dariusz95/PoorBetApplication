@@ -42,7 +42,6 @@ export class BetSlipService {
   }
 
   toggleSelection(bet: SelectedBet): void {
-    console.log('Toggling bet selection:', bet);
     this._selectedBets.update((currentBets) => {
       const existingBet = currentBets.find(
         (currentBet) => currentBet.matchId === bet.matchId,

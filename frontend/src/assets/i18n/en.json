@@ -60,7 +60,7 @@
       "matchInProgress": "Match in progress"
     },
     "coupon": {
-      "eyebrow": "Your coupon",
+      "eyebrow": "Your coupon test",
       "title": "Building coupon",
       "emptyTitle": "No events selected yet.",
       "emptyText": "Click odds in a match to add it to the coupon on the right.",

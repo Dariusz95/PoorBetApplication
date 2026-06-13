@@ -11,11 +11,11 @@ import {
 @Component({
   selector: 'app-coupon-bets-list',
   standalone: true,
-  imports: [CommonModule, TranslocoPipe, CouponBetItemComponent],
+  imports: [CommonModule, CouponBetItemComponent],
   template: `
     <section class="coupon__bets">
       <ul class="coupon__bets-list" role="list">
-        @for (bet of bets; track trackBet($index, bet); let i = $index) {
+        @for (bet of bets; track $index; let i = $index) {
           <app-coupon-bet-item
             [bet]="bet"
             [betNumber]="i + 1"
@@ -32,12 +32,9 @@ export class CouponBetsListComponent {
   @Input() bets: BetInfo[] = [];
   @Input() betStatuses: Map<string, BetStatus> = new Map();
 
-  trackBet(index: number, bet: BetInfo): string {
-    return `${bet.matchId}-${bet.betType}`;
-  }
-
   getBetStatus(bet: BetInfo): BetStatus | undefined {
     const betWithStatus = bet as CouponBetDto;
-    return betWithStatus.status || this.betStatuses.get(this.trackBet(0, bet));
+
+    return betWithStatus.status;
   }
 }

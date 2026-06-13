@@ -12,7 +12,7 @@ export class CouponService {
   private readonly http = inject(HttpClient);
   private readonly baseUrl = `${environment.backend.baseURL}/api/coupons`;
 
-  createCoupon(request: CreateCouponRequest): Observable<CouponData> {
+  create(request: CreateCouponRequest): Observable<CouponData> {
     return this.http.post<CouponData>(this.baseUrl, request);
   }
 }

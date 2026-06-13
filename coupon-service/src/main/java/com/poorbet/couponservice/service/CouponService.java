@@ -1,5 +1,11 @@
 package com.poorbet.couponservice.service;
 
+import java.math.BigDecimal;
+import java.util.UUID;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.poorbet.commons.commons.wallet.contract.ReserveRequest;
 import com.poorbet.commons.rabbit.events.coupon.CouponCreationFailedEvent;
 import com.poorbet.commons.rabbit.events.coupon.CouponEvents;
@@ -17,6 +23,7 @@ import com.poorbet.couponservice.dto.CreateCouponDto;
 import com.poorbet.couponservice.mapper.CouponMapper;
 import com.poorbet.couponservice.repository.CouponRepository;
 import jakarta.persistence.EntityNotFoundException;
+
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -41,7 +48,7 @@ public class CouponService {
     private final CouponMapper couponMapper;
 
     @Transactional
-    public Coupon createCoupon(CreateCouponDto dto, UUID userId) {
+    public CouponDetailDto createCoupon(CreateCouponDto dto, UUID userId) {
 
         UUID reservationId = UUID.randomUUID();
 
@@ -54,15 +61,18 @@ public class CouponService {
             Coupon coupon = buildCoupon(dto, userId, reservationId);
             dto.getBets().forEach(betDto -> {
 
-                Double odd = matchClient.getOdd(
+                var snapshot = matchClient.getBetSnapshot(
                         betDto.getMatchId(),
                         betDto.getBetType()
                 );
 
                 Bet bet = Bet.builder()
                         .betType(betDto.getBetType())
-                        .matchId(betDto.getMatchId())
-                        .odds(BigDecimal.valueOf(odd))
+                        .matchId(snapshot.matchId())
+                        .homeTeamName(snapshot.homeTeamName())
+                        .awayTeamName(snapshot.awayTeamName())
+                        .matchStartTime(snapshot.matchStartTime())
+                        .odds(snapshot.odd())
                         .status(BetStatus.PENDING)
                         .build();
 
@@ -79,7 +89,7 @@ public class CouponService {
 
             Coupon saved = couponRepository.save(coupon);
 
-            return saved;
+            return couponMapper.toDetailDto(saved);
 
         } catch (WalletBusinessException ex) {
             throw ex;

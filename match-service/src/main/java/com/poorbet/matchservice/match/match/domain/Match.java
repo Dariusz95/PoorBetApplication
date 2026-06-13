@@ -4,6 +4,7 @@ import com.poorbet.matchservice.match.matchpool.domain.MatchPool;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -16,7 +17,6 @@ import java.util.UUID;
 public class Match {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "match_id")
     private UUID id;
 
     @Column(name = "home_team_id", nullable = false)
@@ -35,6 +35,9 @@ public class Match {
     @Column(name = "status")
     private MatchStatus status;
 
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "pool_id", nullable = false)
     private MatchPool pool;
@@ -50,5 +53,10 @@ public class Match {
     public void setOdds(Odds odds) {
         this.odds = odds;
         odds.setMatch(this);
+    }
+
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
     }
 }

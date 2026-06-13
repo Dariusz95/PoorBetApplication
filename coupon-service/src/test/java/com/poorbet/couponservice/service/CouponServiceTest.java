@@ -3,6 +3,7 @@ package com.poorbet.couponservice.service;
 import com.poorbet.couponservice.client.MatchClient;
 import com.poorbet.couponservice.client.wallet.WalletClient;
 import com.poorbet.couponservice.domain.*;
+import com.poorbet.couponservice.dto.CouponDetailDto;
 import com.poorbet.couponservice.dto.CreateBetDto;
 import com.poorbet.couponservice.dto.CreateCouponDto;
 import com.poorbet.couponservice.repository.CouponRepository;
@@ -74,7 +75,7 @@ class CouponServiceTest {
 
     private void setupMatchClientWithOdd(Double oddValue) {
         doNothing().when(walletClient).reserve(any(UUID.class), any());
-        when(matchClient.getOdd(any(UUID.class), any(BetType.class)))
+        when(matchClient.getBetSnapshot(any(UUID.class), any(BetType.class)))
                 .thenReturn(oddValue);
     }
 
@@ -91,7 +92,7 @@ class CouponServiceTest {
         setupRepositoryToReturnCoupon(null);
 
         // Act
-        Coupon result = couponService.createCoupon(validCreateCouponDto, userId);
+        CouponDetailDto result = couponService.createCoupon(validCreateCouponDto, userId);
 
         // Assert
         assertThat(result)
