@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { CouponSummaryComponent } from '@features/coupons/components/coupon-summary/coupon-summary.component';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { CouponData } from '@shared/types/coupon.types';
+import { CouponDetails } from '@shared/types/coupon.types';
 import { PbIconComponent } from '@shared/ui/icon/pb-icon.component';
 import { PbButtonComponent } from '../../../../shared/ui/pb-button/pb-button.component';
 import { PbCardBodyDirective } from '../../../../shared/ui/pb-card/directives/pb-card-body.directive';
@@ -29,13 +29,13 @@ import { CouponBetsListComponent } from './sub-components/coupon-bets-list.compo
   styleUrl: './pb-coupon-dialog.component.scss',
 })
 export class PbCouponDialogComponent implements OnInit {
-  couponData!: CouponData;
+  couponData!: CouponDetails;
 
   private readonly dialogRef = inject(DialogRef<void>);
 
   ngOnInit(): void {
     if (this.dialogRef.componentInstance) {
-      //   this.couponData = this.dialogRef.componentInstance.couponData;
+        this.couponData = this.dialogRef.componentInstance.couponData as CouponDetails;
     }
   }
 

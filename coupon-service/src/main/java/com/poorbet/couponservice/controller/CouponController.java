@@ -4,7 +4,6 @@ import com.poorbet.couponservice.domain.CouponStatus;
 import com.poorbet.couponservice.dto.CouponDetailDto;
 import com.poorbet.couponservice.dto.CouponDto;
 import com.poorbet.couponservice.dto.CreateCouponDto;
-import com.poorbet.couponservice.domain.Coupon;
 import com.poorbet.couponservice.security.CurrentUserProvider;
 import com.poorbet.couponservice.service.CouponService;
 import jakarta.validation.Valid;
@@ -28,7 +27,7 @@ public class CouponController {
     private final CurrentUserProvider currentUserProvider;
 
     @PostMapping
-    @PreAuthorize("hasAuthority(T(com.poorbet.auth-starter.security.PoorbetPermissions).COUPON_CREATE)")
+    @PreAuthorize("hasAuthority(T(com.poorbet.authstarter.security.PoorbetPermissions).COUPON_CREATE)")
     public ResponseEntity<CouponDetailDto> createCoupon(@RequestBody @Valid CreateCouponDto createCouponDto) {
         CouponDetailDto coupon = couponService.createCoupon(createCouponDto, currentUserProvider.getUserId());
         return new ResponseEntity<>(coupon, HttpStatus.CREATED);

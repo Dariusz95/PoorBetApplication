@@ -1,6 +1,7 @@
 package com.poorbet.couponservice.service;
 
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -27,15 +28,6 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.Locale;
-import java.util.Optional;
-import java.util.UUID;
 
 @AllArgsConstructor
 @Service
@@ -110,7 +102,7 @@ public class CouponService {
                 .userId(userId)
                 .reservationId(reservationId)
                 .status(CouponStatus.OPEN)
-                .createdAt(LocalDateTime.now())
+                .createdAt(OffsetDateTime.now())
                 .build();
     }
 

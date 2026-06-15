@@ -1,9 +1,12 @@
 package com.poorbet.couponservice.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.poorbet.couponservice.domain.BetStatus;
 import com.poorbet.couponservice.domain.BetType;
 import com.poorbet.couponservice.domain.Coupon;
 import com.poorbet.couponservice.domain.CouponStatus;
+import com.poorbet.couponservice.dto.BetDto;
+import com.poorbet.couponservice.dto.CouponDetailDto;
 import com.poorbet.couponservice.dto.CreateBetDto;
 import com.poorbet.couponservice.dto.CreateCouponDto;
 import com.poorbet.couponservice.security.CurrentUserProvider;
@@ -19,10 +22,8 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.time.OffsetDateTime;
+import java.util.*;
 
 import static org.hamcrest.Matchers.comparesEqualTo;
 import static org.hamcrest.Matchers.equalTo;
@@ -48,20 +49,40 @@ class CouponControllerTest {
     private CurrentUserProvider currentUserProvider;
 
     private static final BigDecimal VALID_STAKE = new BigDecimal("50.00");
+    private static final BigDecimal POTENTIAL_PAYOUT = new BigDecimal("50.00");
     private static final String COUPONS_ENDPOINT = "/api/coupons";
 
     private CreateCouponDto validCreateCouponDto;
-    private Coupon couponResponse;
+    private CouponDetailDto couponResponse;
+
+    private BetDto createBetDtoResponse(BetType betType) {
+        return new BetDto(
+                UUID.randomUUID(),
+                UUID.randomUUID(),
+                "Real Madrid",
+                "Barcelona",
+                OffsetDateTime.parse("2026-06-20T20:45:00Z"),
+                BetStatus.PENDING,
+                betType,
+                new BigDecimal("1.50")
+        );
+    }
 
     @BeforeEach
     void setUp() {
         when(currentUserProvider.getUserId()).thenReturn(UUID.randomUUID());
         validCreateCouponDto = createValidCouponDto();
-        couponResponse = Coupon.builder()
-                .id(UUID.randomUUID())
-                .stake(VALID_STAKE)
-                .status(CouponStatus.OPEN)
-                .build();
+
+        BetDto bet1 = createBetDtoResponse(BetType.HOME_WIN);
+        BetDto bet2 = createBetDtoResponse(BetType.DRAW);
+        couponResponse = new CouponDetailDto(
+                UUID.randomUUID(),
+                VALID_STAKE,
+                CouponStatus.OPEN,
+                POTENTIAL_PAYOUT,
+                OffsetDateTime.parse("2026-06-20T20:45:00Z"),
+                List.of(bet1, bet2)
+                );
     }
 
     private CreateCouponDto createValidCouponDto() {
@@ -238,12 +259,7 @@ class CouponControllerTest {
     @DisplayName("Should return created coupon in response body")
     void shouldReturnCreatedCouponInResponseBody() throws Exception {
         // Arrange
-        UUID couponId = UUID.randomUUID();
-        Coupon expectedCoupon = Coupon.builder()
-                .id(couponId)
-                .stake(new BigDecimal("50.00"))
-                .status(CouponStatus.OPEN)
-                .build();
+        CouponDetailDto expectedCoupon = couponResponse;
 
         when(couponService.createCoupon(any(CreateCouponDto.class), any(UUID.class)))
                 .thenReturn(expectedCoupon);
@@ -253,8 +269,7 @@ class CouponControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(validCreateCouponDto)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id", equalTo(couponId.toString())))
-                .andExpect(jsonPath("$.stake", comparesEqualTo(50.00)))
+                .andExpect(jsonPath("$.stake", comparesEqualTo(VALID_STAKE.doubleValue())))
                 .andExpect(jsonPath("$.status", equalTo("OPEN")));
     }
 

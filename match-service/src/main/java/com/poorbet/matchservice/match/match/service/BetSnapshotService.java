@@ -1,7 +1,7 @@
 package com.poorbet.matchservice.match.match.service;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -50,7 +50,7 @@ public class BetSnapshotService {
         BigDecimal odd = oddsService.getOdds(matchId, type)
                 .orElse(BigDecimal.ONE);
 
-        LocalDateTime matchStartTime = match.getPool().getScheduledStartTime().toLocalDateTime();
+        OffsetDateTime matchStartTime = match.getPool().getScheduledStartTime();
 
         return new MatchBetSnapshotDto(
                 matchId,

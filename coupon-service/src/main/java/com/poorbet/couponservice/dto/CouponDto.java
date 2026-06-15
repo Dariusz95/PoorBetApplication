@@ -3,7 +3,7 @@ package com.poorbet.couponservice.dto;
 import com.poorbet.couponservice.domain.CouponStatus;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 public record CouponDto(
@@ -11,5 +11,5 @@ public record CouponDto(
         BigDecimal stake,
         CouponStatus status,
         BigDecimal potentialPayout,
-        LocalDateTime createdAt
+        OffsetDateTime createdAt
 ) {}
