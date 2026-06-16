@@ -1,4 +1,4 @@
-import { DialogRef } from '@angular/cdk/dialog';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { CouponSummaryComponent } from '@features/coupons/components/coupon-summary/coupon-summary.component';
@@ -9,10 +9,11 @@ import { PbButtonComponent } from '../../../../shared/ui/pb-button/pb-button.com
 import { PbCardBodyDirective } from '../../../../shared/ui/pb-card/directives/pb-card-body.directive';
 import { PbCardHeaderDirective } from '../../../../shared/ui/pb-card/directives/pb-card-header.directive';
 import { PbCardComponent } from '../../../../shared/ui/pb-card/pb-card.component';
-import { CouponBetsListComponent } from './sub-components/coupon-bets-list.component';
+import { CouponBetsListComponent } from './components/coupon-bets-list.component';
+import { CouponDialogData } from './models/coupon-dialog-data.model';
 
 @Component({
-  selector: 'pb-coupon-dialog',
+  selector: 'coupon-dialog',
   standalone: true,
   imports: [
     CommonModule,
@@ -25,18 +26,16 @@ import { CouponBetsListComponent } from './sub-components/coupon-bets-list.compo
     PbIconComponent,
     CouponSummaryComponent,
   ],
-  templateUrl: './pb-coupon-dialog.component.html',
-  styleUrl: './pb-coupon-dialog.component.scss',
+  templateUrl: './coupon-dialog.component.html',
+  styleUrl: './coupon-dialog.component.scss',
 })
 export class PbCouponDialogComponent implements OnInit {
   couponData!: CouponDetails;
 
   private readonly dialogRef = inject(DialogRef<void>);
-
+  readonly data = inject<CouponDialogData>(DIALOG_DATA);
   ngOnInit(): void {
-    if (this.dialogRef.componentInstance) {
-        this.couponData = this.dialogRef.componentInstance.couponData as CouponDetails;
-    }
+    this.couponData = this.data.data;
   }
 
   closeCoupon(): void {

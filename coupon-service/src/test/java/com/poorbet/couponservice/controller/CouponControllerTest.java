@@ -50,6 +50,7 @@ class CouponControllerTest {
 
     private static final BigDecimal VALID_STAKE = new BigDecimal("50.00");
     private static final BigDecimal POTENTIAL_PAYOUT = new BigDecimal("50.00");
+    private static final BigDecimal TOTAL_ODDS = new BigDecimal("1222.00");
     private static final String COUPONS_ENDPOINT = "/api/coupons";
 
     private CreateCouponDto validCreateCouponDto;
@@ -80,6 +81,7 @@ class CouponControllerTest {
                 VALID_STAKE,
                 CouponStatus.OPEN,
                 POTENTIAL_PAYOUT,
+                TOTAL_ODDS,
                 OffsetDateTime.parse("2026-06-20T20:45:00Z"),
                 List.of(bet1, bet2)
                 );

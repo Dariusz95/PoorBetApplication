@@ -22,10 +22,9 @@
         }}</span>
         <span slot="odds-value">
           {{ couponData.totalOdds | number: "1.2-2" }}
-          <!-- {{ 222 | number: "1.2-2" }} -->
         </span>
         <span slot="win-value">{{
-          couponData.potentialWin | number: "1.2-2"
+          couponData.potentialPayout | number: "1.2-2"
         }}</span>
       </app-coupon-summary>
     </section>

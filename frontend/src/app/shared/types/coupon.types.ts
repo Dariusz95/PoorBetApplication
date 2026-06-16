@@ -1,12 +1,13 @@
-import { BetStatus } from "@features/coupons/dialogs/pb-coupon-dialog/sub-components/coupon-bet-item.component";
-import { BetType } from "./bet-type";
+import { BetStatus } from '@features/coupons/enums/bet-status';
+import { BetType } from './bet-type';
+import { CouponStatus } from '@features/coupons/enums/coupon-status';
 
 export interface CouponDetails {
   id: string;
   stake: number;
-  status: any; //TODO: Change to CouponStatus when implemented
-  // status: CouponStatus;
+  status: CouponStatus;
   potentialPayout: number;
+  totalOdds: number;
   createdAt: string;
   bets: BetDetails[];
 }
@@ -20,4 +21,3 @@ export interface BetDetails {
   betType: BetType;
   odds: number;
 }
-

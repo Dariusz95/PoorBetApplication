@@ -7,6 +7,8 @@ import com.poorbet.couponservice.dto.CouponDetailDto;
 import com.poorbet.couponservice.dto.CouponDto;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+
 @Component
 public class CouponMapper {
     public CouponDto toDto(Coupon coupon){
@@ -25,6 +27,7 @@ public class CouponMapper {
                 coupon.getStake(),
                 coupon.getStatus(),
                 coupon.getPotentialPayout(),
+                calculateTotalOdds(coupon),
                 coupon.getCreatedAt(),
                 coupon.getBets().stream()
                         .map(this::toBetDto)
@@ -43,5 +46,11 @@ public class CouponMapper {
                 bet.getBetType(),
                 bet.getOdds()
         );
+    }
+
+    private BigDecimal calculateTotalOdds(Coupon coupon) {
+        return coupon.getBets().stream()
+                .map(Bet::getOdds)
+                .reduce(BigDecimal.ONE, BigDecimal::multiply);
     }
 }

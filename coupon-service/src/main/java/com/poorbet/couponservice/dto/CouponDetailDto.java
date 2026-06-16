@@ -1,7 +1,6 @@
 package com.poorbet.couponservice.dto;
 
 import com.poorbet.couponservice.domain.CouponStatus;
-import lombok.Getter;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -13,6 +12,7 @@ public record CouponDetailDto(
         BigDecimal stake,
         CouponStatus status,
         BigDecimal potentialPayout,
+        BigDecimal totalOdds,
         OffsetDateTime createdAt,
         List<BetDto> bets
 ) {}

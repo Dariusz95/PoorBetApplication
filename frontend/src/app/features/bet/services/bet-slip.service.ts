@@ -23,12 +23,6 @@ export class BetSlipService {
     this._selectedBets().reduce((total, bet) => total * bet.odds, 1),
   );
   readonly selectedCount = computed(() => this._selectedBets().length);
-  // readonly potentialWin = computed(() => {
-  //   const totalOdds = this.totalOdds();
-  //   const amount = this._amount();
-
-  //   return totalOdds * amount;
-  // });
 
   potentialWin(amount: number | null): number {
     const totalOdds = this.totalOdds();
