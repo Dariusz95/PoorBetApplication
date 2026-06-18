@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { BetDetails } from '@shared/types/coupon.types';
+import { Bet } from '@features/coupons/models/bet';
 import { CouponBetItemComponent } from './coupon-bet-item.component';
 
 @Component({
@@ -20,5 +20,5 @@ import { CouponBetItemComponent } from './coupon-bet-item.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CouponBetsListComponent {
-  @Input() bets: BetDetails[] = [];
+  @Input() bets: Bet[] = [];
 }

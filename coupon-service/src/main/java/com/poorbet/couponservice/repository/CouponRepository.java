@@ -21,4 +21,10 @@ public interface CouponRepository extends JpaRepository<Coupon, UUID> {
     List<Coupon> findAllWithBetsByIds(@Param("couponIds") Collection<UUID> couponIds);
 
     Page<Coupon> findByUserIdAndStatus(UUID userId, CouponStatus status, Pageable pageable);
+
+    Page<Coupon> findByUserIdAndStatusIn(
+            UUID userId,
+            List<CouponStatus> statuses,
+            Pageable pageable
+    );
 }

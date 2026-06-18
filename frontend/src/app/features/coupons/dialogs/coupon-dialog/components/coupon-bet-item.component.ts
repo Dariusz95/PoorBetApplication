@@ -1,7 +1,7 @@
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { Bet } from '@features/coupons/models/bet';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { BetDetails } from '@shared/types/coupon.types';
 
 @Component({
   selector: 'app-coupon-bet-item',
@@ -31,5 +31,5 @@ import { BetDetails } from '@shared/types/coupon.types';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CouponBetItemComponent {
-  @Input() bet!: BetDetails;
+  @Input() bet!: Bet;
 }

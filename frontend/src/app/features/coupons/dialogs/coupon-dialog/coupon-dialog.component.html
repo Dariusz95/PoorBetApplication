@@ -13,20 +13,22 @@
   </div>
 
   <div pbCardBody class="coupon-dialog__body">
-    <app-coupon-bets-list [bets]="couponData.bets" />
+    @if (data) {
+      <app-coupon-bets-list [bets]="data.bets" />
 
-    <section aria-labelledby="coupon-summary-title">
-      <app-coupon-summary>
-        <span slot="amount-value">{{
-          couponData.stake | number: "1.2-2"
-        }}</span>
-        <span slot="odds-value">
-          {{ couponData.totalOdds | number: "1.2-2" }}
-        </span>
-        <span slot="win-value">{{
-          couponData.potentialPayout | number: "1.2-2"
-        }}</span>
-      </app-coupon-summary>
-    </section>
+      <section aria-labelledby="coupon-summary-title">
+        <app-coupon-summary>
+          <span slot="amount-value">{{
+            data.stake | number: "1.2-2"
+          }}</span>
+          <span slot="odds-value">
+            {{ data.totalOdds | number: "1.2-2" }}
+          </span>
+          <span slot="win-value">{{
+            data.potentialPayout | number: "1.2-2"
+          }}</span>
+        </app-coupon-summary>
+      </section>
+    }
   </div>
 </pb-card>

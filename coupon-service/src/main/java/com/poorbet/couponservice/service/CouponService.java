@@ -2,6 +2,7 @@ package com.poorbet.couponservice.service;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -106,8 +107,13 @@ public class CouponService {
                 .build();
     }
 
-    public Page<CouponDto> getCoupons(UUID userId, CouponStatus status, Pageable pageable) {
+    public Page<CouponDto> getMyCouponsByStatus(UUID userId, CouponStatus status, Pageable pageable) {
         return couponRepository.findByUserIdAndStatus(userId, status, pageable)
+                .map(couponMapper::toDto);
+    }
+
+    public Page<CouponDto> getMyCouponsByStatuses(UUID userId, List<CouponStatus> status, Pageable pageable) {
+        return couponRepository.findByUserIdAndStatusIn(userId, status, pageable)
                 .map(couponMapper::toDto);
     }
 

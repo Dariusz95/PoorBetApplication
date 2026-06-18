@@ -1,0 +1,23 @@
+@layer components {
+  .pb-overlay-trigger {
+    @apply flex items-center justify-between rounded-lg text-sm transition-colors duration-200 ease-out;
+
+    height: var(--overlay-trigger-height, 40px);
+    min-width: 40px;
+    padding-inline: 12px;
+    gap: 8px;
+
+    cursor: pointer;
+    user-select: none;
+
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    color: var(--color-text);
+
+    box-shadow: var(--shadow-surface);
+
+    &:hover {
+      background: var(--color-surface-soft);
+    }
+  }
+}
