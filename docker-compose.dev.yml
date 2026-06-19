@@ -18,7 +18,7 @@ x-resource-db: &resource-db
 
 services:
   odds-engine-service:
-    <<: [ *resource-medium ]
+    <<: [*resource-medium]
     build:
       context: ./odds-engine-service
       dockerfile: Dockerfile.dev
@@ -33,12 +33,12 @@ services:
       - SPRING_PROFILES_ACTIVE=dev
       - JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=75.0
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health/readiness" ]
+      test:
+        ["CMD", "curl", "-f", "http://localhost:8080/actuator/health/readiness"]
       interval: 10s
       timeout: 3s
       retries: 10
       start_period: 20s
-
 
   frontend:
     build:
@@ -53,9 +53,8 @@ services:
       - CHOKIDAR_USEPOLLING=true
     restart: unless-stopped
 
-
   gateway:
-    <<: [ *resource-light ]
+    <<: [*resource-light]
     build:
       context: ./gateway
       dockerfile: Dockerfile.dev
@@ -71,7 +70,7 @@ services:
     restart: unless-stopped
 
   auth-service:
-    <<: [ *resource-medium ]
+    <<: [*resource-medium]
     build:
       context: .
       dockerfile: auth-service/Dockerfile.dev
@@ -93,26 +92,8 @@ services:
       - MATCH_SERVICE_CLIENT_SECRET=${MATCH_SERVICE_CLIENT_SECRET}
       - COUPON_SERVICE_CLIENT_SECRET=${COUPON_SERVICE_CLIENT_SECRET}
 
-  teams-service:
-    <<: [ *resource-medium ]
-    build:
-      context: ./teams-service
-      dockerfile: Dockerfile.dev
-    ports:
-      - "8082:8080"
-      - "5071:5071"
-    volumes:
-      - ./teams-service:/app
-      - ~/.m2:/root/.m2
-    environment:
-      - SPRING_PROFILES_ACTIVE=dev
-      - JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=75.0
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://teams-db:5432/${POSTGRES_TEAMS_DB}
-      - POSTGRES_USER=${POSTGRES_TEAMS_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_TEAMS_PASSWORD}
-
   match-service:
-    <<: [ *resource-heavy ]
+    <<: [*resource-heavy]
     build:
       context: ./match-service
       dockerfile: Dockerfile.dev
@@ -123,6 +104,8 @@ services:
       - ./match-service:/app
       - ~/.m2:/root/.m2
     environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=75.0
       - SPRING_DATASOURCE_URL=jdbc:postgresql://match-db:5432/${POSTGRES_MATCH_DB}
       - POSTGRES_USER=${POSTGRES_MATCH_USER}
       - POSTGRES_PASSWORD=${POSTGRES_MATCH_PASSWORD}
@@ -132,7 +115,7 @@ services:
       - AUTH_SERVICE_CLIENT_SECRET=${AUTH_SERVICE_CLIENT_SECRET}
 
   coupon-service:
-    <<: [ *resource-medium ]
+    <<: [*resource-medium]
     build:
       context: ./coupon-service
       dockerfile: Dockerfile.dev
@@ -150,7 +133,7 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_COUPON_PASSWORD}
 
   wallet-service:
-    <<: [ *resource-medium ]
+    <<: [*resource-medium]
     build:
       context: ./wallet-service
       dockerfile: Dockerfile.dev
@@ -168,7 +151,7 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_WALLET_PASSWORD}
 
   notification-service:
-    <<: [ *resource-medium ]
+    <<: [*resource-medium]
     build:
       context: ./notification-service
       dockerfile: Dockerfile.dev
@@ -183,10 +166,10 @@ services:
       - JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=75.0
 
   redis:
-    <<: [ *resource-light ]
+    <<: [*resource-light]
 
   rabbitmq:
-    <<: [ *resource-medium ]
+    <<: [*resource-medium]
     ports:
       - "5672:5672"
       - "15672:15672"
@@ -197,7 +180,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - "5434:5432"
-    <<: [ *resource-db ]
+    <<: [*resource-db]
 
   user-db:
     build:
@@ -205,7 +188,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - "5432:5432"
-    <<: [ *resource-db ]
+    <<: [*resource-db]
 
   wallet-db:
     build:
@@ -213,15 +196,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - "5437:5432"
-    <<: [ *resource-db ]
+    <<: [*resource-db]
 
-  teams-db:
-    build:
-      context: ./teams-db
-      dockerfile: Dockerfile
-    ports:
-      - "5433:5432"
-    <<: [ *resource-db ]
 
   coupon-db:
     build:
@@ -229,4 +205,4 @@ services:
       dockerfile: Dockerfile
     ports:
       - "5435:5432"
-    <<: [ *resource-db ]
+    <<: [*resource-db]

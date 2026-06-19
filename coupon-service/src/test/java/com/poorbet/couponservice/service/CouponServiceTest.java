@@ -3,8 +3,8 @@ package com.poorbet.couponservice.service;
 import com.poorbet.couponservice.client.MatchClient;
 import com.poorbet.couponservice.client.wallet.WalletClient;
 import com.poorbet.couponservice.domain.*;
-import com.poorbet.couponservice.dto.CreateBetDto;
-import com.poorbet.couponservice.dto.CreateCouponDto;
+import com.poorbet.couponservice.dto.*;
+import com.poorbet.couponservice.mapper.CouponMapper;
 import com.poorbet.couponservice.repository.CouponRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -12,9 +12,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.stubbing.OngoingStubbing;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -41,17 +45,45 @@ class CouponServiceTest {
     @InjectMocks
     private CouponService couponService;
 
+    @Spy
+    private CouponMapper couponMapper = new CouponMapper();
+
     private static final BigDecimal VALID_STAKE = new BigDecimal("50.00");
-    private static final Double DEFAULT_ODD = 1.5;
+    private static final BigDecimal DEFAULT_ODD = new BigDecimal("1.5");
+
+    private static final String HOME_TEAM = "Real Madrid";
+    private static final String AWAY_TEAM = "Barcelona";
+
+    public static MatchBetSnapshotDto createSnapshot1() {
+        return new MatchBetSnapshotDto(
+                UUID.randomUUID(),
+                HOME_TEAM,
+                AWAY_TEAM,
+                OffsetDateTime.parse("2026-06-20T20:45:00Z"),
+                DEFAULT_ODD
+        );
+    }
+
+    public static MatchBetSnapshotDto createSnapshot2() {
+        return new MatchBetSnapshotDto(
+                UUID.randomUUID(),
+                HOME_TEAM,
+                AWAY_TEAM,
+                OffsetDateTime.parse("2026-06-20T20:45:00Z"),
+                DEFAULT_ODD
+        );
+    }
 
     private CreateCouponDto validCreateCouponDto;
     private UUID userId;
-    private UUID matchId;
+    private UUID firstMatchId;
+    private UUID secondMatchId;
 
     @BeforeEach
     void setUp() {
         userId = UUID.randomUUID();
-        matchId = UUID.randomUUID();
+        firstMatchId = UUID.randomUUID();
+        secondMatchId = UUID.randomUUID();
         validCreateCouponDto = createValidCouponDto();
     }
 
@@ -59,8 +91,8 @@ class CouponServiceTest {
         CreateCouponDto dto = new CreateCouponDto();
         dto.setStake(VALID_STAKE);
         dto.setBets(Arrays.asList(
-                createBetDto(matchId, BetType.HOME_WIN),
-                createBetDto(UUID.randomUUID(), BetType.DRAW)
+                createBetDto(firstMatchId, BetType.HOME_WIN),
+                createBetDto(secondMatchId, BetType.DRAW)
         ));
         return dto;
     }
@@ -72,13 +104,17 @@ class CouponServiceTest {
                 .build();
     }
 
-    private void setupMatchClientWithOdd(Double oddValue) {
+    private void setupMatchClientWithSnapshots(MatchBetSnapshotDto... snapshots) {
         doNothing().when(walletClient).reserve(any(UUID.class), any());
-        when(matchClient.getOdd(any(UUID.class), any(BetType.class)))
-                .thenReturn(oddValue);
-    }
 
-    private void setupRepositoryToReturnCoupon(Coupon coupon) {
+        OngoingStubbing<MatchBetSnapshotDto> stubbing =
+                when(matchClient.getBetSnapshot(any(UUID.class), any(BetType.class)));
+
+        for (MatchBetSnapshotDto snapshot : snapshots) {
+            stubbing = stubbing.thenReturn(snapshot);
+        }
+    }
+    private void setupRepositoryToReturnCoupon() {
         when(couponRepository.save(any(Coupon.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
     }
@@ -87,19 +123,19 @@ class CouponServiceTest {
     @DisplayName("Should create coupon with correct stake and bets")
     void shouldCreateCouponWithCorrectStakeAndBets() {
         // Arrange
-        setupMatchClientWithOdd(DEFAULT_ODD);
-        setupRepositoryToReturnCoupon(null);
+        setupMatchClientWithSnapshots(createSnapshot1(), createSnapshot2());
+        setupRepositoryToReturnCoupon();
 
         // Act
-        Coupon result = couponService.createCoupon(validCreateCouponDto, userId);
+        CouponDetailDto result = couponService.createCoupon(validCreateCouponDto, userId);
 
         // Assert
         assertThat(result)
                 .isNotNull()
                 .satisfies(coupon -> {
-                    assertThat(coupon.getStake()).isEqualByComparingTo(VALID_STAKE);
-                    assertThat(coupon.getStatus()).isEqualTo(CouponStatus.OPEN);
-                    assertThat(coupon.getBets()).hasSize(2);
+                    assertThat(coupon.stake()).isEqualByComparingTo(VALID_STAKE);
+                    assertThat(coupon.status()).isEqualTo(CouponStatus.OPEN);
+                    assertThat(coupon.bets()).hasSize(2);
                 });
     }
 
@@ -107,20 +143,19 @@ class CouponServiceTest {
     @DisplayName("Should create bets with correct odds from MatchClient")
     void shouldCreateBetsWithCorrectOdds() {
         // Arrange
-        Double oddValue = 2.5;
-        setupMatchClientWithOdd(oddValue);
-        setupRepositoryToReturnCoupon(null);
+        setupMatchClientWithSnapshots(createSnapshot1(), createSnapshot2());
+        setupRepositoryToReturnCoupon();
 
         // Act
-        Coupon result = couponService.createCoupon(validCreateCouponDto, userId);
+        CouponDetailDto result = couponService.createCoupon(validCreateCouponDto, userId);
 
         // Assert
-        assertThat(result.getBets())
+        assertThat(result.bets())
                 .hasSize(2)
                 .allSatisfy(bet -> {
-                    assertThat(bet.getOdds()).isEqualByComparingTo(BigDecimal.valueOf(oddValue));
-                    assertThat(bet.getStatus()).isEqualTo(BetStatus.PENDING);
-                    assertThat(bet.getMatchId()).isNotNull();
+                    assertThat(bet.odds()).isEqualByComparingTo(DEFAULT_ODD);
+                    assertThat(bet.status()).isEqualTo(BetStatus.PENDING);
+                    assertThat(bet.matchId()).isNotNull();
                 });
     }
 
@@ -129,30 +164,30 @@ class CouponServiceTest {
     void shouldCallMatchClientForEachBet() {
         // Arrange
         int expectedBetCount = validCreateCouponDto.getBets().size();
-        setupMatchClientWithOdd(DEFAULT_ODD);
-        setupRepositoryToReturnCoupon(null);
+        setupMatchClientWithSnapshots(createSnapshot1(), createSnapshot2());
+        setupRepositoryToReturnCoupon();
 
         // Act
         couponService.createCoupon(validCreateCouponDto, userId);
 
         // Assert
         verify(matchClient, times(expectedBetCount))
-                .getOdd(any(UUID.class), any(BetType.class));
+                .getBetSnapshot(any(UUID.class), any(BetType.class));
     }
 
     @Test
     @DisplayName("Should set correct betType for each bet")
     void shouldSetCorrectBetTypeForEachBet() {
         // Arrange
-        setupMatchClientWithOdd(DEFAULT_ODD);
-        setupRepositoryToReturnCoupon(null);
+        setupMatchClientWithSnapshots(createSnapshot1(), createSnapshot2());
+        setupRepositoryToReturnCoupon();
 
         // Act
-        Coupon result = couponService.createCoupon(validCreateCouponDto, userId);
+        CouponDetailDto result = couponService.createCoupon(validCreateCouponDto, userId);
 
         // Assert
-        assertThat(result.getBets())
-                .extracting(Bet::getBetType)
+        assertThat(result.bets())
+                .extracting(BetDto::betType)
                 .containsExactly(BetType.HOME_WIN, BetType.DRAW);
     }
 
@@ -160,8 +195,8 @@ class CouponServiceTest {
     @DisplayName("Should save coupon in repository")
     void shouldSaveCouponInRepository() {
         // Arrange
-        setupMatchClientWithOdd(DEFAULT_ODD);
-        setupRepositoryToReturnCoupon(null);
+        setupMatchClientWithSnapshots(createSnapshot1(), createSnapshot2());
+        setupRepositoryToReturnCoupon();
 
         // Act
         couponService.createCoupon(validCreateCouponDto, userId);
@@ -176,83 +211,36 @@ class CouponServiceTest {
         // Arrange
         CreateCouponDto singleBetCoupon = new CreateCouponDto();
         singleBetCoupon.setStake(new BigDecimal("100.00"));
-        singleBetCoupon.setBets(List.of(createBetDto(matchId, BetType.AWAY_WIN)));
+        singleBetCoupon.setBets(List.of(createBetDto(firstMatchId, BetType.AWAY_WIN)));
 
-        setupMatchClientWithOdd(3.0);
-        setupRepositoryToReturnCoupon(null);
+        MatchBetSnapshotDto snapshot = new MatchBetSnapshotDto(
+                firstMatchId,
+                HOME_TEAM,
+                AWAY_TEAM,
+                OffsetDateTime.parse("2026-06-20T20:45:00Z"),
+                DEFAULT_ODD
+        );
+
+        setupMatchClientWithSnapshots(snapshot);
+
+        setupRepositoryToReturnCoupon();
 
         // Act
-        Coupon result = couponService.createCoupon(singleBetCoupon, userId);
+        CouponDetailDto result = couponService.createCoupon(singleBetCoupon, userId);
 
         // Assert
-        assertThat(result.getBets())
+        assertThat(result.bets())
                 .hasSize(1)
                 .first()
-                .satisfies(bet -> assertThat(bet.getBetType()).isEqualTo(BetType.AWAY_WIN));
+                .satisfies(bet -> assertThat(bet.betType()).isEqualTo(BetType.AWAY_WIN));
     }
 
-    @Test
-    @DisplayName("Should handle multiple bets in coupon")
-    void shouldHandleMultipleBetsInCoupon() {
-        // Arrange
-        BigDecimal stake = new BigDecimal("75.00");
-        CreateCouponDto multipleBetsCoupon = new CreateCouponDto();
-        multipleBetsCoupon.setStake(stake);
-        multipleBetsCoupon.setBets(Arrays.asList(
-                createBetDto(UUID.randomUUID(), BetType.HOME_WIN),
-                createBetDto(UUID.randomUUID(), BetType.DRAW),
-                createBetDto(UUID.randomUUID(), BetType.AWAY_WIN)
-        ));
-
-        setupMatchClientWithOdd(1.8);
-        setupRepositoryToReturnCoupon(null);
-
-        // Act
-        Coupon result = couponService.createCoupon(multipleBetsCoupon, userId);
-
-        // Assert
-        assertThat(result)
-                .satisfies(coupon -> {
-                    assertThat(coupon.getBets()).hasSize(3);
-                    assertThat(coupon.getStake()).isEqualByComparingTo(stake);
-                });
-    }
-
-    @Test
-    @DisplayName("Should create coupon with default status OPEN")
-    void shouldCreateCouponWithStatusOpen() {
-        // Arrange
-        setupMatchClientWithOdd(DEFAULT_ODD);
-        setupRepositoryToReturnCoupon(null);
-
-        // Act
-        Coupon result = couponService.createCoupon(validCreateCouponDto, userId);
-
-        // Assert
-        assertThat(result.getStatus()).isEqualTo(CouponStatus.OPEN);
-    }
-
-    @Test
-    @DisplayName("Should create coupon with generated UUID")
-    void shouldCreateCouponWithGeneratedUUID() {
-        // Arrange
-        setupMatchClientWithOdd(DEFAULT_ODD);
-        setupRepositoryToReturnCoupon(null);
-
-        // Act
-        Coupon result = couponService.createCoupon(validCreateCouponDto, userId);
-
-        // Assert - Repository should receive coupon with all bets properly linked
-        assertThat(result.getBets())
-                .isNotEmpty()
-                .allSatisfy(bet -> assertThat(bet.getCoupon()).isEqualTo(result));
-    }
 
     @Test
     @DisplayName("Should propagate MatchClient exceptions")
     void shouldPropagateMatchClientExceptions() {
         // Arrange
-        when(matchClient.getOdd(any(UUID.class), eq(BetType.HOME_WIN)))
+        when(matchClient.getBetSnapshot(any(UUID.class), eq(BetType.HOME_WIN)))
                 .thenThrow(new RuntimeException("MatchClient unavailable"));
         doNothing().when(walletClient).reserve(any(UUID.class), any());
 

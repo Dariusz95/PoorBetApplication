@@ -1,4 +1,4 @@
-CREATE TABLE outbox_event (
+CREATE TABLE IF NOT EXISTS outbox_event (
     id UUID PRIMARY KEY,
     exchange VARCHAR(255) NOT NULL,
     routing_key VARCHAR(255) NOT NULL,
@@ -11,4 +11,4 @@ CREATE TABLE outbox_event (
     CONSTRAINT chk_coupon_outbox_status CHECK (status IN ('PENDING', 'SENT', 'FAILED'))
 );
 
-CREATE INDEX idx_coupon_outbox_status_created_at ON outbox_event(status, created_at);
+CREATE INDEX IF NOT EXISTS idx_coupon_outbox_status_created_at ON outbox_event(status, created_at);

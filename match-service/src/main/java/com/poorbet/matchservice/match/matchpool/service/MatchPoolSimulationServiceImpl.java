@@ -1,25 +1,27 @@
 package com.poorbet.matchservice.match.matchpool.service;
 
-import com.poorbet.matchservice.match.client.OddsEngineClient;
-import com.poorbet.matchservice.match.client.TeamsClient;
-import com.poorbet.matchservice.match.match.domain.Match;
-import com.poorbet.matchservice.match.match.dto.TeamStatsDto;
-import com.poorbet.matchservice.match.match.dto.request.SimulationRequest;
-import com.poorbet.matchservice.match.match.dto.request.SimulationTeamStats;
-import com.poorbet.matchservice.match.match.repository.MatchRepository;
-import com.poorbet.matchservice.match.matchpool.dto.LiveMatchEventDto;
-import com.poorbet.matchservice.match.matchpool.simulation.LiveMatchSimulation;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import com.poorbet.matchservice.team.dto.TeamStatsDto;
+import org.springframework.stereotype.Service;
+
+import com.poorbet.matchservice.match.client.OddsEngineClient;
+import com.poorbet.matchservice.match.match.domain.Match;
+import com.poorbet.matchservice.match.match.dto.request.SimulationRequest;
+import com.poorbet.matchservice.match.match.dto.request.SimulationTeamStats;
+import com.poorbet.matchservice.match.match.repository.MatchRepository;
+import com.poorbet.matchservice.match.matchpool.dto.LiveMatchEventDto;
+import com.poorbet.matchservice.match.matchpool.simulation.LiveMatchSimulation;
+import com.poorbet.matchservice.team.service.TeamService;
+
+import lombok.RequiredArgsConstructor;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 
 @Service
@@ -30,7 +32,7 @@ public class MatchPoolSimulationServiceImpl implements MatchPoolSimulationServic
     private final MatchRepository matchRepository;
     private final MatchFinishService matchFinishService;
     private final OddsEngineClient oddsEngineClient;
-    private final TeamsClient teamsClient;
+    private final TeamService teamService;
 
     public void startPoolSimulation(UUID poolId) {
         List<Match> matches = matchRepository.findByPoolId(poolId);
@@ -40,7 +42,7 @@ public class MatchPoolSimulationServiceImpl implements MatchPoolSimulationServic
                 .distinct()
                 .toList();
 
-        List<TeamStatsDto> teamStats = teamsClient.getStatsByIds(teamIds);
+        List<TeamStatsDto> teamStats = teamService.getStatsByIds(teamIds);
 
         Map<UUID, TeamStatsDto> teamsById = teamStats.stream()
                 .collect(Collectors.toMap(

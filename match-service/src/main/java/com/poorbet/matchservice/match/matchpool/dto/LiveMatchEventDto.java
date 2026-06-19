@@ -1,8 +1,8 @@
 package com.poorbet.matchservice.match.matchpool.dto;
 
-import com.poorbet.matchservice.match.match.dto.TeamStatsDto;
 import com.poorbet.matchservice.match.match.dto.response.LiveMatchEvent;
 import com.poorbet.matchservice.match.matchpool.domain.MatchEventType;
+import com.poorbet.matchservice.team.dto.TeamStatsDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

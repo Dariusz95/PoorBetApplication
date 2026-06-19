@@ -1,6 +1,6 @@
 package com.poorbet.matchservice.match.matchpool.service.helper;
 
-import com.poorbet.matchservice.match.match.dto.TeamStatsDto;
+import com.poorbet.matchservice.team.dto.TeamStatsDto;
 
 import java.util.UUID;
 

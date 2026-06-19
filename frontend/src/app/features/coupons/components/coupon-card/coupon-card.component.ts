@@ -1,3 +1,4 @@
+import { DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import {
   FormControl,
@@ -21,7 +22,6 @@ import { BetSlipService } from '../../../bet/services/bet-slip.service';
 import { CreateCouponRequest } from '../../models/create-coupon-request';
 import { CouponSelectedBetsComponent } from '../coupon-selected-bets/coupon-selected-bets.component';
 import { CouponSummaryComponent } from '../coupon-summary/coupon-summary.component';
-import { DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-coupon-card',
@@ -40,7 +40,7 @@ import { DecimalPipe } from '@angular/common';
     TranslocoPipe,
     CouponSelectedBetsComponent,
     CouponSummaryComponent,
-    DecimalPipe
+    DecimalPipe,
   ],
   templateUrl: './coupon-card.component.html',
   styleUrl: './coupon-card.component.scss',
@@ -55,52 +55,23 @@ export class CouponCardComponent {
   amountCtrl = new FormControl(0, [Validators.min(1)]);
 
   submitCoupon(): void {
-    const data: any = {
-      id: '0796685f-bb78-4cc5-ada3-f9ba43927d2f',
-      stake: 2,
-      userId: '399a18b3-0d80-42f5-97ad-2878460da8e7',
-      reservationId: '49061d9f-8eab-4eff-aec1-e29c75aa1f91',
-      status: 'OPEN',
-      potentialPayout: 39.7068,
-      bets: [
-        {
-          id: '0c920fec-7b55-4f45-bf85-76c6562f7e83',
-          matchId: '04e7d490-bfaf-44a5-837a-199c629f9bc1',
-          status: 'PENDING',
-          betType: 'AWAY_WIN',
-          odds: 4.06,
-          version: 0,
-        },
-        {
-          id: '98d2b019-e8af-4f32-be89-ac01d42c500b',
-          matchId: '30c58c4d-0f12-4915-b4c1-54b031315499',
-          status: 'PENDING',
-          betType: 'AWAY_WIN',
-          odds: 4.89,
-          version: 0,
-        },
-      ],
-    };
-    this.dialogService.openCouponDialog(data);
-    return;
+    if (!this.amountCtrl.valid) {
+      this.amountCtrl.markAsTouched();
 
-    // if (!this.amountCtrl.valid) {
-    //   this.amountCtrl.markAsTouched();
+      return;
+    }
 
-    //   return;
-    // }
+    const request = this.mapToRequest();
 
-    // const request = this.mapToRequest();
-
-    // this.couponService.createCoupon(request).subscribe({
-    //   next: (coupon) => {
-    //     this.dialogService.openCouponDialog(coupon);
-    //     this.resetForm();
-    //   },
-    //   error: (error) => {
-    //     this.toastService.error('Błąd podczas tworzenia kuponu');
-    //   },
-    // });
+    this.couponService.create(request).subscribe({
+      next: (coupon) => {
+        this.dialogService.openCouponDialog(coupon);
+        this.amountCtrl.reset(0);
+      },
+      error: (error) => {
+        this.toastService.error('Błąd podczas tworzenia kuponu');
+      },
+    });
   }
 
   private mapToRequest(): CreateCouponRequest {
@@ -111,9 +82,5 @@ export class CouponCardComponent {
         betType: bet.betType,
       })),
     };
-  }
-
-  private resetForm(): void {
-    this.amountCtrl.reset(0);
   }
 }

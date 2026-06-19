@@ -1,19 +1,10 @@
-<ng-container *transloco="let t">
-  <app-pb-dropdown
-    [options]="(filteredOptions$ | async) ?? []"
-    [optionTemplate]="userMenuTpl"
-    [highlightedOption]="false"
-  >
-    <div dropdownLabel class="user-dropdown__trigger">
-      <div class="user-dropdown__balance">
-        <app-user-balance />
-      </div>
-      <pb-icon icon="account_circle" size="lg"></pb-icon>
-    </div>
-  </app-pb-dropdown>
+<pb-popover>
+  <div class="user-dropdown__trigger pb-overlay-trigger" popoverTrigger>
+    <app-user-balance />
+    <pb-icon icon="account_circle" size="lg"></pb-icon>
+  </div>
 
-  <ng-template #userMenuTpl let-option>
-    <pb-icon [icon]="option.icon" size="s"></pb-icon>
-    <span>{{ t(option.label) }}</span>
-  </ng-template>
-</ng-container>
+  <div popoverContent>
+    <app-user-dropdown-content />
+  </div>
+</pb-popover>

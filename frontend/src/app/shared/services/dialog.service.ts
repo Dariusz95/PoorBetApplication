@@ -1,7 +1,7 @@
 import { Dialog } from '@angular/cdk/dialog';
 import { Injectable, inject } from '@angular/core';
-import { PbCouponDialogComponent } from '../../features/coupons/dialogs/pb-coupon-dialog/pb-coupon-dialog.component';
-import { CouponData } from '../types/coupon.types';
+import { CouponDetails } from '@features/coupons/models/coupon-details';
+import { PbCouponDialogComponent } from '../../features/coupons/dialogs/coupon-dialog/coupon-dialog.component';
 
 @Injectable({
   providedIn: 'root',
@@ -9,16 +9,16 @@ import { CouponData } from '../types/coupon.types';
 export class DialogService {
   private readonly dialog = inject(Dialog);
 
-  openCouponDialog(couponData: CouponData): void {
-    const dialogRef = this.dialog.open(PbCouponDialogComponent, {
-      width: '600px',
-      maxWidth: '90vw',
-      disableClose: false,
-      panelClass: 'coupon-dialog',
-    });
-
-    if (dialogRef.componentInstance) {
-      dialogRef.componentInstance.couponData = couponData;
-    }
+  openCouponDialog(couponData: CouponDetails): void {
+    this.dialog.open<PbCouponDialogComponent, CouponDetails>(
+      PbCouponDialogComponent,
+      {
+        width: '600px',
+        maxWidth: '90vw',
+        disableClose: false,
+        panelClass: 'coupon-dialog',
+        data: couponData,
+      },
+    );
   }
 }

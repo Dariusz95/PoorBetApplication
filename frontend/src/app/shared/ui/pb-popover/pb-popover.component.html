@@ -1,0 +1,29 @@
+<div
+  #trigger="cdkOverlayOrigin"
+  cdkOverlayOrigin
+  class="pb-popover__trigger"
+  [class.pb-popover__trigger--open]="isOpen()"
+  (click)="toggle()"
+>
+  <ng-content select="[popoverTrigger]"></ng-content>
+</div>
+
+<ng-template
+  cdkConnectedOverlay
+  [cdkConnectedOverlayOrigin]="origin() || trigger"
+  [cdkConnectedOverlayOpen]="isOpen()"
+  [cdkConnectedOverlayPositions]="positions()"
+  [cdkConnectedOverlayHasBackdrop]="true"
+  cdkConnectedOverlayBackdropClass="pb-overlay-backdrop"
+  (backdropClick)="close()"
+  (detach)="close()"
+>
+  <div
+    class="pb-overlay-panel"
+    [style.min-width]="width()"
+    [class.pb-overlay-panel--open]="isOpen()"
+    [@popoverAnimation]
+  >
+    <ng-content select="[popoverContent]"></ng-content>
+  </div>
+</ng-template>

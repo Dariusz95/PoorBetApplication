@@ -13,12 +13,7 @@ spring:
         - id: match-service
           uri: http://match-service:8080
           predicates:
-            - Path=/api/match/**, /api/match-pool/**
-
-        - id: team-service
-          uri: http://teams-service:8080
-          predicates:
-            - Path=/api/teams/**
+            - Path=/api/match/**, /api/match-pool/**, /api/teams/**
 
         - id: coupon-service
           uri: http://coupon-service:8080

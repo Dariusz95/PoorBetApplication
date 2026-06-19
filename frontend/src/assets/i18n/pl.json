@@ -91,5 +91,23 @@
   "myCoupons": {
     "title": "Moje kupony",
     "empty": "Brak kuponów do wyświetlenia."
+  },
+  "couponList": {
+    "title": "Moje kupony",
+    "seeAll": "Zobacz wszystkie",
+    "tabOpen": "W grze",
+    "tabWon": "Wygrane",
+    "tabSettled": "Rozliczone",
+    "emptyTitle": "Trochę tu pusto",
+    "emptyText": "Nie masz żadnych kuponów w grze. Zmień to! Setki zdarzeń czekają na Twój typ.",
+    "emptyWonTitle": "Brak wygranych kuponów",
+    "emptySettledTitle": "Brak rozliczonych kuponów",
+    "checkOffer": "Sprawdź ofertę",
+    "stake": "Stawka",
+    "totalOdds": "Kurs całkowity",
+    "payout": "Wygrana",
+    "statusOpen": "W grze",
+    "statusWon": "Wygrany",
+    "statusLost": "Przegrany"
   }
 }

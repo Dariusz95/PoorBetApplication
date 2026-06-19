@@ -2,11 +2,11 @@ package com.poorbet.matchservice.match.matchpool.service;
 
 import com.poorbet.matchservice.fixture.MatchFixtures;
 import com.poorbet.matchservice.match.client.OddsEngineClient;
-import com.poorbet.matchservice.match.client.TeamsClient;
 import com.poorbet.matchservice.match.match.domain.Match;
 import com.poorbet.matchservice.match.match.domain.MatchStatus;
-import com.poorbet.matchservice.match.match.dto.TeamStatsDto;
 import com.poorbet.matchservice.match.match.repository.MatchRepository;
+import com.poorbet.matchservice.team.dto.TeamStatsDto;
+import com.poorbet.matchservice.team.service.TeamService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -45,7 +45,7 @@ class MatchPoolSimulationServiceImplTest {
     private OddsEngineClient oddsEngineClient;
 
     @Mock
-    private TeamsClient teamsClient;
+    private TeamService teamService;
 
     @InjectMocks
     private MatchPoolSimulationServiceImpl matchPoolSimulationService;
@@ -93,15 +93,13 @@ class MatchPoolSimulationServiceImplTest {
 
             when(matchRepository.findByPoolId(testPoolId))
                     .thenReturn(List.of(match1, match2));
-            when(teamsClient.getStatsByIds(any()))
-                    .thenReturn(Collections.emptyList());
 
             // Act
             matchPoolSimulationService.startPoolSimulation(testPoolId);
 
             // Assert
             ArgumentCaptor<List<UUID>> teamIdsCaptor = ArgumentCaptor.forClass(List.class);
-            verify(teamsClient).getStatsByIds(teamIdsCaptor.capture());
+            verify(teamService).getStatsByIds(teamIdsCaptor.capture());
 
             List<UUID> capturedTeamIds = teamIdsCaptor.getValue();
             assertThat(capturedTeamIds)
@@ -119,7 +117,7 @@ class MatchPoolSimulationServiceImplTest {
 
             when(matchRepository.findByPoolId(testPoolId))
                     .thenReturn(List.of(match1, match2));
-            when(teamsClient.getStatsByIds(any()))
+            when(teamService.getStatsByIds(any()))
                     .thenReturn(Collections.emptyList());
 
             // Act
@@ -127,7 +125,7 @@ class MatchPoolSimulationServiceImplTest {
 
             // Assert
             ArgumentCaptor<List<UUID>> teamIdsCaptor = ArgumentCaptor.forClass(List.class);
-            verify(teamsClient).getStatsByIds(teamIdsCaptor.capture());
+            verify(teamService).getStatsByIds(teamIdsCaptor.capture());
 
             List<UUID> capturedTeamIds = teamIdsCaptor.getValue();
             assertThat(capturedTeamIds).doesNotHaveDuplicates();
@@ -141,7 +139,7 @@ class MatchPoolSimulationServiceImplTest {
             Match singleMatch = createTestMatch();
             when(matchRepository.findByPoolId(testPoolId))
                     .thenReturn(List.of(singleMatch));
-            when(teamsClient.getStatsByIds(any()))
+            when(teamService.getStatsByIds(any()))
                     .thenReturn(createTestTeamStats(2));
 
             // Act
@@ -149,7 +147,7 @@ class MatchPoolSimulationServiceImplTest {
 
             // Assert
             verify(matchRepository).findByPoolId(testPoolId);
-            verify(teamsClient).getStatsByIds(any());
+            verify(teamService).getStatsByIds(any());
         }
 
         @Test
@@ -163,7 +161,7 @@ class MatchPoolSimulationServiceImplTest {
             );
             when(matchRepository.findByPoolId(testPoolId))
                     .thenReturn(multipleMatches);
-            when(teamsClient.getStatsByIds(any()))
+            when(teamService.getStatsByIds(any()))
                     .thenReturn(createTestTeamStats(6));
 
             // Act
@@ -191,14 +189,14 @@ class MatchPoolSimulationServiceImplTest {
 
             when(matchRepository.findByPoolId(testPoolId))
                     .thenReturn(List.of(match));
-            when(teamsClient.getStatsByIds(any()))
+            when(teamService.getStatsByIds(any()))
                     .thenReturn(List.of(homeStats, awayStats));
 
             // Act
             matchPoolSimulationService.startPoolSimulation(testPoolId);
 
             // Assert
-            verify(teamsClient).getStatsByIds(any());
+            verify(teamService).getStatsByIds(any());
         }
 
         @Test
@@ -208,7 +206,7 @@ class MatchPoolSimulationServiceImplTest {
             Match match = createTestMatch();
             when(matchRepository.findByPoolId(testPoolId))
                     .thenReturn(List.of(match));
-            when(teamsClient.getStatsByIds(any()))
+            when(teamService.getStatsByIds(any()))
                     .thenReturn(Collections.emptyList());
 
             // Act & Assert - Should not throw exception
@@ -239,8 +237,6 @@ class MatchPoolSimulationServiceImplTest {
             Match match = createTestMatch();
             when(matchRepository.findByPoolId(testPoolId))
                     .thenReturn(List.of(match));
-            when(teamsClient.getStatsByIds(any()))
-                    .thenThrow(new RuntimeException("Teams client error"));
 
             // Act & Assert
             assertThatThrownBy(() -> matchPoolSimulationService.startPoolSimulation(testPoolId))
@@ -259,8 +255,6 @@ class MatchPoolSimulationServiceImplTest {
             Match match = createTestMatch();
             when(matchRepository.findByPoolId(testPoolId))
                     .thenReturn(List.of(match));
-            when(teamsClient.getStatsByIds(any()))
-                    .thenReturn(createTestTeamStats(2));
 
             // Act
             matchPoolSimulationService.startPoolSimulation(testPoolId);

@@ -7,6 +7,7 @@ import { RoutePath } from '../../routing/route-path';
 import { LanguageSwitcherComponent } from '../language-switcher/language-switcher.component';
 import { UserDropdownComponent } from '../user-dropdown/user-dropdown.component';
 import { MENU_ITEMS } from './models/menu-items';
+import { CouponDropdownComponent } from "../coupon-dropdown/coupon-dropdown.component";
 
 @Component({
   selector: 'app-header',
@@ -16,7 +17,8 @@ import { MENU_ITEMS } from './models/menu-items';
     LanguageSwitcherComponent,
     TranslocoDirective,
     UserDropdownComponent,
-  ],
+    CouponDropdownComponent
+],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
 })

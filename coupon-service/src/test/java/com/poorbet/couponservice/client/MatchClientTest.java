@@ -1,6 +1,7 @@
 package com.poorbet.couponservice.client;
 
 import com.poorbet.couponservice.domain.BetType;
+import com.poorbet.couponservice.dto.MatchBetSnapshotDto;
 import com.poorbet.couponservice.dto.MatchResultMapDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -12,6 +13,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.client.RestClient;
 
+import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -49,6 +52,24 @@ class MatchClientTest {
 
     private UUID matchId;
 
+    private static final String HOME_TEAM = "Real Madrid";
+    private static final String AWAY_TEAM = "Barcelona";
+    public static final BigDecimal DEFAULT_ODD = new BigDecimal("1.50");
+
+    public static MatchBetSnapshotDto createSnapshot(BigDecimal odd) {
+        return new MatchBetSnapshotDto(
+                UUID.randomUUID(),
+                HOME_TEAM,
+                AWAY_TEAM,
+                OffsetDateTime.parse("2026-06-20T20:45:00Z"),
+                odd
+        );
+    }
+
+    public static MatchBetSnapshotDto createSnapshot() {
+        return createSnapshot(DEFAULT_ODD);
+    }
+
     @BeforeEach
     @SuppressWarnings("unused")
     void setUp() {
@@ -56,20 +77,28 @@ class MatchClientTest {
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private void setupWebClientChainForGet(Double oddValue) {
+    private void setupRestClientChainForGet(MatchBetSnapshotDto snapshotDto) {
         when(restClient.get()).thenReturn((RestClient.RequestHeadersUriSpec) requestHeadersUriSpec);
         when(requestHeadersUriSpec.uri(any(Function.class))).thenReturn(requestHeadersSpec);
         when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
-        when(responseSpec.body(Double.class))
-                .thenReturn(oddValue);
+        when(responseSpec.body(MatchBetSnapshotDto.class))
+                .thenReturn(snapshotDto);
     }
 
+
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private void setupWebClientChainForPost(MatchResultMapDto results) {
+    private void setupRestClientChainForPost(MatchResultMapDto results) {
         when(restClient.post()).thenReturn(requestBodyUriSpec);
-        when(requestBodyUriSpec.uri("/internal/match/results")).thenReturn(requestBodySpec);
-        when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
-        when(responseSpec.onStatus(any(), any())).thenReturn(responseSpec);
+
+        when(requestBodyUriSpec.uri("/internal/match/results"))
+                .thenReturn(requestBodySpec);
+
+        when(requestBodySpec.body(any(Object.class)))
+                .thenReturn(requestBodySpec);
+
+        when(requestBodySpec.retrieve())
+                .thenReturn(responseSpec);
+
         when(responseSpec.body(MatchResultMapDto.class))
                 .thenReturn(results);
     }
@@ -78,24 +107,26 @@ class MatchClientTest {
     @DisplayName("Should get odd for match with correct URI")
     void shouldGetOddForMatchWithCorrectUri() {
         // Arrange
-        Double expectedOdd = 1.5;
-        setupWebClientChainForGet(expectedOdd);
+        BigDecimal expectedOdd = new BigDecimal("1.5");
+        MatchBetSnapshotDto snapshot = createSnapshot(expectedOdd);
+        setupRestClientChainForGet(snapshot);
 
         // Act
-        Double result = matchClient.getOdd(matchId, BetType.HOME_WIN);
+        MatchBetSnapshotDto result = matchClient.getBetSnapshot(matchId, BetType.HOME_WIN);
 
         // Assert
-        assertThat(result).isEqualTo(expectedOdd);
+        assertThat(result.odd()).isEqualTo(expectedOdd);
     }
 
     @Test
     @DisplayName("Should call get request for odds endpoint")
     void shouldCallGetRequestForOddsEndpoint() {
         // Arrange
-        setupWebClientChainForGet(1.5);
+        MatchBetSnapshotDto snapshot = createSnapshot();
+        setupRestClientChainForGet(snapshot);
 
         // Act
-        matchClient.getOdd(matchId, BetType.HOME_WIN);
+        matchClient.getBetSnapshot(matchId, BetType.HOME_WIN);
 
         // Assert
         verify(restClient).get();
@@ -107,14 +138,14 @@ class MatchClientTest {
     @DisplayName("Should block on getOdd response")
     void shouldBlockOnGetOddResponse() {
         // Arrange
-        Double expectedOdd = 3.0;
-        setupWebClientChainForGet(expectedOdd);
+        MatchBetSnapshotDto expectedSnapshot = createSnapshot();
+        setupRestClientChainForGet(expectedSnapshot);
 
         // Act
-        Double result = matchClient.getOdd(matchId, BetType.HOME_WIN);
+        MatchBetSnapshotDto result = matchClient.getBetSnapshot(matchId, BetType.HOME_WIN);
 
         // Assert
-        assertThat(result).isNotNull().isEqualTo(expectedOdd);
+        assertThat(result).isNotNull().isEqualTo(expectedSnapshot);
     }
 
     @Test
@@ -123,7 +154,7 @@ class MatchClientTest {
         // Arrange
         List<UUID> matchIds = Arrays.asList(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID());
         MatchResultMapDto expectedResults = MatchResultMapDto.builder().build();
-        setupWebClientChainForPost(expectedResults);
+        setupRestClientChainForPost(expectedResults);
 
         // Act
         MatchResultMapDto result = matchClient.getMatchResult(matchIds);
@@ -138,14 +169,13 @@ class MatchClientTest {
         // Arrange
         List<UUID> matchIds = Arrays.asList(UUID.randomUUID(), UUID.randomUUID());
         MatchResultMapDto expectedResults = MatchResultMapDto.builder().build();
-        setupWebClientChainForPost(expectedResults);
+        setupRestClientChainForPost(expectedResults);
 
         // Act
         matchClient.getMatchResult(matchIds);
 
         // Assert
         verify(restClient).post();
-        verify(requestHeadersSpec).retrieve();
     }
 
     @Test
@@ -154,7 +184,7 @@ class MatchClientTest {
         // Arrange
         List<UUID> matchIds = Arrays.asList(UUID.randomUUID(), UUID.randomUUID());
         MatchResultMapDto expectedResults = MatchResultMapDto.builder().build();
-        setupWebClientChainForPost(expectedResults);
+        setupRestClientChainForPost(expectedResults);
 
         // Act
         matchClient.getMatchResult(matchIds);
@@ -172,7 +202,7 @@ class MatchClientTest {
         // Arrange
         List<UUID> matchIds = Arrays.asList(UUID.randomUUID(), UUID.randomUUID());
         MatchResultMapDto expectedResults = MatchResultMapDto.builder().build();
-        setupWebClientChainForPost(expectedResults);
+        setupRestClientChainForPost(expectedResults);
 
         // Act
         MatchResultMapDto result = matchClient.getMatchResult(matchIds);

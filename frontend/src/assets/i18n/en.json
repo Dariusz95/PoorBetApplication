@@ -60,7 +60,7 @@
       "matchInProgress": "Match in progress"
     },
     "coupon": {
-      "eyebrow": "Your coupon",
+      "eyebrow": "Your coupon test",
       "title": "Building coupon",
       "emptyTitle": "No events selected yet.",
       "emptyText": "Click odds in a match to add it to the coupon on the right.",
@@ -91,5 +91,23 @@
   "myCoupons": {
     "title": "My coupons",
     "empty": "No coupons yet."
+  },
+  "couponList": {
+    "title": "My coupons",
+    "seeAll": "See all",
+    "tabOpen": "In game",
+    "tabWon": "Won",
+    "tabSettled": "Settled",
+    "emptyTitle": "A little empty here",
+    "emptyText": "You have no active coupons. Hundreds of events await your pick.",
+    "emptyWonTitle": "No won coupons",
+    "emptySettledTitle": "No settled coupons",
+    "checkOffer": "Check the offer",
+    "stake": "Stake",
+    "totalOdds": "Total odds",
+    "payout": "Payout",
+    "statusOpen": "In game",
+    "statusWon": "Won",
+    "statusLost": "Lost"
   }
 }

@@ -1,0 +1,15 @@
+<div class="language-list">
+  @for (lang of languages(); track lang.code) {
+    <button
+      type="button"
+      class="language-item"
+      [class.language-item--active]="lang.code === activeLang()"
+      (click)="setLang(lang.code)"
+    >
+      @if (lang.imageType) {
+        <pb-image [type]="lang.imageType" size="md"></pb-image>
+      }
+      <span class="language-item__label">{{ lang.labelKey | transloco }}</span>
+    </button>
+  }
+</div>

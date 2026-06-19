@@ -1,6 +1,7 @@
 package com.poorbet.couponservice.client;
 
 import com.poorbet.couponservice.domain.BetType;
+import com.poorbet.couponservice.dto.MatchBetSnapshotDto;
 import com.poorbet.couponservice.dto.MatchResultMapDto;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -27,14 +28,14 @@ public class MatchClient {
                 .body(MatchResultMapDto.class);
     }
 
-    public Double getOdd(UUID matchId, BetType type) {
+    public MatchBetSnapshotDto getBetSnapshot(UUID matchId, BetType type) {
         return restClient
                 .get()
                 .uri(uriBuilder -> uriBuilder
-                        .path("/internal/match/{matchId}/odds")
+                        .path("/internal/match/{matchId}/bet-snapshot")
                         .queryParam("type", type)
                         .build(matchId))
                 .retrieve()
-                .body(Double.class);
+                .body(MatchBetSnapshotDto.class);
     }
 }

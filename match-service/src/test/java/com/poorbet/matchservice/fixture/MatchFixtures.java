@@ -9,9 +9,9 @@ import java.util.UUID;
 import com.poorbet.matchservice.match.match.domain.Match;
 import com.poorbet.matchservice.match.match.domain.MatchStatus;
 import com.poorbet.matchservice.match.match.domain.Odds;
-import com.poorbet.matchservice.match.match.dto.TeamStatsDto;
 import com.poorbet.matchservice.match.matchpool.domain.MatchPool;
 import com.poorbet.matchservice.match.matchpool.domain.PoolStatus;
+import com.poorbet.matchservice.team.dto.TeamStatsDto;
 
 public class MatchFixtures {
 

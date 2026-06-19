@@ -3,7 +3,6 @@ x-auth-config: &auth-config
   AUTH_JWKS_URI: ${AUTH_JWKS_URI}
 
 services:
-
   frontend:
     networks:
       - main_network
@@ -35,21 +34,12 @@ services:
     networks:
       - main_network
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health/readiness" ]
+      test:
+        ["CMD", "curl", "-f", "http://localhost:8080/actuator/health/readiness"]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 20s
-
-
-  teams-service:
-    environment:
-      <<: *auth-config
-    depends_on:
-      - teams-db
-      - redis
-    networks:
-      - main_network
 
   match-service:
     environment:
@@ -60,7 +50,6 @@ services:
       RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
     depends_on:
       - match-db
-      - teams-db
       - rabbitmq
       - redis
       - auth-service
@@ -163,17 +152,6 @@ services:
       POSTGRES_DB: ${POSTGRES_COUPON_DB}
     volumes:
       - coupon_data:/var/lib/postgresql/data
-    networks:
-      - main_network
-
-  teams-db:
-    restart: always
-    environment:
-      POSTGRES_USER: ${POSTGRES_TEAMS_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_TEAMS_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_TEAMS_DB}
-    volumes:
-      - teams_data:/var/lib/postgresql/data
     networks:
       - main_network
 

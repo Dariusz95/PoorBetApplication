@@ -1,23 +1,18 @@
 package com.poorbet.matchservice.match.matchpool.service;
 
 
-import com.poorbet.matchservice.match.client.OddsEngineClient;
-import com.poorbet.matchservice.match.client.TeamsClient;
-import com.poorbet.matchservice.match.config.MatchPoolProperties;
-import com.poorbet.matchservice.match.match.domain.Match;
-import com.poorbet.matchservice.match.match.domain.MatchStatus;
-import com.poorbet.matchservice.match.match.domain.Odds;
-import com.poorbet.matchservice.match.match.dto.TeamStatsDto;
-import com.poorbet.matchservice.match.match.dto.WinProbabilityDto;
-import com.poorbet.matchservice.match.match.dto.request.PreMatchDto;
-import com.poorbet.matchservice.match.match.dto.request.PredictionBatchRequestDto;
-import com.poorbet.matchservice.match.match.dto.response.BatchOddsResponse;
-import com.poorbet.matchservice.match.match.mapper.PredictionBatchMapper;
-import com.poorbet.matchservice.match.matchpool.domain.MatchPool;
-import com.poorbet.matchservice.match.matchpool.domain.PoolStatus;
-import com.poorbet.matchservice.match.matchpool.repository.MatchPoolRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import com.poorbet.matchservice.team.dto.TeamStatsDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
@@ -26,12 +21,23 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.time.OffsetDateTime;
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import com.poorbet.matchservice.match.client.OddsEngineClient;
+import com.poorbet.matchservice.match.config.MatchPoolProperties;
+import com.poorbet.matchservice.match.match.domain.Match;
+import com.poorbet.matchservice.match.match.domain.MatchStatus;
+import com.poorbet.matchservice.match.match.domain.Odds;
+import com.poorbet.matchservice.match.match.dto.WinProbabilityDto;
+import com.poorbet.matchservice.match.match.dto.request.PreMatchDto;
+import com.poorbet.matchservice.match.match.dto.request.PredictionBatchRequestDto;
+import com.poorbet.matchservice.match.match.dto.response.BatchOddsResponse;
+import com.poorbet.matchservice.match.match.mapper.PredictionBatchMapper;
+import com.poorbet.matchservice.match.matchpool.domain.MatchPool;
+import com.poorbet.matchservice.match.matchpool.domain.PoolStatus;
+import com.poorbet.matchservice.match.matchpool.repository.MatchPoolRepository;
+import com.poorbet.matchservice.team.service.TeamService;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 
 @Slf4j
@@ -41,7 +47,7 @@ public class MatchPoolSchedulingServiceImpl implements MatchPoolSchedulingServic
 
     private final MatchPoolRepository matchPoolRepository;
     private final MatchPoolProperties properties;
-    private final TeamsClient teamsClient;
+    private final TeamService teamService;
     private final MatchPoolService matchPoolService;
     private final TaskScheduler taskScheduler;
     private final OddsEngineClient oddsEngineClient;
@@ -84,7 +90,7 @@ public class MatchPoolSchedulingServiceImpl implements MatchPoolSchedulingServic
 
             List<TeamStatsDto> teams;
             try {
-                teams = teamsClient.randomTeams(4);
+                teams = teamService.findRandomTeams(4);
             } catch (Exception ex) {
                 log.error("Cannot fetch teams", ex);
                 break;
