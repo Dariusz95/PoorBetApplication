@@ -1,7 +1,7 @@
 .pb-overlay-panel {
   @apply mt-2 overflow-hidden rounded-xl;
 
-  padding: var(--overlay-padding, 4px);
+  padding: var(--overlay-padding, 0);
 
   border: 1px solid var(--color-border);
   background: var(--color-surface);

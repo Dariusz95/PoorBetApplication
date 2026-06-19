@@ -3,7 +3,6 @@ import { inject, Injectable } from '@angular/core';
 import { PageResponse } from '@shared/interfaces/page-response';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { CouponStatus } from '../enums/coupon-status';
 import { Coupon } from '../models/coupon';
 import { CouponDetails } from '../models/coupon-details';
 import { CreateCouponRequest } from '../models/create-coupon-request';
@@ -20,16 +19,18 @@ export class CouponService {
   }
 
   getOpen(page = 0, size = 20): Observable<PageResponse<Coupon>> {
-    console.log('here?');
-    let params = new HttpParams().set('page', page).set('size', size);
+    const params = new HttpParams().set('page', page).set('size', size);
+    return this.http.get<PageResponse<Coupon>>(`${this.baseUrl}/me/open`, { params });
+  }
 
-    if (status) {
-      params = params.set('status', status);
-    }
+  getWon(page = 0, size = 20): Observable<PageResponse<Coupon>> {
+    const params = new HttpParams().set('page', page).set('size', size);
+    return this.http.get<PageResponse<Coupon>>(`${this.baseUrl}/me/won`, { params });
+  }
 
-    return this.http.get<PageResponse<Coupon>>(`${this.baseUrl}/me/open`, {
-      params,
-    });
+  getSettled(page = 0, size = 20): Observable<PageResponse<Coupon>> {
+    const params = new HttpParams().set('page', page).set('size', size);
+    return this.http.get<PageResponse<Coupon>>(`${this.baseUrl}/me/settled`, { params });
   }
 
   getCouponDetails(couponId: string): Observable<CouponDetails> {

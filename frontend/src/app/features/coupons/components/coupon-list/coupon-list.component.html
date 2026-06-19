@@ -1,12 +1,97 @@
-<div class="flex p-6">
-  <div class="flex items-beetwen">
-    <h5>Moje kupony</h5>
-    <button>Zobacz wszystkie</button>
-  </div>
+<ng-container *transloco="let t">
+  <div class="coupon-list">
 
-  <div>
-    <button>W grze</button>
-    <button>Wygrane</button>
-    <button>Rozliczone</button>
+    @if (showHeader()) {
+      <div class="coupon-list__header">
+        <span class="coupon-list__title">{{ t('couponList.title') }}</span>
+        <button type="button" class="coupon-list__see-all" (click)="navigateToAll()">
+          {{ t('couponList.seeAll') }}
+        </button>
+      </div>
+    }
+
+    <!-- Tabs -->
+    <div class="coupon-list__tabs">
+      @for (tab of tabs; track tab.id) {
+        <button
+          type="button"
+          class="coupon-tab"
+          [class.coupon-tab--active]="activeTab() === tab.id"
+          (click)="selectTab(tab.id)"
+        >
+          @if (activeTab() === tab.id) {
+            <span class="coupon-tab__count">{{ total() }}</span>
+          }
+          {{ t(tab.labelKey) }}
+        </button>
+      }
+    </div>
+
+    <!-- Content -->
+    <div
+      class="coupon-list__content"
+      [class.coupon-list__content--scrollable]="scrollable()"
+    >
+
+      @if (coupons().length === 0) {
+        <!-- Empty state -->
+        <div class="coupon-list__empty">
+          <pb-icon icon="info" size="lg" color="primary"></pb-icon>
+          <p class="coupon-list__empty-title">{{ t(emptyTitleKey()) }}</p>
+          @if (activeTab() === 'open') {
+            <p class="coupon-list__empty-text">{{ t('couponList.emptyText') }}</p>
+            <button type="button" class="coupon-list__cta" (click)="navigateToAll()">
+              {{ t('couponList.checkOffer') }}
+            </button>
+          }
+        </div>
+
+      } @else {
+        <!-- Coupon items -->
+        <div class="coupon-items">
+          @for (coupon of coupons(); track coupon.id) {
+            <div class="coupon-card" (click)="openDetails(coupon)" role="button" tabindex="0"
+                 (keydown.enter)="openDetails(coupon)" (keydown.space)="openDetails(coupon)">
+
+              <!-- Status row -->
+              <div class="coupon-card__top">
+                <div class="coupon-status" [class]="'coupon-status--' + coupon.status.toLowerCase()">
+                  @if (coupon.status === CouponStatus.Won) {
+                    <pb-icon icon="check_circle" size="s"></pb-icon>
+                  } @else if (coupon.status === CouponStatus.Lost) {
+                    <pb-icon icon="cancel" size="s"></pb-icon>
+                  } @else {
+                    <pb-icon icon="sports_soccer" size="s"></pb-icon>
+                  }
+                  <span>{{ t(statusLabelKey(coupon.status)) }}</span>
+                  @if (coupon.betCount) {
+                    <span class="coupon-status__count">{{ coupon.betCount }}</span>
+                  }
+                </div>
+                <pb-icon icon="chevron_right" size="m" color="primary"></pb-icon>
+              </div>
+
+              <!-- Date/time -->
+              <p class="coupon-card__datetime">{{ coupon.createdAt | date: 'dd.MM.yyyy, HH:mm' }}</p>
+
+              <!-- Stake / Odds / Payout -->
+              <app-coupon-summary
+                [surface]="false"
+                [showOdds]="coupon.totalOdds !== undefined"
+                amountLabelKey="couponList.stake"
+                oddsLabelKey="couponList.totalOdds"
+                payoutLabelKey="couponList.payout"
+              >
+                <span slot="amount-value">{{ coupon.stake }} zł</span>
+                <span slot="odds-value">{{ coupon.totalOdds }}</span>
+                <span slot="win-value">{{ coupon.potentialPayout }} zł</span>
+              </app-coupon-summary>
+
+            </div>
+          }
+        </div>
+      }
+
+    </div>
   </div>
-</div>
+</ng-container>

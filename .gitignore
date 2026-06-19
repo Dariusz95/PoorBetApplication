@@ -5,3 +5,6 @@
 **/.idea/*
 /data/*
 .idea/
+
+CLAUDE.local.md
+.claude/settings.local.json

@@ -6,7 +6,7 @@
   }
 
   &__badge {
-    @apply inline-flex items-center justify-center rounded-full px-3 py-2 text-sm font-semibold;
+    @apply inline-flex items-center justify-center rounded-full px-3 py-2 t-heading-xs;
 
     background-color: rgb(from var(--color-primary) r g b / 0.15);
     color: var(--color-primary);

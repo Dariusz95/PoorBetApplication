@@ -5,5 +5,7 @@ export interface Coupon {
   stake: number;
   status: CouponStatus;
   potentialPayout: number;
+  totalOdds?: number;
+  betCount?: number;
   createdAt: string;
 }

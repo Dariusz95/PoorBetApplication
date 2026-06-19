@@ -91,5 +91,23 @@
   "myCoupons": {
     "title": "My coupons",
     "empty": "No coupons yet."
+  },
+  "couponList": {
+    "title": "My coupons",
+    "seeAll": "See all",
+    "tabOpen": "In game",
+    "tabWon": "Won",
+    "tabSettled": "Settled",
+    "emptyTitle": "A little empty here",
+    "emptyText": "You have no active coupons. Hundreds of events await your pick.",
+    "emptyWonTitle": "No won coupons",
+    "emptySettledTitle": "No settled coupons",
+    "checkOffer": "Check the offer",
+    "stake": "Stake",
+    "totalOdds": "Total odds",
+    "payout": "Payout",
+    "statusOpen": "In game",
+    "statusWon": "Won",
+    "statusLost": "Lost"
   }
 }

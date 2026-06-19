@@ -1,17 +1,11 @@
-<app-pb-dropdown
-  [options]="languageDropdownOptions"
-  [optionTemplate]="optionTemplate"
->
-  <span dropdownLabel>
+<pb-popover>
+  <div class="pb-overlay-trigger" popoverTrigger>
     @if (imageType()) {
-      <pb-image [type]="imageType()!"></pb-image>
+      <pb-image [type]="imageType()!" size="md"></pb-image>
     }
-  </span>
-</app-pb-dropdown>
+  </div>
 
-<ng-template #optionTemplate let-option>
-  @if (option.imageType) {
-    <pb-image [type]="option.imageType"></pb-image>
-  }
-  <span>{{ option.label | transloco }}</span>
-</ng-template>
+  <div popoverContent>
+    <app-language-content />
+  </div>
+</pb-popover>

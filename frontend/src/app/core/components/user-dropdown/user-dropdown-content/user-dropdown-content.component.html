@@ -1,0 +1,14 @@
+<ng-container *transloco="let t">
+  <div class="user-menu">
+    @for (item of menuItems(); track item.value) {
+      <button
+        type="button"
+        class="user-menu__item"
+        (click)="executeAction(item)"
+      >
+        <pb-icon [icon]="item.icon" size="s"></pb-icon>
+        <span class="user-menu__label">{{ t(item.labelKey) }}</span>
+      </button>
+    }
+  </div>
+</ng-container>

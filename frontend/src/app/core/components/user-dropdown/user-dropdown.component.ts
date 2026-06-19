@@ -1,76 +1,18 @@
-import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ReactiveFormsModule } from '@angular/forms';
-import { TranslocoDirective } from '@jsverse/transloco';
-import { map } from 'rxjs';
-import { PbIconComponent } from '../../../shared/ui/icon/pb-icon.component';
-import { DropdownOption } from '../../../shared/ui/pb-dropdown/dropdown-option';
-import { PbDropdownComponent } from '../../../shared/ui/pb-dropdown/pb-dropdown.component';
-import { AuthService } from '../../auth/services/auth.service';
-import { RoutePath } from '../../routing/route-path';
-import { RoutingService } from '../../routing/routing.service';
+import { Component } from '@angular/core';
+import { PbIconComponent } from '@shared/ui/icon/pb-icon.component';
+import { PbPopoverComponent } from '@shared/ui/pb-popover/pb-popover.component';
 import { UserBalanceComponent } from '../user-balance/user-balance.component';
-import { UserMenuAction } from './user-menu-action';
-
-interface UserDropdownOption extends DropdownOption<UserMenuAction> {
-  visible: (isLoggedIn: boolean) => boolean;
-}
+import { UserDropdownContentComponent } from './user-dropdown-content/user-dropdown-content.component';
 
 @Component({
   selector: 'app-user-dropdown',
-  standalone: true,
   imports: [
-    CommonModule,
-    TranslocoDirective,
-    PbDropdownComponent,
-    ReactiveFormsModule,
+    PbPopoverComponent,
     PbIconComponent,
     UserBalanceComponent,
+    UserDropdownContentComponent,
   ],
   templateUrl: './user-dropdown.component.html',
   styleUrl: './user-dropdown.component.scss',
 })
-export class UserDropdownComponent {
-  protected readonly isLoggedIn$ = inject(AuthService).isLoggedIn$;
-  private readonly routingService = inject(RoutingService);
-  private readonly authService = inject(AuthService);
-  private readonly destroyRef = inject(DestroyRef);
-
-  userMenuOptions: UserDropdownOption[] = [
-    {
-      value: 'settings',
-      label: 'user.settings',
-      icon: 'settings',
-      visible: () => true,
-      action: () => console.log('settings clicked'),
-    },
-    {
-      value: 'login',
-      label: 'user.login',
-      icon: 'login',
-      visible: (isLoggedIn) => !isLoggedIn,
-      action: () => this.routingService.navigateTo(RoutePath.Login),
-    },
-    {
-      value: 'register',
-      label: 'user.register',
-      icon: 'person_add',
-      visible: (isLoggedIn) => !isLoggedIn,
-    },
-    {
-      value: 'logout',
-      label: 'user.logout',
-      icon: 'logout',
-      visible: (isLoggedIn) => isLoggedIn,
-      action: () => this.authService.logout(),
-    },
-  ];
-
-  filteredOptions$ = this.isLoggedIn$.pipe(
-    takeUntilDestroyed(this.destroyRef),
-    map((isLoggedIn) =>
-      this.userMenuOptions.filter((opt) => opt.visible(isLoggedIn)),
-    ),
-  );
-}
+export class UserDropdownComponent {}

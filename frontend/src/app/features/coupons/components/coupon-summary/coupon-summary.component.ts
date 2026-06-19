@@ -1,5 +1,4 @@
-import { Component, computed, inject, input } from '@angular/core';
-import { BetSlipService } from '@features/bet/services/bet-slip.service';
+import { Component, input } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 @Component({
@@ -9,11 +8,9 @@ import { TranslocoPipe } from '@jsverse/transloco';
   styleUrl: './coupon-summary.component.scss',
 })
 export class CouponSummaryComponent {
-  protected readonly betSlipService = inject(BetSlipService);
-
-  amount = input<number | null>(null);
-
-  amountValue = computed(() => {
-    return this.amount() || 0;
-  });
+  surface = input(true);
+  showOdds = input(true);
+  amountLabelKey = input('bet.coupon.amount');
+  oddsLabelKey = input('bet.coupon.totalOdds');
+  payoutLabelKey = input('bet.coupon.potentialWin');
 }

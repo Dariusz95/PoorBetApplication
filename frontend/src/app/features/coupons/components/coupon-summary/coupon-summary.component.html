@@ -1,23 +1,24 @@
-<div class="pb-surface my-4 flex flex-col gap-4">
-  <div class="flex justify-between">
-    <div class="flex flex-col">
-      <span class="t-label">{{ "bet.coupon.amount" | transloco }}</span>
-      <span class="t-warning t-body-md font-semibold">
+<div class="coupon-summary" [class.coupon-summary--surface]="surface()">
+  <div class="coupon-summary__row">
+    <div class="coupon-summary__cell">
+      <span class="coupon-summary__label">{{ amountLabelKey() | transloco }}</span>
+      <span class="coupon-summary__value coupon-summary__value--warning">
         <ng-content select="[slot=amount-value]"></ng-content>
       </span>
     </div>
-
-    <div class="flex flex-col items-end">
-      <span class="t-label">{{ "bet.coupon.totalOdds" | transloco }}</span>
-      <span class="t-warning t-body-md font-semibold">
-        <ng-content select="[slot=odds-value]"></ng-content>
-      </span>
-    </div>
+    @if (showOdds()) {
+      <div class="coupon-summary__cell coupon-summary__cell--end">
+        <span class="coupon-summary__label">{{ oddsLabelKey() | transloco }}</span>
+        <span class="coupon-summary__value">
+          <ng-content select="[slot=odds-value]"></ng-content>
+        </span>
+      </div>
+    }
   </div>
 
-  <div class="flex justify-between">
-    <span class="t-label">{{ "bet.coupon.potentialWin" | transloco }}</span>
-    <span class="t-success t-body-md font-semibold">
+  <div class="coupon-summary__row">
+    <span class="coupon-summary__label">{{ payoutLabelKey() | transloco }}</span>
+    <span class="coupon-summary__value coupon-summary__value--success">
       <ng-content select="[slot=win-value]"></ng-content>
     </span>
   </div>

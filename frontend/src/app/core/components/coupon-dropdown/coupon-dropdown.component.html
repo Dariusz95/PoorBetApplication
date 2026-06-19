@@ -1,7 +1,9 @@
-<pb-popover width="400px">
+<pb-popover #popoverRef width="400px">
   <div class="pb-overlay-trigger" popoverTrigger>
     <pb-icon icon="library_books" size="m"></pb-icon>
   </div>
 
-  <div popoverContent><app-coupon-list /></div>
+  <div popoverContent>
+    <app-coupon-list (seeAll)="popoverRef.close()" />
+  </div>
 </pb-popover>
