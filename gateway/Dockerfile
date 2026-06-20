@@ -9,8 +9,10 @@ RUN mvn clean install -DskipTests -f poorbet-commons/pom.xml
 
 RUN mvn clean package -DskipTests -f gateway/pom.xml
 
-FROM eclipse-temurin:21-jdk
+FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
+RUN addgroup -S appgroup && adduser -S -u 1001 -G appgroup appuser
 COPY --from=build /app/gateway/target/*.jar app.jar
+USER 1001
 EXPOSE 8081
 ENTRYPOINT ["java", "-jar", "app.jar"]

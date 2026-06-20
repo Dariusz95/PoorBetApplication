@@ -4,7 +4,7 @@ import com.poorbet.matchservice.match.matchpool.dto.LiveMatchEventDto;
 import com.poorbet.matchservice.match.match.domain.Match;
 import com.poorbet.matchservice.match.match.repository.MatchRepository;
 import com.poorbet.matchservice.match.tx.AfterCommitHandler;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,6 +30,7 @@ public class MatchFinishServiceImpl implements MatchFinishService {
 
         match.setStatus(FINISHED);
         match.setHomeGoals(event.getHomeScore());
+        match.setAwayGoals(event.getAwayScore());
 
         Match saved = matchRepository.save(match);
 

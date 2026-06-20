@@ -8,7 +8,7 @@ import com.poorbet.matchservice.match.match.repository.MatchRepository;
 import com.poorbet.matchservice.match.matchpool.domain.PoolStatus;
 import com.poorbet.matchservice.match.matchpool.repository.MatchPoolRepository;
 import jakarta.persistence.EntityNotFoundException;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class MatchPoolLifecycleManager {
 
     private final MatchRepository matchRepository;

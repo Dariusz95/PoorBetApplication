@@ -1,7 +1,7 @@
 package com.poorbet.authservice.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import com.poorbet.authservice.auth.AuthClientsProperties;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,10 +15,10 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableConfigurationProperties({CorsProperties.class, AuthClientsProperties.class})
 @EnableMethodSecurity
 @Configuration
+@RequiredArgsConstructor
 public class SecurityConfiguration {
 
-    @Autowired
-    private CorsProperties corsProperties;
+    private final CorsProperties corsProperties;
 
     @Bean
     public PasswordEncoder passwordEncoder() {

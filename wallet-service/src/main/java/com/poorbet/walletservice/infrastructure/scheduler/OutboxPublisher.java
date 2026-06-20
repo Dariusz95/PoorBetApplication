@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -36,9 +37,9 @@ public class OutboxPublisher {
     );
 
     @Scheduled(fixedDelay = 5000)
+    @Transactional
     public void publishEvents() {
-        List<OutboxEvent> events = outboxRepository.findTop100ByStatus("NEW");
-
+        List<OutboxEvent> events = outboxRepository.findPendingForUpdate();
 
         for (OutboxEvent event : events) {
             Object payloadObject = toObject(event.getPayload(), event.getEventType());
@@ -60,11 +61,12 @@ public class OutboxPublisher {
                 event.setStatus("SENT");
 
             } catch (Exception e) {
+                log.error("Failed to publish outbox event {}", event.getId(), e);
                 event.setStatus("FAILED");
             }
-
-            outboxRepository.save(event);
         }
+
+        outboxRepository.saveAll(events);
     }
 
 

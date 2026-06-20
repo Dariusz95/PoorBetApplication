@@ -6,25 +6,29 @@
           <img src="assets/logo.png" alt="Logo" class="app-header__logo" />
         </a>
 
-        @if (true) {
-          <nav class="app-header__nav hidden md:block">
-            <ul class="app-header__nav-list">
-              @for (item of menuItems; track item.link) {
-                <li>
-                  <a [routerLink]="item.link" class="app-header__nav-link">
-                    {{ t(item.labelKey) }}
-                  </a>
-                </li>
-              }
-            </ul>
-          </nav>
-        }
+        <nav class="app-header__nav hidden md:block">
+          <ul class="app-header__nav-list">
+            @for (item of menuItems; track item.link) {
+              <li>
+                <a [routerLink]="item.link" class="app-header__nav-link">
+                  {{ t(item.labelKey) }}
+                </a>
+              </li>
+            }
+          </ul>
+        </nav>
       </div>
 
-      <div class="app-header__right hidden md:flex">
-        <app-coupon-dropdown/>
+      <div class="app-header__right">
+        <app-coupon-dropdown class="hidden md:inline-block" />
         <app-language-switcher />
-        <app-user-dropdown />
+        <button
+          class="app-header__user"
+          (click)="openUserPanel()"
+          [attr.aria-label]="t('userPanel.open')"
+        >
+          <span class="material-icons">account_circle</span>
+        </button>
       </div>
     </div>
   </header>

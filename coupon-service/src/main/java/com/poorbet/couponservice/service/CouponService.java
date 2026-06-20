@@ -26,11 +26,11 @@ import com.poorbet.couponservice.mapper.CouponMapper;
 import com.poorbet.couponservice.repository.CouponRepository;
 import jakarta.persistence.EntityNotFoundException;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Service
 public class CouponService {
 
