@@ -56,33 +56,11 @@ Architektoniczne rozróżnienie endpointów wewnętrznych (serwis-do-serwisu) od
 
 ## Problemy architektoniczne
 
-### [CRITICAL] C1 — Bug: Bramki gości zawsze = 0 po zakończeniu meczu
+### [CRITICAL] C1 — Bug: Bramki gości zawsze = 0 po zakończeniu meczu ✅ NAPRAWIONY
 
-**Lokalizacja:** `match-service/src/main/java/com/poorbet/matchservice/match/matchpool/service/MatchFinishServiceImpl.java:32-33`
+**Lokalizacja:** `match-service/.../MatchFinishServiceImpl.java`
 
-**Opis problemu:**
-
-```java
-match.setStatus(FINISHED);
-match.setHomeGoals(event.getHomeScore());
-// BRAK: match.setAwayGoals(event.getAwayScore());
-```
-
-Metoda `finishMatch()` ustawia tylko wynik gospodarzy. Wynik gości pozostaje na wartości domyślnej (0).
-
-**Dlaczego to jest problem:**  
-Wynik meczu 3:0 dla gości zostanie zapisany jako 3:0 dla gospodarzy — zupełnie odwrotnie. Kupony na "wygraną gości" mogą być rozliczane błędnie.
-
-**Konsekwencje:**  
-Błędne rozliczenie zakładów, potencjalne roszczenia finansowe użytkowników. Cel projektu (platforma bukmacherska) jest dosłownie niespełniony.
-
-**Rekomendacja:**
-
-```java
-match.setStatus(FINISHED);
-match.setHomeGoals(event.getHomeScore());
-match.setAwayGoals(event.getAwayScore()); // dodać tę linię
-```
+Brakująca linia `match.setAwayGoals(event.getAwayScore())` została dodana.
 
 ---
 
@@ -133,42 +111,33 @@ public void publishEvents() {
 
 ---
 
-### [CRITICAL] C3 — Brak Outbox na krytycznym przepływie finalizacji meczu — Lost Events
+### [CRITICAL] C3 — Brak Outbox na krytycznym przepływie finalizacji meczu — Lost Events ✅ NAPRAWIONY
 
-**Lokalizacja:** `match-service/src/main/java/com/poorbet/matchservice/match/matchpool/service/MatchPoolLifecycleManager.java:73-86`
+**Lokalizacja:** `match-service/.../MatchPoolLifecycleManager.java`
 
-**Opis problemu:**
+Zaimplementowano Outbox Pattern w match-service:
+- Nowa tabela `outbox_event` (migracja `V6__create_outbox_event_table.sql`)
+- `OutboxService`, `OutboxRepository`, `OutboxPublisher` w pakiecie `infrastructure/outbox`
+- `MatchPoolLifecycleManager.handleMatchFinished()` zapisuje event do outbox w tej samej transakcji REQUIRES_NEW
+- `OutboxPublisher` (scheduler co 5s) publikuje eventy do RabbitMQ z użyciem `FOR UPDATE SKIP LOCKED`
 
-```java
-private void sendPoolFinishedEventsAsync(UUID poolId, List<MatchResultDto> results) {
-    try {
-        matchPoolEventPublisher.publishMatchesFinished(eventResults); // bezpośrednio do RabbitMQ!
-        liveMatchSimulationManager.notifyPoolFinished(poolId);
-    } catch (Exception e) {
-        log.error("Failed to notify about finished pool {}", poolId, e); // event ZNIKA bezpowrotnie
-    }
-}
+---
+
+### [CRITICAL] C3b — Constraint `'PENDING'` vs kod `'NEW'` w coupon-service OutboxEvent ✅ NAPRAWIONY
+
+**Lokalizacja:** `coupon-service/src/main/resources/db/migration/V2__create_outbox_event_table.sql`
+
+**Opis problemu:**  
+Był to **główny root cause** buga "kupon zostaje OPEN". Migracja V2 definiowała constraint:
+```sql
+CHECK (status IN ('PENDING', 'SENT', 'FAILED'))
 ```
+Ale `OutboxService.saveEvent()` zapisuje `status("NEW")`. Każde wywołanie `processFinishedMatch()`, gdy kupon miał przejść do WON/LOST, kończyło się `DataIntegrityViolationException` przy zapisie OutboxEvent, co rollbackowało całą transakcję — zakłady zostawały PENDING, kupon OPEN.
 
-Publikacja `MATCH_FINISHED` do RabbitMQ odbywa się **bezpośrednio** (bez Outbox Pattern), mimo że `wallet-service` i `coupon-service` używają Outbox. Jeśli RabbitMQ jest chwilowo niedostępny — event jest logowany i **tracony na zawsze**.
-
-**Konsekwencje:**  
-Kupony na zakończone mecze nigdy nie zostaną rozliczone. Środki użytkowników nie zostaną zwolnione. Nie ma żadnego mechanizmu wykrywania takiej sytuacji.
-
-**Rekomendacja:**  
-Dodać Outbox Pattern w `match-service` dla `MATCH_FINISHED` event. Wzorzec jest już zaimplementowany w `wallet-service` i `coupon-service` — wystarczy przenieść.
-
-```java
-// Zamiast bezpośredniego publishMatchesFinished():
-@Transactional(propagation = Propagation.REQUIRES_NEW)
-public void handleMatchFinished(Match match) {
-    ...
-    matchPoolOutboxService.saveEvent(
-        MatchEvents.MATCH_FINISHED,
-        new MatchesFinishedEvent(eventResults)
-    );
-    liveMatchSimulationManager.notifyPoolFinished(poolId);
-}
+**Naprawa:** Migracja `V3__fix_outbox_status_constraint.sql`:
+```sql
+ALTER TABLE outbox_event DROP CONSTRAINT chk_coupon_outbox_status;
+ALTER TABLE outbox_event ADD CONSTRAINT chk_outbox_status CHECK (status IN ('NEW', 'SENT', 'FAILED'));
 ```
 
 ---
@@ -681,33 +650,33 @@ Brak profilu `prod` to techłdług który się pojawi w momencie pierwszego wdro
 
 ## Quick Wins (do wdrożenia w 1 dzień)
 
-| # | Zadanie | Czas | Impact |
-|---|---------|------|--------|
-| QW1 | Dodaj `match.setAwayGoals(event.getAwayScore())` | 5 min | **Critical** |
-| QW2 | Zmień `V1_create_user_table.sql` → `V1__create_user_table.sql` | 2 min | Critical |
-| QW3 | Przenieś pliki wallet migracji `db.migration` → `db/migration` | 10 min | Critical |
-| QW4 | Zmień `ddl-auto: update` → `validate` w wallet-service | 2 min | High |
-| QW5 | Zmień import `jakarta.transaction.Transactional` na Spring w MatchFinishServiceImpl | 2 min | High |
-| QW6 | Zmień `@Autowired` field → constructor injection w SecurityConfiguration | 5 min | Medium |
-| QW7 | Napraw wiadomość błędu: `event.couponId()` → `event.userId()` | 2 min | Low |
-| QW8 | Usuń `@EnableScheduling` z notification-service | 2 min | Low |
-| QW9 | Zmień `@AllArgsConstructor` → `@RequiredArgsConstructor` w CouponService i MatchPoolLifecycleManager | 5 min | Low |
+| # | Zadanie | Status | Impact |
+|---|---------|--------|--------|
+| QW1 | Dodaj `match.setAwayGoals(event.getAwayScore())` | ✅ Naprawiony | **Critical** |
+| QW2 | Zmień `V1_create_user_table.sql` → `V1__create_user_table.sql` | ✅ Naprawiony | Critical |
+| QW3 | Przenieś pliki wallet migracji `db.migration` → `db/migration` | ✅ Naprawiony | Critical |
+| QW4 | Zmień `ddl-auto: update` → `validate` w wallet-service | ✅ Naprawiony | High |
+| QW5 | Zmień import `jakarta.transaction.Transactional` na Spring | ✅ Naprawiony | High |
+| QW6 | Zmień `@Autowired` field → constructor injection w SecurityConfiguration | ✅ Naprawiony | Medium |
+| QW7 | Napraw wiadomość błędu: `event.couponId()` → `event.userId()` | ✅ Naprawiony | Low |
+| QW8 | Usuń `@EnableScheduling` z notification-service | ✅ Naprawiony | Low |
+| QW9 | `@AllArgsConstructor` → `@RequiredArgsConstructor` w MatchPoolLifecycleManager | ✅ Naprawiony | Low |
 
 ---
 
 ## Średnioterminowe usprawnienia (1–4 tygodnie)
 
-### MT1 — Outbox Pattern dla MATCH_FINISHED w match-service
+### MT1 — Outbox Pattern dla MATCH_FINISHED w match-service ✅ NAPRAWIONY
 
-Dodać tabelę `outbox_event` w `match-service`, `OutboxService`, `OutboxPublisher` (wzorując się na `coupon-service`). Zastąpić `sendPoolFinishedEventsAsync` zapisem do outbox.
+Zaimplementowano — patrz C3 powyżej.
 
 ### MT2 — SELECT FOR UPDATE SKIP LOCKED w OutboxPublisher
 
 Zmiana zapytania w obu `OutboxRepository` + dodanie `@Transactional` na `publishEvents()`. Kluczowe dla multi-instancji.
 
-### MT3 — Healthchecks i depends_on z warunkami w docker-compose
+### MT3 — Healthchecks i depends_on z warunkami w docker-compose ✅ NAPRAWIONY
 
-Dodać healthchecki dla wszystkich serwisów i baz danych. Zmienić `depends_on` na `condition: service_healthy`.
+Dodano healthchecki dla wszystkich baz danych (pg_isready), RabbitMQ (rabbitmq-diagnostics ping), Redis (redis-cli ping) oraz serwisów Spring Boot (actuator/health/readiness). Zmieniono `depends_on` na `condition: service_healthy`.
 
 ### MT4 — Refaktor handleUserCreated() — pre-check zamiast catch
 
@@ -820,28 +789,27 @@ CREATE INDEX IF NOT EXISTS idx_wallet_outbox_status_created_at
 
 Posortowana od największego wpływu biznesowego i technicznego:
 
-| Priorytet | ID | Problem | Kategoría | Szacowany czas naprawy |
-|-----------|-----|---------|-----------|------------------------|
-| 1 | C1 | Bug: away goals = 0 po meczu | Business-blocker | 15 min |
-| 2 | C3 | Brak Outbox dla MATCH_FINISHED — lost events | Data loss | 2 dni |
-| 3 | C4 | Flyway path mismatch w wallet-service | Infrastructure | 30 min |
-| 4 | C5 | Błędna nazwa migracji w auth-service | Infrastructure | 5 min |
-| 5 | C2 | Race condition OutboxPublisher — duplikaty | Multi-instance | 1 dzień |
-| 6 | H1 | LiveMatchSimulationManager in-memory | Multi-instance | 3–5 dni |
-| 7 | H7 | wallet-service ddl-auto: update | Production risk | 10 min |
-| 8 | D1 | Brak healthchecks w docker-compose | Operations | 2 godz. |
-| 9 | H4 | N+1 HTTP calls + niekompletna kompensacja | Performance + correctness | 1–2 dni |
-| 10 | H3 | rollback-only w handleUserCreated | Correctness | 1 godz. |
-| 11 | H5 | startPool() — symulacja wewnątrz transakcji | Correctness | 30 min |
-| 12 | H9 | jakarta.transaction.Transactional | Correctness | 5 min |
-| 13 | Q1 | ddl-auto: update w wallet-service | Risk | 5 min |
-| 14 | MT9 | Dead Letter Queue | Reliability | 1 dzień |
-| 15 | DL3 | Observability (metrics + tracing) | Operations | 3–5 dni |
-| 16 | Q5 | Magic strings w Outbox status | Code quality | 2 godz. |
-| 17 | D2 | Brak application-prod.yml | Operations | 2 godz. |
-| 18 | P1 | Brak indeksów na tabeli match | Performance | 30 min |
-| 19 | P2 | Brak indeksu na outbox_event w wallet | Performance | 10 min |
-| 20 | S1 | @Autowired field injection w SecurityConfig | Code quality | 5 min |
+| Priorytet | ID | Problem | Status | Kategoría |
+|-----------|-----|---------|--------|-----------|
+| 1 | C1 | Bug: away goals = 0 po meczu | ✅ Naprawiony | Business-blocker |
+| 2 | C3b | Constraint 'PENDING' vs 'NEW' w coupon OutboxEvent | ✅ Naprawiony | Root cause "kupon OPEN" |
+| 3 | C3 | Brak Outbox dla MATCH_FINISHED — lost events | ✅ Naprawiony | Data loss |
+| 4 | C4 | Flyway path mismatch w wallet-service | ✅ Naprawiony | Infrastructure |
+| 5 | C5 | Błędna nazwa migracji w auth-service | ✅ Naprawiony | Infrastructure |
+| 6 | D1 | Brak healthchecks w docker-compose | ✅ Naprawiony | Operations |
+| 7 | C2 | Race condition OutboxPublisher — duplikaty | ⚠️ Częściowo (SKIP LOCKED już w repo) | Multi-instance |
+| 8 | H1 | LiveMatchSimulationManager in-memory | Nie naprawiony | Multi-instance |
+| 9 | Q2 | N+1 HTTP calls + niekompletna kompensacja | ✅ Naprawiony | Performance + correctness |
+| 10 | Q3 | rollback-only w handleUserCreated | ✅ Naprawiony | Correctness |
+| 11 | H5 | startPool() — symulacja wewnątrz transakcji | ✅ Naprawiony | Correctness |
+| 12 | Q4 | jakarta.transaction.Transactional | ✅ Naprawiony | Correctness |
+| 13 | MT9 | Dead Letter Queue | ✅ Naprawiony | Reliability |
+| 14 | DL3 | Observability (metrics + tracing) | Nie naprawiony | Operations |
+| 15 | Q5 | Magic strings w Outbox status | ✅ Naprawiony | Code quality |
+| 16 | D2 | Brak application-prod.yml | ✅ Naprawiony | Operations |
+| 17 | P1 | Brak indeksów na tabeli match | ✅ Naprawiony (V5) | Performance |
+| 18 | P2 | Brak indeksu na outbox_event w wallet | ✅ Naprawiony (V4) | Performance |
+| 19 | S1 | @Autowired field injection w SecurityConfig | ✅ Naprawiony | Code quality |
 
 ---
 

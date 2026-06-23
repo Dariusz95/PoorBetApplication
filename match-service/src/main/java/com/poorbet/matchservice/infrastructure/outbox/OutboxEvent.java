@@ -1,4 +1,4 @@
-package com.poorbet.couponservice.infrastructure.persistence.entity;
+package com.poorbet.matchservice.infrastructure.outbox;
 
 import jakarta.persistence.*;
 import lombok.*;

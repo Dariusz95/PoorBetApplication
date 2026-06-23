@@ -9,6 +9,7 @@ import com.poorbet.commons.rabbit.events.coupon.CouponLostEvent;
 import com.poorbet.commons.rabbit.events.coupon.CouponWonEvent;
 import com.poorbet.couponservice.infrastructure.persistence.OutboxRepository;
 import com.poorbet.couponservice.infrastructure.persistence.entity.OutboxEvent;
+import com.poorbet.couponservice.infrastructure.persistence.entity.OutboxEventStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -60,11 +61,11 @@ public class OutboxPublisher {
                         envelope
                 );
 
-                event.setStatus("SENT");
+                event.setStatus(OutboxEventStatus.SENT);
 
             } catch (Exception e) {
                 log.error("Failed to publish outbox event {}", event.getId(), e);
-                event.setStatus("FAILED");
+                event.setStatus(OutboxEventStatus.FAILED);
             }
         }
 

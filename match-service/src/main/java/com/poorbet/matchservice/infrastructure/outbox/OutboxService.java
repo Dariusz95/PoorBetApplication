@@ -1,11 +1,8 @@
-package com.poorbet.walletservice.service;
+package com.poorbet.matchservice.infrastructure.outbox;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.poorbet.commons.rabbit.EventDefinition;
-import com.poorbet.walletservice.infrastructure.persistence.OutboxRepository;
-import com.poorbet.walletservice.infrastructure.persistence.entity.OutboxEvent;
-import com.poorbet.walletservice.infrastructure.persistence.entity.OutboxEventStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,23 +17,12 @@ public class OutboxService {
     private final ObjectMapper objectMapper;
 
     public void saveEvent(EventDefinition<?> definition, Object payload) {
-        saveEvent(
-                definition.exchange(),
-                definition.routingKey(),
-                definition.eventType(),
-                definition.version(),
-                payload
-        );
-    }
-
-    public void saveEvent(String exchange, String routingKey, String eventType, String version, Object payload) {
-
         OutboxEvent event = OutboxEvent.builder()
                 .id(UUID.randomUUID())
-                .exchange(exchange)
-                .routingKey(routingKey)
-                .eventType(eventType)
-                .version(version)
+                .exchange(definition.exchange())
+                .routingKey(definition.routingKey())
+                .eventType(definition.eventType())
+                .version(definition.version())
                 .payload(toJson(payload))
                 .status(OutboxEventStatus.NEW)
                 .createdAt(Instant.now())

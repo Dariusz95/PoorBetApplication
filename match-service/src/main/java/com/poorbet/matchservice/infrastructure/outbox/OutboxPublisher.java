@@ -1,14 +1,11 @@
-package com.poorbet.walletservice.infrastructure.scheduler;
+package com.poorbet.matchservice.infrastructure.outbox;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.poorbet.commons.rabbit.EventEnvelope;
 import com.poorbet.commons.rabbit.MessagingProperties;
-import com.poorbet.commons.rabbit.events.wallet.WalletBalanceChangedEvent;
-import com.poorbet.commons.rabbit.events.wallet.WalletCreatedEvent;
-import com.poorbet.walletservice.infrastructure.persistence.OutboxRepository;
-import com.poorbet.walletservice.infrastructure.persistence.entity.OutboxEvent;
-import com.poorbet.walletservice.infrastructure.persistence.entity.OutboxEventStatus;
+import com.poorbet.commons.rabbit.events.match.MatchEvents;
+import com.poorbet.commons.rabbit.events.match.MatchesFinishedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -19,10 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Map;
 
-import static com.poorbet.commons.rabbit.events.wallet.WalletEvents.WALLET_BALANCE_CHANGED;
-import static com.poorbet.commons.rabbit.events.wallet.WalletEvents.WALLET_CREATED;
-
-
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -32,9 +25,9 @@ public class OutboxPublisher {
     private final RabbitTemplate rabbitTemplate;
     private final MessagingProperties messagingProperties;
     private final ObjectMapper objectMapper;
+
     private final Map<String, Class<?>> eventTypeMap = Map.of(
-            WALLET_CREATED.eventType(), WalletCreatedEvent.class,
-            WALLET_BALANCE_CHANGED.eventType(), WalletBalanceChangedEvent.class
+            MatchEvents.MATCH_FINISHED.eventType(), MatchesFinishedEvent.class
     );
 
     @Scheduled(fixedDelay = 5000)
@@ -43,7 +36,7 @@ public class OutboxPublisher {
         List<OutboxEvent> events = outboxRepository.findPendingForUpdate();
 
         for (OutboxEvent event : events) {
-            Object payloadObject = toObject(event.getPayload(), event.getEventType());
+            Object payloadObject = deserialize(event.getPayload(), event.getEventType());
 
             EventEnvelope<Object> envelope = new EventEnvelope<>(
                     event.getEventType(),
@@ -58,11 +51,9 @@ public class OutboxPublisher {
                         event.getRoutingKey(),
                         envelope
                 );
-
                 event.setStatus(OutboxEventStatus.SENT);
-
             } catch (Exception e) {
-                log.error("Failed to publish outbox event {}", event.getId(), e);
+                log.error("Nie udało się opublikować eventu outbox {}", event.getId(), e);
                 event.setStatus(OutboxEventStatus.FAILED);
             }
         }
@@ -70,19 +61,15 @@ public class OutboxPublisher {
         outboxRepository.saveAll(events);
     }
 
-
-    private Object toObject(String payload, String eventType) {
+    private Object deserialize(String payload, String eventType) {
         try {
             Class<?> clazz = eventTypeMap.get(eventType);
-
             if (clazz == null) {
-                throw new RuntimeException("Unknown eventType: " + eventType);
+                throw new RuntimeException("Nieznany eventType: " + eventType);
             }
-
             return objectMapper.readValue(payload, clazz);
-
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("Failed to deserialize payload", e);
+            throw new RuntimeException("Nie udało się zdeserializować payloadu", e);
         }
     }
 }

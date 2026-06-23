@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.awt.print.Pageable;
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.UUID;
 
@@ -39,4 +39,7 @@ public interface MatchRepository extends JpaRepository<Match, UUID> {
         where m.id in :ids
     """)
     List<MatchResultDto> findResultsByIds(@Param("ids") List<UUID> ids);
+
+    @Query("SELECT m FROM Match m JOIN FETCH m.pool WHERE m.id IN :ids")
+    List<Match> findAllByIdWithPool(@Param("ids") List<UUID> ids);
 }

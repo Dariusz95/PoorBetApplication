@@ -1,6 +1,9 @@
 package com.poorbet.matchservice.match.matchpool.service;
 
+import com.poorbet.commons.rabbit.events.match.MatchEvents;
+import com.poorbet.commons.rabbit.events.match.MatchesFinishedEvent;
 import com.poorbet.commons.rabbit.events.match.dto.MatchResultEventDto;
+import com.poorbet.matchservice.infrastructure.outbox.OutboxService;
 import com.poorbet.matchservice.match.match.domain.Match;
 import com.poorbet.matchservice.match.match.domain.MatchStatus;
 import com.poorbet.matchservice.match.match.dto.MatchResultDto;
@@ -28,7 +31,7 @@ public class MatchPoolLifecycleManager {
     private final MatchPoolRepository matchPoolRepository;
     private final LiveMatchSimulationManager liveMatchSimulationManager;
     private final RedisTemplate<String, String> redisTemplate;
-    private final MatchPoolEventPublisher matchPoolEventPublisher;
+    private final OutboxService outboxService;
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void handleMatchFinished(Match match) {
@@ -67,25 +70,17 @@ public class MatchPoolLifecycleManager {
 
         List<MatchResultDto> results = matchPoolRepository.getResults(poolId);
 
-        sendPoolFinishedEventsAsync(poolId, results);
+        List<MatchResultEventDto> eventResults = results.stream()
+                .map(this::toEventDto)
+                .toList();
+
+        log.info("Zapisuję event zakończenia puli {} do outbox ({} meczów)", poolId, eventResults.size());
+        outboxService.saveEvent(MatchEvents.MATCH_FINISHED, new MatchesFinishedEvent(eventResults));
+
+        liveMatchSimulationManager.notifyPoolFinished(poolId);
     }
 
-    private void sendPoolFinishedEventsAsync(UUID poolId, List<MatchResultDto> results) {
-        try {
-            List<MatchResultEventDto> eventResults = results.stream()
-                    .map(this::toEventDto)
-                    .toList();
-            log.info("eventResults - {}", eventResults);
-            matchPoolEventPublisher.publishMatchesFinished(eventResults);
-
-            liveMatchSimulationManager.notifyPoolFinished(poolId);
-
-        } catch (Exception e) {
-            log.error("Failed to notify about finished pool {}", poolId, e);
-        }
-    }
-
-    public MatchResultEventDto toEventDto(MatchResultDto dto) {
+    private MatchResultEventDto toEventDto(MatchResultDto dto) {
         return new MatchResultEventDto(
                 dto.getId(),
                 dto.getHomeGoals(),
