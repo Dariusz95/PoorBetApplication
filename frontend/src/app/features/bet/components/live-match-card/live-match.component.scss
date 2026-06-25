@@ -32,19 +32,39 @@
   }
 
   &__body-grid {
-    @apply grid grid-cols-[1fr_auto_1fr] items-center gap-3 px-4;
+    @apply grid grid-cols-[1fr_auto_1fr] items-center gap-4 px-2 py-2;
   }
 
   &__team {
-    @apply text-center;
+    @apply flex flex-col items-center gap-2 text-center;
+  }
+
+  &__logo-wrapper {
+    @apply flex h-16 w-16 items-center justify-center overflow-hidden rounded-full bg-app-surface;
+  }
+
+  &__logo {
+    @apply h-full w-full object-cover;
+  }
+
+  &__logo-fallback {
+    @apply text-xl font-bold text-app-textMuted;
   }
 
   &__team-name {
-    @apply mb-2 line-clamp-2 text-sm font-medium text-app-text;
+    @apply line-clamp-2 text-sm font-medium text-app-text;
+  }
+
+  &__score-block {
+    @apply flex flex-col items-center gap-1;
   }
 
   &__score {
-    @apply text-3xl font-bold;
+    @apply flex items-center gap-2 text-4xl font-bold;
+  }
+
+  &__score-sep {
+    @apply text-app-textMuted;
   }
 
   &__score--home {
@@ -53,9 +73,5 @@
 
   &__score--away {
     @apply text-app-primary;
-  }
-
-  &__vs {
-    @apply text-xs font-semibold uppercase tracking-wide text-app-textMuted;
   }
 }

@@ -26,6 +26,10 @@ export class UserSidePanelComponent {
   readonly balance = this.walletService.balance;
   readonly userEmail = this.jwtAuthState.getSubject();
 
+  constructor() {
+    this.walletService.getBalance().subscribe();
+  }
+
   close(): void {
     this.dialogRef.close();
   }

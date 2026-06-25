@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, output } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { LangDefinition, TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { ImageType } from '@shared/ui/pb-image/image-type.model';
@@ -20,6 +20,8 @@ interface LanguageOption {
 export class LanguageContentComponent {
   private readonly translocoService = inject(TranslocoService);
 
+  readonly langSelected = output<void>();
+
   readonly activeLang = toSignal(this.translocoService.langChanges$);
 
   readonly languages = computed<LanguageOption[]>(() =>
@@ -35,5 +37,6 @@ export class LanguageContentComponent {
 
   setLang(code: string): void {
     this.translocoService.setActiveLang(code);
+    this.langSelected.emit();
   }
 }

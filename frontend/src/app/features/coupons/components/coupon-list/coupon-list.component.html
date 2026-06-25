@@ -10,7 +10,6 @@
       </div>
     }
 
-    <!-- Tabs -->
     <div class="coupon-list__tabs">
       @for (tab of tabs; track tab.id) {
         <button
@@ -27,14 +26,12 @@
       }
     </div>
 
-    <!-- Content -->
     <div
       class="coupon-list__content"
       [class.coupon-list__content--scrollable]="scrollable()"
     >
 
       @if (coupons().length === 0) {
-        <!-- Empty state -->
         <div class="coupon-list__empty">
           <pb-icon icon="info" size="lg" color="primary"></pb-icon>
           <p class="coupon-list__empty-title">{{ t(emptyTitleKey()) }}</p>
@@ -47,13 +44,11 @@
         </div>
 
       } @else {
-        <!-- Coupon items -->
         <div class="coupon-items">
           @for (coupon of coupons(); track coupon.id) {
             <div class="coupon-card" (click)="openDetails(coupon)" role="button" tabindex="0"
                  (keydown.enter)="openDetails(coupon)" (keydown.space)="openDetails(coupon)">
 
-              <!-- Status row -->
               <div class="coupon-card__top">
                 <div class="coupon-status" [class]="'coupon-status--' + coupon.status.toLowerCase()">
                   @if (coupon.status === CouponStatus.Won) {
@@ -71,10 +66,8 @@
                 <pb-icon icon="chevron_right" size="m" color="primary"></pb-icon>
               </div>
 
-              <!-- Date/time -->
               <p class="coupon-card__datetime">{{ coupon.createdAt | date: 'dd.MM.yyyy, HH:mm' }}</p>
 
-              <!-- Stake / Odds / Payout -->
               <app-coupon-summary
                 [surface]="false"
                 [showOdds]="coupon.totalOdds !== undefined"

@@ -5,6 +5,7 @@ import java.util.UUID;
 
 public record TeamShortDto(
         UUID id,
-        String name
+        String name,
+        String img
 ) implements Serializable {
 }

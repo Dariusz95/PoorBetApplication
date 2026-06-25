@@ -15,6 +15,7 @@ poorbet:
     unprotected-paths:
       - /api/match-pool/live
       - /api/match-pool/future
+      - /images/**
 
 logging:
   level:

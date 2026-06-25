@@ -103,6 +103,7 @@ services:
     volumes:
       - ./match-service:/app
       - ~/.m2:/root/.m2
+      - teams_data:/app/data/images
     environment:
       - SPRING_PROFILES_ACTIVE=dev
       - JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=75.0

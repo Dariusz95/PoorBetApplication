@@ -24,6 +24,7 @@ poorbet:
     unprotected-paths:
       - /api/match-pool/live
       - /api/match-pool/future
+      - /images/**
 
 odds:
   service:
@@ -43,3 +44,7 @@ auth:
 
 messaging:
   source-service: match-service
+
+app:
+  images:
+    path: /app/data/images

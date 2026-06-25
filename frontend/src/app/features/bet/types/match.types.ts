@@ -43,4 +43,5 @@ export interface PoolMatch {
 export interface ShortTeamInfo {
   id: Uuid;
   name: string;
+  img?: string;
 }

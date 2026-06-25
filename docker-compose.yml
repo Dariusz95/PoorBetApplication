@@ -51,6 +51,8 @@ services:
       RABBITMQ_PORT: ${RABBITMQ_PORT}
       RABBITMQ_USER: ${RABBITMQ_USER}
       RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
+    volumes:
+      - teams_data:/app/data/images
     depends_on:
       match-db:
         condition: service_healthy
@@ -182,7 +184,7 @@ services:
     networks:
       - main_network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_MATCH_USER"]
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -198,7 +200,7 @@ services:
     networks:
       - main_network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_WALLET_USER"]
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -214,7 +216,7 @@ services:
     networks:
       - main_network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_COUPON_USER"]
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER"]
       interval: 10s
       timeout: 5s
       retries: 5

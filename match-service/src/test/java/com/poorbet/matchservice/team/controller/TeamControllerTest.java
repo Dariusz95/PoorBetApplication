@@ -37,7 +37,7 @@ class TeamControllerTest {
     void shouldReturnTeam_whenIdExists() throws Exception {
         UUID id = BARCELONA_ID;
         String name = BARCELONA;
-        TeamShortDto team = new TeamShortDto(id, name);
+        TeamShortDto team = new TeamShortDto(id, name, "");
 
         when(teamService.getById(id)).thenReturn(team);
 
