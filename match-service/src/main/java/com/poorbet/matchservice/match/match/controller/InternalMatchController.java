@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.poorbet.matchservice.match.match.domain.OddsType;
+import com.poorbet.matchservice.match.match.dto.BetSnapshotRequest;
 import com.poorbet.matchservice.match.match.dto.MatchBetSnapshotDto;
 import com.poorbet.matchservice.match.match.dto.MatchResultMapDto;
 import com.poorbet.matchservice.match.match.service.BetSnapshotService;
@@ -54,5 +55,10 @@ public class InternalMatchController {
         } catch (IllegalArgumentException ex) {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @PostMapping("/bet-snapshots/batch")
+    public ResponseEntity<List<MatchBetSnapshotDto>> getBetSnapshotsBatch(@RequestBody List<BetSnapshotRequest> requests) {
+        return ResponseEntity.ok(betSnapshotService.getBetSnapshots(requests));
     }
 }

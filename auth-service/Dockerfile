@@ -12,6 +12,8 @@ RUN mvn -pl auth-service -am -DskipTests package -q
 
 FROM amazoncorretto:21-alpine3.20
 WORKDIR /app
+RUN addgroup -S appgroup && adduser -S -u 1001 -G appgroup appuser
 COPY --from=build /workspace/auth-service/target/*.jar app.jar
+USER 1001
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]

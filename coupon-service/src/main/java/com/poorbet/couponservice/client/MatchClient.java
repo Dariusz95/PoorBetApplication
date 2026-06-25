@@ -1,9 +1,11 @@
 package com.poorbet.couponservice.client;
 
 import com.poorbet.couponservice.domain.BetType;
+import com.poorbet.couponservice.dto.BetSnapshotRequest;
 import com.poorbet.couponservice.dto.MatchBetSnapshotDto;
 import com.poorbet.couponservice.dto.MatchResultMapDto;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
@@ -37,5 +39,14 @@ public class MatchClient {
                         .build(matchId))
                 .retrieve()
                 .body(MatchBetSnapshotDto.class);
+    }
+
+    public List<MatchBetSnapshotDto> getBetSnapshots(List<BetSnapshotRequest> requests) {
+        return restClient
+                .post()
+                .uri("/internal/match/bet-snapshots/batch")
+                .body(requests)
+                .retrieve()
+                .body(new ParameterizedTypeReference<>() {});
     }
 }

@@ -1,3 +1,22 @@
+.user-side-panel {
+  animation: slideInFromRight 200ms ease-out;
+  height: 100dvh;
+  overflow-y: auto;
+}
+
+.user-side-panel-backdrop {
+  background: rgba(0, 0, 0, 0.55);
+}
+
+@keyframes slideInFromRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
 @layer components {
   .pb-overlay-trigger {
     @apply flex items-center justify-between rounded-lg text-sm transition-colors duration-200 ease-out;

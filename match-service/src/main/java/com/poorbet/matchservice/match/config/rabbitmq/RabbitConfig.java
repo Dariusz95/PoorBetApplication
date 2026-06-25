@@ -4,6 +4,7 @@ import com.poorbet.commons.rabbit.EventDefinition;
 import com.poorbet.commons.rabbit.EventKey;
 import com.poorbet.commons.rabbit.EventRegistry;
 import com.poorbet.commons.rabbit.MessagingProperties;
+import com.poorbet.commons.rabbit.events.match.MatchEvents;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
@@ -63,6 +64,11 @@ public class RabbitConfig {
         });
 
         return new Declarables(declarables);
+    }
+
+    @Bean
+    public TopicExchange matchEventsExchange() {
+        return new TopicExchange(MatchEvents.MATCH_FINISHED.exchange(), true, false);
     }
 
     @Bean

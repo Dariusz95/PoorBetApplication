@@ -11,8 +11,8 @@ services:
     environment:
       <<: *auth-config
     depends_on:
-      - auth-service
-      - user-db
+      auth-service:
+        condition: service_healthy
     networks:
       - main_network
 
@@ -24,7 +24,10 @@ services:
 
   auth-service:
     depends_on:
-      - user-db
+      user-db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
     environment:
       <<: *auth-config
       RABBITMQ_HOST: rabbitmq
@@ -48,14 +51,27 @@ services:
       RABBITMQ_PORT: ${RABBITMQ_PORT}
       RABBITMQ_USER: ${RABBITMQ_USER}
       RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
+    volumes:
+      - teams_data:/app/data/images
     depends_on:
-      - match-db
-      - rabbitmq
-      - redis
-      - auth-service
-      - odds-engine-service
+      match-db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      auth-service:
+        condition: service_healthy
+      odds-engine-service:
+        condition: service_healthy
     networks:
       - main_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health/readiness"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   coupon-service:
     environment:
@@ -65,11 +81,20 @@ services:
       RABBITMQ_USER: ${RABBITMQ_USER}
       RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
     depends_on:
-      - coupon-db
-      - rabbitmq
-      - redis
+      coupon-db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     networks:
       - main_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health/readiness"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   wallet-service:
     environment:
@@ -79,11 +104,20 @@ services:
       RABBITMQ_USER: ${RABBITMQ_USER}
       RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
     depends_on:
-      - wallet-db
-      - rabbitmq
-      - redis
+      wallet-db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     networks:
       - main_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health/readiness"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   notification-service:
     environment:
@@ -101,6 +135,11 @@ services:
       - redis_data:/data
     networks:
       - main_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -111,6 +150,12 @@ services:
       - rabbitmq_data:/var/lib/rabbitmq
     networks:
       - main_network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
 
   user-db:
     restart: always
@@ -122,6 +167,11 @@ services:
       - user_data:/var/lib/postgresql/data
     networks:
       - main_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   match-db:
     restart: always
@@ -133,8 +183,14 @@ services:
       - match_data:/var/lib/postgresql/data
     networks:
       - main_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   wallet-db:
+    restart: always
     environment:
       POSTGRES_USER: ${POSTGRES_WALLET_USER}
       POSTGRES_PASSWORD: ${POSTGRES_WALLET_PASSWORD}
@@ -143,6 +199,11 @@ services:
       - wallet_data:/var/lib/postgresql/data
     networks:
       - main_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   coupon-db:
     restart: always
@@ -154,6 +215,11 @@ services:
       - coupon_data:/var/lib/postgresql/data
     networks:
       - main_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 networks:
   main_network:

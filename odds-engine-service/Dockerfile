@@ -9,5 +9,7 @@ RUN ./mvnw -DskipTests package -q
 
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
+RUN addgroup -S appgroup && adduser -S -u 1001 -G appgroup appuser
 COPY --from=build /app/target/*.jar app.jar
+USER 1001
 ENTRYPOINT ["java","-jar","/app/app.jar"]

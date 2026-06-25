@@ -8,11 +8,13 @@ import com.poorbet.commons.rabbit.events.wallet.WalletBalanceChangedEvent;
 import com.poorbet.commons.rabbit.events.wallet.WalletCreatedEvent;
 import com.poorbet.walletservice.infrastructure.persistence.OutboxRepository;
 import com.poorbet.walletservice.infrastructure.persistence.entity.OutboxEvent;
+import com.poorbet.walletservice.infrastructure.persistence.entity.OutboxEventStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -36,9 +38,9 @@ public class OutboxPublisher {
     );
 
     @Scheduled(fixedDelay = 5000)
+    @Transactional
     public void publishEvents() {
-        List<OutboxEvent> events = outboxRepository.findTop100ByStatus("NEW");
-
+        List<OutboxEvent> events = outboxRepository.findPendingForUpdate();
 
         for (OutboxEvent event : events) {
             Object payloadObject = toObject(event.getPayload(), event.getEventType());
@@ -57,14 +59,15 @@ public class OutboxPublisher {
                         envelope
                 );
 
-                event.setStatus("SENT");
+                event.setStatus(OutboxEventStatus.SENT);
 
             } catch (Exception e) {
-                event.setStatus("FAILED");
+                log.error("Failed to publish outbox event {}", event.getId(), e);
+                event.setStatus(OutboxEventStatus.FAILED);
             }
-
-            outboxRepository.save(event);
         }
+
+        outboxRepository.saveAll(events);
     }
 
 

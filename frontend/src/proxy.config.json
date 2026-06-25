@@ -4,5 +4,10 @@
     "secure": false,
     "logLevel": "debug",
     "changeOrigin": true
+  },
+  "/images/**": {
+    "target": "http://host.docker.internal:8081",
+    "secure": false,
+    "changeOrigin": true
   }
 }

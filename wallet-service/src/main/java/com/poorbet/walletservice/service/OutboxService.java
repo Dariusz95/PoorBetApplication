@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.poorbet.commons.rabbit.EventDefinition;
 import com.poorbet.walletservice.infrastructure.persistence.OutboxRepository;
 import com.poorbet.walletservice.infrastructure.persistence.entity.OutboxEvent;
+import com.poorbet.walletservice.infrastructure.persistence.entity.OutboxEventStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -37,7 +38,7 @@ public class OutboxService {
                 .eventType(eventType)
                 .version(version)
                 .payload(toJson(payload))
-                .status("NEW")
+                .status(OutboxEventStatus.NEW)
                 .createdAt(Instant.now())
                 .build();
 

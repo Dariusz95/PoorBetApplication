@@ -1,9 +1,6 @@
 package com.poorbet.walletservice.infrastructure.persistence.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
@@ -35,7 +32,8 @@ public class OutboxEvent {
     @JdbcTypeCode(SqlTypes.JSON)
     private String payload;
 
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private OutboxEventStatus status;
 
     private Instant createdAt;
 

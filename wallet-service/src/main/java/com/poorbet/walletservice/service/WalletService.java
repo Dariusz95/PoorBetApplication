@@ -13,7 +13,6 @@ import com.poorbet.walletservice.repository.WalletRepository;
 import com.poorbet.walletservice.repository.WalletReservationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,23 +31,24 @@ public class WalletService {
 
     @Transactional
     public void handleUserCreated(UUID userId) {
-        try {
-            log.info("userId = {}", userId);
-            Wallet wallet = Wallet.builder()
-                    .userId(userId)
-                    .balance(BigDecimal.valueOf(100))
-                    .build();
+        log.info("handleUserCreated userId={}", userId);
 
-            walletRepository.save(wallet);
-
-            outboxService.saveEvent(
-                    WalletEvents.WALLET_CREATED,
-                    new WalletCreatedEvent(userId)
-            );
-
-        } catch (DataIntegrityViolationException e) {
-            log.info("exists = {}", e.getMessage());
+        if (walletRepository.existsByUserId(userId)) {
+            log.info("Wallet already exists for userId={}, skipping", userId);
+            return;
         }
+
+        Wallet wallet = Wallet.builder()
+                .userId(userId)
+                .balance(BigDecimal.valueOf(100))
+                .build();
+
+        walletRepository.save(wallet);
+
+        outboxService.saveEvent(
+                WalletEvents.WALLET_CREATED,
+                new WalletCreatedEvent(userId)
+        );
     }
 
     @Transactional
@@ -63,7 +63,7 @@ public class WalletService {
         }
 
         Wallet wallet = walletRepository.findByUserIdForUpdate(event.userId())
-                .orElseThrow(() -> new IllegalStateException("Wallet not found: " + event.couponId()));
+                .orElseThrow(() -> new IllegalStateException("Wallet not found: " + event.userId()));
 
         wallet.setBalance(wallet.getBalance().add(event.amount()));
 

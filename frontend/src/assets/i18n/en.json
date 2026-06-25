@@ -86,7 +86,12 @@
   },
   "menu": {
     "home": "Home",
-    "myCoupons": "My coupons"
+    "myCoupons": "My coupons",
+    "ranking": "Ranking"
+  },
+  "userPanel": {
+    "open": "Open user panel",
+    "guest": "Not logged in"
   },
   "myCoupons": {
     "title": "My coupons",

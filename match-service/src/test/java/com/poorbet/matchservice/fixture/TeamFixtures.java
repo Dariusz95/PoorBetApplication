@@ -58,7 +58,7 @@ public class TeamFixtures {
     }
 
     public static TeamShortDto createTeamShortDto(UUID id, String name) {
-        return new TeamShortDto(id, name);
+        return new TeamShortDto(id, name, "");
     }
 
     public static Team manchesterUnited() {

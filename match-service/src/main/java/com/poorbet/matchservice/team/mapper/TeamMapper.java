@@ -19,7 +19,8 @@ public class TeamMapper {
     public static TeamShortDto toTeamShortDto(Team team){
         return new TeamShortDto(
                 team.getId(),
-                team.getName()
+                team.getName(),
+                team.getImg()
         );
     }
 }

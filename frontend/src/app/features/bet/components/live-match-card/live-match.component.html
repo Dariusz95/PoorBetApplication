@@ -17,26 +17,52 @@
     <div class="live-match-card__body-grid">
       <div class="live-match-card__team">
         @if (homeTeam$ | async; as home) {
-          <p class="live-match-card__team-name">
-            {{ home.name }}
-          </p>
+          <div class="live-match-card__logo-wrapper">
+            @if (home.img) {
+              <img
+                class="live-match-card__logo"
+                [src]="home.img"
+                [alt]="home.name"
+              />
+            } @else {
+              <span class="live-match-card__logo-fallback">{{
+                home.name.charAt(0)
+              }}</span>
+            }
+          </div>
+          <p class="live-match-card__team-name">{{ home.name }}</p>
         }
-        <p class="live-match-card__score live-match-card__score--home">
-          {{ liveMatch().homeScore }}
+      </div>
+
+      <div class="live-match-card__score-block">
+        <p class="live-match-card__score">
+          <span class="live-match-card__score--home">{{
+            liveMatch().homeScore
+          }}</span>
+          <span class="live-match-card__score-sep">:</span>
+          <span class="live-match-card__score--away">{{
+            liveMatch().awayScore
+          }}</span>
         </p>
       </div>
 
-      <p class="live-match-card__vs">vs</p>
-
       <div class="live-match-card__team">
         @if (awayTeam$ | async; as away) {
-          <p class="live-match-card__team-name">
-            {{ away.name }}
-          </p>
+          <div class="live-match-card__logo-wrapper">
+            @if (away.img) {
+              <img
+                class="live-match-card__logo"
+                [src]="away.img"
+                [alt]="away.name"
+              />
+            } @else {
+              <span class="live-match-card__logo-fallback">{{
+                away.name.charAt(0)
+              }}</span>
+            }
+          </div>
+          <p class="live-match-card__team-name">{{ away.name }}</p>
         }
-        <p class="live-match-card__score live-match-card__score--away">
-          {{ liveMatch().awayScore }}
-        </p>
       </div>
     </div>
   </div>

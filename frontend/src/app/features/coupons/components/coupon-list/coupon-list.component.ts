@@ -1,13 +1,20 @@
-import { Component, computed, inject, input, output, signal } from '@angular/core';
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { DatePipe } from '@angular/common';
-import { TranslocoDirective } from '@jsverse/transloco';
-import { switchMap } from 'rxjs';
+import {
+  Component,
+  computed,
+  inject,
+  input,
+  output,
+  signal,
+} from '@angular/core';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { RoutePath } from '@core/routing/route-path';
 import { RoutingService } from '@core/routing/routing.service';
-import { PbIconComponent } from '@shared/ui/icon/pb-icon.component';
-import { DialogService } from '@shared/services/dialog.service';
+import { TranslocoDirective } from '@jsverse/transloco';
 import { PageResponse } from '@shared/interfaces/page-response';
+import { DialogService } from '@shared/services/dialog.service';
+import { PbIconComponent } from '@shared/ui/icon/pb-icon.component';
+import { switchMap } from 'rxjs';
 import { CouponStatus } from '../../enums/coupon-status';
 import { Coupon } from '../../models/coupon';
 import { CouponService } from '../../services/coupon.service';
@@ -22,7 +29,12 @@ interface TabConfig {
 
 @Component({
   selector: 'app-coupon-list',
-  imports: [TranslocoDirective, PbIconComponent, DatePipe, CouponSummaryComponent],
+  imports: [
+    TranslocoDirective,
+    PbIconComponent,
+    DatePipe,
+    CouponSummaryComponent,
+  ],
   templateUrl: './coupon-list.component.html',
   styleUrl: './coupon-list.component.scss',
 })
@@ -31,17 +43,15 @@ export class CouponListComponent {
   private readonly routingService = inject(RoutingService);
   private readonly dialogService = inject(DialogService);
 
-  showHeader = input(true);
-  scrollable = input(true);
+  readonly showHeader = input(true);
+  readonly scrollable = input(true);
 
   readonly seeAll = output<void>();
 
   readonly activeTab = signal<CouponTab>('open');
 
   readonly couponPage = toSignal<PageResponse<Coupon> | null>(
-    toObservable(this.activeTab).pipe(
-      switchMap((tab) => this.loadForTab(tab)),
-    ),
+    toObservable(this.activeTab).pipe(switchMap((tab) => this.loadForTab(tab))),
     { initialValue: null },
   );
 

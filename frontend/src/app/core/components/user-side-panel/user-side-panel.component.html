@@ -1,0 +1,56 @@
+<div class="side-panel" *transloco="let t">
+  <div class="side-panel__header">
+    <button class="side-panel__close" (click)="close()" [attr.aria-label]="t('bet.coupon.close')">
+      <span class="material-icons">close</span>
+    </button>
+  </div>
+
+  <div class="side-panel__user">
+    <div class="side-panel__avatar">
+      <span class="material-icons side-panel__avatar-icon">account_circle</span>
+    </div>
+
+    @if (isLoggedIn()) {
+      <p class="side-panel__email">{{ userEmail }}</p>
+    } @else {
+      <p class="side-panel__email side-panel__email--guest">{{ t('userPanel.guest') }}</p>
+    }
+  </div>
+
+  @if (isLoggedIn()) {
+    <div class="side-panel__balance">
+      <span class="side-panel__balance-label">{{ t('header.wallet') }}</span>
+      <span class="side-panel__balance-value">
+        @if (balance() !== null) {
+          {{ balance() | number: '1.2-2' }} zł
+        } @else {
+          —
+        }
+      </span>
+    </div>
+
+    <div class="side-panel__divider"></div>
+
+    <nav class="side-panel__menu">
+      <button class="side-panel__menu-item" (click)="goToCoupons()">
+        <span class="material-icons">confirmation_number</span>
+        <span class="side-panel__menu-label">{{ t('menu.myCoupons') }}</span>
+        <span class="material-icons side-panel__menu-arrow">chevron_right</span>
+      </button>
+      <button class="side-panel__menu-item side-panel__menu-item--danger" (click)="logout()">
+        <span class="material-icons">logout</span>
+        <span class="side-panel__menu-label">{{ t('user.logout') }}</span>
+        <span class="material-icons side-panel__menu-arrow">chevron_right</span>
+      </button>
+    </nav>
+  } @else {
+    <div class="side-panel__auth">
+      <button class="side-panel__auth-btn side-panel__auth-btn--primary" (click)="login()">
+        {{ t('user.login') }}
+      </button>
+      <button class="side-panel__auth-btn" (click)="register()">
+        {{ t('user.register') }}
+      </button>
+    </div>
+  }
+</div>

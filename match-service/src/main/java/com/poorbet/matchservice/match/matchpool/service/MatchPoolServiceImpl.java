@@ -6,6 +6,7 @@ import com.poorbet.matchservice.match.matchpool.domain.PoolStatus;
 import com.poorbet.matchservice.match.matchpool.dto.MatchPoolDto;
 import com.poorbet.matchservice.match.matchpool.mapper.MatchPoolMapper;
 import com.poorbet.matchservice.match.matchpool.repository.MatchPoolRepository;
+import com.poorbet.matchservice.match.tx.AfterCommitHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -22,6 +23,7 @@ public class MatchPoolServiceImpl implements MatchPoolService {
     private final MatchPoolRepository matchPoolRepository;
     private final MatchPoolMapper matchPoolMapper;
     private final MatchPoolSimulationService matchPoolSimulationService;
+    private final AfterCommitHandler afterCommitHandler;
 
     @Transactional
     public void startPool(UUID poolId) {
@@ -35,7 +37,7 @@ public class MatchPoolServiceImpl implements MatchPoolService {
 
         matchPoolRepository.save(pool);
 
-        matchPoolSimulationService.startPoolSimulation(pool.getId());
+        afterCommitHandler.run(() -> matchPoolSimulationService.startPoolSimulation(pool.getId()));
     }
 
 

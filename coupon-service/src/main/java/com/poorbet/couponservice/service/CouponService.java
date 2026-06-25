@@ -3,7 +3,10 @@ package com.poorbet.couponservice.service;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,23 +17,24 @@ import com.poorbet.commons.rabbit.events.coupon.CouponEvents;
 import com.poorbet.couponservice.client.MatchClient;
 import com.poorbet.couponservice.client.wallet.WalletBusinessException;
 import com.poorbet.couponservice.client.wallet.WalletClient;
-import com.poorbet.couponservice.client.wallet.WalletTechnicalException;
 import com.poorbet.couponservice.domain.Bet;
 import com.poorbet.couponservice.domain.BetStatus;
 import com.poorbet.couponservice.domain.Coupon;
 import com.poorbet.couponservice.domain.CouponStatus;
+import com.poorbet.couponservice.dto.BetSnapshotRequest;
 import com.poorbet.couponservice.dto.CouponDetailDto;
 import com.poorbet.couponservice.dto.CouponDto;
 import com.poorbet.couponservice.dto.CreateCouponDto;
+import com.poorbet.couponservice.dto.MatchBetSnapshotDto;
 import com.poorbet.couponservice.mapper.CouponMapper;
 import com.poorbet.couponservice.repository.CouponRepository;
 import jakarta.persistence.EntityNotFoundException;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Service
 public class CouponService {
 
@@ -51,15 +55,22 @@ public class CouponService {
                     new ReserveRequest(reservationId, dto.getStake())
             );
 
+            List<BetSnapshotRequest> snapshotRequests = dto.getBets().stream()
+                    .map(b -> new BetSnapshotRequest(b.getMatchId(), b.getBetType()))
+                    .toList();
+
+            Map<UUID, MatchBetSnapshotDto> snapshots = matchClient.getBetSnapshots(snapshotRequests)
+                    .stream()
+                    .collect(Collectors.toMap(MatchBetSnapshotDto::matchId, Function.identity()));
+
             Coupon coupon = buildCoupon(dto, userId, reservationId);
             dto.getBets().forEach(betDto -> {
+                MatchBetSnapshotDto snapshot = snapshots.get(betDto.getMatchId());
+                if (snapshot == null) {
+                    throw new IllegalStateException("Brak snapshotu dla meczu: " + betDto.getMatchId());
+                }
 
-                var snapshot = matchClient.getBetSnapshot(
-                        betDto.getMatchId(),
-                        betDto.getBetType()
-                );
-
-                Bet bet = Bet.builder()
+                coupon.addBet(Bet.builder()
                         .betType(betDto.getBetType())
                         .matchId(snapshot.matchId())
                         .homeTeamName(snapshot.homeTeamName())
@@ -67,32 +78,26 @@ public class CouponService {
                         .matchStartTime(snapshot.matchStartTime())
                         .odds(snapshot.odd())
                         .status(BetStatus.PENDING)
-                        .build();
-
-                coupon.addBet(bet);
+                        .build());
             });
 
             BigDecimal totalOdds = coupon.getBets().stream()
                     .map(Bet::getOdds)
                     .reduce(BigDecimal.ONE, BigDecimal::multiply);
 
-            BigDecimal potentialPayout = dto.getStake().multiply(totalOdds);
+            coupon.setPotentialPayout(dto.getStake().multiply(totalOdds));
 
-            coupon.setPotentialPayout(potentialPayout);
-
-            Coupon saved = couponRepository.save(coupon);
-
-            return couponMapper.toDetailDto(saved);
+            return couponMapper.toDetailDto(couponRepository.save(coupon));
 
         } catch (WalletBusinessException ex) {
             throw ex;
 
-        } catch (WalletTechnicalException ex) {
+        } catch (Exception ex) {
+
             outboxService.saveEvent(
                     CouponEvents.COUPON_CREATION_FAILED,
                     new CouponCreationFailedEvent(reservationId)
             );
-
             throw ex;
         }
     }

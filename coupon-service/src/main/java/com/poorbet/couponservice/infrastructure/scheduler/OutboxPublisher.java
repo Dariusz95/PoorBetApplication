@@ -4,19 +4,23 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.poorbet.commons.rabbit.EventEnvelope;
 import com.poorbet.commons.rabbit.MessagingProperties;
+import com.poorbet.commons.rabbit.events.coupon.CouponCreationFailedEvent;
 import com.poorbet.commons.rabbit.events.coupon.CouponLostEvent;
 import com.poorbet.commons.rabbit.events.coupon.CouponWonEvent;
 import com.poorbet.couponservice.infrastructure.persistence.OutboxRepository;
 import com.poorbet.couponservice.infrastructure.persistence.entity.OutboxEvent;
+import com.poorbet.couponservice.infrastructure.persistence.entity.OutboxEventStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
 
+import static com.poorbet.commons.rabbit.events.coupon.CouponEvents.COUPON_CREATION_FAILED;
 import static com.poorbet.commons.rabbit.events.coupon.CouponEvents.COUPON_LOST;
 import static com.poorbet.commons.rabbit.events.coupon.CouponEvents.COUPON_WON;
 
@@ -31,13 +35,14 @@ public class OutboxPublisher {
     private final ObjectMapper objectMapper;
     private final Map<String, Class<?>> eventTypeMap = Map.of(
             COUPON_WON.eventType(), CouponWonEvent.class,
-            COUPON_LOST.eventType(), CouponLostEvent.class
+            COUPON_LOST.eventType(), CouponLostEvent.class,
+            COUPON_CREATION_FAILED.eventType(), CouponCreationFailedEvent.class
     );
 
     @Scheduled(fixedDelay = 5000)
+    @Transactional
     public void publishEvents() {
-        List<OutboxEvent> events = outboxRepository.findTop100ByStatus("NEW");
-
+        List<OutboxEvent> events = outboxRepository.findPendingForUpdate();
 
         for (OutboxEvent event : events) {
             Object payloadObject = toObject(event.getPayload(), event.getEventType());
@@ -56,14 +61,15 @@ public class OutboxPublisher {
                         envelope
                 );
 
-                event.setStatus("SENT");
+                event.setStatus(OutboxEventStatus.SENT);
 
             } catch (Exception e) {
-                event.setStatus("FAILED");
+                log.error("Failed to publish outbox event {}", event.getId(), e);
+                event.setStatus(OutboxEventStatus.FAILED);
             }
-
-            outboxRepository.save(event);
         }
+
+        outboxRepository.saveAll(events);
     }
 
 

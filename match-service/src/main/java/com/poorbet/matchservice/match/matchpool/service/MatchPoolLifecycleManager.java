@@ -1,6 +1,9 @@
 package com.poorbet.matchservice.match.matchpool.service;
 
+import com.poorbet.commons.rabbit.events.match.MatchEvents;
+import com.poorbet.commons.rabbit.events.match.MatchesFinishedEvent;
 import com.poorbet.commons.rabbit.events.match.dto.MatchResultEventDto;
+import com.poorbet.matchservice.infrastructure.outbox.OutboxService;
 import com.poorbet.matchservice.match.match.domain.Match;
 import com.poorbet.matchservice.match.match.domain.MatchStatus;
 import com.poorbet.matchservice.match.match.dto.MatchResultDto;
@@ -8,7 +11,7 @@ import com.poorbet.matchservice.match.match.repository.MatchRepository;
 import com.poorbet.matchservice.match.matchpool.domain.PoolStatus;
 import com.poorbet.matchservice.match.matchpool.repository.MatchPoolRepository;
 import jakarta.persistence.EntityNotFoundException;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -21,14 +24,14 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class MatchPoolLifecycleManager {
 
     private final MatchRepository matchRepository;
     private final MatchPoolRepository matchPoolRepository;
     private final LiveMatchSimulationManager liveMatchSimulationManager;
     private final RedisTemplate<String, String> redisTemplate;
-    private final MatchPoolEventPublisher matchPoolEventPublisher;
+    private final OutboxService outboxService;
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void handleMatchFinished(Match match) {
@@ -67,25 +70,17 @@ public class MatchPoolLifecycleManager {
 
         List<MatchResultDto> results = matchPoolRepository.getResults(poolId);
 
-        sendPoolFinishedEventsAsync(poolId, results);
+        List<MatchResultEventDto> eventResults = results.stream()
+                .map(this::toEventDto)
+                .toList();
+
+        log.info("Zapisuję event zakończenia puli {} do outbox ({} meczów)", poolId, eventResults.size());
+        outboxService.saveEvent(MatchEvents.MATCH_FINISHED, new MatchesFinishedEvent(eventResults));
+
+        liveMatchSimulationManager.notifyPoolFinished(poolId);
     }
 
-    private void sendPoolFinishedEventsAsync(UUID poolId, List<MatchResultDto> results) {
-        try {
-            List<MatchResultEventDto> eventResults = results.stream()
-                    .map(this::toEventDto)
-                    .toList();
-            log.info("eventResults - {}", eventResults);
-            matchPoolEventPublisher.publishMatchesFinished(eventResults);
-
-            liveMatchSimulationManager.notifyPoolFinished(poolId);
-
-        } catch (Exception e) {
-            log.error("Failed to notify about finished pool {}", poolId, e);
-        }
-    }
-
-    public MatchResultEventDto toEventDto(MatchResultDto dto) {
+    private MatchResultEventDto toEventDto(MatchResultDto dto) {
         return new MatchResultEventDto(
                 dto.getId(),
                 dto.getHomeGoals(),
