@@ -2,6 +2,9 @@ export const ButtonVariant = [
   'primary',
   'secondary',
   'outline',
+  'ghost',
+  'success',
+  'danger',
   'link',
 ] as const;
 export type ButtonVariant = (typeof ButtonVariant)[number];

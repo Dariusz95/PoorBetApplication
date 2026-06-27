@@ -12,12 +12,61 @@
     gap: var(--space-3);
   }
 
-  &__title {
+  &__header-left {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  &__status {
     margin: 0;
-    color: var(--color-text);
-    font-size: 1.25rem;
+    font-size: 1.125rem;
     font-weight: 700;
     line-height: 1.4;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+
+    &--won {
+      color: var(--color-success);
+    }
+
+    &--lost {
+      color: var(--color-danger);
+    }
+
+    &--open {
+      color: var(--color-text);
+    }
+  }
+
+  &__bet-counts {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  &__bet-count {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.125rem 0.375rem;
+    border-radius: var(--radius-sm);
+
+    .material-icons {
+      font-size: 0.9rem;
+    }
+
+    &--won {
+      color: var(--color-success);
+      background-color: color-mix(in srgb, var(--color-success) 15%, transparent);
+    }
+
+    &--lost {
+      color: var(--color-danger);
+      background-color: color-mix(in srgb, var(--color-danger) 15%, transparent);
+    }
   }
 
   &__body {

@@ -42,28 +42,125 @@
 
   &__bet-type {
     margin: 0;
-    color: var(--color-text-muted);
-    font-size: 0.75rem;
-    line-height: 1rem;
-  }
-
-  &__status {
-    display: inline-flex;
-    align-self: flex-start;
-    padding: 0.125rem 0.5rem;
-    border-radius: var(--radius-sm);
-    color: #fff;
-    background-color: var(--color-primary);
+    color: var(--color-primary);
     font-size: 0.75rem;
     font-weight: 600;
+    line-height: 1rem;
+
+    &--won {
+      color: var(--color-success);
+    }
+
+    &--lost {
+      color: var(--color-danger);
+    }
+  }
+
+  &__final-score {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--color-text);
+  }
+
+  &__final-label {
+    font-size: 0.7rem;
+    font-weight: 400;
+    color: var(--color-text-muted);
     text-transform: uppercase;
   }
 
-  &__odds {
+  &__live {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    align-self: flex-start;
+  }
+
+  &__live-dot {
+    position: relative;
+    display: flex;
+    width: 0.625rem;
+    height: 0.625rem;
     flex-shrink: 0;
+  }
+
+  &__live-dot-ping {
+    position: absolute;
+    display: inline-flex;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-color: var(--color-danger);
+    opacity: 0.8;
+    animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+
+  &__live-dot-core {
+    position: relative;
+    display: inline-flex;
+    width: 0.625rem;
+    height: 0.625rem;
+    border-radius: 50%;
+    background-color: var(--color-danger);
+  }
+
+  &__live-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--color-danger);
+    letter-spacing: 0.05em;
+  }
+
+  &__live-score {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--color-text);
+  }
+
+  &__live-minute {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+  }
+
+  &__right {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-shrink: 0;
+  }
+
+  &__odds {
     color: var(--color-success);
     font-size: 1rem;
     font-weight: 700;
+  }
+
+  &__status-icon {
+    font-size: 1.25rem;
+    line-height: 1;
+
+    &--won {
+      color: var(--color-success);
+    }
+
+    &--lost {
+      color: var(--color-danger);
+    }
+
+    &--pending {
+      color: var(--color-text-muted);
+    }
+  }
+}
+
+@keyframes ping {
+  75%, 100% {
+    transform: scale(2);
+    opacity: 0;
   }
 }
 
@@ -72,7 +169,7 @@
     align-items: flex-start;
     flex-direction: column;
 
-    &__odds {
+    &__right {
       align-self: flex-end;
     }
   }

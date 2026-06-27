@@ -30,9 +30,10 @@ public interface MatchPoolRepository extends JpaRepository<MatchPool, UUID> {
     @Query("""
                 select mp from MatchPool mp
                 where mp.status = com.poorbet.matchservice.match.matchpool.domain.PoolStatus.BETTABLE
+                and mp.scheduledStartTime > :now
                 order by mp.scheduledStartTime asc
             """)
-    List<MatchPool> getFutureMatchPools(Pageable pageable);
+    List<MatchPool> getFutureMatchPools(@Param("now") OffsetDateTime now, Pageable pageable);
 
     @Transactional
     @Modifying(clearAutomatically = true, flushAutomatically = true)

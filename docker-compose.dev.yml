@@ -32,13 +32,6 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=dev
       - JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=75.0
-    healthcheck:
-      test:
-        ["CMD", "curl", "-f", "http://localhost:8080/actuator/health/readiness"]
-      interval: 10s
-      timeout: 3s
-      retries: 10
-      start_period: 20s
 
   frontend:
     build:
@@ -54,7 +47,7 @@ services:
     restart: unless-stopped
 
   gateway:
-    <<: [*resource-light]
+    <<: [*resource-medium]
     build:
       context: ./gateway
       dockerfile: Dockerfile.dev

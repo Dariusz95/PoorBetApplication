@@ -66,6 +66,17 @@ oauth:
       audiences:
         - match-service
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: always
+
 poorbet:
   security:
     enabled: true
@@ -76,6 +87,7 @@ poorbet:
       - /api/users/register
       - /oauth/token
       - /.well-known/jwks.json
+      - /actuator/health/**
 
 messaging:
   source-service: auth-service

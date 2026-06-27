@@ -23,11 +23,11 @@
         <app-coupon-dropdown class="hidden md:inline-block" />
         <app-language-switcher />
         <button
-          class="app-header__user"
+          class="app-header__user pb-overlay-trigger"
           (click)="openUserPanel()"
           [attr.aria-label]="t('userPanel.open')"
         >
-          <span class="material-icons">account_circle</span>
+           <pb-icon icon="account_circle" size="m"></pb-icon>
         </button>
       </div>
     </div>

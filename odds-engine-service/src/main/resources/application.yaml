@@ -30,8 +30,6 @@ poorbet:
     jwk-set-uri: ${AUTH_JWKS_URI}
     internal-audience:
       - odds-engine-service
-    unprotected-paths:
-      - /actuator/**
 
 training:
   count-per-tier: 7
