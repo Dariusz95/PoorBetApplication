@@ -30,25 +30,21 @@
               [value]="match.odds.homeWin"
               [selected]="isSelected(match.matchId, BetType.HomeWin)"
               [disabled]="hasStarted()"
-              (oddsClick)="
-                toggleBet(match, BetType.HomeWin, '1', match.odds.homeWin)
-              "
+              (oddsClick)="toggleBet(match, BetType.HomeWin, match.odds.homeWin)"
             ></app-odds-button>
             <app-odds-button
               label="X"
               [value]="match.odds.draw"
               [selected]="isSelected(match.matchId, BetType.Draw)"
               [disabled]="hasStarted()"
-              (oddsClick)="toggleBet(match, BetType.Draw, 'X', match.odds.draw)"
+              (oddsClick)="toggleBet(match, BetType.Draw, match.odds.draw)"
             ></app-odds-button>
             <app-odds-button
               label="2"
               [value]="match.odds.awayWin"
               [selected]="isSelected(match.matchId, BetType.AwayWin)"
               [disabled]="hasStarted()"
-              (oddsClick)="
-                toggleBet(match, BetType.AwayWin, '2', match.odds.awayWin)
-              "
+              (oddsClick)="toggleBet(match, BetType.AwayWin, match.odds.awayWin)"
             ></app-odds-button>
           </div>
         </section>

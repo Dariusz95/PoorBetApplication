@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, Input } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { LiveMatchService } from '@features/bet/services/live-match.service';
-import { Bet } from '@features/coupons/models/bet';
+import { Bet } from '@features/coupons/types/bet';
 import { CouponBetItemComponent } from './coupon-bet-item.component';
 import { LiveMatchEvent } from '@features/bet/types/match.types';
 

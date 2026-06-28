@@ -1,14 +1,7 @@
 import { computed, Injectable, signal } from '@angular/core';
 import { BetType } from '@shared/types/bet-type';
 import { Uuid } from '@shared/types/uuid.type';
-
-export interface SelectedBet {
-  matchId: Uuid;
-  matchLabel: string;
-  betType: BetType;
-  optionLabel: string;
-  odds: number;
-}
+import { SelectedBet } from '../types/bet-slip.types';
 
 @Injectable({
   providedIn: 'root',

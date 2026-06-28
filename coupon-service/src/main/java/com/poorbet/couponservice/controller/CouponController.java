@@ -1,14 +1,15 @@
 package com.poorbet.couponservice.controller;
 
+import com.poorbet.commons.commons.pagination.PageResponse;
 import com.poorbet.couponservice.domain.CouponStatus;
 import com.poorbet.couponservice.dto.CouponDetailDto;
 import com.poorbet.couponservice.dto.CouponDto;
 import com.poorbet.couponservice.dto.CreateCouponDto;
+import com.poorbet.couponservice.filter.CouponFilter;
 import com.poorbet.couponservice.security.CurrentUserProvider;
 import com.poorbet.couponservice.service.CouponService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,19 +35,19 @@ public class CouponController {
         return new ResponseEntity<>(coupon, HttpStatus.CREATED);
     }
 
-    @GetMapping("/me/open")
-    public Page<CouponDto> getMyOpenCoupons(Pageable pageable) {
-        return couponService.getMyCouponsByStatus(currentUserProvider.getUserId(), CouponStatus.OPEN, pageable);
-    }
+    @GetMapping("/me")
+    public PageResponse<CouponDto> getMyCoupons(
+            @RequestParam(required = false) List<CouponStatus> statuses,
+            Pageable pageable
+    ) {
+        CouponFilter filter = new CouponFilter();
+        filter.setStatuses(statuses);
 
-    @GetMapping("/me/won")
-    public Page<CouponDto> getMyWonCoupons(Pageable pageable) {
-        return couponService.getMyCouponsByStatus(currentUserProvider.getUserId(), CouponStatus.WON, pageable);
-    }
-
-    @GetMapping("/me/settled")
-    public Page<CouponDto> getMySettledCoupons(Pageable pageable) {
-        return couponService.getMyCouponsByStatuses(currentUserProvider.getUserId(), List.of(CouponStatus.WON, CouponStatus.LOST), pageable);
+        return couponService.getMyCoupons(
+                currentUserProvider.getUserId(),
+                filter,
+                pageable
+        );
     }
 
     @GetMapping("/{couponId}")

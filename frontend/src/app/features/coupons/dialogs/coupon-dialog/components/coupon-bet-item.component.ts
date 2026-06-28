@@ -1,7 +1,7 @@
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { Component, computed, input } from '@angular/core';
 import { LiveMatchEvent, MatchEventType } from '@features/bet/types/match.types';
-import { Bet } from '@features/coupons/models/bet';
+import { Bet } from '@features/coupons/types/bet';
 import { BetStatus } from '@features/coupons/enums/bet-status';
 import { TranslocoPipe } from '@jsverse/transloco';
 

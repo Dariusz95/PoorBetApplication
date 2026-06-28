@@ -4,7 +4,7 @@ import { Component, computed, inject } from '@angular/core';
 import { BetStatus } from '@features/coupons/enums/bet-status';
 import { CouponStatus } from '@features/coupons/enums/coupon-status';
 import { CouponSummaryComponent } from '@features/coupons/components/coupon-summary/coupon-summary.component';
-import { CouponDetails } from '@features/coupons/models/coupon-details';
+import { CouponDetails } from '@features/coupons/types/coupon-details';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { PbIconComponent } from '@shared/ui/icon/pb-icon.component';
 import { PbButtonComponent } from '../../../../shared/ui/pb-button/pb-button.component';

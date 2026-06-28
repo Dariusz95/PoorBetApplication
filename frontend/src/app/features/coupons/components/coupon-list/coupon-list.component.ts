@@ -11,13 +11,15 @@ import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { RoutePath } from '@core/routing/route-path';
 import { RoutingService } from '@core/routing/routing.service';
 import { TranslocoDirective } from '@jsverse/transloco';
+import { PageRequest } from '@shared/interfaces/page-request';
 import { PageResponse } from '@shared/interfaces/page-response';
 import { DialogService } from '@shared/services/dialog.service';
 import { PbIconComponent } from '@shared/ui/icon/pb-icon.component';
-import { switchMap } from 'rxjs';
+import { combineLatest, switchMap } from 'rxjs';
 import { CouponStatus } from '../../enums/coupon-status';
-import { Coupon } from '../../models/coupon';
 import { CouponService } from '../../services/coupon.service';
+import { Coupon } from '../../types/coupon';
+import { CouponFilter } from '../../types/coupon-filter';
 import { CouponSummaryComponent } from '../coupon-summary/coupon-summary.component';
 
 type CouponTab = 'open' | 'won' | 'settled';
@@ -49,9 +51,26 @@ export class CouponListComponent {
   readonly seeAll = output<void>();
 
   readonly activeTab = signal<CouponTab>('open');
+//   TODO cos bardziej generycznego, moze serwis
+  readonly pageRequest = signal<PageRequest>({
+    page: 0,
+    size: 20,
+    sort: 'createdAt',
+    direction: 'desc',
+  });
 
   readonly couponPage = toSignal<PageResponse<Coupon> | null>(
-    toObservable(this.activeTab).pipe(switchMap((tab) => this.loadForTab(tab))),
+    combineLatest([
+      toObservable(this.activeTab),
+      toObservable(this.pageRequest),
+    ]).pipe(
+      switchMap(([tab]) =>
+        this.couponService.getMyCoupons(
+          this.pageRequest(),
+          this.tabToFilter(tab),
+        ),
+      ),
+    ),
     { initialValue: null },
   );
 
@@ -103,14 +122,14 @@ export class CouponListComponent {
     }
   }
 
-  private loadForTab(tab: CouponTab) {
+  private tabToFilter(tab: CouponTab): CouponFilter {
     switch (tab) {
       case 'open':
-        return this.couponService.getOpen();
+        return { statuses: [CouponStatus.Open] };
       case 'won':
-        return this.couponService.getWon();
+        return { statuses: [CouponStatus.Won] };
       case 'settled':
-        return this.couponService.getSettled();
+        return { statuses: [CouponStatus.Lost, CouponStatus.Won] };
     }
   }
 }

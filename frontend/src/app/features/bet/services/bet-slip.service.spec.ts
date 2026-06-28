@@ -1,8 +1,10 @@
 import { TestBed } from '@angular/core/testing';
+import { BetOption } from '@shared/types/bet-option';
 import { BetType } from '@shared/types/bet-type';
 import { Uuid } from '@shared/types/uuid.type';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { BetSlipService, SelectedBet } from './bet-slip.service';
+import { BetSlipService } from './bet-slip.service';
+import { SelectedBet } from '../types/bet-slip.types';
 
 describe('BetSlipService', () => {
   let service: BetSlipService;
@@ -17,7 +19,7 @@ describe('BetSlipService', () => {
       matchId: '550e8400-e29b-41d4-a716-446655440000' as Uuid,
       matchLabel: 'A vs B',
       betType: BetType.HomeWin,
-      optionLabel: '1',
+      optionLabel: BetOption.HomeWin,
       odds: 1.8,
     };
 
@@ -35,7 +37,7 @@ describe('BetSlipService', () => {
       matchId: '550e8400-e29b-41d4-a716-446655440000' as Uuid,
       matchLabel: 'A vs B',
       betType: BetType.HomeWin,
-      optionLabel: '1',
+      optionLabel: BetOption.HomeWin,
       odds: 1.8,
     });
 
@@ -43,7 +45,7 @@ describe('BetSlipService', () => {
       matchId: '550e8400-e29b-41d4-a716-446655440000' as Uuid,
       matchLabel: 'A vs B',
       betType: BetType.Draw,
-      optionLabel: 'X',
+      optionLabel: BetOption.Draw,
       odds: 3.25,
     });
 
@@ -52,7 +54,7 @@ describe('BetSlipService', () => {
         matchId: '550e8400-e29b-41d4-a716-446655440000' as Uuid,
         matchLabel: 'A vs B',
         betType: BetType.Draw,
-        optionLabel: 'X',
+        optionLabel: BetOption.Draw,
         odds: 3.25,
       },
     ]);

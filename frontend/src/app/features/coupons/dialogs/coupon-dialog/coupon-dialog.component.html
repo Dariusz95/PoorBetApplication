@@ -5,7 +5,7 @@
         class="coupon-dialog__status"
         [class.coupon-dialog__status--won]="data.status === CouponStatus.Won"
         [class.coupon-dialog__status--lost]="data.status === CouponStatus.Lost"
-        [class.coupon-dialog__status--open]="data.status === CouponStatus.Open || data.status === CouponStatus.Pending"
+        [class.coupon-dialog__status--open]="data.status === CouponStatus.Open"
       >{{ data.status | transloco }}</h2>
       @if (wonCount() > 0 || lostCount() > 0) {
         <div class="coupon-dialog__bet-counts">

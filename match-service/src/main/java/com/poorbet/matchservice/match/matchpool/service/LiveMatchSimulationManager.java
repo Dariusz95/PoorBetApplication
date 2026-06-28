@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class LiveMatchSimulationManager {
 
     private final Map<UUID, LiveMatchSimulation> simulations = new ConcurrentHashMap<>();
-    private final Sinks.Many<LiveMatchEventDto> sink = Sinks.many().replay().limit(10);
+    private final Sinks.Many<LiveMatchEventDto> sink = Sinks.many().replay().limit(50);
 
     public LiveMatchSimulation startIfNotRunning(UUID matchId) {
         return simulations.computeIfAbsent(
@@ -32,6 +32,6 @@ public class LiveMatchSimulationManager {
     public void notifyPoolFinished(UUID poolId) {
         LiveMatchEventDto poolFinishedEvent = LiveMatchEventDto.poolFinished(poolId);
 
-        sink.tryEmitNext(poolFinishedEvent);
+        sink.emitNext(poolFinishedEvent, (signalType, emitResult) -> emitResult == Sinks.EmitResult.FAIL_NON_SERIALIZED);
     }
 }
