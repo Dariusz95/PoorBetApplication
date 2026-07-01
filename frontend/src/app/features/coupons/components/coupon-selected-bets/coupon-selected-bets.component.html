@@ -19,10 +19,11 @@
         <pb-button
           size="sm"
           type="icon"
+          variant="ghost"
           [ariaLabel]="'bet.coupon.removeAria' | transloco"
           (buttonClick)="betSlipService.removeSelection(bet.matchId)"
         >
-          <pb-icon color="warning" icon="close" size="s" />
+          <pb-icon icon="close" size="s" />
         </pb-button>
       </li>
     }

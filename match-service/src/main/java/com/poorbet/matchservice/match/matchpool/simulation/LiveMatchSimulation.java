@@ -18,6 +18,6 @@ public class LiveMatchSimulation {
     }
 
     public void publish(LiveMatchEventDto event) {
-        sink.tryEmitNext(event);
+        sink.emitNext(event, (signalType, emitResult) -> emitResult == Sinks.EmitResult.FAIL_NON_SERIALIZED);
     }
 }

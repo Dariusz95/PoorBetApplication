@@ -5,6 +5,7 @@ import {
   inject,
   input,
   OnInit,
+  signal,
 } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { PbCardHeaderDirective } from '@shared/ui/pb-card/directives/pb-card-header.directive';
@@ -34,6 +35,9 @@ export class LiveMatchComponent implements OnInit {
 
   homeTeam$!: Observable<ShortTeamInfo>;
   awayTeam$!: Observable<ShortTeamInfo>;
+
+  homeImgError = signal(false);
+  awayImgError = signal(false);
 
   MatchEventType = MatchEventType;
 

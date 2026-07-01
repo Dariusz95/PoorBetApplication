@@ -27,7 +27,7 @@ public class InternalWalletController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void reserve(
             @PathVariable UUID userId,
-            @RequestBody ReserveRequest request
+            @RequestBody @Valid ReserveRequest request
     ) {
         walletService.reserve(userId, request.amount(), request.reservationId());
     }

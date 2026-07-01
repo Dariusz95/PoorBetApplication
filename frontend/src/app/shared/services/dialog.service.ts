@@ -1,6 +1,6 @@
 import { Dialog } from '@angular/cdk/dialog';
 import { Injectable, inject } from '@angular/core';
-import { CouponDetails } from '@features/coupons/models/coupon-details';
+import { CouponDetails } from '@features/coupons/types/coupon-details';
 import { PbCouponDialogComponent } from '../../features/coupons/dialogs/coupon-dialog/coupon-dialog.component';
 
 @Injectable({

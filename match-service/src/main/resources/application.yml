@@ -14,6 +14,17 @@ spring:
     cache:
       type: redis
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: always
+
 poorbet:
   security:
     enabled: true
@@ -25,6 +36,7 @@ poorbet:
       - /api/match-pool/live
       - /api/match-pool/future
       - /images/**
+      - /actuator/health/**
 
 odds:
   service:
@@ -44,6 +56,15 @@ auth:
 
 messaging:
   source-service: match-service
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      oddsEngine:
+        sliding-window-size: 10
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 30s
+        permitted-number-of-calls-in-half-open-state: 3
 
 app:
   images:

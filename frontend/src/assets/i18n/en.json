@@ -72,7 +72,9 @@
       "stake": "Stake",
       "potentialWin": "Potential Win",
       "bets": "Bets",
-      "close": "Close"
+      "close": "Close",
+      "live": "LIVE",
+      "finalScore": "Final score"
     },
     "poolCard": {
       "eyebrow": "Pool"
@@ -97,6 +99,10 @@
     "title": "My coupons",
     "empty": "No coupons yet."
   },
+  "OPEN": "In progress",
+  "PENDING": "Pending",
+  "WON": "Won",
+  "LOST": "Lost",
   "couponList": {
     "title": "My coupons",
     "seeAll": "See all",

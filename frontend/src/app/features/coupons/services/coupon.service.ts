@@ -1,11 +1,14 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
+import { PageRequest } from '@shared/interfaces/page-request';
 import { PageResponse } from '@shared/interfaces/page-response';
+import { buildParams } from '@shared/utils/http-params.builder';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { Coupon } from '../models/coupon';
-import { CouponDetails } from '../models/coupon-details';
-import { CreateCouponRequest } from '../models/create-coupon-request';
+import { CouponFilter } from '../types/coupon-filter';
+import { Coupon } from '../types/coupon';
+import { CouponDetails } from '../types/coupon-details';
+import { CreateCouponRequest } from '../types/create-coupon-request';
 
 @Injectable({
   providedIn: 'root',
@@ -18,19 +21,10 @@ export class CouponService {
     return this.http.post<CouponDetails>(this.baseUrl, request);
   }
 
-  getOpen(page = 0, size = 20): Observable<PageResponse<Coupon>> {
-    const params = new HttpParams().set('page', page).set('size', size);
-    return this.http.get<PageResponse<Coupon>>(`${this.baseUrl}/me/open`, { params });
-  }
-
-  getWon(page = 0, size = 20): Observable<PageResponse<Coupon>> {
-    const params = new HttpParams().set('page', page).set('size', size);
-    return this.http.get<PageResponse<Coupon>>(`${this.baseUrl}/me/won`, { params });
-  }
-
-  getSettled(page = 0, size = 20): Observable<PageResponse<Coupon>> {
-    const params = new HttpParams().set('page', page).set('size', size);
-    return this.http.get<PageResponse<Coupon>>(`${this.baseUrl}/me/settled`, { params });
+  getMyCoupons(request: PageRequest, filter: CouponFilter): Observable<PageResponse<Coupon>> {
+    return this.http.get<PageResponse<Coupon>>(`${this.baseUrl}/me`, {
+      params: buildParams(request, filter as Record<string, unknown>),
+    });
   }
 
   getCouponDetails(couponId: string): Observable<CouponDetails> {

@@ -20,10 +20,12 @@ import com.poorbet.matchservice.match.matchpool.simulation.LiveMatchSimulation;
 import com.poorbet.matchservice.team.service.TeamService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MatchPoolSimulationServiceImpl implements MatchPoolSimulationService {
@@ -57,7 +59,10 @@ public class MatchPoolSimulationServiceImpl implements MatchPoolSimulationServic
 
                     return startMatchSimulation(match.getId(), home, away);
                 })
-                .subscribe();
+                .subscribe(
+                        null,
+                        error -> log.error("Pool simulation failed for poolId={}: {}", poolId, error.getMessage(), error)
+                );
 
     }
 

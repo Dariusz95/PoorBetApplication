@@ -11,6 +11,7 @@ import { UserDropdownComponent } from '../user-dropdown/user-dropdown.component'
 import { UserSidePanelComponent } from '../user-side-panel/user-side-panel.component';
 import { MENU_ITEMS } from './models/menu-items';
 import { CouponDropdownComponent } from '../coupon-dropdown/coupon-dropdown.component';
+import { PbIconComponent } from '@shared/ui/icon/pb-icon.component';
 
 @Component({
   selector: 'app-header',
@@ -20,6 +21,7 @@ import { CouponDropdownComponent } from '../coupon-dropdown/coupon-dropdown.comp
     LanguageSwitcherComponent,
     TranslocoDirective,
     UserDropdownComponent,
+    PbIconComponent,
     CouponDropdownComponent,
   ],
   templateUrl: './header.component.html',

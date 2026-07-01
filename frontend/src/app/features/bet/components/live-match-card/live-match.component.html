@@ -18,11 +18,13 @@
       <div class="live-match-card__team">
         @if (homeTeam$ | async; as home) {
           <div class="live-match-card__logo-wrapper">
+            <!-- @if (home.img && !homeImgError()) { -->
             @if (home.img) {
               <img
                 class="live-match-card__logo"
                 [src]="home.img"
                 [alt]="home.name"
+                (error)="homeImgError.set(true)"
               />
             } @else {
               <span class="live-match-card__logo-fallback">{{
@@ -49,11 +51,12 @@
       <div class="live-match-card__team">
         @if (awayTeam$ | async; as away) {
           <div class="live-match-card__logo-wrapper">
-            @if (away.img) {
+            @if (away.img && !awayImgError()) {
               <img
                 class="live-match-card__logo"
                 [src]="away.img"
                 [alt]="away.name"
+                (error)="awayImgError.set(true)"
               />
             } @else {
               <span class="live-match-card__logo-fallback">{{

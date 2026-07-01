@@ -19,7 +19,7 @@ import { PbButtonComponent } from '../../../../shared/ui/pb-button/pb-button.com
 import { PbFormFieldComponent } from '../../../../shared/ui/pb-form-field/pb-form-field.component';
 import { PbInputComponent } from '../../../../shared/ui/pb-input/pb-input.component';
 import { BetSlipService } from '../../../bet/services/bet-slip.service';
-import { CreateCouponRequest } from '../../models/create-coupon-request';
+import { CreateCouponRequest } from '../../types/create-coupon-request';
 import { CouponSelectedBetsComponent } from '../coupon-selected-bets/coupon-selected-bets.component';
 import { CouponSummaryComponent } from '../coupon-summary/coupon-summary.component';
 

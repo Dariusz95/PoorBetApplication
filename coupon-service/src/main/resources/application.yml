@@ -19,11 +19,24 @@ spring:
     username: ${RABBITMQ_USER}
     password: ${RABBITMQ_PASSWORD}
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: always
+
 poorbet:
   security:
     enabled: true
     issuer: ${AUTH_ISSUER_URI}
     jwk-set-uri: ${AUTH_JWKS_URI}
+    unprotected-paths:
+      - /actuator/health/**
 
 auth:
   service:

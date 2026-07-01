@@ -1,8 +1,10 @@
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
+import { BetStatus } from '@features/coupons/enums/bet-status';
+import { CouponStatus } from '@features/coupons/enums/coupon-status';
 import { CouponSummaryComponent } from '@features/coupons/components/coupon-summary/coupon-summary.component';
-import { CouponDetails } from '@features/coupons/models/coupon-details';
+import { CouponDetails } from '@features/coupons/types/coupon-details';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { PbIconComponent } from '@shared/ui/icon/pb-icon.component';
 import { PbButtonComponent } from '../../../../shared/ui/pb-button/pb-button.component';
@@ -31,6 +33,11 @@ import { CouponBetsListComponent } from './components/coupon-bets-list.component
 export class PbCouponDialogComponent {
   private readonly dialogRef = inject(DialogRef<void>);
   readonly data = inject<CouponDetails>(DIALOG_DATA);
+
+  readonly wonCount = computed(() => this.data.bets.filter((b) => b.status === BetStatus.Won).length);
+  readonly lostCount = computed(() => this.data.bets.filter((b) => b.status === BetStatus.Lost).length);
+
+  readonly CouponStatus = CouponStatus;
 
   closeCoupon(): void {
     this.dialogRef.close();

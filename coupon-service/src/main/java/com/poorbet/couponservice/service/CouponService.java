@@ -8,6 +8,8 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.poorbet.commons.commons.pagination.PageResponse;
+import com.poorbet.couponservice.filter.CouponFilter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -112,14 +114,24 @@ public class CouponService {
                 .build();
     }
 
-    public Page<CouponDto> getMyCouponsByStatus(UUID userId, CouponStatus status, Pageable pageable) {
-        return couponRepository.findByUserIdAndStatus(userId, status, pageable)
-                .map(couponMapper::toDto);
-    }
 
-    public Page<CouponDto> getMyCouponsByStatuses(UUID userId, List<CouponStatus> status, Pageable pageable) {
-        return couponRepository.findByUserIdAndStatusIn(userId, status, pageable)
+    public PageResponse<CouponDto> getMyCoupons(
+            UUID userId,
+            CouponFilter filter,
+            Pageable pageable
+    ) {
+        Page<CouponDto> page = couponRepository
+                .findByUserIdAndStatusIn(userId, filter.getStatuses(), pageable)
                 .map(couponMapper::toDto);
+
+        return new PageResponse<>(
+                page.getContent(),
+                page.getNumber(),
+                page.getSize(),
+                page.getTotalElements(),
+                page.getTotalPages(),
+                page.isLast()
+        );
     }
 
     public CouponDetailDto getCouponDetails(UUID couponId) {

@@ -1,6 +1,29 @@
 <pb-card variant="highlighted" class="coupon-dialog">
   <div pbCardHeader class="coupon-dialog__header">
-    <h2 class="coupon-dialog__title">{{ "coupon.title" | transloco }}</h2>
+    <div class="coupon-dialog__header-left">
+      <h2
+        class="coupon-dialog__status"
+        [class.coupon-dialog__status--won]="data.status === CouponStatus.Won"
+        [class.coupon-dialog__status--lost]="data.status === CouponStatus.Lost"
+        [class.coupon-dialog__status--open]="data.status === CouponStatus.Open"
+      >{{ data.status | transloco }}</h2>
+      @if (wonCount() > 0 || lostCount() > 0) {
+        <div class="coupon-dialog__bet-counts">
+          @if (wonCount() > 0) {
+            <span class="coupon-dialog__bet-count coupon-dialog__bet-count--won">
+              <span class="material-icons" aria-hidden="true">check_circle</span>
+              {{ wonCount() }}
+            </span>
+          }
+          @if (lostCount() > 0) {
+            <span class="coupon-dialog__bet-count coupon-dialog__bet-count--lost">
+              <span class="material-icons" aria-hidden="true">cancel</span>
+              {{ lostCount() }}
+            </span>
+          }
+        </div>
+      }
+    </div>
 
     <pb-button
       size="sm"

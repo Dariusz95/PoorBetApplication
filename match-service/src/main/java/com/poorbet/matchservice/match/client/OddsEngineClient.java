@@ -4,6 +4,7 @@ import com.poorbet.matchservice.match.match.dto.request.PredictionBatchRequestDt
 import com.poorbet.matchservice.match.match.dto.request.SimulationRequest;
 import com.poorbet.matchservice.match.match.dto.response.BatchPredictionResponse;
 import com.poorbet.matchservice.match.match.dto.response.LiveMatchEvent;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.retry.annotation.Backoff;
@@ -29,6 +30,7 @@ public class OddsEngineClient {
         this.oddsEngineRestClient = restClient;
     }
 
+    @CircuitBreaker(name = "oddsEngine", fallbackMethod = "getBatchPredictionFallback")
     @Retryable(value = IllegalStateException.class, maxAttempts = 3, backoff = @Backoff(delay = 3000))
     public BatchPredictionResponse getBatchPrediction(PredictionBatchRequestDto data) {
 
@@ -52,6 +54,11 @@ public class OddsEngineClient {
 
             throw ex;
         }
+    }
+
+    public BatchPredictionResponse getBatchPredictionFallback(PredictionBatchRequestDto data, Exception ex) {
+        log.error("Circuit breaker aktywny — odds-engine-service niedostępny: {}", ex.getMessage());
+        return new BatchPredictionResponse(List.of());
     }
 
     public Flux<LiveMatchEvent> simulateMatch(SimulationRequest request) {

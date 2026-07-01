@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.Duration;
 import reactor.core.publisher.Flux;
 
 import java.util.List;
@@ -27,7 +29,7 @@ public class MatchPoolController {
     )
     public Flux<LiveMatchEventDto> streamAll() {
         return Flux.merge(
-                Flux.just(LiveMatchEventDto.heartbeat()),
+                Flux.interval(Duration.ofSeconds(15)).map(i -> LiveMatchEventDto.heartbeat()),
                 manager.streamAll()
         ).doOnSubscribe(sub ->
                 log.info("New client subscribed to live match stream")

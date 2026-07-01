@@ -72,7 +72,9 @@
       "stake": "Stawka",
       "potentialWin": "Potencjalna wygrana",
       "bets": "Zdarzenia",
-      "close": "Zamknij"
+      "close": "Zamknij",
+      "live": "LIVE",
+      "finalScore": "Wynik końcowy"
     },
     "poolCard": {
       "eyebrow": "Pula"
@@ -97,6 +99,10 @@
     "title": "Moje kupony",
     "empty": "Brak kuponów do wyświetlenia."
   },
+  "OPEN": "W toku",
+  "PENDING": "Oczekuje",
+  "WON": "Wygrany",
+  "LOST": "Przegrany",
   "couponList": {
     "title": "Moje kupony",
     "seeAll": "Zobacz wszystkie",

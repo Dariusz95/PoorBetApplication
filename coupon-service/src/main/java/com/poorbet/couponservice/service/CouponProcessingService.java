@@ -6,6 +6,7 @@ import com.poorbet.commons.rabbit.events.coupon.CouponWonEvent;
 import com.poorbet.commons.rabbit.events.match.MatchesFinishedEvent;
 import com.poorbet.commons.rabbit.events.match.dto.MatchResultEventDto;
 import com.poorbet.couponservice.domain.Bet;
+import com.poorbet.couponservice.domain.BetStatus;
 import com.poorbet.couponservice.domain.Coupon;
 import com.poorbet.couponservice.domain.CouponStatus;
 import com.poorbet.couponservice.repository.BetRepository;
@@ -40,15 +41,23 @@ public class CouponProcessingService {
 
         List<Bet> bets = betRepository.findAllByMatchIdIn(matchResults.keySet());
 
-        bets.forEach(bet -> {
+        List<Bet> pendingBets = bets.stream()
+                .filter(bet -> bet.getStatus() == BetStatus.PENDING)
+                .toList();
+
+        pendingBets.forEach(bet -> {
             MatchResultEventDto result = matchResults.get(bet.getMatchId());
             bet.settle(result);
         });
 
-        Set<UUID> couponIds = bets.stream()
+        Set<UUID> couponIds = pendingBets.stream()
                 .map(Bet::getCoupon)
                 .map(Coupon::getId)
                 .collect(Collectors.toSet());
+
+        if (couponIds.isEmpty()) {
+            return;
+        }
 
         List<Coupon> coupons = couponRepository.findAllWithBetsByIds(couponIds);
 

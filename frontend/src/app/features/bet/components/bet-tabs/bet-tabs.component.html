@@ -1,0 +1,39 @@
+<ng-container *transloco="let t; prefix: 'bet.page'">
+  <div class="bet-page-main">
+    @if (tabs$ | async; as tabs) {
+      <pb-tab-container
+        [tabButtonContent]="tabButtonContent"
+        [tabs]="tabs"
+        [defaultTab]="'live'"
+      >
+        <ng-template
+          #tabButtonContent
+          let-tab
+          [appTabTemplate]="tabTemplateType"
+        >
+          @if (tab.value === LIVE_TAB_NAME) {
+            <span class="live-badge">🔴 {{ t("live") }}</span>
+          } @else {
+            <app-tab-button-time [tabConfig]="tab"></app-tab-button-time>
+          }
+        </ng-template>
+
+        <pb-tab-content [value]="LIVE_TAB_NAME">
+          <app-live-matches></app-live-matches>
+        </pb-tab-content>
+
+        @if (futureGrouped$ | async; as grouped) {
+          @for (entry of grouped | keyvalue; track entry.key) {
+            <pb-tab-content [value]="entry.key">
+              <div class="matches-section">
+                <div class="matches-grid">
+                  <app-pool-card [pool]="entry.value"></app-pool-card>
+                </div>
+              </div>
+            </pb-tab-content>
+          }
+        }
+      </pb-tab-container>
+    }
+  </div>
+</ng-container>

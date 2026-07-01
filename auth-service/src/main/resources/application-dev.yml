@@ -76,6 +76,7 @@ poorbet:
       - /api/users/register
       - /oauth/token
       - /.well-known/jwks.json
+      - /actuator/health/**
 
 messaging:
   source-service: auth-service

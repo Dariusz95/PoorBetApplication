@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.OffsetDateTime;
 import java.util.*;
 
 @Slf4j
@@ -44,7 +45,7 @@ public class MatchPoolServiceImpl implements MatchPoolService {
     @Transactional(readOnly = true)
     public List<MatchPoolDto> getFutureMatchPools() {
         Pageable pageable = PageRequest.of(0, 3);
-        List<MatchPool> matchPools = matchPoolRepository.getFutureMatchPools(pageable);
+        List<MatchPool> matchPools = matchPoolRepository.getFutureMatchPools(OffsetDateTime.now(), pageable);
 
         return matchPoolMapper.toDto(matchPools);
     }

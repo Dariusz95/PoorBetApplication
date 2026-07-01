@@ -2,20 +2,23 @@ package com.poorbet.walletservice.service;
 
 import com.poorbet.commons.rabbit.EventEnvelope;
 import com.poorbet.commons.rabbit.events.auth.UserCreatedEvent;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 @Service
 @Slf4j
+@Validated
 @RequiredArgsConstructor
 public class UserCreatedListener {
 
     private final WalletService walletService;
 
     @RabbitListener(queues = "${messaging.consumers.USER_CREATED.queue}")
-    public void handleUserCreated(EventEnvelope<UserCreatedEvent> event) {
+    public void handleUserCreated(@Valid EventEnvelope<UserCreatedEvent> event) {
         log.info("📨 [WALLET] Received eventType={} version={} source={}",
                 event.eventType(),
                 event.version(),
