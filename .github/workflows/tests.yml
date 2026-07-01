@@ -5,6 +5,10 @@ on:
     branches:
       - main
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
   packages: read
@@ -12,15 +16,19 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     env:
       GITHUB_ACTOR: ${{ github.actor }}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     strategy:
+      fail-fast: false
       matrix:
         service: [
           coupon-service,
           match-service,
           odds-engine-service,
+          wallet-service,
+          notification-service,
         ]
 
     steps:
@@ -39,4 +47,4 @@ jobs:
 
       - name: Run tests for ${{ matrix.service }}
         working-directory: ${{ matrix.service }}
-        run: mvn clean test
+        run: mvn --batch-mode --no-transfer-progress clean test
