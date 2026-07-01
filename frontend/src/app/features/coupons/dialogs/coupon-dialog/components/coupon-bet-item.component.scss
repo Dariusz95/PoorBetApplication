@@ -56,17 +56,31 @@
     }
   }
 
+  &__odds {
+    color: var(--color-success);
+    font-size: 0.875rem;
+    font-weight: 700;
+  }
+
+  &__right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: var(--space-2);
+    flex-shrink: 0;
+  }
+
   &__final-score {
     display: inline-flex;
     align-items: center;
-    gap: var(--space-2);
+    gap: var(--space-1);
     font-size: 0.875rem;
     font-weight: 700;
     color: var(--color-text);
   }
 
   &__final-label {
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     font-weight: 400;
     color: var(--color-text-muted);
     text-transform: uppercase;
@@ -76,7 +90,6 @@
     display: inline-flex;
     align-items: center;
     gap: var(--space-2);
-    align-self: flex-start;
   }
 
   &__live-dot {
@@ -107,14 +120,6 @@
     background-color: var(--color-danger);
   }
 
-  &__live-label {
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    color: var(--color-danger);
-    letter-spacing: 0.05em;
-  }
-
   &__live-score {
     font-size: 0.875rem;
     font-weight: 700;
@@ -124,19 +129,6 @@
   &__live-minute {
     font-size: 0.75rem;
     color: var(--color-text-muted);
-  }
-
-  &__right {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    flex-shrink: 0;
-  }
-
-  &__odds {
-    color: var(--color-success);
-    font-size: 1rem;
-    font-weight: 700;
   }
 
   &__status-icon {
@@ -171,6 +163,7 @@
 
     &__right {
       align-self: flex-end;
+      flex-direction: row;
     }
   }
 }

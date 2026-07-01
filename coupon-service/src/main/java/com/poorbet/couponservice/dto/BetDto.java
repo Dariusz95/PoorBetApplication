@@ -15,7 +15,9 @@ public record BetDto(
         OffsetDateTime matchStartTime,
         BetStatus status,
         BetType betType,
-        BigDecimal odds
+        BigDecimal odds,
+        Integer homeGoals,
+        Integer awayGoals
 ) {
 }
 

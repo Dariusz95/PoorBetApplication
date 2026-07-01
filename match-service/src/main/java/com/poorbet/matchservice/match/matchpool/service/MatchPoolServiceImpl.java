@@ -6,7 +6,7 @@ import com.poorbet.matchservice.match.matchpool.domain.PoolStatus;
 import com.poorbet.matchservice.match.matchpool.dto.MatchPoolDto;
 import com.poorbet.matchservice.match.matchpool.mapper.MatchPoolMapper;
 import com.poorbet.matchservice.match.matchpool.repository.MatchPoolRepository;
-import com.poorbet.matchservice.match.tx.AfterCommitHandler;
+import com.poorbet.matchservice.infrastructure.AfterCommitHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;

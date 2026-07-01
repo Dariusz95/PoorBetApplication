@@ -16,4 +16,16 @@
   &__dot {
     color: var(--color-primary);
   }
+
+  &__item--started {
+    border-left: 3px solid var(--color-danger);
+    opacity: 0.7;
+  }
+
+  &__item-warning {
+    margin: 0.25rem 0 0;
+    font-size: 0.7rem;
+    color: var(--color-danger);
+    font-weight: 600;
+  }
 }

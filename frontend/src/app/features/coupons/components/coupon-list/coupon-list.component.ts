@@ -16,7 +16,7 @@ import { PageResponse } from '@shared/interfaces/page-response';
 import { DialogService } from '@shared/services/dialog.service';
 import { PbIconComponent } from '@shared/ui/icon/pb-icon.component';
 import { combineLatest, switchMap } from 'rxjs';
-import { CouponStatus } from '../../enums/coupon-status';
+import { CouponStatus } from '../../types/coupon-status';
 import { CouponService } from '../../services/coupon.service';
 import { Coupon } from '../../types/coupon';
 import { CouponFilter } from '../../types/coupon-filter';

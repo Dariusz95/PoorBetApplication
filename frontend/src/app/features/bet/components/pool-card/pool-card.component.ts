@@ -75,6 +75,7 @@ export class PoolCardComponent {
       betType,
       optionLabel: BET_TYPE_TO_OPTION[betType],
       odds,
+      matchStartTime: this.pool().scheduledStartTime,
     });
   }
 

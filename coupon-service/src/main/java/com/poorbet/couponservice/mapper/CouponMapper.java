@@ -44,7 +44,9 @@ public class CouponMapper {
                 bet.getMatchStartTime(),
                 bet.getStatus(),
                 bet.getBetType(),
-                bet.getOdds()
+                bet.getOdds(),
+                bet.getHomeGoals(),
+                bet.getAwayGoals()
         );
     }
 

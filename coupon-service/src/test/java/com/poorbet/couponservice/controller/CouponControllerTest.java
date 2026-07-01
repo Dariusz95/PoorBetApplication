@@ -65,7 +65,9 @@ class CouponControllerTest {
                 OffsetDateTime.parse("2026-06-20T20:45:00Z"),
                 BetStatus.PENDING,
                 betType,
-                new BigDecimal("1.50")
+                new BigDecimal("1.50"),
+                null,
+                null
         );
     }
 

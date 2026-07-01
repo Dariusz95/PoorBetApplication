@@ -1,0 +1,2 @@
+ALTER TABLE bet ADD COLUMN home_goals INTEGER;
+ALTER TABLE bet ADD COLUMN away_goals INTEGER;

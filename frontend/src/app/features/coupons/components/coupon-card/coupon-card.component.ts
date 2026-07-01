@@ -7,7 +7,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { CouponService } from '@features/coupons/services/coupon.service';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { DialogService } from '@shared/services/dialog.service';
 import { ToastService } from '@shared/services/toast.service';
 import { PbCardBodyDirective } from '@shared/ui/pb-card/directives/pb-card-body.directive';
@@ -51,13 +51,21 @@ export class CouponCardComponent {
   protected readonly couponService = inject(CouponService);
   protected readonly dialogService = inject(DialogService);
   protected readonly toastService = inject(ToastService);
+  private readonly transloco = inject(TranslocoService);
 
   amountCtrl = new FormControl(0, [Validators.min(1)]);
 
   submitCoupon(): void {
     if (!this.amountCtrl.valid) {
       this.amountCtrl.markAsTouched();
+      return;
+    }
 
+    const startedBet = this.betSlipService.selectedBets().find(
+      (bet) => new Date(bet.matchStartTime).getTime() <= Date.now(),
+    );
+    if (startedBet) {
+      this.toastService.error(this.transloco.translate('coupon.matchStartedToast'));
       return;
     }
 
@@ -68,8 +76,8 @@ export class CouponCardComponent {
         this.dialogService.openCouponDialog(coupon);
         this.amountCtrl.reset(0);
       },
-      error: (error) => {
-        this.toastService.error('Błąd podczas tworzenia kuponu');
+      error: () => {
+        this.toastService.error(this.transloco.translate('bet.coupon.error'));
       },
     });
   }

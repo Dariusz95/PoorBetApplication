@@ -8,4 +8,5 @@ export interface SelectedBet {
   betType: BetType;
   optionLabel: BetOption;
   odds: number;
+  matchStartTime: string;
 }

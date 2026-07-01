@@ -3,7 +3,10 @@
 } @else {
   <ul class="list" role="list">
     @for (bet of betSlipService.selectedBets(); track bet.matchId) {
-      <li class="list__item pb-surface">
+      <li
+        class="list__item pb-surface"
+        [class.list__item--started]="isStarted(bet.matchStartTime)"
+      >
         <div class="flex-1 min-w-0">
           <p class="t-heading-xs t-truncate">
             {{ bet.matchLabel }}
@@ -15,6 +18,9 @@
               {{ bet.odds | number: "1.2-2" }}
             </span>
           </p>
+          @if (isStarted(bet.matchStartTime)) {
+            <p class="list__item-warning">{{ 'coupon.matchStarted' | transloco }}</p>
+          }
         </div>
         <pb-button
           size="sm"

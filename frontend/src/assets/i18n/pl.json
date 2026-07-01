@@ -74,7 +74,8 @@
       "bets": "Zdarzenia",
       "close": "Zamknij",
       "live": "LIVE",
-      "finalScore": "Wynik końcowy"
+      "finalScore": "Wynik końcowy",
+      "error": "Błąd podczas tworzenia kuponu"
     },
     "poolCard": {
       "eyebrow": "Pula"
@@ -120,5 +121,13 @@
     "statusOpen": "W grze",
     "statusWon": "Wygrany",
     "statusLost": "Przegrany"
+  },
+  "coupon": {
+    "live": "LIVE",
+    "finalScore": "Wynik końcowy",
+    "close": "Zamknij",
+    "match": "Mecz",
+    "matchStarted": "Mecz już się rozpoczął",
+    "matchStartedToast": "Nie można postawić kuponu — mecz już się rozpoczął"
   }
 }
