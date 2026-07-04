@@ -6,20 +6,24 @@
       <li
         class="list__item pb-surface"
         [class.list__item--started]="isStarted(bet.matchStartTime)"
+        [@listItemAnimation]
       >
-        <div class="flex-1 min-w-0">
-          <p class="t-heading-xs t-truncate">
+        <div class="min-w-0 flex-1">
+          <p class="t-heading-xs truncate">
             {{ bet.matchLabel }}
           </p>
-          <p class="flex items-center gap-4 t-label mt-1">
-            <span class="t-muted"> {{ bet.optionLabel }} </span>
+
+          <p class="t-label mt-1 flex items-center gap-4">
+            <app-bet-type-label [betType]="bet.betType" />
             <span class="list__item--dot" aria-hidden="true">•</span>
             <span class="t-primary">
               {{ bet.odds | number: "1.2-2" }}
             </span>
           </p>
           @if (isStarted(bet.matchStartTime)) {
-            <p class="list__item-warning">{{ 'coupon.matchStarted' | transloco }}</p>
+            <p class="list__item-warning">
+              {{ "coupon.matchStarted" | transloco }}
+            </p>
           }
         </div>
         <pb-button

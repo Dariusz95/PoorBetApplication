@@ -29,7 +29,26 @@
   }
 
   &__nav-link {
-    @apply py-1 font-bold text-app-text no-underline;
+    @apply relative py-1 font-bold text-app-text no-underline;
+
+    &::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -2px;
+      height: 2px;
+      border-radius: var(--radius-sm);
+      background: var(--color-primary);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform var(--duration-base) var(--ease-standard);
+    }
+
+    &:hover::after,
+    &:focus-visible::after {
+      transform: scaleX(1);
+    }
   }
 
   &__right {

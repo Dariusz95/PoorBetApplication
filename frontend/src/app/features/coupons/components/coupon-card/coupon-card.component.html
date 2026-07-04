@@ -3,39 +3,41 @@
     <span class="bet-coupon__badge">
       {{ betSlipService.selectedCount() }}
     </span>
-    <div>
+    <div class="bet-coupon__title">
+      <pb-icon icon="confirmation_number" size="s" color="primary" />
       <p class="t-eyebrow">{{ "bet.coupon.eyebrow" | transloco }}</p>
     </div>
   </div>
 
-  <div pbCardBody>
+  <div pbCardBody class="bg-app-gradient">
     <app-coupon-selected-bets />
   </div>
 
-  <div pbCardFooter>
+  <div pbCardFooter class="bet-coupon__footer">
     <pb-form-field>
       <pb-label>{{ "bet.coupon.amount" | transloco }}</pb-label>
       <pb-input
         id="amount"
         type="number"
+        variant="surface"
         placeholder="0.00"
-        [formControl]="amountCtrl"
+        [formControl]="couponStakeCtrl"
       />
     </pb-form-field>
 
     <app-coupon-summary>
-      <span slot="amount-value">{{ amountCtrl.value | number: "1.2-2" }}</span>
+      <span slot="amount-value">{{ couponStakeCtrl.value | number: "1.2-2" }}</span>
       <span slot="odds-value">{{
         betSlipService.totalOdds() | number: "1.2-2"
       }}</span>
       <span slot="win-value">{{
-        betSlipService.potentialWin(amountCtrl.value) | number: "1.2-2"
+        betSlipService.potentialWin(couponStakeCtrl.value) | number: "1.2-2"
       }}</span>
     </app-coupon-summary>
 
     <pb-button
       [fullWidth]="true"
-      [disabled]="betSlipService.selectedCount() === 0 || amountCtrl.invalid"
+      [disabled]="betSlipService.selectedCount() === 0 || couponStakeCtrl.invalid"
       (buttonClick)="submitCoupon()"
     >
       {{ "bet.coupon.submit" | transloco }}

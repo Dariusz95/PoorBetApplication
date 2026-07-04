@@ -1,0 +1,12 @@
+// Shared shape for pill-style badges (status pills, counters, tab-time remaining).
+// Consumers `@use "components/badge" as badge;` and compose their own tone/size on top.
+@mixin pb-badge-base($padding-inline: 0.5rem, $padding-block: 0.125rem) {
+  @apply inline-flex items-center gap-1 rounded-full text-xs font-semibold;
+  padding: $padding-block $padding-inline;
+}
+
+// Tints a badge with a 15%-strength background of $color and matching text color.
+@mixin pb-badge-tone($color) {
+  background-color: color-mix(in srgb, $color 15%, transparent);
+  color: $color;
+}

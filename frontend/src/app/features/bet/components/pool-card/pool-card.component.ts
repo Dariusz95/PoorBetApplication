@@ -1,26 +1,27 @@
-import { AsyncPipe, SlicePipe } from '@angular/common';
-import { Component, inject, input } from '@angular/core';
+import { SlicePipe } from '@angular/common';
+import { Component, inject, input, signal } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { BET_TYPE_TO_OPTION } from '@shared/types/bet-option';
 import { BetType } from '@shared/types/bet-type';
 import { Uuid } from '@shared/types/uuid.type';
 import { PbCardComponent } from '@shared/ui/pb-card/pb-card.component';
-import { combineLatest, map, Observable, of, switchMap } from 'rxjs';
+import { combineLatest, map, of, switchMap } from 'rxjs';
 import { BetSlipService } from '../../services/bet-slip.service';
 import { TeamService } from '../../services/team.service';
 import { MatchDto, PoolMatch, ShortTeamInfo } from '../../types/match.types';
 import { OddsButtonComponent } from '../odds-button/odds-button.component';
 
-interface TeamNames {
-  home: string;
-  away: string;
+interface TeamDetails {
+  home: ShortTeamInfo;
+  away: ShortTeamInfo;
 }
+
+type TeamSide = 'home' | 'away';
 
 @Component({
   selector: 'app-pool-card',
   imports: [
-    AsyncPipe,
     SlicePipe,
     OddsButtonComponent,
     PbCardComponent,
@@ -37,37 +38,52 @@ export class PoolCardComponent {
 
   readonly BetType = BetType;
 
-  readonly teamNamesMap = toSignal(
+  readonly teamDetailsMap = toSignal(
     toObservable(this.pool).pipe(
       switchMap((pool) => {
         const matches = pool.matches;
-        if (!matches.length) return of({} as Record<string, TeamNames>);
+        if (!matches.length) return of({} as Record<string, TeamDetails>);
 
         return combineLatest(
           matches.map((match) =>
             combineLatest([
-              this.teamService.getDetails(match.homeTeamId).pipe(map((t: ShortTeamInfo) => t.name)),
-              this.teamService.getDetails(match.awayTeamId).pipe(map((t: ShortTeamInfo) => t.name)),
+              this.teamService.getDetails(match.homeTeamId),
+              this.teamService.getDetails(match.awayTeamId),
             ]).pipe(
-              map(([home, away]): [string, TeamNames] => [match.matchId, { home, away }]),
+              map(([home, away]): [string, TeamDetails] => [
+                match.matchId,
+                { home, away },
+              ]),
             ),
           ),
         ).pipe(map((entries) => Object.fromEntries(entries)));
       }),
     ),
-    { initialValue: {} as Record<string, TeamNames> },
+    { initialValue: {} as Record<string, TeamDetails> },
   );
 
-  getTeamName(teamId: Uuid): Observable<string> {
-    return this.teamService.getDetails(teamId).pipe(map((team) => team.name));
+  private readonly imgErrors = signal<
+    Record<Uuid, { home: boolean; away: boolean }>
+  >({});
+
+  hasImgError(matchId: Uuid, side: TeamSide): boolean {
+    return this.imgErrors()[matchId]?.[side] ?? false;
+  }
+
+  markImgError(matchId: Uuid, side: TeamSide): void {
+    this.imgErrors.update((errors) => {
+      const current = errors[matchId] ?? { home: false, away: false };
+      
+      return { ...errors, [matchId]: { ...current, [side]: true } };
+    });
   }
 
   toggleBet(match: MatchDto, betType: BetType, odds: number): void {
     if (this.hasStarted()) return;
 
-    const names = this.teamNamesMap()[match.matchId];
-    const home = names?.home ?? match.homeTeamId;
-    const away = names?.away ?? match.awayTeamId;
+    const details = this.teamDetailsMap()[match.matchId];
+    const home = details?.home.name ?? match.homeTeamId;
+    const away = details?.away.name ?? match.awayTeamId;
 
     this.betSlipService.toggleSelection({
       matchId: match.matchId,

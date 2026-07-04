@@ -46,6 +46,7 @@ export class PbInputComponent
 {
   placeholder = input<string>('');
   type = input<string>('text');
+  variant = input<'underline' | 'surface'>('underline');
 
   icon = contentChild(PbInputIconDirective);
 

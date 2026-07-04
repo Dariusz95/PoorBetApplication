@@ -8,29 +8,59 @@
         >
           <div class="pool-card__teams">
             <span class="pool-card__team">
-              @if (getTeamName(match.homeTeamId) | async; as homeTeamName) {
-                {{ homeTeamName }}
+              @if (teamDetailsMap()[match.matchId]?.home; as home) {
+                <span class="pool-card__logo-wrapper">
+                  @if (home.img && !hasImgError(match.matchId, "home")) {
+                    <img
+                      class="pool-card__logo"
+                      [src]="home.img"
+                      [alt]="home.name"
+                      (error)="markImgError(match.matchId, 'home')"
+                    />
+                  } @else {
+                    <span class="pool-card__logo-fallback">{{
+                      home.name.charAt(0)
+                    }}</span>
+                  }
+                </span>
+                <span class="pool-card__team-name">{{ home.name }}</span>
               } @else {
                 {{ match.homeTeamId | slice: 0 : 8 }}
               }
             </span>
             <span class="pool-card__versus">vs</span>
             <span class="pool-card__team pool-card__team--away">
-              @if (getTeamName(match.awayTeamId) | async; as awayTeamName) {
-                {{ awayTeamName }}
+              @if (teamDetailsMap()[match.matchId]?.away; as away) {
+                <span class="pool-card__team-name">{{ away.name }}</span>
+                <span class="pool-card__logo-wrapper">
+                  @if (away.img && !hasImgError(match.matchId, "away")) {
+                    <img
+                      class="pool-card__logo"
+                      [src]="away.img"
+                      [alt]="away.name"
+                      (error)="markImgError(match.matchId, 'away')"
+                    />
+                  } @else {
+                    <span class="pool-card__logo-fallback">{{
+                      away.name.charAt(0)
+                    }}</span>
+                  }
+                </span>
               } @else {
                 {{ match.awayTeamId | slice: 0 : 8 }}
               }
             </span>
           </div>
 
-          <div class="grid grid-cols-3 gap-2">
+          <div class="grid grid-cols-3 gap-2.5">
             <app-odds-button
               label="1"
               [value]="match.odds.homeWin"
               [selected]="isSelected(match.matchId, BetType.HomeWin)"
               [disabled]="hasStarted()"
-              (oddsClick)="toggleBet(match, BetType.HomeWin, match.odds.homeWin)"
+              (oddsClick)="
+                toggleBet(match, BetType.HomeWin, match.odds.homeWin)
+              "
             ></app-odds-button>
             <app-odds-button
               label="X"
@@ -44,7 +74,9 @@
               [value]="match.odds.awayWin"
               [selected]="isSelected(match.matchId, BetType.AwayWin)"
               [disabled]="hasStarted()"
-              (oddsClick)="toggleBet(match, BetType.AwayWin, match.odds.awayWin)"
+              (oddsClick)="
+                toggleBet(match, BetType.AwayWin, match.odds.awayWin)
+              "
             ></app-odds-button>
           </div>
         </section>

@@ -1,3 +1,5 @@
+@use "components/badge" as badge;
+
 .tab-button-time {
   @apply flex flex-col items-center gap-1;
 
@@ -10,6 +12,7 @@
   }
 
   &__remaining {
-    @apply rounded-full bg-app-surfaceSoft px-2 py-0.5 text-xs font-semibold text-app-primary;
+    @include badge.pb-badge-base;
+    @apply bg-app-surfaceSoft text-app-primary;
   }
 }

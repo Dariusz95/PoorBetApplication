@@ -17,6 +17,37 @@
   }
 }
 
+.coupon-dialog-backdrop {
+  background: rgba(6, 8, 14, 0.7);
+  backdrop-filter: blur(2px);
+  animation: backdropIn 200ms ease-out;
+
+  &.is-closing {
+    animation: backdropOut 160ms ease-in forwards;
+  }
+}
+
+@keyframes backdropIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes backdropOut {
+  to {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .coupon-dialog-backdrop {
+    animation: none !important;
+  }
+}
+
 @layer components {
   .pb-overlay-trigger {
     @apply flex items-center justify-between rounded-lg text-sm transition-colors duration-200 ease-out;

@@ -36,6 +36,11 @@ module.exports = {
         surface: "0 10px 30px rgba(0,0,0,0.6)",
         glow: "0 0 30px rgba(139,92,246,0.35)",
         elevated: "0 20px 50px rgba(0,0,0,0.7)",
+        "glow-sm": "var(--shadow-glow-sm)",
+        "glow-lg": "var(--shadow-glow-lg)",
+        "accent-glow": "var(--shadow-accent-glow)",
+        "success-glow": "var(--shadow-success-glow)",
+        "danger-glow": "var(--shadow-danger-glow)",
       },
 
       backgroundImage: {

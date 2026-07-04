@@ -18,8 +18,7 @@
       <div class="live-match-card__team">
         @if (homeTeam$ | async; as home) {
           <div class="live-match-card__logo-wrapper">
-            <!-- @if (home.img && !homeImgError()) { -->
-            @if (home.img) {
+            @if (home.img && !homeImgError()) {
               <img
                 class="live-match-card__logo"
                 [src]="home.img"

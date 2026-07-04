@@ -4,6 +4,38 @@
   max-width: 42rem;
 }
 
+.coupon-dialog-card--won {
+  animation: couponWonGlow 2400ms ease-in-out infinite;
+}
+
+@keyframes couponWonGlow {
+  0%,
+  100% {
+    box-shadow: var(--shadow-surface);
+  }
+  50% {
+    box-shadow: var(--shadow-success-glow);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .coupon-dialog-card--won {
+    animation: none;
+    box-shadow: var(--shadow-success-glow);
+  }
+}
+
+@keyframes statusPop {
+  from {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 .coupon-dialog {
   &__header {
     display: flex;
@@ -28,6 +60,7 @@
 
     &--won {
       color: var(--color-success);
+      animation: statusPop 420ms var(--ease-out-back);
     }
 
     &--lost {
@@ -36,6 +69,12 @@
 
     &--open {
       color: var(--color-text);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &__status--won {
+      animation: none;
     }
   }
 
@@ -60,12 +99,20 @@
 
     &--won {
       color: var(--color-success);
-      background-color: color-mix(in srgb, var(--color-success) 15%, transparent);
+      background-color: color-mix(
+        in srgb,
+        var(--color-success) 15%,
+        transparent
+      );
     }
 
     &--lost {
       color: var(--color-danger);
-      background-color: color-mix(in srgb, var(--color-danger) 15%, transparent);
+      background-color: color-mix(
+        in srgb,
+        var(--color-danger) 15%,
+        transparent
+      );
     }
   }
 
@@ -73,7 +120,6 @@
     display: flex;
     flex-direction: column;
     gap: var(--space-3);
-    min-height: 320px;
   }
 
   &__section-title {

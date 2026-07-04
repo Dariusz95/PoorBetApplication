@@ -9,20 +9,27 @@
   gap: var(--space-3);
   padding: var(--space-3);
   border: 1px solid var(--color-border);
-  border-left: 4px solid var(--color-accent);
   border-radius: var(--radius-md);
   background-color: var(--color-surface-soft);
 
   &--won {
-    border-left-color: var(--color-success);
+    background-color: color-mix(
+      in srgb,
+      var(--color-success) 12%,
+      var(--color-surface-soft)
+    );
   }
 
   &--lost {
-    border-left-color: var(--color-danger);
+    background-color: color-mix(
+      in srgb,
+      var(--color-danger) 12%,
+      var(--color-surface-soft)
+    );
   }
 
   &--pending {
-    border-left-color: var(--color-primary);
+    background-color: var(--color-surface-soft);
   }
 
   &__info {
@@ -40,21 +47,6 @@
     line-height: 1.25rem;
   }
 
-  &__bet-type {
-    margin: 0;
-    color: var(--color-primary);
-    font-size: 0.75rem;
-    font-weight: 600;
-    line-height: 1rem;
-
-    &--won {
-      color: var(--color-success);
-    }
-
-    &--lost {
-      color: var(--color-danger);
-    }
-  }
 
   &__odds {
     color: var(--color-success);
@@ -150,7 +142,8 @@
 }
 
 @keyframes ping {
-  75%, 100% {
+  75%,
+  100% {
     transform: scale(2);
     opacity: 0;
   }

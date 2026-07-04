@@ -1,0 +1,11 @@
+@mixin pb-menu-item-base {
+  @apply flex w-full cursor-pointer items-center gap-3 rounded-lg px-3 py-2 text-left text-sm transition-colors;
+  
+  color: var(--color-text);
+  background: transparent;
+  border: none;
+
+  &:hover {
+    background: var(--color-surface-soft);
+  }
+}

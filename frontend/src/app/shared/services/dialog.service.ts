@@ -15,8 +15,8 @@ export class DialogService {
       {
         width: '600px',
         maxWidth: '90vw',
-        disableClose: false,
-        panelClass: 'coupon-dialog',
+        disableClose: true,
+        backdropClass: 'coupon-dialog-backdrop',
         data: couponData,
       },
     );
