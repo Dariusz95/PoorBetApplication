@@ -1,0 +1,136 @@
+package com.poorbet.matchservice.infrastructure.outbox;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.poorbet.commons.rabbit.EventEnvelope;
+import com.poorbet.commons.rabbit.MessagingProperties;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+
+import java.time.Instant;
+import java.util.List;
+import java.util.UUID;
+
+import static com.poorbet.commons.rabbit.events.match.MatchEvents.MATCH_FINISHED;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+@ExtendWith(MockitoExtension.class)
+@DisplayName("OutboxPublisher Unit Tests")
+class OutboxPublisherTest {
+
+    @Mock
+    private OutboxRepository outboxRepository;
+    @Mock
+    private RabbitTemplate rabbitTemplate;
+    @Mock
+    private MessagingProperties messagingProperties;
+    @Spy
+    private ObjectMapper objectMapper = new ObjectMapper().findAndRegisterModules();
+
+    @InjectMocks
+    private OutboxPublisher outboxPublisher;
+
+    private OutboxEvent matchFinishedEvent;
+
+    @BeforeEach
+    void setUp() {
+        matchFinishedEvent = OutboxEvent.builder()
+                .id(UUID.randomUUID())
+                .exchange(MATCH_FINISHED.exchange())
+                .routingKey(MATCH_FINISHED.routingKey())
+                .eventType(MATCH_FINISHED.eventType())
+                .version(MATCH_FINISHED.version())
+                .payload("{\"results\":[]}")
+                .status(OutboxEventStatus.NEW)
+                .createdAt(Instant.now())
+                .build();
+    }
+
+    @Test
+    @DisplayName("Should publish pending events to RabbitMQ and mark them as SENT")
+    void shouldPublishPendingEventsSuccessfully() {
+        // Arrange
+        when(outboxRepository.findPendingForUpdate()).thenReturn(List.of(matchFinishedEvent));
+        when(messagingProperties.getSourceService()).thenReturn("match-service");
+
+        // Act
+        outboxPublisher.publishEvents();
+
+        // Assert
+        ArgumentCaptor<EventEnvelope> envelopeCaptor = ArgumentCaptor.forClass(EventEnvelope.class);
+        verify(rabbitTemplate).convertAndSend(eq(MATCH_FINISHED.exchange()), eq(MATCH_FINISHED.routingKey()), envelopeCaptor.capture());
+        assertThat(envelopeCaptor.getValue().eventType()).isEqualTo(MATCH_FINISHED.eventType());
+        assertThat(envelopeCaptor.getValue().source()).isEqualTo("match-service");
+
+        assertThat(matchFinishedEvent.getStatus()).isEqualTo(OutboxEventStatus.SENT);
+        verify(outboxRepository).saveAll(List.of(matchFinishedEvent));
+    }
+
+    @Test
+    @DisplayName("Should mark event as FAILED when publishing to RabbitMQ throws")
+    void shouldMarkEventAsFailedWhenPublishingThrows() {
+        // Arrange
+        when(outboxRepository.findPendingForUpdate()).thenReturn(List.of(matchFinishedEvent));
+        when(messagingProperties.getSourceService()).thenReturn("match-service");
+        org.mockito.Mockito.doThrow(new org.springframework.amqp.AmqpException("broker unavailable"))
+                .when(rabbitTemplate).convertAndSend(any(String.class), any(String.class), any(Object.class));
+
+        // Act
+        outboxPublisher.publishEvents();
+
+        // Assert
+        assertThat(matchFinishedEvent.getStatus()).isEqualTo(OutboxEventStatus.FAILED);
+        verify(outboxRepository).saveAll(List.of(matchFinishedEvent));
+    }
+
+    @Test
+    @DisplayName("Should not persist anything when an event has an unrecognized eventType")
+    void shouldPropagateWhenEventTypeUnknown() {
+        // Arrange
+        OutboxEvent unknownEvent = OutboxEvent.builder()
+                .id(UUID.randomUUID())
+                .exchange("match.exchange")
+                .routingKey("match.unknown")
+                .eventType("UNKNOWN_EVENT")
+                .version("v1")
+                .payload("{}")
+                .status(OutboxEventStatus.NEW)
+                .createdAt(Instant.now())
+                .build();
+        when(outboxRepository.findPendingForUpdate()).thenReturn(List.of(unknownEvent));
+
+        // Act & Assert
+        assertThatThrownBy(() -> outboxPublisher.publishEvents())
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("Nieznany eventType");
+
+        verify(outboxRepository, never()).saveAll(any());
+    }
+
+    @Test
+    @DisplayName("Should do nothing when there are no pending events")
+    void shouldDoNothingWhenNoPendingEvents() {
+        // Arrange
+        when(outboxRepository.findPendingForUpdate()).thenReturn(List.of());
+
+        // Act
+        outboxPublisher.publishEvents();
+
+        // Assert
+        verify(rabbitTemplate, never()).convertAndSend(any(String.class), any(String.class), any(Object.class));
+        verify(outboxRepository).saveAll(List.of());
+    }
+}

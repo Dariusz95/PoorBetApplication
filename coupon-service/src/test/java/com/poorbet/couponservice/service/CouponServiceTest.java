@@ -14,7 +14,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.stubbing.OngoingStubbing;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
@@ -26,7 +25,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -42,6 +41,9 @@ class CouponServiceTest {
     @Mock
     private WalletClient walletClient;
 
+    @Mock
+    private OutboxService outboxService;
+
     @InjectMocks
     private CouponService couponService;
 
@@ -54,9 +56,9 @@ class CouponServiceTest {
     private static final String HOME_TEAM = "Real Madrid";
     private static final String AWAY_TEAM = "Barcelona";
 
-    public static MatchBetSnapshotDto createSnapshot1() {
+    private MatchBetSnapshotDto createSnapshot1() {
         return new MatchBetSnapshotDto(
-                UUID.randomUUID(),
+                firstMatchId,
                 HOME_TEAM,
                 AWAY_TEAM,
                 OffsetDateTime.parse("2026-06-20T20:45:00Z"),
@@ -64,9 +66,9 @@ class CouponServiceTest {
         );
     }
 
-    public static MatchBetSnapshotDto createSnapshot2() {
+    private MatchBetSnapshotDto createSnapshot2() {
         return new MatchBetSnapshotDto(
-                UUID.randomUUID(),
+                secondMatchId,
                 HOME_TEAM,
                 AWAY_TEAM,
                 OffsetDateTime.parse("2026-06-20T20:45:00Z"),
@@ -106,13 +108,7 @@ class CouponServiceTest {
 
     private void setupMatchClientWithSnapshots(MatchBetSnapshotDto... snapshots) {
         doNothing().when(walletClient).reserve(any(UUID.class), any());
-
-        OngoingStubbing<MatchBetSnapshotDto> stubbing =
-                when(matchClient.getBetSnapshot(any(UUID.class), any(BetType.class)));
-
-        for (MatchBetSnapshotDto snapshot : snapshots) {
-            stubbing = stubbing.thenReturn(snapshot);
-        }
+        when(matchClient.getBetSnapshots(anyList())).thenReturn(Arrays.asList(snapshots));
     }
     private void setupRepositoryToReturnCoupon() {
         when(couponRepository.save(any(Coupon.class)))
@@ -171,8 +167,7 @@ class CouponServiceTest {
         couponService.createCoupon(validCreateCouponDto, userId);
 
         // Assert
-        verify(matchClient, times(expectedBetCount))
-                .getBetSnapshot(any(UUID.class), any(BetType.class));
+        verify(matchClient).getBetSnapshots(argThat(requests -> requests.size() == expectedBetCount));
     }
 
     @Test
@@ -240,7 +235,7 @@ class CouponServiceTest {
     @DisplayName("Should propagate MatchClient exceptions")
     void shouldPropagateMatchClientExceptions() {
         // Arrange
-        when(matchClient.getBetSnapshot(any(UUID.class), eq(BetType.HOME_WIN)))
+        when(matchClient.getBetSnapshots(anyList()))
                 .thenThrow(new RuntimeException("MatchClient unavailable"));
         doNothing().when(walletClient).reserve(any(UUID.class), any());
 
@@ -248,5 +243,7 @@ class CouponServiceTest {
         assertThatThrownBy(() -> couponService.createCoupon(validCreateCouponDto, userId))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessage("MatchClient unavailable");
+
+        verify(outboxService).saveEvent(any(), any());
     }
 }

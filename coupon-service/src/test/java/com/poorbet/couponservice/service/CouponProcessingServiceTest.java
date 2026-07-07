@@ -294,12 +294,21 @@ class CouponProcessingServiceTest {
     void shouldHandleMultipleCouponsWithDifferentBets(int numberOfBets) {
         // Arrange
         List<Coupon> coupons = new ArrayList<>();
+        List<Bet> allBets = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
             Coupon coupon = Coupon.builder()
                     .id(UUID.randomUUID())
                     .stake(BigDecimal.TEN)
                     .status(CouponStatus.OPEN)
                     .build();
+
+            List<Bet> couponBets = new ArrayList<>();
+            for (int b = 0; b < numberOfBets; b++) {
+                Bet bet = createBet(matchId1, BetType.HOME_WIN, BetStatus.PENDING, coupon);
+                couponBets.add(bet);
+            }
+            coupon.setBets(couponBets);
+            allBets.addAll(couponBets);
             coupons.add(coupon);
         }
 
@@ -310,7 +319,7 @@ class CouponProcessingServiceTest {
 
         MatchesFinishedEvent event = new MatchesFinishedEvent(Collections.singletonList(result));
 
-        when(betRepository.findAllByMatchIdIn(anySet())).thenReturn(Collections.emptyList());
+        when(betRepository.findAllByMatchIdIn(anySet())).thenReturn(allBets);
         when(couponRepository.findAllWithBetsByIds(anySet())).thenReturn(coupons);
 
         // Act
@@ -318,6 +327,7 @@ class CouponProcessingServiceTest {
 
         // Assert
         verify(couponRepository).findAllWithBetsByIds(any());
+        assertThat(coupons).allSatisfy(coupon -> assertThat(coupon.getStatus()).isEqualTo(CouponStatus.WON));
     }
 
     @Test

@@ -131,7 +131,7 @@ class MatchClientTest {
         // Assert
         verify(restClient).get();
         verify(requestHeadersSpec).retrieve();
-        verify(responseSpec).body(Double.class);
+        verify(responseSpec).body(MatchBetSnapshotDto.class);
     }
 
     @Test

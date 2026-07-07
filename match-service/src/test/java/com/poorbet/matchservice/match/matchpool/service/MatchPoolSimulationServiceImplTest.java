@@ -237,6 +237,8 @@ class MatchPoolSimulationServiceImplTest {
             Match match = createTestMatch();
             when(matchRepository.findByPoolId(testPoolId))
                     .thenReturn(List.of(match));
+            when(teamService.getStatsByIds(any()))
+                    .thenThrow(new RuntimeException("Teams client error"));
 
             // Act & Assert
             assertThatThrownBy(() -> matchPoolSimulationService.startPoolSimulation(testPoolId))

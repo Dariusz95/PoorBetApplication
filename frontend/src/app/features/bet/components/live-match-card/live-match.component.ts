@@ -1,48 +1,28 @@
-import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  inject,
-  input,
-  OnInit,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { PbCardHeaderDirective } from '@shared/ui/pb-card/directives/pb-card-header.directive';
 import { PbCardComponent } from '@shared/ui/pb-card/pb-card.component';
-import { Observable } from 'rxjs';
-import { TeamService } from '../../services/team.service';
-import {
-  LiveMatchEvent,
-  MatchEventType,
-  ShortTeamInfo,
-} from '../../types/match.types';
+import { LiveMatchTeamComponent } from '../live-match-team/live-match-team.component';
 import { PbCardBodyDirective } from '@shared/ui/pb-card/directives/pb-card-body.directive';
-import { PbCardFooterDirective } from '@shared/ui/pb-card/directives/pb-card-footer.directive.';
+import { PbCardFooterDirective } from '@shared/ui/pb-card/directives/pb-card-footer.directive';
+import { LiveMatchEvent, MatchEventType } from '@features/bet/types/match.types';
 
 @Component({
   selector: 'app-live-match-card',
-  standalone: true,
-  imports: [AsyncPipe, PbCardComponent, TranslocoPipe, PbCardHeaderDirective, PbCardBodyDirective, PbCardFooterDirective],
+  imports: [
+    PbCardComponent,
+    TranslocoPipe,
+    PbCardHeaderDirective,
+    PbCardBodyDirective,
+    PbCardFooterDirective,
+    LiveMatchTeamComponent,
+  ],
   templateUrl: './live-match.component.html',
   styleUrl: './live-match.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LiveMatchComponent implements OnInit {
-  private readonly teamService = inject(TeamService);
+export class LiveMatchComponent {
+  readonly liveMatch = input.required<LiveMatchEvent>();
 
-  liveMatch = input.required<LiveMatchEvent>();
-
-  homeTeam$!: Observable<ShortTeamInfo>;
-  awayTeam$!: Observable<ShortTeamInfo>;
-
-  homeImgError = signal(false);
-  awayImgError = signal(false);
-
-  MatchEventType = MatchEventType;
-
-  ngOnInit(): void {
-    this.homeTeam$ = this.teamService.getDetails(this.liveMatch().homeTeamId);
-    this.awayTeam$ = this.teamService.getDetails(this.liveMatch().awayTeamId);
-  }
+  readonly MatchEventType = MatchEventType;
 }

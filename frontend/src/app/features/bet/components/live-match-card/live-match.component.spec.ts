@@ -4,12 +4,12 @@ import { TeamService } from '@features/bet/services/team.service';
 import {
   LiveMatchEvent,
   MatchEventType,
-  ShortTeamInfo,
 } from '@features/bet/types/match.types';
 import { Uuid } from '@shared/types/uuid.type';
 import { getTranslocoModule } from '@shared/utils/get-transloco-module';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { LiveMatchComponent } from './live-match.component';
+import { LiveMatchTeamComponent } from '../live-match-team/live-match-team.component';
 
 describe('LiveMatchComponent', () => {
   let component: LiveMatchComponent;
@@ -45,11 +45,17 @@ describe('LiveMatchComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should load home and away teams on init', () => {
-    expect(teamServiceMock.getDetails).toHaveBeenCalledWith(
+  it('should render home and away team components with the correct team ids', () => {
+    const teamComponents = fixture.debugElement.queryAll(
+      (debugElement) =>
+        debugElement.componentInstance instanceof LiveMatchTeamComponent,
+    );
+
+    expect(teamComponents).toHaveLength(2);
+    expect(teamComponents[0].componentInstance.teamId()).toBe(
       mockLiveMatchEvent.homeTeamId,
     );
-    expect(teamServiceMock.getDetails).toHaveBeenCalledWith(
+    expect(teamComponents[1].componentInstance.teamId()).toBe(
       mockLiveMatchEvent.awayTeamId,
     );
   });
