@@ -9,6 +9,7 @@ import com.poorbet.authservice.user.mapper.UserMapper;
 import com.poorbet.authservice.user.model.Role;
 import com.poorbet.authservice.user.model.User;
 import com.poorbet.authservice.user.repository.UserRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,6 +17,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.UUID;
 
@@ -70,6 +72,15 @@ class UserServiceTest {
                 Role.USER,
                 mockUser.getCreatedAt()
         );
+
+        // register() rejestruje TransactionSynchronization wewnątrz @Transactional; bez kontekstu
+        // Springa nikt tego nie inicjuje, więc trzeba to zasymulować ręcznie na potrzeby testu.
+        TransactionSynchronizationManager.initSynchronization();
+    }
+
+    @AfterEach
+    void tearDown() {
+        TransactionSynchronizationManager.clearSynchronization();
     }
 
     @Test
