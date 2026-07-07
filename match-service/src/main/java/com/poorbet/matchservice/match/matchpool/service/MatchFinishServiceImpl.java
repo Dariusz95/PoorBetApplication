@@ -3,7 +3,7 @@ package com.poorbet.matchservice.match.matchpool.service;
 import com.poorbet.matchservice.match.matchpool.dto.LiveMatchEventDto;
 import com.poorbet.matchservice.match.match.domain.Match;
 import com.poorbet.matchservice.match.match.repository.MatchRepository;
-import com.poorbet.matchservice.match.tx.AfterCommitHandler;
+import com.poorbet.matchservice.infrastructure.AfterCommitHandler;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

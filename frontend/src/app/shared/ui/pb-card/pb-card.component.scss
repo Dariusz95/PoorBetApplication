@@ -29,9 +29,9 @@
 
     background: linear-gradient(
       160deg,
-      hsl(0 0% 28%) 0%,
-      hsla(277 60% 38% / 0.8) 55%,
-      hsla(306 60% 38% / 0.7) 100%
+      color-mix(in srgb, var(--color-text-muted) 40%, transparent) 0%,
+      color-mix(in srgb, var(--color-primary) 70%, transparent) 55%,
+      color-mix(in srgb, var(--color-accent) 65%, transparent) 100%
     );
   }
 
@@ -50,8 +50,8 @@
     background: linear-gradient(
       0deg,
       transparent 0%,
-      hsla(277 95% 65% / 0.7) 40%,
-      hsla(277 95% 65% / 0.7) 60%,
+      color-mix(in srgb, var(--color-primary) 75%, white) 40%,
+      color-mix(in srgb, var(--color-primary) 75%, white) 60%,
       transparent 100%
     );
 

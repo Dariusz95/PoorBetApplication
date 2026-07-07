@@ -1,0 +1,17 @@
+@if (team$ | async; as team) {
+  <div class="live-match-team__logo-wrapper">
+    @if (team.img && !imgError()) {
+      <img
+        class="live-match-team__logo"
+        [src]="team.img"
+        [alt]="team.name"
+        (error)="imgError.set(true)"
+      />
+    } @else {
+      <span class="live-match-team__logo-fallback">{{
+        team.name.charAt(0)
+      }}</span>
+    }
+  </div>
+  <p class="live-match-team__team-name">{{ team.name }}</p>
+}

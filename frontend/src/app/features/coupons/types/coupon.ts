@@ -1,4 +1,4 @@
-import { CouponStatus } from '../enums/coupon-status';
+import { CouponStatus } from './coupon-status';
 
 export interface Coupon {
   id: string;

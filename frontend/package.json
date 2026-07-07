@@ -7,8 +7,8 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "start:dev": "ng serve --proxy-config src/proxy.config.json --host 0.0.0.0 --poll",
-    "test": "vitest run",
-    "test:watch": "vitest"
+    "test": "ng test --watch=false",
+    "test:watch": "ng test"
   },
   "private": true,
   "dependencies": {
@@ -34,7 +34,7 @@
     "@angular/cli": "^21.2.8",
     "@angular/compiler-cli": "^21.2.10",
     "@types/jest": "^30.0.0",
-    "@vitest/browser": "^4.1.5",
+    "@vitest/browser": "^4.1.9",
     "autoprefixer": "^10.4.21",
     "jsdom": "^29.1.1",
     "playwright": "^1.59.1",
@@ -44,6 +44,6 @@
     "tailwindcss": "^3.4.17",
     "tslib": "^2.8.1",
     "typescript": "~5.9.3",
-    "vitest": "^4.1.5"
+    "vitest": "^4.1.9"
   }
 }

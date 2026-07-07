@@ -21,6 +21,7 @@ describe('BetSlipService', () => {
       betType: BetType.HomeWin,
       optionLabel: BetOption.HomeWin,
       odds: 1.8,
+      matchStartTime: '2026-07-01T18:00:00Z',
     };
 
     service.toggleSelection(bet);
@@ -39,6 +40,7 @@ describe('BetSlipService', () => {
       betType: BetType.HomeWin,
       optionLabel: BetOption.HomeWin,
       odds: 1.8,
+      matchStartTime: '2026-07-01T18:00:00Z',
     });
 
     service.toggleSelection({
@@ -47,6 +49,7 @@ describe('BetSlipService', () => {
       betType: BetType.Draw,
       optionLabel: BetOption.Draw,
       odds: 3.25,
+      matchStartTime: '2026-07-01T18:00:00Z',
     });
 
     expect(service.selectedBets()).toEqual([
@@ -56,6 +59,7 @@ describe('BetSlipService', () => {
         betType: BetType.Draw,
         optionLabel: BetOption.Draw,
         odds: 3.25,
+        matchStartTime: '2026-07-01T18:00:00Z',
       },
     ]);
     expect(service.totalOdds()).toBe(3.25);

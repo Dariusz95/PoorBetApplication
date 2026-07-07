@@ -1,0 +1,15 @@
+.bet-type {
+    margin: 0;
+    color: var(--color-primary);
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1rem;
+
+    &--won {
+      color: var(--color-success);
+    }
+
+    &--lost {
+      color: var(--color-danger);
+    }
+  }

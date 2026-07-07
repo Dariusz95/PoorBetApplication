@@ -1,22 +1,40 @@
-<pb-card variant="highlighted" class="coupon-dialog">
+<pb-card
+  variant="highlighted"
+  class="coupon-dialog-card"
+  [class.coupon-dialog-card--won]="coupon().status === CouponStatus.Won"
+>
   <div pbCardHeader class="coupon-dialog__header">
     <div class="coupon-dialog__header-left">
       <h2
         class="coupon-dialog__status"
-        [class.coupon-dialog__status--won]="data.status === CouponStatus.Won"
-        [class.coupon-dialog__status--lost]="data.status === CouponStatus.Lost"
-        [class.coupon-dialog__status--open]="data.status === CouponStatus.Open"
-      >{{ data.status | transloco }}</h2>
+        [class.coupon-dialog__status--won]="
+          coupon().status === CouponStatus.Won
+        "
+        [class.coupon-dialog__status--lost]="
+          coupon().status === CouponStatus.Lost
+        "
+        [class.coupon-dialog__status--open]="
+          coupon().status === CouponStatus.Open
+        "
+      >
+        {{ coupon().status | transloco }}
+      </h2>
       @if (wonCount() > 0 || lostCount() > 0) {
         <div class="coupon-dialog__bet-counts">
           @if (wonCount() > 0) {
-            <span class="coupon-dialog__bet-count coupon-dialog__bet-count--won">
-              <span class="material-icons" aria-hidden="true">check_circle</span>
+            <span
+              class="coupon-dialog__bet-count coupon-dialog__bet-count--won"
+            >
+              <span class="material-icons" aria-hidden="true"
+                >check_circle</span
+              >
               {{ wonCount() }}
             </span>
           }
           @if (lostCount() > 0) {
-            <span class="coupon-dialog__bet-count coupon-dialog__bet-count--lost">
+            <span
+              class="coupon-dialog__bet-count coupon-dialog__bet-count--lost"
+            >
               <span class="material-icons" aria-hidden="true">cancel</span>
               {{ lostCount() }}
             </span>
@@ -36,22 +54,18 @@
   </div>
 
   <div pbCardBody class="coupon-dialog__body">
-    @if (data) {
-      <app-coupon-bets-list [bets]="data.bets" />
+    <app-coupon-bets-list [bets]="coupon().bets" />
 
-      <section aria-labelledby="coupon-summary-title">
-        <app-coupon-summary>
-          <span slot="amount-value">{{
-            data.stake | number: "1.2-2"
-          }}</span>
-          <span slot="odds-value">
-            {{ data.totalOdds | number: "1.2-2" }}
-          </span>
-          <span slot="win-value">{{
-            data.potentialPayout | number: "1.2-2"
-          }}</span>
-        </app-coupon-summary>
-      </section>
-    }
+    <section aria-labelledby="coupon-summary-title">
+      <app-coupon-summary>
+        <span slot="amount-value">{{ coupon().stake | number: "1.2-2" }}</span>
+        <span slot="odds-value">
+          {{ coupon().totalOdds | number: "1.2-2" }}
+        </span>
+        <span slot="win-value">{{
+          coupon().potentialPayout | number: "1.2-2"
+        }}</span>
+      </app-coupon-summary>
+    </section>
   </div>
 </pb-card>

@@ -1,5 +1,6 @@
 package com.poorbet.matchservice.match.matchpool.controller;
 
+import com.poorbet.matchservice.match.matchpool.domain.MatchEventType;
 import com.poorbet.matchservice.match.matchpool.domain.PoolStatus;
 import com.poorbet.matchservice.match.matchpool.dto.LiveMatchEventDto;
 import com.poorbet.matchservice.match.matchpool.dto.MatchPoolDto;
@@ -79,10 +80,12 @@ class MatchPoolControllerTest {
             // Act
             Flux<LiveMatchEventDto> result = matchPoolController.streamAll();
 
-            // Assert - Verify that the flux is created (heartbeat is added first)
+            // Assert - the heartbeat interval never completes on its own (it's an
+            // infinite SSE keep-alive), so we cancel once we've seen it instead of
+            // waiting for onComplete.
             StepVerifier.create(result)
                     .expectNextCount(1) // Heartbeat
-                    .expectComplete()
+                    .thenCancel()
                     .verify(Duration.ofSeconds(1));
         }
 
@@ -100,7 +103,7 @@ class MatchPoolControllerTest {
             // Assert
             StepVerifier.create(result)
                     .expectNextCount(2) // Heartbeat + manager event
-                    .expectComplete()
+                    .thenCancel()
                     .verify(Duration.ofSeconds(1));
         }
 
@@ -116,7 +119,7 @@ class MatchPoolControllerTest {
             // Assert
             StepVerifier.create(result)
                     .expectNextCount(1) // Only heartbeat
-                    .expectComplete()
+                    .thenCancel()
                     .verify(Duration.ofSeconds(1));
         }
 
@@ -135,7 +138,7 @@ class MatchPoolControllerTest {
             // Assert
             StepVerifier.create(result)
                     .expectNextCount(4) // Heartbeat + 3 events
-                    .expectComplete()
+                    .thenCancel()
                     .verify(Duration.ofSeconds(2));
         }
 
@@ -149,9 +152,12 @@ class MatchPoolControllerTest {
             // Act
             Flux<LiveMatchEventDto> result = matchPoolController.streamAll();
 
-            // Assert
+            // Assert - the heartbeat interval and the erroring manager stream are
+            // merged from two independently scheduled sources, so whether a heartbeat
+            // sneaks in before the error is a race; skip over any heartbeats and just
+            // assert the stream terminates with the manager's error.
             StepVerifier.create(result)
-                    .expectNextCount(1) // Heartbeat
+                    .thenConsumeWhile(event -> event.getEventType() == MatchEventType.HEARTBEAT)
                     .expectError(RuntimeException.class)
                     .verify(Duration.ofSeconds(1));
         }

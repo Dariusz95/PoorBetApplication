@@ -15,26 +15,7 @@
 
   <div pbCardBody>
     <div class="live-match-card__body-grid">
-      <div class="live-match-card__team">
-        @if (homeTeam$ | async; as home) {
-          <div class="live-match-card__logo-wrapper">
-            <!-- @if (home.img && !homeImgError()) { -->
-            @if (home.img) {
-              <img
-                class="live-match-card__logo"
-                [src]="home.img"
-                [alt]="home.name"
-                (error)="homeImgError.set(true)"
-              />
-            } @else {
-              <span class="live-match-card__logo-fallback">{{
-                home.name.charAt(0)
-              }}</span>
-            }
-          </div>
-          <p class="live-match-card__team-name">{{ home.name }}</p>
-        }
-      </div>
+      <app-live-match-team [teamId]="liveMatch().homeTeamId" />
 
       <div class="live-match-card__score-block">
         <p class="live-match-card__score">
@@ -48,25 +29,7 @@
         </p>
       </div>
 
-      <div class="live-match-card__team">
-        @if (awayTeam$ | async; as away) {
-          <div class="live-match-card__logo-wrapper">
-            @if (away.img && !awayImgError()) {
-              <img
-                class="live-match-card__logo"
-                [src]="away.img"
-                [alt]="away.name"
-                (error)="awayImgError.set(true)"
-              />
-            } @else {
-              <span class="live-match-card__logo-fallback">{{
-                away.name.charAt(0)
-              }}</span>
-            }
-          </div>
-          <p class="live-match-card__team-name">{{ away.name }}</p>
-        }
-      </div>
+      <app-live-match-team [teamId]="liveMatch().awayTeamId" />
     </div>
   </div>
 

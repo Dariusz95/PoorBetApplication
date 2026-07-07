@@ -7,11 +7,12 @@ import {
   Validators,
 } from '@angular/forms';
 import { CouponService } from '@features/coupons/services/coupon.service';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { DialogService } from '@shared/services/dialog.service';
 import { ToastService } from '@shared/services/toast.service';
+import { PbIconComponent } from '@shared/ui/icon/pb-icon.component';
 import { PbCardBodyDirective } from '@shared/ui/pb-card/directives/pb-card-body.directive';
-import { PbCardFooterDirective } from '@shared/ui/pb-card/directives/pb-card-footer.directive.';
+import { PbCardFooterDirective } from '@shared/ui/pb-card/directives/pb-card-footer.directive';
 import { PbCardHeaderDirective } from '@shared/ui/pb-card/directives/pb-card-header.directive';
 import { PbCardComponent } from '@shared/ui/pb-card/pb-card.component';
 import { PbLabel } from '@shared/ui/pb-form-field/directives/pb-label';
@@ -41,6 +42,7 @@ import { CouponSummaryComponent } from '../coupon-summary/coupon-summary.compone
     CouponSelectedBetsComponent,
     CouponSummaryComponent,
     DecimalPipe,
+    PbIconComponent,
   ],
   templateUrl: './coupon-card.component.html',
   styleUrl: './coupon-card.component.scss',
@@ -51,13 +53,24 @@ export class CouponCardComponent {
   protected readonly couponService = inject(CouponService);
   protected readonly dialogService = inject(DialogService);
   protected readonly toastService = inject(ToastService);
+  private readonly transloco = inject(TranslocoService);
 
-  amountCtrl = new FormControl(0, [Validators.min(1)]);
+  couponStakeCtrl = new FormControl(null, [Validators.min(1)]);
 
   submitCoupon(): void {
-    if (!this.amountCtrl.valid) {
-      this.amountCtrl.markAsTouched();
+    if (!this.couponStakeCtrl.valid) {
+      this.couponStakeCtrl.markAsTouched();
 
+      return;
+    }
+
+    const startedBet = this.betSlipService
+      .selectedBets()
+      .find((bet) => new Date(bet.matchStartTime).getTime() <= Date.now());
+    if (startedBet) {
+      this.toastService.error(
+        this.transloco.translate('coupon.matchStartedToast'),
+      );
       return;
     }
 
@@ -66,17 +79,16 @@ export class CouponCardComponent {
     this.couponService.create(request).subscribe({
       next: (coupon) => {
         this.dialogService.openCouponDialog(coupon);
-        this.amountCtrl.reset(0);
       },
-      error: (error) => {
-        this.toastService.error('Błąd podczas tworzenia kuponu');
+      error: () => {
+        this.toastService.error(this.transloco.translate('bet.coupon.error'));
       },
     });
   }
 
   private mapToRequest(): CreateCouponRequest {
     return {
-      stake: this.amountCtrl.value!,
+      stake: this.couponStakeCtrl.value!,
       bets: this.betSlipService.selectedBets().map((bet) => ({
         matchId: bet.matchId,
         betType: bet.betType,

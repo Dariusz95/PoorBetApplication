@@ -61,6 +61,12 @@ public class Bet {
     @Column(nullable = false)
     private BigDecimal odds;
 
+    @Column
+    private Integer homeGoals;
+
+    @Column
+    private Integer awayGoals;
+
     @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "coupon_id")
@@ -75,5 +81,7 @@ public class Bet {
                 result.homeGoals(),
                 result.awayGoals()
         );
+        this.homeGoals = result.homeGoals();
+        this.awayGoals = result.awayGoals();
     }
 }

@@ -1,6 +1,9 @@
 <div
   class="input-container"
+  [class.input-container--underline]="variant() === 'underline'"
+  [class.input-container--surface]="variant() === 'surface'"
   [class.focused]="focused()"
+  [class.invalid]="invalid()"
   [class.has-value]="value() !== ''"
   [class.has-icon-left]="hasIcon"
 >
@@ -21,8 +24,10 @@
     (blur)="onBlur()"
   />
 
-  <div class="underline">
-    <div class="base-line"></div>
-    <div class="focus-line"></div>
-  </div>
+  @if (variant() === "underline") {
+    <div class="underline">
+      <div class="base-line"></div>
+      <div class="focus-line"></div>
+    </div>
+  }
 </div>

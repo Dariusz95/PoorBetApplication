@@ -1,3 +1,5 @@
+@use "components/menu" as menu;
+
 .side-panel {
   display: flex;
   flex-direction: column;
@@ -49,7 +51,7 @@
     width: 72px;
     height: 72px;
     border-radius: 50%;
-    background: theme('colors.app.primary') / 15%;
+    background: color-mix(in srgb, theme('colors.app.primary') 15%, transparent);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -112,8 +114,8 @@
     align-items: center;
     gap: 4px;
     padding: 12px 20px;
-    background: theme('colors.app.primary') / 10%;
-    border: 1px solid theme('colors.app.primary') / 20%;
+    background: color-mix(in srgb, theme('colors.app.primary') 10%, transparent);
+    border: 1px solid color-mix(in srgb, theme('colors.app.primary') 20%, transparent);
     border-radius: 10px;
     color: theme('colors.app.primary');
     cursor: pointer;
@@ -126,7 +128,7 @@
     }
 
     &:hover {
-      background: theme('colors.app.primary') / 20%;
+      background: color-mix(in srgb, theme('colors.app.primary') 20%, transparent);
     }
   }
 
@@ -144,26 +146,15 @@
   }
 
   &__menu-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+    @include menu.pb-menu-item-base;
     padding: 14px 12px;
+    gap: 12px;
     border-radius: 8px;
-    background: transparent;
-    border: none;
-    color: theme('colors.app.text');
-    cursor: pointer;
-    text-align: left;
     transition: background 0.15s;
-    width: 100%;
 
     .material-icons:first-child {
       font-size: 20px;
       color: theme('colors.app.textMuted');
-    }
-
-    &:hover {
-      background: theme('colors.app.surfaceSoft');
     }
 
     &--danger {

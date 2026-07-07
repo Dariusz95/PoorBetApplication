@@ -1,4 +1,4 @@
-package com.poorbet.matchservice.match.tx;
+package com.poorbet.matchservice.infrastructure;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionSynchronization;

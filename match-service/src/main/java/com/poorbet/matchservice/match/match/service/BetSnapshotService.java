@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.poorbet.matchservice.match.match.domain.Match;
+import com.poorbet.matchservice.match.match.domain.MatchStatus;
 import com.poorbet.matchservice.match.match.domain.OddsType;
 import com.poorbet.matchservice.match.match.dto.BetSnapshotRequest;
 import com.poorbet.matchservice.match.match.dto.MatchBetSnapshotDto;
@@ -36,6 +37,10 @@ public class BetSnapshotService {
     public MatchBetSnapshotDto getBetSnapshot(UUID matchId, OddsType type) {
         var match = matchRepository.findById(matchId)
                 .orElseThrow(() -> new IllegalArgumentException("Match not found: " + matchId));
+
+        if (match.getStatus() != MatchStatus.SCHEDULED) {
+            throw new IllegalArgumentException("Match just had started: " + matchId);
+        }
 
         List<TeamStatsDto> teams = teamService.getStatsByIds(
                 List.of(match.getHomeTeamId(), match.getAwayTeamId())
@@ -89,6 +94,10 @@ public class BetSnapshotService {
             Match match = matchMap.get(req.matchId());
             if (match == null) {
                 throw new IllegalArgumentException("Match not found: " + req.matchId());
+            }
+
+            if (match.getStatus() != MatchStatus.SCHEDULED) {
+                throw new IllegalArgumentException("Match just had started: " + req.matchId());
             }
 
             BigDecimal odd = oddsService.getOdds(req.matchId(), req.betType())

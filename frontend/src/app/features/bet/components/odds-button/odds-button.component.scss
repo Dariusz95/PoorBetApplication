@@ -15,15 +15,35 @@
     transition: color 200ms ease;
   }
 
-  &__label { color: var(--color-text-muted); }
-  &__value { color: var(--color-text); font-weight: 600; }
+  &__label {
+    color: var(--color-text-muted);
+  }
+  &__value {
+    color: var(--color-text);
+    font-weight: 600;
+  }
 
   &--selected {
+    transform: translateY(-1px);
+    box-shadow: inset 0 0 0 1px
+      color-mix(in srgb, var(--color-primary) 60%, transparent);
+    transition:
+      transform var(--duration-fast) var(--ease-out-back),
+      box-shadow var(--duration-fast) var(--ease-standard);
+
     .odds-button-content__label,
     .odds-button-content__value {
-      color: #fff;
+      color: var(--color-text);
     }
   }
 
-  &--disabled { opacity: 0.5; }
+  &--disabled {
+    opacity: 0.5;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .odds-button-content--selected {
+    transition: none;
+  }
 }

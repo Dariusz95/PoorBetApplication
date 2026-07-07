@@ -1,3 +1,5 @@
+@use "components/badge" as badge;
+
 .bet-coupon {
   &__header {
     @apply flex items-center gap-3 border-b;
@@ -5,10 +7,25 @@
     border-color: var(--color-border);
   }
 
-  &__badge {
-    @apply inline-flex items-center justify-center rounded-full px-3 py-2 t-heading-xs;
+  &__title {
+    @apply flex items-center gap-2;
+  }
 
-    background-color: rgb(from var(--color-primary) r g b / 0.15);
-    color: var(--color-primary);
+  &__badge {
+    @include badge.pb-badge-base(0.75rem, 0.5rem);
+    @apply t-heading-xs justify-center;
+
+    background: linear-gradient(
+      135deg,
+      var(--color-primary),
+      var(--color-primary-dark)
+    );
+    color: var(--color-text);
+    box-shadow: var(--shadow-glow-sm);
+  }
+
+  &__footer {
+    background-color: var(--color-surface-soft);
+    border-top: 1px solid var(--color-border);
   }
 }

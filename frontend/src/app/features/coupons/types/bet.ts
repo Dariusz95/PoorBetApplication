@@ -1,5 +1,5 @@
 import { BetType } from '@shared/types/bet-type';
-import { BetStatus } from '../enums/bet-status';
+import { BetStatus } from './bet-status';
 
 export interface Bet {
   id: string;
@@ -10,4 +10,6 @@ export interface Bet {
   status: BetStatus;
   betType: BetType;
   odds: number;
+  homeGoals: number | null;
+  awayGoals: number | null;
 }

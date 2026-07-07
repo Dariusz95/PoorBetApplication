@@ -60,7 +60,7 @@
       "matchInProgress": "Match in progress"
     },
     "coupon": {
-      "eyebrow": "Your coupon test",
+      "eyebrow": "Your coupon",
       "title": "Building coupon",
       "emptyTitle": "No events selected yet.",
       "emptyText": "Click odds in a match to add it to the coupon on the right.",
@@ -74,7 +74,8 @@
       "bets": "Bets",
       "close": "Close",
       "live": "LIVE",
-      "finalScore": "Final score"
+      "finalScore": "Final score",
+      "error": "Error creating coupon"
     },
     "poolCard": {
       "eyebrow": "Pool"
@@ -120,5 +121,13 @@
     "statusOpen": "In game",
     "statusWon": "Won",
     "statusLost": "Lost"
+  },
+  "coupon": {
+    "live": "LIVE",
+    "finalScore": "Final score",
+    "close": "Close",
+    "match": "Match",
+    "matchStarted": "Match has already started",
+    "matchStartedToast": "Cannot place coupon — match has already started"
   }
 }

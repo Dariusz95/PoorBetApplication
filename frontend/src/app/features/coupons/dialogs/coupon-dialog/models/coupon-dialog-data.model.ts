@@ -1,4 +1,4 @@
-import { CouponDetails } from "@shared/types/coupon.types";
+import { CouponDetails } from '@features/coupons/types/coupon-details';
 
 export interface CouponDialogData {
   data: CouponDetails;

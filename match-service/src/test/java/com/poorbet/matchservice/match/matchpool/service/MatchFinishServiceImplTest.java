@@ -24,7 +24,7 @@ import com.poorbet.matchservice.match.match.domain.Match;
 import com.poorbet.matchservice.match.match.domain.MatchStatus;
 import com.poorbet.matchservice.match.match.repository.MatchRepository;
 import com.poorbet.matchservice.match.matchpool.dto.LiveMatchEventDto;
-import com.poorbet.matchservice.match.tx.AfterCommitHandler;
+import com.poorbet.matchservice.infrastructure.AfterCommitHandler;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("MatchFinishServiceImpl Unit Tests")

@@ -1,19 +1,14 @@
+@use "components/menu" as menu;
+
 .language-list {
   @apply flex flex-col p-1;
 }
 
 .language-item {
-  @apply flex w-full cursor-pointer items-center gap-3 rounded-lg px-3 py-2 text-left text-sm transition-colors;
-  color: var(--color-text-primary);
-  background: transparent;
-  border: none;
-
-  &:hover {
-    background: var(--color-surface-active, rgba(255, 255, 255, 0.08));
-  }
+  @include menu.pb-menu-item-base;
 
   &--active {
-    background: var(--color-surface-active, rgba(255, 255, 255, 0.08));
+    background: var(--color-surface-soft);
     font-weight: 600;
   }
 }

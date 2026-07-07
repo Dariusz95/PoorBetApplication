@@ -1,0 +1,21 @@
+:host {
+  @apply flex flex-col items-center gap-2 text-center;
+}
+
+.live-match-team {
+  &__logo-wrapper {
+    @apply flex h-16 w-16 items-center justify-center overflow-hidden rounded-full bg-app-surface;
+  }
+
+  &__logo {
+    @apply h-full w-full object-cover;
+  }
+
+  &__logo-fallback {
+    @apply text-xl font-bold text-app-textMuted;
+  }
+
+  &__team-name {
+    @apply line-clamp-2 text-sm font-medium text-app-text;
+  }
+}

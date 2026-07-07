@@ -1,0 +1,9 @@
+@mixin pb-badge-base($padding-inline: 0.5rem, $padding-block: 0.125rem) {
+  @apply inline-flex items-center gap-1 rounded-full text-xs font-semibold;
+  padding: $padding-block $padding-inline;
+}
+
+@mixin pb-badge-tone($color) {
+  background-color: color-mix(in srgb, $color 15%, transparent);
+  color: $color;
+}

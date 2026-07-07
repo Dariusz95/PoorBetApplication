@@ -1,5 +1,5 @@
 .pb-button {
-  @apply inline-flex items-center justify-center relative select-none;
+  @apply relative inline-flex select-none items-center justify-center;
   @apply font-medium transition duration-200 ease-out;
   @apply focus:outline-none focus:ring-2 focus:ring-app-primary focus:ring-offset-2;
   @apply disabled:cursor-not-allowed disabled:opacity-60;
@@ -9,22 +9,22 @@
 }
 
 .pb-button--sm {
-  @apply px-3 text-sm rounded-md;
+  @apply rounded-md px-3 text-sm;
   min-height: 32px;
 }
 
 .pb-button--md {
-  @apply px-4 text-sm rounded-md;
+  @apply rounded-md px-4 text-sm;
   min-height: 40px;
 }
 
 .pb-button--lg {
-  @apply px-6 text-base rounded-lg;
+  @apply rounded-lg px-6 text-base;
   min-height: 48px;
 }
 
 .pb-button--responsive {
-  @apply px-3 sm:px-4 lg:px-6 text-sm lg:text-base;
+  @apply px-3 text-sm sm:px-4 lg:px-6 lg:text-base;
   min-height: 40px;
 }
 
@@ -47,19 +47,21 @@
 }
 
 .pb-button--secondary {
-  @apply bg-app-surface text-app-text border border-app-border shadow-surface;
+  @apply border border-app-border bg-app-surface text-app-text shadow-surface;
 }
 
 .pb-button--secondary:hover {
   @apply bg-app-surfaceSoft;
+  transform: translateY(-1px);
 }
 
 .pb-button--outline {
-  @apply bg-transparent text-app-primary border border-app-primary;
+  @apply border border-app-primary bg-transparent text-app-primary;
 }
 
 .pb-button--outline:hover {
   background: rgba(139, 92, 246, 0.08);
+  transform: translateY(-1px);
 }
 
 .pb-button--ghost {
@@ -68,6 +70,13 @@
 
 .pb-button--ghost:hover {
   @apply bg-app-surfaceSoft;
+  transform: translateY(-1px);
+}
+
+.pb-button--secondary:active,
+.pb-button--outline:active,
+.pb-button--ghost:active {
+  transform: translateY(0);
 }
 
 .pb-button--success {
@@ -116,4 +125,10 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pb-button {
+    transition: none;
+  }
 }
