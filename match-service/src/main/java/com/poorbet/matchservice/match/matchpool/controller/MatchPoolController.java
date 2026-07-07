@@ -29,7 +29,7 @@ public class MatchPoolController {
     )
     public Flux<LiveMatchEventDto> streamAll() {
         return Flux.merge(
-                Flux.interval(Duration.ofSeconds(15)).map(i -> LiveMatchEventDto.heartbeat()),
+                Flux.interval(Duration.ZERO, Duration.ofSeconds(15)).map(i -> LiveMatchEventDto.heartbeat()),
                 manager.streamAll()
         ).doOnSubscribe(sub ->
                 log.info("New client subscribed to live match stream")

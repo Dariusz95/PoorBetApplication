@@ -19,7 +19,7 @@ import { LoginRequest } from '../../requests/login-request';
 import { AuthService } from '../../services/auth.service';
 import { LoginFormComponent } from '../login-form/login-form.component';
 import { LoginModel } from '../types/login.model';
-import { PbCardFooterDirective } from "@shared/ui/pb-card/directives/pb-card-footer.directive.";
+import { PbCardFooterDirective } from "@shared/ui/pb-card/directives/pb-card-footer.directive";
 
 @Component({
   selector: 'app-login-page',
@@ -50,7 +50,7 @@ export class LoginPageComponent {
   onSubmitForm(event: LoginModel): void {
     this.submitted.set(true);
 
-    const request = this.getLoginRequest(event);
+    const request = this.getRequest(event);
 
     this.authService
       .login(request)
@@ -65,7 +65,7 @@ export class LoginPageComponent {
       });
   }
 
-  private getLoginRequest(event: LoginModel): LoginRequest {
+  private getRequest(event: LoginModel): LoginRequest {
     return {
       email: event.email,
       password: event.password,

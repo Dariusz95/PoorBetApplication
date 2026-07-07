@@ -35,16 +35,51 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up JDK
+      - name: Set up JDK and Maven auth for PoorBet Commons
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 21
           cache: maven
-          server-id: github
+          server-id: github-commons
           server-username: GITHUB_ACTOR
           server-password: GITHUB_TOKEN
+
+      - name: Add Maven auth for PoorBet Auth Starter
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          server-id: github-auth
+          server-username: GITHUB_ACTOR
+          server-password: GITHUB_TOKEN
+          overwrite-settings: false
 
       - name: Run tests for ${{ matrix.service }}
         working-directory: ${{ matrix.service }}
         run: mvn --batch-mode --no-transfer-progress clean test
+
+  frontend-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test run test

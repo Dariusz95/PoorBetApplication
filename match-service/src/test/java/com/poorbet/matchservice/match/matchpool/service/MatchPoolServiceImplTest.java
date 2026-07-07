@@ -25,6 +25,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Pageable;
 
 import com.poorbet.matchservice.fixture.MatchFixtures;
+import com.poorbet.matchservice.infrastructure.AfterCommitHandler;
 import com.poorbet.matchservice.match.match.domain.Match;
 import com.poorbet.matchservice.match.match.domain.MatchStatus;
 import com.poorbet.matchservice.match.matchpool.domain.MatchPool;
@@ -46,6 +47,9 @@ class MatchPoolServiceImplTest {
 
     @Mock
     private MatchPoolSimulationService matchPoolSimulationService;
+
+    @Mock
+    private AfterCommitHandler afterCommitHandler;
 
     @InjectMocks
     private MatchPoolServiceImpl matchPoolService;
@@ -215,7 +219,7 @@ class MatchPoolServiceImplTest {
                     new MatchPoolDto(UUID.randomUUID(), null, null, null)
             );
 
-            when(matchPoolRepository.getFutureMatchPools(OffsetDateTime.now(), any(Pageable.class)))
+            when(matchPoolRepository.getFutureMatchPools(any(OffsetDateTime.class), any(Pageable.class)))
                     .thenReturn(futurePools);
             when(matchPoolMapper.toDto(futurePools))
                     .thenReturn(expectedDtos);
@@ -234,7 +238,7 @@ class MatchPoolServiceImplTest {
         @DisplayName("Should use correct pagination parameters")
         void shouldUseCorrectPaginationParameters() {
             // Arrange
-            when(matchPoolRepository.getFutureMatchPools(OffsetDateTime.now(), any(Pageable.class)))
+            when(matchPoolRepository.getFutureMatchPools(any(OffsetDateTime.class), any(Pageable.class)))
                     .thenReturn(Collections.emptyList());
             when(matchPoolMapper.toDto(Collections.emptyList()))
                     .thenReturn(Collections.emptyList());
@@ -244,7 +248,7 @@ class MatchPoolServiceImplTest {
 
             // Assert
             ArgumentCaptor<Pageable> pageCaptor = ArgumentCaptor.forClass(Pageable.class);
-            verify(matchPoolRepository).getFutureMatchPools(OffsetDateTime.now(), pageCaptor.capture());
+            verify(matchPoolRepository).getFutureMatchPools(any(OffsetDateTime.class), pageCaptor.capture());
             Pageable capturedPage = pageCaptor.getValue();
             assertThat(capturedPage.getPageNumber()).isZero();
             assertThat(capturedPage.getPageSize()).isEqualTo(3);
@@ -254,7 +258,7 @@ class MatchPoolServiceImplTest {
         @DisplayName("Should handle empty future pools list")
         void shouldHandleEmptyFuturePoolsList() {
             // Arrange
-            when(matchPoolRepository.getFutureMatchPools(OffsetDateTime.now(), any(Pageable.class)))
+            when(matchPoolRepository.getFutureMatchPools(any(OffsetDateTime.class), any(Pageable.class)))
                     .thenReturn(Collections.emptyList());
             when(matchPoolMapper.toDto(Collections.emptyList()))
                     .thenReturn(Collections.emptyList());
@@ -275,7 +279,7 @@ class MatchPoolServiceImplTest {
                     createTestMatchPool(),
                     createTestMatchPool()
             );
-            when(matchPoolRepository.getFutureMatchPools(OffsetDateTime.now(), any(Pageable.class)))
+            when(matchPoolRepository.getFutureMatchPools(any(OffsetDateTime.class), any(Pageable.class)))
                     .thenReturn(repositoryResults);
             when(matchPoolMapper.toDto(repositoryResults))
                     .thenReturn(Collections.emptyList());
@@ -296,7 +300,7 @@ class MatchPoolServiceImplTest {
             MatchPoolDto dto2 = new MatchPoolDto(UUID.randomUUID(), null, null, null);
             List<MatchPoolDto> expectedDtos = List.of(dto1, dto2);
 
-            when(matchPoolRepository.getFutureMatchPools(OffsetDateTime.now(), any(Pageable.class)))
+            when(matchPoolRepository.getFutureMatchPools(any(OffsetDateTime.class), any(Pageable.class)))
                     .thenReturn(pools);
             when(matchPoolMapper.toDto(pools))
                     .thenReturn(expectedDtos);
@@ -319,7 +323,7 @@ class MatchPoolServiceImplTest {
         @DisplayName("Should handle repository exception")
         void shouldHandleRepositoryException() {
             // Arrange
-            when(matchPoolRepository.getFutureMatchPools(OffsetDateTime.now(), any(Pageable.class)))
+            when(matchPoolRepository.getFutureMatchPools(any(OffsetDateTime.class), any(Pageable.class)))
                     .thenThrow(new RuntimeException("Database error"));
 
             // Act & Assert
@@ -332,7 +336,7 @@ class MatchPoolServiceImplTest {
         void shouldHandleMapperException() {
             // Arrange
             List<MatchPool> pools = List.of(createTestMatchPool());
-            when(matchPoolRepository.getFutureMatchPools(OffsetDateTime.now(), any(Pageable.class)))
+            when(matchPoolRepository.getFutureMatchPools(any(OffsetDateTime.class), any(Pageable.class)))
                     .thenReturn(pools);
             when(matchPoolMapper.toDto(pools))
                     .thenThrow(new RuntimeException("Mapping error"));

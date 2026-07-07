@@ -12,7 +12,7 @@ import { DialogService } from '@shared/services/dialog.service';
 import { ToastService } from '@shared/services/toast.service';
 import { PbIconComponent } from '@shared/ui/icon/pb-icon.component';
 import { PbCardBodyDirective } from '@shared/ui/pb-card/directives/pb-card-body.directive';
-import { PbCardFooterDirective } from '@shared/ui/pb-card/directives/pb-card-footer.directive.';
+import { PbCardFooterDirective } from '@shared/ui/pb-card/directives/pb-card-footer.directive';
 import { PbCardHeaderDirective } from '@shared/ui/pb-card/directives/pb-card-header.directive';
 import { PbCardComponent } from '@shared/ui/pb-card/pb-card.component';
 import { PbLabel } from '@shared/ui/pb-form-field/directives/pb-label';

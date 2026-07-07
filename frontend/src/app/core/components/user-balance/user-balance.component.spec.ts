@@ -4,6 +4,7 @@ import { of } from 'rxjs';
 import { AuthService } from '@core/auth/services/auth.service';
 import { WalletService } from '@core/wallet/services/wallet.service';
 import { UserBalanceComponent } from './user-balance.component';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 describe('UserBalanceComponent', () => {
   let component: UserBalanceComponent;

@@ -7,19 +7,19 @@ import {
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RouteLink } from '@core/routing/route-link';
+import { RoutePath } from '@core/routing/route-path';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { PbCardBodyDirective } from '@shared/ui/pb-card/directives/pb-card-body.directive';
+import { PbCardFooterDirective } from '@shared/ui/pb-card/directives/pb-card-footer.directive';
 import { PbCardHeaderDirective } from '@shared/ui/pb-card/directives/pb-card-header.directive';
 import { finalize } from 'rxjs';
 import { PbButtonComponent } from '../../../../shared/ui/pb-button/pb-button.component';
 import { PbCardComponent } from '../../../../shared/ui/pb-card/pb-card.component';
-import { RoutePath } from '../../../routing/route-path';
 import { AuthCardHeaderComponent } from '../../components/auth-card-header/auth-card-header.component';
 import { RegisterRequest } from '../../requests/register-request';
 import { AuthService } from '../../services/auth.service';
 import { RegisterFormComponent } from '../register-form/register-form.component';
 import { RegisterModel } from '../types/register.model';
-import { PbCardFooterDirective } from '@shared/ui/pb-card/directives/pb-card-footer.directive.';
 
 @Component({
   selector: 'app-register-page',
