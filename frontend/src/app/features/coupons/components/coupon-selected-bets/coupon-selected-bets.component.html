@@ -8,23 +8,24 @@
         [class.list__item--started]="isStarted(bet.matchStartTime)"
         [@listItemAnimation]
       >
-        <div class="min-w-0 flex-1">
+        <div class="flex flex-col gap-8 min-w-0 flex-1">
           <p class="t-heading-xs truncate">
             {{ bet.matchLabel }}
           </p>
-
-          <p class="t-label mt-1 flex items-center gap-4">
-            <app-bet-type-label [betType]="bet.betType" />
-            <span class="list__item--dot" aria-hidden="true">•</span>
-            <span class="t-primary">
-              {{ bet.odds | number: "1.2-2" }}
-            </span>
-          </p>
-          @if (isStarted(bet.matchStartTime)) {
-            <p class="list__item-warning">
-              {{ "coupon.matchStarted" | transloco }}
+            <div>
+            <p class="t-label flex items-center gap-4">
+              <app-bet-type-label [betType]="bet.betType" />
+              <span class="list__item--dot" aria-hidden="true">•</span>
+              <span class="t-primary">
+                {{ bet.odds | number: "1.2-2" }}
+              </span>
             </p>
-          }
+            @if (isStarted(bet.matchStartTime)) {
+              <p class="list__item-warning">
+                {{ "coupon.matchStarted" | transloco }}
+              </p>
+            }
+          </div>
         </div>
         <pb-button
           size="sm"

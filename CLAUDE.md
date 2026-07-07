@@ -21,13 +21,13 @@ Przed pierwszym `make dev` wymagana jest konfiguracja:
 
 ### 1. Plik `.env.dev`
 
-Skopiuj i uzupełnij plik ze zmiennymi środowiskowymi:
+Skopiuj wzorzec `.env.example` i uzupełnij wartości:
 
 ```bash
-cp .env.dev.example .env.dev   # jeśli istnieje wzorzec
+cp .env.example .env.dev
 ```
 
-Plik `.env.dev` jest ignorowany przez git i nie jest dostarczany z repozytorium.
+Ten sam wzorzec służy też do stworzenia `.env` na potrzeby produkcji — patrz `DEPLOY_PLAN.md`. Pliki `.env` i `.env.dev` są ignorowane przez git i nie są dostarczane z repozytorium.
 
 ### 2. Dostęp do GitHub Packages (biblioteki współdzielone)
 
@@ -37,7 +37,12 @@ Biblioteki `poorbet-commons` i `poorbet-auth-starter` są publikowane w GitHub P
 <settings>
   <servers>
     <server>
-      <id>github</id>
+      <id>github-commons</id>
+      <username>TWÓJ_LOGIN_GITHUB</username>
+      <password>TWÓJ_TOKEN_GITHUB</password>
+    </server>
+    <server>
+      <id>github-auth</id>
       <username>TWÓJ_LOGIN_GITHUB</username>
       <password>TWÓJ_TOKEN_GITHUB</password>
     </server>

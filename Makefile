@@ -1,5 +1,6 @@
 COMPOSE = docker compose --env-file env
 COMPOSE_DEV = docker compose --env-file .env.dev -f docker-compose.yml -f docker-compose.dev.yml
+COMPOSE_PROD = docker compose --env-file .env -f docker-compose.yml -f docker-compose.prod.yml
 
 # ========================
 # DEV ENV
@@ -7,6 +8,16 @@ COMPOSE_DEV = docker compose --env-file .env.dev -f docker-compose.yml -f docker
 
 dev:
 	$(COMPOSE_DEV) up -d --build
+
+# ========================
+# PROD ENV
+# ========================
+
+prod-pull:
+	$(COMPOSE_PROD) pull
+
+prod:
+	$(COMPOSE_PROD) up -d
 
 # ========================
 # DEV
