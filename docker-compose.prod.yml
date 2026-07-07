@@ -1,0 +1,88 @@
+# Produkcja: obrazy z GHCR (Etap 5/6), bez lokalnego builda, bez bind mountów kodu.
+#
+# Wymaga zmiennej IMAGE_TAG (wersja obrazów, np. v0.1.0 — nigdy "latest", patrz DEPLOY_PLAN.md Etap 5).
+# Użycie:
+#   IMAGE_TAG=v0.1.0 docker compose --env-file .env -f docker-compose.yml -f docker-compose.prod.yml pull
+#   IMAGE_TAG=v0.1.0 docker compose --env-file .env -f docker-compose.yml -f docker-compose.prod.yml up -d
+#
+# Tylko frontend i gateway mają porty wystawione na hosta — reszta serwisów i wszystkie bazy
+# komunikują się wyłącznie wewnątrz sieci main_network (DNS Compose po nazwie serwisu),
+# bez potrzeby publikowania portów. Docelowo (Etap 8) nawet frontend/gateway przestaną
+# wystawiać porty bezpośrednio — stanie przed nimi reverse proxy w tej samej sieci.
+
+services:
+  frontend:
+    image: ghcr.io/dariusz95/poorbet-frontend:${IMAGE_TAG}
+    restart: unless-stopped
+    ports:
+      - "80:8080"
+
+  gateway:
+    image: ghcr.io/dariusz95/poorbet-gateway:${IMAGE_TAG}
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+
+  odds-engine-service:
+    image: ghcr.io/dariusz95/poorbet-odds-engine-service:${IMAGE_TAG}
+    restart: unless-stopped
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+
+  auth-service:
+    image: ghcr.io/dariusz95/poorbet-auth-service:${IMAGE_TAG}
+    restart: unless-stopped
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+
+  match-service:
+    image: ghcr.io/dariusz95/poorbet-match-service:${IMAGE_TAG}
+    restart: unless-stopped
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - INSTANCE_ID=match-1
+
+  coupon-service:
+    image: ghcr.io/dariusz95/poorbet-coupon-service:${IMAGE_TAG}
+    restart: unless-stopped
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+
+  wallet-service:
+    image: ghcr.io/dariusz95/poorbet-wallet-service:${IMAGE_TAG}
+    restart: unless-stopped
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+
+  notification-service:
+    image: ghcr.io/dariusz95/poorbet-notification-service:${IMAGE_TAG}
+    restart: unless-stopped
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+
+  redis:
+    restart: unless-stopped
+
+  rabbitmq:
+    restart: unless-stopped
+
+  # user-db/Dockerfile, match-db/Dockerfile itd. to gołe "FROM postgres:16" bez żadnych
+  # dodatków — więc w prod od razu ciągniemy oficjalny obraz, zamiast budować i publikować
+  # własny 1:1 taki sam.
+  user-db:
+    image: postgres:16
+    restart: always
+
+  match-db:
+    image: postgres:16
+    restart: always
+
+  wallet-db:
+    image: postgres:16
+    restart: always
+
+  coupon-db:
+    image: postgres:16
+    restart: always

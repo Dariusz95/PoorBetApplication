@@ -15,6 +15,12 @@ services:
         condition: service_healthy
     networks:
       - main_network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8081/actuator/health/readiness"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   odds-engine-service:
     environment:
@@ -22,7 +28,7 @@ services:
     networks:
       - main_network
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health/readiness" ]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/actuator/health/readiness"]
       interval: 10s
       timeout: 3s
       retries: 10
@@ -43,7 +49,7 @@ services:
     networks:
       - main_network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health/readiness"]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/actuator/health/readiness"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -72,7 +78,7 @@ services:
     networks:
       - main_network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health/readiness"]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/actuator/health/readiness"]
       interval: 15s
       timeout: 5s
       retries: 5
@@ -95,7 +101,7 @@ services:
     networks:
       - main_network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health/readiness"]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/actuator/health/readiness"]
       interval: 15s
       timeout: 5s
       retries: 5
@@ -118,7 +124,7 @@ services:
     networks:
       - main_network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health/readiness"]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/actuator/health/readiness"]
       interval: 15s
       timeout: 5s
       retries: 5
@@ -133,6 +139,12 @@ services:
       RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
     networks:
       - main_network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/actuator/health/readiness"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   redis:
     image: redis:7.4-alpine

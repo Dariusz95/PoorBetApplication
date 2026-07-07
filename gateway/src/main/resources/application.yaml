@@ -43,3 +43,14 @@ poorbet:
       - /api/match-pool/**
       - /api/teams/public/**
       - /images/**
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: always

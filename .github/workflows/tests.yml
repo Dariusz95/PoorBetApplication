@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - main
+  workflow_call:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -24,6 +25,8 @@ jobs:
       fail-fast: false
       matrix:
         service: [
+          auth-service,
+          gateway,
           coupon-service,
           match-service,
           odds-engine-service,

@@ -16,3 +16,14 @@ poorbet:
   security:
     issuer: ${AUTH_ISSUER_URI}
     jwk-set-uri: ${AUTH_JWKS_URI}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: always
