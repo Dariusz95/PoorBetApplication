@@ -36,25 +36,36 @@ services:
     restart: unless-stopped
     environment:
       - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://user-db:5432/${POSTGRES_AUTH_DB}
+      - POSTGRES_USER=${POSTGRES_AUTH_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_AUTH_PASSWORD}
 
   match-service:
     image: ghcr.io/dariusz95/poorbet-match-service:${IMAGE_TAG}
     restart: unless-stopped
     environment:
       - SPRING_PROFILES_ACTIVE=prod
-      - INSTANCE_ID=match-1
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://match-db:5432/${POSTGRES_MATCH_DB}
+      - POSTGRES_USER=${POSTGRES_MATCH_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_MATCH_PASSWORD}
 
   coupon-service:
     image: ghcr.io/dariusz95/poorbet-coupon-service:${IMAGE_TAG}
     restart: unless-stopped
     environment:
       - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://coupon-db:5432/${POSTGRES_COUPON_DB}
+      - POSTGRES_USER=${POSTGRES_COUPON_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_COUPON_PASSWORD}
 
   wallet-service:
     image: ghcr.io/dariusz95/poorbet-wallet-service:${IMAGE_TAG}
     restart: unless-stopped
     environment:
       - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://wallet-db:5432/${POSTGRES_WALLET_DB}
+      - POSTGRES_USER=${POSTGRES_WALLET_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_WALLET_PASSWORD}
 
   notification-service:
     image: ghcr.io/dariusz95/poorbet-notification-service:${IMAGE_TAG}
@@ -68,9 +79,6 @@ services:
   rabbitmq:
     restart: unless-stopped
 
-  # user-db/Dockerfile, match-db/Dockerfile itd. to gołe "FROM postgres:16" bez żadnych
-  # dodatków — więc w prod od razu ciągniemy oficjalny obraz, zamiast budować i publikować
-  # własny 1:1 taki sam.
   user-db:
     image: postgres:16
     restart: always
@@ -86,3 +94,13 @@ services:
   coupon-db:
     image: postgres:16
     restart: always
+
+volumes:
+  user_data:
+    name: poorbet_prod_user_data
+  match_data:
+    name: poorbet_prod_match_data
+  wallet_data:
+    name: poorbet_prod_wallet_data
+  coupon_data:
+    name: poorbet_prod_coupon_data

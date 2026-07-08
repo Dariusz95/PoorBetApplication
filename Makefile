@@ -1,23 +1,32 @@
+IMAGE_TAG ?= latest
+
 COMPOSE = docker compose --env-file env
 COMPOSE_DEV = docker compose --env-file .env.dev -f docker-compose.yml -f docker-compose.dev.yml
-COMPOSE_PROD = docker compose --env-file .env -f docker-compose.yml -f docker-compose.prod.yml
+COMPOSE_PROD_BUILD = docker compose --env-file .env.dev --env-file .env.secrets.local -f docker-compose.yml -f docker-compose.prod-build.yml
+COMPOSE_PROD = IMAGE_TAG=$(IMAGE_TAG) docker compose \
+	--env-file .env.dev \
+	-f docker-compose.yml \
+	-f docker-compose.prod.yml
+
 
 # ========================
-# DEV ENV
-# ========================
-
-dev:
-	$(COMPOSE_DEV) up -d --build
-
-# ========================
-# PROD ENV
+# PROD
 # ========================
 
 prod-pull:
-	$(COMPOSE_PROD) pull
+	$(COMPOSE_PROD_BUILD) pull
 
 prod:
-	$(COMPOSE_PROD) up -d
+	$(COMPOSE_PROD_BUILD) up -d --build
+
+odds-prod:
+	$(COMPOSE_PROD_BUILD) up -d --build odds-engine-service
+
+front-prod:
+	$(COMPOSE_PROD_BUILD) up -d --build frontend
+
+auth-prod:
+	$(COMPOSE_PROD_BUILD) up -d --build auth-service
 
 # ========================
 # DEV
@@ -25,6 +34,9 @@ prod:
 
 odds-engine-dev:
 	$(COMPOSE_DEV) up -d --build odds-engine-service
+
+dev:
+	$(COMPOSE_DEV) up -d --build
 
 auth-dev:
 	$(COMPOSE_DEV) up -d --build auth-service
