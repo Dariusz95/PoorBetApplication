@@ -19,6 +19,7 @@ FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 RUN addgroup -S appgroup && adduser -S -u 1001 -G appgroup appuser
 COPY --from=build /workspace/odds-engine-service/target/*.jar app.jar
+RUN chown -R appuser:appgroup /app
 USER 1001
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]

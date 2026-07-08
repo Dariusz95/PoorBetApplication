@@ -1,0 +1,131 @@
+secrets:
+  github_actor:
+    environment: GITHUB_ACTOR
+  github_token:
+    environment: GITHUB_TOKEN
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "4200:8080"
+    restart: unless-stopped
+
+  gateway:
+    build:
+      context: .
+      dockerfile: gateway/Dockerfile
+      secrets:
+        - github_actor
+        - github_token
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+    restart: unless-stopped
+
+  auth-service:
+    build:
+      context: .
+      dockerfile: auth-service/Dockerfile
+      secrets:
+        - github_actor
+        - github_token
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://user-db:5432/${POSTGRES_AUTH_DB}
+      - POSTGRES_USER=${POSTGRES_AUTH_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_AUTH_PASSWORD}
+    restart: unless-stopped
+
+  match-service:
+    build:
+      context: .
+      dockerfile: match-service/Dockerfile
+      secrets:
+        - github_actor
+        - github_token
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://match-db:5432/${POSTGRES_MATCH_DB}
+      - POSTGRES_USER=${POSTGRES_MATCH_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_MATCH_PASSWORD}
+    restart: unless-stopped
+
+  coupon-service:
+    build:
+      context: .
+      dockerfile: coupon-service/Dockerfile
+      secrets:
+        - github_actor
+        - github_token
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://coupon-db:5432/${POSTGRES_COUPON_DB}
+      - POSTGRES_USER=${POSTGRES_COUPON_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_COUPON_PASSWORD}
+    restart: unless-stopped
+
+  wallet-service:
+    build:
+      context: .
+      dockerfile: wallet-service/Dockerfile
+      secrets:
+        - github_actor
+        - github_token
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://wallet-db:5432/${POSTGRES_WALLET_DB}
+      - POSTGRES_USER=${POSTGRES_WALLET_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_WALLET_PASSWORD}
+    restart: unless-stopped
+
+  notification-service:
+    build:
+      context: .
+      dockerfile: notification-service/Dockerfile
+      secrets:
+        - github_actor
+        - github_token
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+    restart: unless-stopped
+
+  odds-engine-service:
+    build:
+      context: .
+      dockerfile: odds-engine-service/Dockerfile
+      secrets:
+        - github_actor
+        - github_token
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+    restart: unless-stopped
+
+  user-db:
+    image: postgres:16
+    restart: always
+
+  match-db:
+    image: postgres:16
+    restart: always
+
+  wallet-db:
+    image: postgres:16
+    restart: always
+
+  coupon-db:
+    image: postgres:16
+    restart: always
+
+volumes:
+  user_data:
+    name: poorbet_prod_build_user_data
+  match_data:
+    name: poorbet_prod_build_match_data
+  wallet_data:
+    name: poorbet_prod_build_wallet_data
+  coupon_data:
+    name: poorbet_prod_build_coupon_data

@@ -1,7 +1,3 @@
-poorbet:
-  security:
-    enabled: true
-
 logging:
   level:
     root: WARN

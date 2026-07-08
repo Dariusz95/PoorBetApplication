@@ -24,6 +24,13 @@ public class DatasetWriter {
         Path path = properties.getOutputPath();
         String delimiter = properties.getDelimiter();
 
+        try {
+            Files.createDirectories(path.getParent());
+        } catch (IOException e) {
+            log.error("❌ Nie udało się utworzyć katalogu {}", path.getParent(), e);
+            return;
+        }
+
         try (BufferedWriter writer = Files.newBufferedWriter(path)) {
             writer.write(String.join(delimiter,
                     "home_attack",

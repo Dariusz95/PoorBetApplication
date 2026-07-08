@@ -29,7 +29,8 @@ RUN chown -R appuser:appgroup \
     /usr/share/nginx/html \
     /var/cache/nginx \
     /var/log/nginx \
-    /etc/nginx
+    /etc/nginx \
+    /run
 
 
 USER appuser

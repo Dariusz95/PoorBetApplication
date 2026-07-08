@@ -1,5 +1,6 @@
 .env
 .env.dev
+.env.secrets.local
 /dist
 .idea/*
 **/.idea/*
