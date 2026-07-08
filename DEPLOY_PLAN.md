@@ -126,21 +126,95 @@ Nowy plik `.github/workflows/publish-images.yml`, uruchamiany po pushu tagu `v*`
 
 ## Etap 7 — Sekrety i konfiguracja produkcyjna
 
-- [ ] Wygenerować **nowe** hasła/sekrety dla prod (`POSTGRES_*_PASSWORD`, `RABBITMQ_PASSWORD`, `JWT_SECRET`, `*_CLIENT_SECRET`) — nie kopiować wartości deweloperskich z `.env.dev`.
-- [ ] `AUTH_ISSUER_URI` / `AUTH_JWKS_URI` muszą wskazywać na publiczny adres produkcyjny auth-service, nie na `localhost`/nazwę kontenera dev.
+- [ ] Wygenerować **nowe** hasła/sekrety dla prod (`POSTGRES_*_PASSWORD`, `RABBITMQ_PASSWORD`, `JWT_SECRET`, `*_CLIENT_SECRET`) — nie kopiować wartości deweloperskich z `.env.dev`. `openssl rand -base64 32` na każdy sekret osobno.
+- [x] ~~`AUTH_ISSUER_URI`/`AUTH_JWKS_URI` muszą wskazywać na publiczny adres produkcyjny~~ — **błędne założenie, poprawione.** Sprawdziłem w kodzie: te dwa URL-e są używane wyłącznie do komunikacji serwis-do-serwisu wewnątrz `main_network` (walidacja `iss` w JWT, pobranie kluczy JWKS) — przeglądarka nigdy ich nie odpytuje bezpośrednio. Zostają jak w dev: `http://auth-service:8080` / `http://auth-service:8080/.well-known/jwks.json`. Zmiana na publiczną domenę byłaby nie tylko zbędna, ale i myląca.
 - [ ] Docelowo sekrety przez Docker secrets albo zewnętrzny vault (reguła `docker.md`: "Sekrety przez Docker secrets lub zewnętrzny vault — nie przez env w compose") — na start wystarczy `.env` na serwerze poza gitem, ale to świadomy dług do spłacenia później, nie od razu.
 
 ---
 
 ## Etap 8 — Serwer, reverse proxy, TLS, DNS
 
-Tego `deploy.md` w ogóle nie porusza (kończy się na `docker compose pull && docker compose up -d`), a jest niezbędne do realnego wystawienia aplikacji:
+Tego `deploy.md` w ogóle nie porusza (kończy się na `docker compose pull && docker compose up -d`), a jest niezbędne do realnego wystawienia aplikacji. Poniżej konkretna checklista **zakładająca, że VPS i Docker już masz gotowe** (Docker Engine + plugin `docker compose` zainstalowane, dostęp SSH działa) — zostaje tylko warstwa aplikacji i sieci.
 
-- [ ] Wybrać hosting (VPS — np. Hetzner/DigitalOcean — wystarczy na start, bo cała reszta to jeden `docker compose up -d`).
-- [ ] Reverse proxy przed `gateway` i `frontend` (Traefik albo Nginx) + TLS przez Let's Encrypt.
-- [ ] DNS wskazujący domenę na serwer.
-- [ ] Firewall — otwarte tylko 80/443 (i SSH), reszta portów (bazy, RabbitMQ management) tylko wewnątrz sieci Docker.
-- [x] ~~`docker login ghcr.io` na serwerze~~ — niepotrzebne, pakiety GHCR są publiczne (decyzja z Etapu 5), zwykły `docker compose pull` bez logowania wystarczy.
+**Ważna zmiana od czasu napisania pierwszej wersji tego etapu:** `frontend/nginx.conf` ma teraz własny `location /api/` proxujący do `http://gateway:8081` **wewnątrz sieci Docker** (naprawiony w tej sesji — wcześniej frontend serwował tylko statyki, więc każde żądanie `/api/**` z przeglądarki dostawało 405, bo trafiało w `try_files` zamiast do gatewaya). To upraszcza resztę tego etapu: reverse proxy na hoście musi znać **tylko jeden upstream — kontener `frontend`**, nie musi dzielić ruchu między `frontend` i `gateway` po prefiksie ścieżki. Konsekwentnie usunąłem `ports: "8081:8081"` z `gateway` w `docker-compose.prod.yml` — nic z zewnątrz nie musi już trafiać do gatewaya bezpośrednio, tylko `frontend`.
+
+### 8.0 — Zanim zaczniesz
+
+- [ ] **Pierwszy tag wypchnięty do GitHuba** (`git tag v0.1.0 && git push origin v0.1.0`), żeby Etap 6 (`publish-images.yml`) faktycznie zbudował i opublikował 8 obrazów do GHCR — bez tego `docker-compose.prod.yml` nie ma czego pullować. Sprawdź zakładkę Actions, aż wszystkie joby będą zielone.
+- [ ] Domena wskazująca rekordem `A` na IP VPS (jeśli deploy ma być pod domeną, nie samym IP).
+
+### 8.1 — Pliki na serwerze
+
+- [ ] Katalog roboczy, np. `/opt/poorbet`, właściciel = user, którym się łączysz (nie root).
+- [ ] Skopiować na serwer (scp) tylko trzy pliki: `docker-compose.yml`, `docker-compose.prod.yml`, `.env.example` — **nie trzeba klonować całego repo**, obrazy są już zbudowane w GHCR, serwer tylko je uruchamia.
+- [ ] `mv .env.example .env`, uzupełnić realnymi wartościami (Etap 7), `chmod 600 .env`.
+
+### 8.2 — Pierwsze uruchomienie
+
+```bash
+cd /opt/poorbet
+export IMAGE_TAG=v0.1.0   # tag z kroku 8.0
+
+docker compose --env-file .env -f docker-compose.yml -f docker-compose.prod.yml pull
+docker compose --env-file .env -f docker-compose.yml -f docker-compose.prod.yml up -d
+docker compose --env-file .env -f docker-compose.yml -f docker-compose.prod.yml ps
+```
+
+Wszystkie serwisy powinny dojść do `healthy` (Etap 4). `docker login ghcr.io` **nie jest potrzebny** — pakiety GHCR są publiczne (decyzja z Etapu 5).
+
+Na tym etapie appka działa lokalnie na serwerze (`curl http://127.0.0.1:80` powinno odpowiadać) — jeszcze nic nie jest wystawione publicznie z TLS.
+
+### 8.3 — Firewall
+
+- [ ] `ufw allow OpenSSH && ufw allow 80/tcp && ufw allow 443/tcp && ufw enable`. Tylko te trzy porty otwarte na świat — bazy, RabbitMQ, `gateway` i tak nie mają już `ports:` w `docker-compose.prod.yml` (8.-wstęp wyżej), więc nie ma czego dodatkowo blokować.
+
+### 8.4 — Reverse proxy (Nginx na hoście) + TLS (Certbot)
+
+Jeden upstream — sam `frontend` (patrz uwaga na początku etapu):
+
+```nginx
+server {
+    listen 80;
+    server_name twojadomena.pl;
+
+    location / {
+        proxy_pass http://127.0.0.1:80;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        # SSE (/api/notifications/stream) — bez tego powiadomienia docierają
+        # z opóźnieniem albo wcale, bo nginx buforuje odpowiedź.
+        proxy_buffering off;
+        proxy_read_timeout 3600s;
+    }
+}
+```
+
+```bash
+sudo apt install -y nginx certbot python3-certbot-nginx
+# wklej powyższy config do /etc/nginx/sites-available/poorbet, potem:
+sudo ln -s /etc/nginx/sites-available/poorbet /etc/nginx/sites-enabled/
+sudo rm -f /etc/nginx/sites-enabled/default
+sudo nginx -t && sudo systemctl reload nginx
+
+sudo certbot --nginx -d twojadomena.pl   # odpowiedz "yes" na przekierowanie http→https
+```
+
+Certbot sam dopisuje `listen 443 ssl` i instaluje systemd timer do automatycznego odnawiania — zweryfikuj jednorazowo: `sudo certbot renew --dry-run`.
+
+### 8.5 — Aktualizacja aplikacji (kolejne wersje)
+
+```bash
+# lokalnie: git tag vX.Y.Z && git push origin vX.Y.Z   → CI buduje i publikuje do GHCR
+# na serwerze:
+export IMAGE_TAG=vX.Y.Z
+docker compose --env-file .env -f docker-compose.yml -f docker-compose.prod.yml pull
+docker compose --env-file .env -f docker-compose.yml -f docker-compose.prod.yml up -d
+```
+Krótka przerwa w dostępności podmienianych serwisów (nie blue-green) — akceptowalne przy tej skali. Migracje Flyway nakładają się automatycznie przy starcie — **zrób backup (Etap 9) przed każdą aktualizacją**.
 
 ---
 
