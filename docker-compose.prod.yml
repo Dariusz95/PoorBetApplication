@@ -3,7 +3,7 @@ services:
     image: ghcr.io/dariusz95/poorbet-frontend:${IMAGE_TAG}
     restart: unless-stopped
     ports:
-      - "80:8080"
+      - "127.0.0.1:8080:8080"
 
   gateway:
     image: ghcr.io/dariusz95/poorbet-gateway:${IMAGE_TAG}
