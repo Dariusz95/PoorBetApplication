@@ -7,6 +7,15 @@ spring:
       idle-timeout: 600000
       max-lifetime: 1800000
 
+web:
+  cors:
+    allowed-origin-patterns:
+      - https://poorbet.pl
+    allowed-headers:
+      - Authorization
+      - Requestor-Type
+      - Content-Type
+
 logging:
   level:
     root: WARN
