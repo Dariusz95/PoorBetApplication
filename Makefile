@@ -64,3 +64,22 @@ notification-dev:
 
 match-db:
 	$(COMPOSE_DEV) up -d --build match-db
+
+# ========================
+# PODGLĄD BAZ DANYCH
+# ========================
+# Otwiera psql wewnątrz kontenera danej bazy (scripts/db-shell.sh).
+# Przykład jednego zapytania zamiast sesji interaktywnej:
+#   make db-match ARGS='-c "SELECT * FROM match LIMIT 10;"'
+
+db-auth:
+	scripts/db-shell.sh auth $(ARGS)
+
+db-match:
+	scripts/db-shell.sh match $(ARGS)
+
+db-coupon:
+	scripts/db-shell.sh coupon $(ARGS)
+
+db-wallet:
+	scripts/db-shell.sh wallet $(ARGS)

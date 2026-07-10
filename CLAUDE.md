@@ -138,6 +138,8 @@ W trybie dev bazy są dostępne bezpośrednio z hosta (np. do podpięcia DBeaver
 | `wallet-db` | 5437 |
 | RabbitMQ Management UI | 15672 |
 
+Alternatywnie, bez klienta SQL na hoście, `scripts/db-shell.sh <auth|match|coupon|wallet>` otwiera psql wewnątrz kontenera (działa też na produkcji, gdzie porty baz nie są wystawione na zewnątrz — patrz `.claude/rules/docker.md`). Skróty: `make db-auth`, `make db-match`, `make db-coupon`, `make db-wallet`.
+
 ## Architektura
 
 ### Mapa serwisów
