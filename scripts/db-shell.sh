@@ -73,8 +73,11 @@ else
   exit 1
 fi
 
-DB_USER="$(grep -E "^${DB_USER_KEY[$SERVICE]}=" "$ENV_FILE" | tail -n1 | cut -d= -f2-)"
-DB_NAME="$(grep -E "^${DB_NAME_KEY[$SERVICE]}=" "$ENV_FILE" | tail -n1 | cut -d= -f2-)"
+# `tr -d '\r'` usuwa końcówkę CR z plików .env zapisanych z zakończeniami
+# linii CRLF (Windows) — bez tego wartość zawiera niewidoczny znak `\r` i
+# psql dostaje np. rolę "wallet_user\r", która "nie istnieje".
+DB_USER="$(grep -E "^${DB_USER_KEY[$SERVICE]}=" "$ENV_FILE" | tail -n1 | cut -d= -f2- | tr -d '\r')"
+DB_NAME="$(grep -E "^${DB_NAME_KEY[$SERVICE]}=" "$ENV_FILE" | tail -n1 | cut -d= -f2- | tr -d '\r')"
 
 if [[ -z "$DB_USER" || -z "$DB_NAME" ]]; then
   echo "BŁĄD: nie udało się odczytać ${DB_USER_KEY[$SERVICE]} / ${DB_NAME_KEY[$SERVICE]} z $ENV_FILE" >&2
