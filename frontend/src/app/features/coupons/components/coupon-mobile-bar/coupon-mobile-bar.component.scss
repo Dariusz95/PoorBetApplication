@@ -1,0 +1,93 @@
+@use "components/badge" as badge;
+
+.coupon-bar {
+  display: none;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 60px;
+  z-index: 1000;
+  box-sizing: border-box;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border: none;
+  border-top: 1px solid var(--color-border);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-elevated);
+  cursor: pointer;
+  animation: coupon-bar-in var(--duration-base) var(--ease-out-back);
+}
+
+.coupon-bar__left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.coupon-bar__badge {
+  @include badge.pb-badge-base(0.75rem, 0.5rem);
+  justify-content: center;
+  min-width: 1.5rem;
+
+  background: linear-gradient(
+    135deg,
+    var(--color-primary),
+    var(--color-primary-dark)
+  );
+  color: var(--color-text);
+  box-shadow: var(--shadow-glow-sm);
+}
+
+.coupon-bar__title {
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.coupon-bar__right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.coupon-bar__odds {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  line-height: 1.2;
+}
+
+.coupon-bar__odds-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+}
+
+.coupon-bar__odds-value {
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+@keyframes coupon-bar-in {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .coupon-bar {
+    animation: none;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .coupon-bar {
+    display: flex;
+  }
+}

@@ -23,6 +23,8 @@
       <span class="side-panel__balance-value">
         @if (balance() !== null) {
           {{ balance() | number: '1.2-2' }} zł
+        } @else if (balanceLoading()) {
+          <pb-spinner size="s" ariaLabel="Balance loading" />
         } @else {
           —
         }

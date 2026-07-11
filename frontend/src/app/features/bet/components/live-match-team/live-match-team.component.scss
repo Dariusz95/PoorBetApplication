@@ -4,7 +4,7 @@
 
 .live-match-team {
   &__logo-wrapper {
-    @apply flex h-16 w-16 items-center justify-center overflow-hidden rounded-full bg-app-surface;
+    @apply flex h-16 w-16 items-center justify-center overflow-hidden rounded-full;
   }
 
   &__logo {

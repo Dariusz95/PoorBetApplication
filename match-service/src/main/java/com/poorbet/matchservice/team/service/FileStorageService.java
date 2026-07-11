@@ -31,7 +31,7 @@ public class FileStorageService {
             Files.createDirectories(storageDir);
             String filename = teamId + resolveExtension(file.getContentType());
             Files.copy(file.getInputStream(), storageDir.resolve(filename), StandardCopyOption.REPLACE_EXISTING);
-            return "/images/" + filename;
+            return filename;
         } catch (IOException e) {
             throw new UncheckedIOException("Nie udało się zapisać pliku logo drużyny", e);
         }

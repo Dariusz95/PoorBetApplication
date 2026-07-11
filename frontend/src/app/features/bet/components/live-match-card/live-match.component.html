@@ -1,29 +1,36 @@
 <pb-card>
-  <div pbCardHeader class="live-match-card__header">
-    <div class="live-match-card__status">
-      <span class="live-match-card__live-dot">
-        <span class="live-match-card__live-dot-ping"></span>
-        <span class="live-match-card__live-dot-core"></span>
-      </span>
-      <span class="live-match-card__status-label">{{
-        "bet.liveMatchCard.live" | transloco
-      }}</span>
+  <div pbCardHeader class="flex w-full justify-between pb-4">
+    <div class="flex items-center gap-2">
+      @if (liveMatch().eventType !== MatchEventType.MatchEnded) {
+        <span class="relative flex h-2.5 w-2.5">
+          <span
+            class="absolute inline-flex h-full w-full animate-ping rounded-full bg-app-danger opacity-80"
+          ></span>
+          <span
+            class="relative inline-flex h-2.5 w-2.5 rounded-full bg-app-danger"
+          ></span>
+        </span>
+        <span
+          class="text-xs font-semibold uppercase tracking-wide text-app-text"
+          >{{ "bet.liveMatchCard.live" | transloco }}</span
+        >
+      }
     </div>
 
-    <span class="live-match-card__minute">{{ liveMatch().minute }}'</span>
+    <span class="t-heading-xs text-app-primary">{{ liveMatch().minute }}'</span>
   </div>
 
   <div pbCardBody>
-    <div class="live-match-card__body-grid">
+    <div class="grid grid-cols-[1fr_auto_1fr] items-center gap-4 px-2 py-2">
       <app-live-match-team [teamId]="liveMatch().homeTeamId" />
 
-      <div class="live-match-card__score-block">
-        <p class="live-match-card__score">
-          <span class="live-match-card__score--home">{{
+      <div class="flex flex-col items-center gap-1">
+        <p class="flex items-center gap-2 text-4xl font-bold">
+          <span class="text-app-accent">{{
             liveMatch().homeScore
           }}</span>
-          <span class="live-match-card__score-sep">:</span>
-          <span class="live-match-card__score--away">{{
+          <span class="text-app-textMuted">:</span>
+          <span class="text-app-primary">{{
             liveMatch().awayScore
           }}</span>
         </p>
@@ -31,13 +38,5 @@
 
       <app-live-match-team [teamId]="liveMatch().awayTeamId" />
     </div>
-  </div>
-
-  <div pbCardFooter>
-    @if (liveMatch().eventType === MatchEventType.MatchEnded) {
-      {{ "bet.liveMatchCard.matchFinished" | transloco }}
-    } @else {
-      {{ "bet.liveMatchCard.matchInProgress" | transloco }}
-    }
   </div>
 </pb-card>

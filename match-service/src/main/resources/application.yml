@@ -28,6 +28,12 @@ spring:
     cache:
       type: redis
 
+  rabbitmq:
+    host: ${RABBITMQ_HOST}
+    port: 5672
+    username: ${RABBITMQ_USER}
+    password: ${RABBITMQ_PASSWORD}
+
 management:
   endpoints:
     web:

@@ -31,7 +31,12 @@
       [class.coupon-list__content--scrollable]="scrollable()"
     >
 
-      @if (coupons().length === 0) {
+      @if (isLoading()) {
+        <div class="coupon-list__loading">
+          <pb-spinner size="lg" />
+        </div>
+
+      } @else if (coupons().length === 0) {
         <div class="coupon-list__empty">
           <pb-icon icon="info" size="lg" color="primary"></pb-icon>
           <p class="coupon-list__empty-title">{{ t(emptyTitleKey()) }}</p>

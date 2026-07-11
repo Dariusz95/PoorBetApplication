@@ -45,6 +45,12 @@
     min-height: 160px;
   }
 
+  &__loading {
+    @apply flex items-center justify-center py-8;
+    min-height: 160px;
+    color: var(--color-text-muted);
+  }
+
   &__empty-title {
     @apply text-sm font-bold;
     color: var(--color-text);

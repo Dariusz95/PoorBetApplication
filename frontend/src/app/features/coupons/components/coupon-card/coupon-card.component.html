@@ -7,6 +7,17 @@
       <pb-icon icon="confirmation_number" size="s" color="primary" />
       <p class="t-eyebrow">{{ "bet.coupon.eyebrow" | transloco }}</p>
     </div>
+
+    @if (dialogRef) {
+      <button
+        type="button"
+        class="bet-coupon__close"
+        (click)="close()"
+        [attr.aria-label]="'bet.coupon.close' | transloco"
+      >
+        <pb-icon icon="keyboard_arrow_down" size="m" />
+      </button>
+    }
   </div>
 
   <div pbCardBody class="bg-app-gradient">
@@ -37,7 +48,12 @@
 
     <pb-button
       [fullWidth]="true"
-      [disabled]="betSlipService.selectedCount() === 0 || couponStakeCtrl.invalid"
+      [disabled]="
+        !isLoggedIn() ||
+        betSlipService.selectedCount() === 0 ||
+        couponStakeCtrl.invalid
+      "
+      [loading]="submitting()"
       (buttonClick)="submitCoupon()"
     >
       {{ "bet.coupon.submit" | transloco }}

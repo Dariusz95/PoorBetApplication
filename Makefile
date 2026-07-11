@@ -1,8 +1,8 @@
-IMAGE_TAG ?= latest
+IMAGE_TAG ?=
 
 COMPOSE = docker compose --env-file env
 COMPOSE_DEV = docker compose --env-file .env.dev -f docker-compose.yml -f docker-compose.dev.yml
-COMPOSE_PROD_BUILD = docker compose --env-file .env.dev --env-file .env.secrets.local -f docker-compose.yml -f docker-compose.prod-build.yml
+COMPOSE_PROD_BUILD_LOCAL = docker compose --env-file .env.dev --env-file .env.secrets.local -f docker-compose.yml -f docker-compose.prod-build.yml
 COMPOSE_PROD = IMAGE_TAG=$(IMAGE_TAG) docker compose \
 	--env-file .env.dev \
 	-f docker-compose.yml \
@@ -10,23 +10,44 @@ COMPOSE_PROD = IMAGE_TAG=$(IMAGE_TAG) docker compose \
 
 
 # ========================
-# PROD
+# PROD (GHCR)
 # ========================
 
 prod-pull:
-	$(COMPOSE_PROD_BUILD) pull
+	@if [ -z "$(IMAGE_TAG)" ]; then \
+		echo "BŁĄD: IMAGE_TAG nie ustawiony. Użyj: make prod-pull IMAGE_TAG=v0.1.6 (nigdy 'latest' w prod)"; \
+		exit 1; \
+	fi
+	$(COMPOSE_PROD) pull
 
 prod:
-	$(COMPOSE_PROD_BUILD) up -d --build
+	@if [ -z "$(IMAGE_TAG)" ]; then \
+		echo "BŁĄD: IMAGE_TAG nie ustawiony. Użyj: make prod IMAGE_TAG=v0.1.6 (nigdy 'latest' w prod)"; \
+		exit 1; \
+	fi
+	$(COMPOSE_PROD) up -d
 
-odds-prod:
-	$(COMPOSE_PROD_BUILD) up -d --build odds-engine-service
+release:
+	scripts/release.sh $(VERSION)
 
-front-prod:
-	$(COMPOSE_PROD_BUILD) up -d --build frontend
+# ========================
+# PROD-BUILD-LOCAL (lokalny prod)
+# ========================
 
-auth-prod:
-	$(COMPOSE_PROD_BUILD) up -d --build auth-service
+prod-build-local-pull:
+	$(COMPOSE_PROD_BUILD_LOCAL) pull
+
+prod-build-local:
+	$(COMPOSE_PROD_BUILD_LOCAL) up -d --build
+
+odds-prod-build-local:
+	$(COMPOSE_PROD_BUILD_LOCAL) up -d --build odds-engine-service
+
+front-prod-build-local:
+	$(COMPOSE_PROD_BUILD_LOCAL) up -d --build frontend
+
+auth-prod-build-local:
+	$(COMPOSE_PROD_BUILD_LOCAL) up -d --build auth-service
 
 # ========================
 # DEV
@@ -64,3 +85,22 @@ notification-dev:
 
 match-db:
 	$(COMPOSE_DEV) up -d --build match-db
+
+# ========================
+# PODGLĄD BAZ DANYCH
+# ========================
+# Otwiera psql wewnątrz kontenera danej bazy (scripts/db-shell.sh).
+# Przykład jednego zapytania zamiast sesji interaktywnej:
+#   make db-match ARGS='-c "SELECT * FROM match LIMIT 10;"'
+
+db-auth:
+	scripts/db-shell.sh auth $(ARGS)
+
+db-match:
+	scripts/db-shell.sh match $(ARGS)
+
+db-coupon:
+	scripts/db-shell.sh coupon $(ARGS)
+
+db-wallet:
+	scripts/db-shell.sh wallet $(ARGS)

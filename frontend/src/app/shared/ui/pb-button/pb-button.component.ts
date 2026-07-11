@@ -14,12 +14,13 @@ import { RoutePath } from '../../../core/routing/route-path';
 import { RoutingService } from '../../../core/routing/routing.service';
 import { PbIconComponent } from '../icon/pb-icon.component';
 import { ImageType } from '../pb-image/image-type.model';
+import { PbSpinnerComponent } from '../pb-spinner/pb-spinner.component';
 import { ButtonSize, ButtonVariant } from './pb-button.model';
 
 @Component({
   selector: 'pb-button',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, PbSpinnerComponent],
   templateUrl: './pb-button.component.html',
   styleUrls: ['./pb-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
