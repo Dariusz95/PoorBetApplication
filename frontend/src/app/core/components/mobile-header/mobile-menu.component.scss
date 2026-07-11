@@ -7,7 +7,7 @@
   background-color: theme("colors.app.surface");
   border-top: 1px solid theme("colors.app.border");
   z-index: 1000;
-  height: 60px;
+  height: var(--app-footer-height);
   box-sizing: border-box;
   padding: 0 10px;
 }

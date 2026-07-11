@@ -1,8 +1,11 @@
 .app-header {
   @apply fixed left-0 right-0 top-0 z-[1000] box-border px-4 md:px-5;
+  background: #00000000;
 
   height: var(--app-header-height);
   border-bottom: 1px solid theme("colors.app.border");
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 
   &__content {
     @apply mx-auto flex h-full w-full max-w-[1200px] items-center justify-between;
@@ -14,14 +17,6 @@
 
   &__right {
     @apply items-center gap-3;
-  }
-
-  &__logo-link {
-    @apply h-full;
-  }
-
-  &__logo {
-    @apply h-full;
   }
 
   &__nav-list {

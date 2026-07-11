@@ -16,6 +16,6 @@ export class UserBalanceComponent {
   protected readonly balance = this.walletService.balance;
 
   constructor() {
-    this.walletService.getBalance().subscribe();
+    this.walletService.ensureBalanceLoaded();
   }
 }

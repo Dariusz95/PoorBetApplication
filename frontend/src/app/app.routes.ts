@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { authGuard } from '@core/auth/guards/auth.guard';
 import { guestGuard } from '@core/auth/guards/guest.guard';
 import { AppLayoutComponent } from './core/layouts/app-layout/app-layout.component';
 import { RouteFragment } from './core/routing/route-fragment';
@@ -33,6 +34,7 @@ export const routes: Routes = [
       },
       {
         path: RouteFragment.MyCoupons,
+        canActivate: [authGuard],
         loadComponent: () =>
           import('./features/coupons/pages/coupons-page/coupons-page.component').then(
             (m) => m.CouponsPageComponent,

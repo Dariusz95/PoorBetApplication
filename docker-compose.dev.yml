@@ -5,7 +5,7 @@ x-resource-light: &resource-light
   cpus: 0.3
 
 x-resource-medium: &resource-medium
-  mem_limit: 512m
+  mem_limit: 384m
   cpus: 0.5
 
 x-resource-heavy: &resource-heavy

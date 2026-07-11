@@ -48,6 +48,36 @@
   }
 }
 
+.coupon-mobile-sheet {
+  animation: slideInFromBottom 220ms ease-out;
+  height: 100dvh;
+  overflow-y: auto;
+}
+
+.coupon-mobile-sheet-backdrop {
+  background: rgba(6, 8, 14, 0.7);
+  animation: backdropIn 200ms ease-out;
+}
+
+@keyframes slideInFromBottom {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .coupon-mobile-sheet {
+    animation: none !important;
+  }
+
+  .coupon-mobile-sheet-backdrop {
+    animation: none !important;
+  }
+}
+
 @layer components {
   .pb-overlay-trigger {
     @apply flex items-center justify-between rounded-lg text-sm transition-colors duration-200 ease-out;

@@ -8,10 +8,11 @@ import { JwtAuthStateService } from '@core/auth/services/jwt-auth-state.service'
 import { RoutePath } from '@core/routing/route-path';
 import { RoutingService } from '@core/routing/routing.service';
 import { WalletService } from '@core/wallet/services/wallet.service';
+import { PbSpinnerComponent } from '@shared/ui/pb-spinner/pb-spinner.component';
 
 @Component({
   selector: 'app-user-side-panel',
-  imports: [TranslocoDirective, DecimalPipe],
+  imports: [TranslocoDirective, DecimalPipe, PbSpinnerComponent],
   templateUrl: './user-side-panel.component.html',
   styleUrl: './user-side-panel.component.scss',
 })
@@ -24,10 +25,11 @@ export class UserSidePanelComponent {
 
   readonly isLoggedIn = toSignal(this.authService.isLoggedIn$, { initialValue: false });
   readonly balance = this.walletService.balance;
+  readonly balanceLoading = this.walletService.loading;
   readonly userEmail = this.jwtAuthState.getSubject();
 
   constructor() {
-    this.walletService.getBalance().subscribe();
+    this.walletService.ensureBalanceLoaded();
   }
 
   close(): void {

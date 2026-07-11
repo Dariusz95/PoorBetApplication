@@ -15,7 +15,8 @@ import { PageRequest } from '@shared/interfaces/page-request';
 import { PageResponse } from '@shared/interfaces/page-response';
 import { DialogService } from '@shared/services/dialog.service';
 import { PbIconComponent } from '@shared/ui/icon/pb-icon.component';
-import { combineLatest, switchMap } from 'rxjs';
+import { PbSpinnerComponent } from '@shared/ui/pb-spinner/pb-spinner.component';
+import { combineLatest, finalize, switchMap, tap } from 'rxjs';
 import { CouponStatus } from '../../types/coupon-status';
 import { CouponService } from '../../services/coupon.service';
 import { Coupon } from '../../types/coupon';
@@ -34,6 +35,7 @@ interface TabConfig {
   imports: [
     TranslocoDirective,
     PbIconComponent,
+    PbSpinnerComponent,
     DatePipe,
     CouponSummaryComponent,
   ],
@@ -59,16 +61,18 @@ export class CouponListComponent {
     direction: 'desc',
   });
 
+  readonly isLoading = signal(true);
+
   readonly couponPage = toSignal<PageResponse<Coupon> | null>(
     combineLatest([
       toObservable(this.activeTab),
       toObservable(this.pageRequest),
     ]).pipe(
+      tap(() => this.isLoading.set(true)),
       switchMap(([tab]) =>
-        this.couponService.getMyCoupons(
-          this.pageRequest(),
-          this.tabToFilter(tab),
-        ),
+        this.couponService
+          .getMyCoupons(this.pageRequest(), this.tabToFilter(tab))
+          .pipe(finalize(() => this.isLoading.set(false))),
       ),
     ),
     { initialValue: null },

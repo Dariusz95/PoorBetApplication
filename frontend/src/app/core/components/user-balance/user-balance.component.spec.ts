@@ -13,6 +13,7 @@ describe('UserBalanceComponent', () => {
   const walletMock = {
     balance: signal<number | null>(125.5),
     getBalance: () => of(125.5),
+    ensureBalanceLoaded: () => {},
   };
 
   beforeEach(async () => {

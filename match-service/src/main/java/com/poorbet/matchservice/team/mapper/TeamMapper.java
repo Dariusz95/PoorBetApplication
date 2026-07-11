@@ -20,7 +20,13 @@ public class TeamMapper {
         return new TeamShortDto(
                 team.getId(),
                 team.getName(),
-                team.getImg()
+                toImgUrl(team.getImg())
         );
+    }
+
+    // img w bazie to sama nazwa pliku (np. "ac-pierogi.png") — prefiks ścieżki serwującej
+    // pliki statyczne (StaticResourceConfig) doklejamy tu, w jednym miejscu, przy budowaniu DTO
+    private static String toImgUrl(String img) {
+        return img != null ? "/images/" + img : null;
     }
 }

@@ -1,0 +1,20 @@
+@if (betSlipService.selectedCount() > 0) {
+  <button
+    type="button"
+    class="coupon-bar"
+    (click)="openSheet()"
+  >
+    <div class="coupon-bar__left">
+      <span class="coupon-bar__badge">{{ betSlipService.selectedCount() }}</span>
+      <span class="coupon-bar__title">{{ "bet.coupon.eyebrow" | transloco }}</span>
+    </div>
+
+    <div class="coupon-bar__right">
+      <div class="coupon-bar__odds">
+        <span class="coupon-bar__odds-label">{{ "bet.coupon.totalOdds" | transloco }}</span>
+        <span class="coupon-bar__odds-value">{{ betSlipService.totalOdds() | number: "1.2-2" }}</span>
+      </div>
+      <pb-icon icon="keyboard_arrow_up" size="m" color="primary" />
+    </div>
+  </button>
+}

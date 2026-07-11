@@ -1,5 +1,5 @@
 INSERT INTO teams (id, name, img, attack_power, defence_power) VALUES
-('11111111-1111-1111-1111-111111111111','Red Lions','/images/red_lions.png',20,65),
-('22222222-2222-2222-2222-222222222222','Blue Wolves','/images/blue_wolves.png',68,40),
-('33333333-3333-3333-3333-333333333333','Green Eagles','/images/green_eagles.png',80,62),
-('44444444-4444-4444-4444-444444444444','Yellow Tigers','/images/yellow_tigers.png',90,72);
+('4cb5a85f-e3f6-4362-8923-68f5030caec3','Na dużą by wpadło','na-duza-by-wpadlo.png',20,65),
+('87c8f7f3-7389-4a07-850e-6f78bc0cfc53','FC po nalewce','fc-po-nalewce.png',68,40),
+('8c9be0bc-33a2-41c5-b86c-f168d8623c1e','AC Pierogi','ac-pierogi.png',80,62),
+('af475fc8-b32c-4365-ac68-9ac0efb15c03','FC Balerona','fc-balerona.png',90,72);

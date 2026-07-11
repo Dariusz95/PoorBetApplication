@@ -1,6 +1,6 @@
 <nav class="mobile-bottom-menu" aria-label="Nawigacja mobilna">
   <ul class="mobile-menu-list">
-    @for (item of menuItems; track item.link) {
+    @for (item of menuItems(); track item.link) {
       <li class="mobile-menu-item">
         <a
           [routerLink]="item.link"
