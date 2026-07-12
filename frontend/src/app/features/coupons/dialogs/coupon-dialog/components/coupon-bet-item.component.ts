@@ -7,14 +7,11 @@ import {
 import { BetTypeLabelComponent } from '@features/coupons/components/bet-type-label/bet-type-label.component';
 import { Bet } from '@features/coupons/types/bet';
 import { BetStatus } from '@features/coupons/types/bet-status';
-import { TranslocoPipe } from '@jsverse/transloco';
-import { BET_TYPE_TO_OPTION } from '@shared/types/bet-option';
-import { BetType } from '@shared/types/bet-type';
 
 @Component({
   selector: 'app-coupon-bet-item',
   standalone: true,
-  imports: [CommonModule, DecimalPipe, TranslocoPipe, BetTypeLabelComponent],
+  imports: [CommonModule, DecimalPipe, BetTypeLabelComponent],
   template: `
     <li
       class="coupon-bet"
@@ -83,7 +80,7 @@ export class CouponBetItemComponent {
 
   isEnded = computed(() => {
     const e = this.liveEvent();
-    
+
     return !!e && e.eventType === MatchEventType.MatchEnded;
   });
 

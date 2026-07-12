@@ -1,5 +1,7 @@
 :host {
   display: block;
+  max-height: 350px;
+  overflow-y: auto;
 }
 
 .coupon {

@@ -47,7 +47,6 @@
     line-height: 1.25rem;
   }
 
-
   &__odds {
     color: var(--color-success);
     font-size: 0.875rem;
@@ -153,6 +152,7 @@
   .coupon-bet {
     align-items: flex-start;
     flex-direction: column;
+    gap: var(--space-2);
 
     &__right {
       align-self: flex-end;

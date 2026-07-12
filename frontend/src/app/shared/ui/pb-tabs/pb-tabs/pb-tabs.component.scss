@@ -1,5 +1,5 @@
 .tabs-container {
-  @apply relative flex border-b overflow-x-auto bg-app-surface gap-0 rounded-3xl;
+  @apply relative flex gap-0 overflow-x-auto rounded-3xl border-b bg-app-surface;
 
   border-color: rgb(var(--app-border));
   border-bottom: 1px solid rgb(var(--app-border));
@@ -12,7 +12,7 @@
 }
 
 .tab-button {
-  @apply relative flex flex-1 items-center justify-center gap-2 px-4 py-3 text-sm font-medium transition-colors cursor-pointer;
+  @apply relative flex flex-1 cursor-pointer items-center justify-center gap-2 px-2 py-1.5 text-sm font-medium transition-colors md:px-4 md:py-3;
 
   color: rgb(var(--app-textMuted));
   background: none;

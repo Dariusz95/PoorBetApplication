@@ -1,4 +1,4 @@
-<form pbCardBody [formGroup]="form">
+<form pbCardBody [formGroup]="form" (ngSubmit)="onSubmit()">
   <pb-form-field>
     <pb-label> {{ "auth.email.label" | transloco }}</pb-label>
     <pb-input
@@ -22,12 +22,7 @@
   </pb-form-field>
 
   <div class="mt-8">
-    <pb-button
-      variant="primary"
-      size="md"
-      [fullWidth]="true"
-      (buttonClick)="onSubmit()"
-    >
+    <pb-button variant="primary" size="md" type="submit" [fullWidth]="true">
       {{ "auth.login.login" | transloco }}
     </pb-button>
   </div>
