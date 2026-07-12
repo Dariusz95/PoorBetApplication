@@ -61,11 +61,11 @@ export class LoginFormComponent {
 
   private createForm(): FormGroup<LoginForm> {
     return this.fb.group({
-      email: this.fb.nonNullable.control('asd@asd.pl', [
+      email: this.fb.nonNullable.control('', [
         Validators.required,
         Validators.email,
       ]),
-      password: this.fb.nonNullable.control('zaq1@WSX', [
+      password: this.fb.nonNullable.control('', [
         Validators.required,
         Validators.minLength(8),
         Validators.pattern(PASSWORD_REGEX),

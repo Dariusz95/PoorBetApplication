@@ -1,17 +1,16 @@
 import { Dialog } from '@angular/cdk/dialog';
 import { Overlay } from '@angular/cdk/overlay';
+import { AsyncPipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslocoDirective } from '@jsverse/transloco';
+import { PbIconComponent } from '@shared/ui/icon/pb-icon.component';
 import { Observable } from 'rxjs';
 import { AuthService } from '../../auth/services/auth.service';
 import { RoutePath } from '../../routing/route-path';
-import { LanguageSwitcherComponent } from '../language-switcher/language-switcher.component';
-import { UserDropdownComponent } from '../user-dropdown/user-dropdown.component';
-import { UserSidePanelComponent } from '../user-side-panel/user-side-panel.component';
-import { MENU_ITEMS } from './models/menu-items';
 import { CouponDropdownComponent } from '../coupon-dropdown/coupon-dropdown.component';
-import { PbIconComponent } from '@shared/ui/icon/pb-icon.component';
+import { LanguageSwitcherComponent } from '../language-switcher/language-switcher.component';
+import { UserSidePanelComponent } from '../user-side-panel/user-side-panel.component';
 
 @Component({
   selector: 'app-header',
@@ -20,9 +19,9 @@ import { PbIconComponent } from '@shared/ui/icon/pb-icon.component';
     RouterLink,
     LanguageSwitcherComponent,
     TranslocoDirective,
-    UserDropdownComponent,
     PbIconComponent,
     CouponDropdownComponent,
+    AsyncPipe,
   ],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
@@ -33,9 +32,8 @@ export class HeaderComponent {
   private readonly overlay = inject(Overlay);
 
   protected readonly RoutePath = RoutePath;
-  protected readonly isLoggedIn$: Observable<boolean> = this.authService.isLoggedIn$;
-
-  menuItems = MENU_ITEMS;
+  protected readonly isLoggedIn$: Observable<boolean> =
+    this.authService.isLoggedIn$;
 
   openUserPanel(): void {
     this.dialog.open(UserSidePanelComponent, {

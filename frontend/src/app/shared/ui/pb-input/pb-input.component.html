@@ -3,7 +3,7 @@
   [class.input-container--underline]="variant() === 'underline'"
   [class.input-container--surface]="variant() === 'surface'"
   [class.focused]="focused()"
-  [class.invalid]="invalid()"
+  [class.invalid]="invalid() && touched()"
   [class.has-value]="value() !== ''"
   [class.has-icon-left]="hasIcon"
 >
@@ -14,7 +14,7 @@
   }
 
   <input
-    class="pb-input"
+    class="pb-input"`
     [id]="labelId()"
     [type]="type()"
     [placeholder]="placeholder()"

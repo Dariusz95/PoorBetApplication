@@ -37,7 +37,9 @@
     </pb-form-field>
 
     <app-coupon-summary>
-      <span slot="amount-value">{{ couponStakeCtrl.value | number: "1.2-2" }}</span>
+      <span slot="amount-value">{{
+        couponStakeCtrl.value || 0 | number: "1.2-2"
+      }}</span>
       <span slot="odds-value">{{
         betSlipService.totalOdds() | number: "1.2-2"
       }}</span>
@@ -58,5 +60,10 @@
     >
       {{ "bet.coupon.submit" | transloco }}
     </pb-button>
+    @if (!isLoggedIn()) {
+      <span class="block text-center text-xs text-app-textMuted">{{
+        "bet.coupon.loginRequired" | transloco
+      }}</span>
+    }
   </div>
 </pb-card>

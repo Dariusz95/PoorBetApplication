@@ -40,7 +40,8 @@
     "minlength": "This field must be at least {{minLength}} characters long",
     "email": "Please enter a valid email address",
     "password": "Password must be at least 6 characters long",
-    "confirmPassword": "Passwords must match"
+    "confirmPassword": "Passwords must match",
+    "passwordMismatch": "Passwords must match"
   },
   "header": {
     "wallet": "Balance"
@@ -75,7 +76,8 @@
       "close": "Close",
       "live": "LIVE",
       "finalScore": "Final score",
-      "error": "Error creating coupon"
+      "error": "Error creating coupon",
+      "loginRequired": "Log in to place a coupon"
     },
     "poolCard": {
       "eyebrow": "Pool"

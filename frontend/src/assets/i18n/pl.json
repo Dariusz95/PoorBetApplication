@@ -40,7 +40,8 @@
     "minlength": "To pole musi mieć co najmniej {{minLength}} znaków",
     "email": "Proszę podać poprawny adres e-mail",
     "password": "Hasło musi mieć co najmniej 6 znaków",
-    "confirmPassword": "Hasła muszą być takie same"
+    "confirmPassword": "Hasła muszą być takie same",
+    "passwordMismatch": "Hasła muszą być takie same"
   },
   "header": {
     "wallet": "Saldo"
@@ -75,7 +76,8 @@
       "close": "Zamknij",
       "live": "LIVE",
       "finalScore": "Wynik końcowy",
-      "error": "Błąd podczas tworzenia kuponu"
+      "error": "Błąd podczas tworzenia kuponu",
+      "loginRequired": "Zaloguj się, aby postawić kupon"
     },
     "poolCard": {
       "eyebrow": "Pula"
