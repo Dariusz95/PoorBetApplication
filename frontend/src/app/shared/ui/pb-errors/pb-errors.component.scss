@@ -7,7 +7,6 @@
 }
 
 .error-container {
-  color: var(--app-danger);
   padding-top: 4px;
   font-size: 12px;
   line-height: 1.2;
@@ -15,4 +14,5 @@
 
 .error-message {
   margin-bottom: 2px;
+  color: var(--color-danger);
 }

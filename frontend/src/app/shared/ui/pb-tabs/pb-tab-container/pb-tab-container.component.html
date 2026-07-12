@@ -8,7 +8,7 @@
   ></pb-tabs>
 
   <div class="bet-page-content">
-    <div [@fadeInOut]="selectedTab()" class="content-wrapper">
+    <div [class.fade-in]="isAnimating()" class="min-h-full">
       <ng-content></ng-content>
     </div>
   </div>

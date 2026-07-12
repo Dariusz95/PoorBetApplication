@@ -1,3 +1,9 @@
-@if ((isLoggedIn$ | async) && balance() !== null) {
-  <span class="user-dropdown__balance">{{ balance() | number: "1.2-2" }}</span>
+@if (isLoggedIn$ | async) {
+  @if (balance() !== null) {
+    {{ balance() | number: "1.2-2" }} zł
+  } @else if (balanceLoading()) {
+    <pb-spinner size="s" ariaLabel="Balance loading" />
+  } @else {
+    —
+  }
 }

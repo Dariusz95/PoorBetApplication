@@ -2,14 +2,15 @@ import {
   ChangeDetectionStrategy,
   Component,
   contentChild,
+  DestroyRef,
   effect,
   forwardRef,
   inject,
   Injector,
   input,
   signal,
-  WritableSignal,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   ControlValueAccessor,
   NG_VALUE_ACCESSOR,
@@ -44,16 +45,18 @@ import { PbInputIconDirective } from './directives/pb-input-icon.directive';
 export class PbInputComponent
   implements ControlValueAccessor, FormFieldControl
 {
+  private readonly injector = inject(Injector);
+  private readonly destroyRef = inject(DestroyRef);
+
+  private ngControl: NgControl | null = null;
+
+  readonly stateChanges: Subject<void> = new Subject<void>();
+
   placeholder = input<string>('');
   type = input<string>('text');
   variant = input<'underline' | 'surface'>('underline');
 
   icon = contentChild(PbInputIconDirective);
-
-  private readonly injector = inject(Injector);
-
-  private ngControl: NgControl | null = null;
-  readonly stateChanges: Subject<void> = new Subject<void>();
 
   errors = signal<ErrorValueMap | null>(null);
   disabled = signal<boolean>(false);
@@ -83,6 +86,26 @@ export class PbInputComponent
 
   ngOnInit() {
     this.ngControl = this.injector.get(NgControl);
+  }
+
+  ngAfterViewInit() {
+    const control = this.ngControl?.control;
+
+    if (control) {
+      this._syncFromControl();
+      control.events
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe(() => this._syncFromControl());
+    }
+  }
+
+  private _syncFromControl(): void {
+    const control = this.ngControl?.control;
+    if (!control) return;
+
+    this.touched.set(control.touched);
+    this.disabled.set(control.disabled);
+    this.setErrors(control.errors as ErrorValueMap | null);
   }
 
   setErrors(errors: ErrorValueMap | null) {

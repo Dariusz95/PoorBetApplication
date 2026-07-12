@@ -27,9 +27,8 @@ export class DialogService {
 
   openCouponSheet(): void {
     this.dialog.open<CouponCardComponent>(CouponCardComponent, {
-      positionStrategy: this.overlay.position().global().left('0').bottom('0'),
+      positionStrategy: this.overlay.position().global().centerVertically(),
       width: '100%',
-      height: '100dvh',
       panelClass: 'coupon-mobile-sheet',
       hasBackdrop: true,
       backdropClass: 'coupon-mobile-sheet-backdrop',

@@ -57,6 +57,7 @@ poorbet:
       - /api/match-pool/future
       - /images/**
       - /actuator/health/**
+      - /api/teams/public/**
 
 odds:
   service:

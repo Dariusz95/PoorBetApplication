@@ -2,17 +2,18 @@ import { DialogRef } from '@angular/cdk/dialog';
 import { DecimalPipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { TranslocoDirective } from '@jsverse/transloco';
 import { AuthService } from '@core/auth/services/auth.service';
 import { JwtAuthStateService } from '@core/auth/services/jwt-auth-state.service';
 import { RoutePath } from '@core/routing/route-path';
 import { RoutingService } from '@core/routing/routing.service';
 import { WalletService } from '@core/wallet/services/wallet.service';
+import { TranslocoDirective } from '@jsverse/transloco';
 import { PbSpinnerComponent } from '@shared/ui/pb-spinner/pb-spinner.component';
+import { UserBalanceComponent } from "../user-balance/user-balance.component";
 
 @Component({
   selector: 'app-user-side-panel',
-  imports: [TranslocoDirective, DecimalPipe, PbSpinnerComponent],
+  imports: [TranslocoDirective, DecimalPipe, PbSpinnerComponent, UserBalanceComponent],
   templateUrl: './user-side-panel.component.html',
   styleUrl: './user-side-panel.component.scss',
 })
@@ -23,13 +24,21 @@ export class UserSidePanelComponent {
   private readonly walletService = inject(WalletService);
   private readonly routingService = inject(RoutingService);
 
-  readonly isLoggedIn = toSignal(this.authService.isLoggedIn$, { initialValue: false });
+  readonly isLoggedIn = toSignal(this.authService.isLoggedIn$, {
+    initialValue: false,
+  });
   readonly balance = this.walletService.balance;
   readonly balanceLoading = this.walletService.loading;
   readonly userEmail = this.jwtAuthState.getSubject();
 
+  protected readonly isLoggedIn$ = inject(AuthService).isLoggedIn$;
+
   constructor() {
-    this.walletService.ensureBalanceLoaded();
+    this.isLoggedIn$.subscribe((loggedIn) => {
+      if (loggedIn) {
+        this.walletService.ensureBalanceLoaded();
+      }
+    });
   }
 
   close(): void {

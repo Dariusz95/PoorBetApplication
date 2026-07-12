@@ -2,10 +2,13 @@ import { AsyncPipe, DecimalPipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { AuthService } from '@core/auth/services/auth.service';
 import { WalletService } from '@core/wallet/services/wallet.service';
+import { PbSpinnerComponent } from '@shared/ui/pb-spinner/pb-spinner.component';
+import { filter } from 'rxjs/internal/operators/filter';
+import { take } from 'rxjs/internal/operators/take';
 
 @Component({
   selector: 'app-user-balance',
-  imports: [AsyncPipe, DecimalPipe],
+  imports: [AsyncPipe, DecimalPipe, PbSpinnerComponent],
   templateUrl: './user-balance.component.html',
   styleUrl: './user-balance.component.scss',
 })
@@ -14,8 +17,11 @@ export class UserBalanceComponent {
 
   protected readonly isLoggedIn$ = inject(AuthService).isLoggedIn$;
   protected readonly balance = this.walletService.balance;
+  protected readonly balanceLoading = this.walletService.loading;
 
   constructor() {
-    this.walletService.ensureBalanceLoaded();
+    this.isLoggedIn$.pipe(filter(Boolean), take(1)).subscribe(() => {
+      this.walletService.ensureBalanceLoaded();
+    });
   }
 }

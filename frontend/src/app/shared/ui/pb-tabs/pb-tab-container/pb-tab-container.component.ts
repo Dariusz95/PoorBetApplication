@@ -1,4 +1,3 @@
-import { animate, style, transition, trigger } from '@angular/animations';
 import {
   afterNextRender,
   Component,
@@ -21,23 +20,13 @@ import { TabConfig } from '../tab-config.model';
   imports: [PbTabsComponent],
   templateUrl: './pb-tab-container.component.html',
   styleUrl: './pb-tab-container.component.scss',
-  animations: [
-    trigger('fadeInOut', [
-      transition('* <=> *', [
-        style({ opacity: 0, transform: 'translateY(10px)' }),
-        animate(
-          '300ms ease-out',
-          style({ opacity: 1, transform: 'translateY(0)' }),
-        ),
-      ]),
-    ]),
-  ],
   encapsulation: ViewEncapsulation.None,
 })
 export class PbTabContainerComponent<T> {
   tabs = input<TabConfig<T>[]>([]);
   defaultTab = input<T | null>(null);
   selectedTab = signal<T | null>(null);
+  isAnimating = signal(false);
 
   tabContents = contentChildren(PbTabContentComponent, { descendants: true });
   tabsContainer = viewChild<PbTabsComponent<T>>('tabsContainer');
@@ -64,7 +53,7 @@ export class PbTabContainerComponent<T> {
     const tabList = this.tabs();
     const initial = this.defaultTab() ?? tabList?.[0]?.value;
     const active = tabList.find((tab) => tab.value === this.selectedTab());
-    
+
     if (isNotNil(active)) {
       this.setSelected(active.value);
       this.tabsContainer()?.updateIndicatorPosition();
@@ -79,11 +68,19 @@ export class PbTabContainerComponent<T> {
 
   onTabSelected(value: T): void {
     this.setSelected(value);
+
+    this.isAnimating.set(false);
+
+    requestAnimationFrame(() => {
+      this.isAnimating.set(true);
+    });
+
+    setTimeout(() => {
+      this.isAnimating.set(false);
+    }, 300);
   }
 
   private setSelected(value: T): void {
-    console.log('setSelected');
-
     this.selectedTab.set(value);
     this.updateContentVisibility();
   }

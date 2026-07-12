@@ -5,29 +5,19 @@
         <a routerLink="/" class="h-full">
           <img src="assets/logo.png" alt="Logo" class="h-full" />
         </a>
-
-        <nav class="app-header__nav hidden md:block">
-          <ul class="app-header__nav-list">
-            @for (item of menuItems; track item.link) {
-              <li>
-                <a [routerLink]="item.link" class="app-header__nav-link">
-                  {{ t(item.labelKey) }}
-                </a>
-              </li>
-            }
-          </ul>
-        </nav>
       </div>
 
       <div class="app-header__right">
-        <app-coupon-dropdown class="hidden md:inline-block" />
+        @if (isLoggedIn$ | async) {
+          <app-coupon-dropdown class="hidden md:inline-block" />
+        }
         <app-language-switcher />
         <button
           class="app-header__user pb-overlay-trigger"
           (click)="openUserPanel()"
           [attr.aria-label]="t('userPanel.open')"
         >
-           <pb-icon icon="account_circle" size="m"></pb-icon>
+          <pb-icon icon="account_circle" size="m"></pb-icon>
         </button>
       </div>
     </div>
