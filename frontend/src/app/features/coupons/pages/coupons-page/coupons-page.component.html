@@ -1,4 +1,8 @@
-<section *transloco="let t" class="pt-6">
-  <h1 class="px-4 text-2xl font-semibold">{{ t('couponList.title') }}</h1>
-  <app-coupon-list [showHeader]="false" [scrollable]="false" class="mt-4" />
+<section *transloco="let t" class="flex justify-center pt-6">
+  <div class="w-full max-w-[600px]">
+    <h1 class="mb-4 px-4 text-xl font-semibold">
+      {{ t("couponList.title") }}
+    </h1>
+    <app-coupon-list [showHeader]="false" [scrollable]="false" class="mt-4" />
+  </div>
 </section>

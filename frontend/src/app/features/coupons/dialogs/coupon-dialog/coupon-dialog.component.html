@@ -5,7 +5,7 @@
 >
   <div pbCardHeader class="coupon-dialog__header">
     <div class="coupon-dialog__header-left">
-      <h2
+      <h3
         class="coupon-dialog__status"
         [class.coupon-dialog__status--won]="
           coupon().status === CouponStatus.Won
@@ -18,7 +18,7 @@
         "
       >
         {{ coupon().status | transloco }}
-      </h2>
+      </h3>
       @if (wonCount() > 0 || lostCount() > 0) {
         <div class="coupon-dialog__bet-counts">
           @if (wonCount() > 0) {
