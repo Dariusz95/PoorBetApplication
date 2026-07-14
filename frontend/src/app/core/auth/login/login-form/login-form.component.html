@@ -21,9 +21,19 @@
     </pb-input>
   </pb-form-field>
 
-  <div class="mt-8">
+  <div class="mt-8 flex flex-col gap-4">
     <pb-button variant="primary" size="md" type="submit" [fullWidth]="true">
       {{ "auth.login.login" | transloco }}
+    </pb-button>
+
+    <pb-button
+      variant="secondary"
+      size="md"
+      type="button"
+      [fullWidth]="true"
+      (click)="loginAsTestUser()"
+    >
+      {{ "auth.login.loginAsTestUser" | transloco }}
     </pb-button>
   </div>
 </form>

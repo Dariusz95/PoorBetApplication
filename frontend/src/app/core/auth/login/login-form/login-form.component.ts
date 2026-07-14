@@ -59,6 +59,15 @@ export class LoginFormComponent {
     this.submitForm.emit(this.toLoginModel());
   }
 
+  loginAsTestUser(): void {
+    const testUser: LoginModel = {
+      email: 'asd@asd.pl',
+      password: 'zaq1@WSX',
+    };
+
+    this.submitForm.emit(testUser);
+  }
+
   private createForm(): FormGroup<LoginForm> {
     return this.fb.group({
       email: this.fb.nonNullable.control('', [

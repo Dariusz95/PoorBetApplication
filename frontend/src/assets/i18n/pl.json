@@ -30,6 +30,7 @@
       "email": "E-mail",
       "password": "Hasło",
       "login": "Zaloguj się",
+      "loginAsTestUser": "Zaloguj się jako użytkownik testowy",
       "forgotPassword": "Nie pamiętasz hasła?",
       "dontHaveAccount": "Nie masz jeszcze konta?",
       "register": "Zarejestruj się"

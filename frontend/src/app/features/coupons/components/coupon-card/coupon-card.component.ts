@@ -73,7 +73,10 @@ export class CouponCardComponent {
     initialValue: false,
   });
 
-  couponStakeCtrl = new FormControl(null, [Validators.min(1)]);
+  couponStakeCtrl = new FormControl(null, [
+    Validators.required,
+    Validators.min(1),
+  ]);
   readonly submitting = signal(false);
 
   constructor() {
