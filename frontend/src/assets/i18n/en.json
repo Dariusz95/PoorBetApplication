@@ -30,6 +30,7 @@
       "email": "E-mail",
       "password": "Password",
       "login": "Log in",
+      "loginAsTestUser": "Log in as test user",
       "forgotPassword": "Forgot password?",
       "dontHaveAccount": "Don't have an account yet?",
       "register": "Register"

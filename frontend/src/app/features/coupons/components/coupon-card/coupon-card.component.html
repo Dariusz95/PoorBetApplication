@@ -50,11 +50,7 @@
 
     <pb-button
       [fullWidth]="true"
-      [disabled]="
-        !isLoggedIn() ||
-        betSlipService.selectedCount() === 0 ||
-        couponStakeCtrl.invalid
-      "
+      [disabled]="!isLoggedIn() || betSlipService.selectedCount() === 0"
       [loading]="submitting()"
       (buttonClick)="submitCoupon()"
     >
