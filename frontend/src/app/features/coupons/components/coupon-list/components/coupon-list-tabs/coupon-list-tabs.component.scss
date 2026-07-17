@@ -1,0 +1,25 @@
+.coupon-list-tabs {
+  @apply flex gap-2 px-4 pb-3;
+}
+
+.coupon-tab {
+  @apply inline-flex cursor-pointer items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium transition-colors;
+  border: 1px solid var(--color-border);
+  background: transparent;
+  color: var(--color-text-muted);
+
+  &:hover:not(&--active) {
+    background: var(--color-surface-soft);
+    color: var(--color-text);
+  }
+
+  &--active {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: #fff;
+  }
+
+  &__count {
+    @apply font-semibold;
+  }
+}

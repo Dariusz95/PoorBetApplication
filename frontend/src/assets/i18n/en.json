@@ -3,6 +3,12 @@
     "pl": "Polish",
     "en": "English"
   },
+  "pageTitle": {
+    "bet": "PoorBet – Bets",
+    "myCoupons": "PoorBet – My coupons",
+    "login": "PoorBet – Login",
+    "register": "PoorBet – Register"
+  },
   "auth": {
     "email": {
       "label": "E-mail",
@@ -45,7 +51,8 @@
     "passwordMismatch": "Passwords must match"
   },
   "header": {
-    "wallet": "Balance"
+    "wallet": "Balance",
+    "balanceUpdated": "Balance updated: {{balance}} zł"
   },
   "bet": {
     "page": {

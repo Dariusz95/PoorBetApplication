@@ -3,7 +3,7 @@ import {
   isDevMode,
   provideZoneChangeDetection,
 } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { provideRouter, TitleStrategy } from '@angular/router';
 
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideAnimations } from '@angular/platform-browser/animations';
@@ -12,6 +12,7 @@ import { provideToastr } from 'ngx-toastr';
 import { routes } from './app.routes';
 import { authErrorInterceptor } from './core/auth/interceptors/auth-error.interceptor';
 import { authTokenInterceptor } from './core/auth/interceptors/auth-token.interceptor';
+import { TranslocoTitleStrategy } from './core/routing/transloco-title-strategy';
 import { TranslocoHttpLoader } from './transloco-loader';
 
 export const appConfig: ApplicationConfig = {
@@ -36,5 +37,6 @@ export const appConfig: ApplicationConfig = {
       },
       loader: TranslocoHttpLoader,
     }),
+    { provide: TitleStrategy, useClass: TranslocoTitleStrategy },
   ],
 };

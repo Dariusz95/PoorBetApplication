@@ -120,12 +120,12 @@ describe('CouponListComponent', () => {
     });
   });
 
-  describe('navigateToAll', () => {
+  describe('navigateToMyCoupons', () => {
     it('should emit seeAll and navigate to the my-coupons route', () => {
       const seeAllSpy = vi.fn();
       component.seeAll.subscribe(seeAllSpy);
 
-      component.navigateToAll();
+      component.navigateToMyCoupons();
 
       expect(seeAllSpy).toHaveBeenCalled();
       expect(routingService.navigateTo).toHaveBeenCalledWith(
@@ -149,26 +149,6 @@ describe('CouponListComponent', () => {
 
       expect(couponService.getCouponDetails).toHaveBeenCalledWith('c1');
       expect(dialogService.openCouponDialog).toHaveBeenCalledWith(details);
-    });
-  });
-
-  describe('statusLabelKey', () => {
-    it('should return the won key', () => {
-      expect(component.statusLabelKey(CouponStatus.Won)).toBe(
-        'couponList.statusWon',
-      );
-    });
-
-    it('should return the lost key', () => {
-      expect(component.statusLabelKey(CouponStatus.Lost)).toBe(
-        'couponList.statusLost',
-      );
-    });
-
-    it('should return the open key', () => {
-      expect(component.statusLabelKey(CouponStatus.Open)).toBe(
-        'couponList.statusOpen',
-      );
     });
   });
 

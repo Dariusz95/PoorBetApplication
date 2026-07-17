@@ -1,0 +1,38 @@
+<div
+  class="coupon-card"
+  (click)="open.emit()"
+  role="button"
+  tabindex="0"
+  (keydown.enter)="open.emit()"
+  (keydown.space)="open.emit(); $event.preventDefault()"
+>
+  <div class="coupon-card__top">
+    <div
+      class="coupon-status"
+      [class]="'coupon-status--' + coupon().status.toLowerCase()"
+    >
+      <pb-icon [icon]="statusIcon()" size="s"></pb-icon>
+      <span>{{ statusLabelKey() | transloco }}</span>
+      @if (coupon().betCount) {
+        <span class="coupon-status__count">{{ coupon().betCount }}</span>
+      }
+    </div>
+    <pb-icon icon="chevron_right" size="m" color="primary"></pb-icon>
+  </div>
+
+  <p class="coupon-card__datetime">
+    {{ coupon().createdAt | date: "dd.MM.yyyy, HH:mm" }}
+  </p>
+
+  <app-coupon-summary
+    [surface]="false"
+    [showOdds]="coupon().totalOdds !== undefined"
+    amountLabelKey="couponList.stake"
+    oddsLabelKey="couponList.totalOdds"
+    payoutLabelKey="couponList.payout"
+  >
+    <span slot="amount-value">{{ coupon().stake }} zł</span>
+    <span slot="odds-value">{{ coupon().totalOdds }}</span>
+    <span slot="win-value">{{ coupon().potentialPayout }} zł</span>
+  </app-coupon-summary>
+</div>

@@ -20,6 +20,7 @@ export class DialogService {
         maxWidth: '90vw',
         disableClose: true,
         backdropClass: 'coupon-dialog-backdrop',
+        ariaLabelledBy: 'coupon-dialog-title',
         data: couponData,
       },
     );

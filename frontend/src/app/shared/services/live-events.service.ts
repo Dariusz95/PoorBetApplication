@@ -1,7 +1,9 @@
+import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { inject, Injectable, NgZone, signal } from '@angular/core';
 import { AuthService } from '@core/auth/services/auth.service';
 import { JwtAuthStateService } from '@core/auth/services/jwt-auth-state.service';
 import { WalletService } from '@core/wallet/services/wallet.service';
+import { TranslocoService } from '@jsverse/transloco';
 import { SseClient } from 'ngx-sse-client';
 import { filter } from 'rxjs';
 import { environment } from 'src/environments/environment';
@@ -16,6 +18,8 @@ export class LiveEventsService {
   private readonly jwtAuthStateService = inject(JwtAuthStateService);
   private readonly authService = inject(AuthService);
   private readonly walletService = inject(WalletService);
+  private readonly liveAnnouncer = inject(LiveAnnouncer);
+  private readonly translocoService = inject(TranslocoService);
   private readonly baseUrl = `${environment.backend.baseURL}/api/notifications/stream`;
 
   private initialized = signal(false);
@@ -32,8 +36,6 @@ export class LiveEventsService {
         this.connectToLiveUpdates();
       });
 
-    // this.initialized.set(true);
-    // this.connectToLiveUpdates();
   }
 
   private connectToLiveUpdates(): void {
@@ -75,6 +77,12 @@ export class LiveEventsService {
           const nextBalance = walletUpdate.balance;
           this.ngZone.run(() => {
             this.walletService.setBalance(nextBalance);
+            this.liveAnnouncer.announce(
+              this.translocoService.translate('header.balanceUpdated', {
+                balance: nextBalance,
+              }),
+              'polite',
+            );
           });
         },
         error: (error) => {

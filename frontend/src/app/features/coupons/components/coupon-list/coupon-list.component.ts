@@ -1,4 +1,3 @@
-import { DatePipe } from '@angular/common';
 import {
   Component,
   computed,
@@ -17,18 +16,14 @@ import { DialogService } from '@shared/services/dialog.service';
 import { PbIconComponent } from '@shared/ui/icon/pb-icon.component';
 import { PbSpinnerComponent } from '@shared/ui/pb-spinner/pb-spinner.component';
 import { combineLatest, finalize, switchMap, tap } from 'rxjs';
-import { CouponStatus } from '../../types/coupon-status';
 import { CouponService } from '../../services/coupon.service';
 import { Coupon } from '../../types/coupon';
 import { CouponFilter } from '../../types/coupon-filter';
-import { CouponSummaryComponent } from '../coupon-summary/coupon-summary.component';
-
-type CouponTab = 'open' | 'won' | 'settled';
-
-interface TabConfig {
-  id: CouponTab;
-  labelKey: string;
-}
+import { CouponStatus } from '../../types/coupon-status';
+import { CouponListItemComponent } from './components/coupon-list-item/coupon-list-item.component';
+import { CouponListTabsComponent } from './components/coupon-list-tabs/coupon-list-tabs.component';
+import { TabConfig } from './interfaces/tab-config';
+import { CouponTab } from './types/coupon-tab';
 
 @Component({
   selector: 'app-coupon-list',
@@ -36,8 +31,8 @@ interface TabConfig {
     TranslocoDirective,
     PbIconComponent,
     PbSpinnerComponent,
-    DatePipe,
-    CouponSummaryComponent,
+    CouponListTabsComponent,
+    CouponListItemComponent,
   ],
   templateUrl: './coupon-list.component.html',
   styleUrl: './coupon-list.component.scss',
@@ -53,7 +48,6 @@ export class CouponListComponent {
   readonly seeAll = output<void>();
 
   readonly activeTab = signal<CouponTab>('open');
-//   TODO cos bardziej generycznego, moze serwis
   readonly pageRequest = signal<PageRequest>({
     page: 0,
     size: 20,
@@ -87,32 +81,24 @@ export class CouponListComponent {
     { id: 'settled', labelKey: 'couponList.tabSettled' },
   ];
 
-  readonly CouponStatus = CouponStatus;
-
   selectTab(tab: CouponTab): void {
     this.activeTab.set(tab);
   }
 
-  navigateToAll(): void {
+  navigateToMyCoupons(): void {
     this.seeAll.emit();
     this.routingService.navigateTo(RoutePath.MyCoupons);
+  }
+
+  navigateToOffer(): void {
+    this.seeAll.emit();
+    this.routingService.navigateTo(RoutePath.App);
   }
 
   openDetails(coupon: Coupon): void {
     this.couponService.getCouponDetails(coupon.id).subscribe((details) => {
       this.dialogService.openCouponDialog(details);
     });
-  }
-
-  statusLabelKey(status: CouponStatus): string {
-    switch (status) {
-      case CouponStatus.Won:
-        return 'couponList.statusWon';
-      case CouponStatus.Lost:
-        return 'couponList.statusLost';
-      default:
-        return 'couponList.statusOpen';
-    }
   }
 
   emptyTitleKey(): string {

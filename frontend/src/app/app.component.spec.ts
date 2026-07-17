@@ -1,11 +1,12 @@
 import { TestBed } from '@angular/core/testing';
+import { getTranslocoModule } from '@shared/utils/get-transloco-module';
 import { AppComponent } from './app.component';
 import { beforeEach, describe, expect, it } from 'vitest';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AppComponent],
+      imports: [AppComponent, getTranslocoModule()],
     }).compileComponents();
   });
 

@@ -3,10 +3,13 @@ import { MaxLengthError, MinLengthError } from './constants/error-types';
 import { ErrorType } from './types/error-type';
 import { ErrorValue, ErrorValueMap } from './types/error-value-map';
 import { FormError } from './types/form-error';
-import { Signal,   ChangeDetectionStrategy,
+import {
+  Signal,
+  ChangeDetectionStrategy,
   Component,
   computed,
-  input, } from '@angular/core';
+  input,
+} from '@angular/core';
 import {
   animate,
   state,
@@ -46,6 +49,7 @@ export class PbErrorsComponent {
   errors = input.required<ErrorValueMap | null>();
   showErrors = input(true);
   displaySingleError = input(true);
+  id = input<string>('');
 
   readonly formErrors: Signal<FormError[]> = computed(() => {
     const errorEntries = Object.entries(this.errors() || {});

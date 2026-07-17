@@ -3,4 +3,8 @@
 
   padding-top: calc(var(--app-header-height) + 1rem);
   margin-bottom: calc(var(--app-footer-height) + 0.5rem);
+
+  &:focus {
+    outline: none;
+  }
 }

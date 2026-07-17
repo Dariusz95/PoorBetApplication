@@ -3,7 +3,14 @@
   cdkOverlayOrigin
   class="pb-popover__trigger"
   [class.pb-popover__trigger--open]="isOpen()"
+  role="button"
+  tabindex="0"
+  [attr.aria-expanded]="isOpen()"
+  aria-haspopup="true"
   (click)="toggle()"
+  (keydown.enter)="toggle()"
+  (keydown.space)="toggle(); $event.preventDefault()"
+  (keydown.escape)="close()"
 >
   <ng-content select="[popoverTrigger]"></ng-content>
 </div>
@@ -19,10 +26,13 @@
   (detach)="close()"
 >
   <div
+    cdkTrapFocus
+    [@popoverAnimation]
     class="pb-overlay-panel"
     [style.min-width]="width()"
     [class.pb-overlay-panel--open]="isOpen()"
-    [@popoverAnimation]
+    [cdkTrapFocusAutoCapture]="true"
+    (keydown.escape)="close()"
   >
     <ng-content select="[popoverContent]"></ng-content>
   </div>

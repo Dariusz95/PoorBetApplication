@@ -1,7 +1,9 @@
-<ul class="error-container">
-  @for(error of formErrors();track $index){ @if(error){
-  <li [@errorState] class="error-message">
-    {{ error.translateKey | transloco : error?.params }}
-  </li>
-  } }
+<ul class="error-container" [id]="id()" role="alert">
+  @for (error of formErrors(); track $index) {
+    @if (error) {
+      <li [@errorState] class="error-message">
+        {{ error.translateKey | transloco: error?.params }}
+      </li>
+    }
+  }
 </ul>

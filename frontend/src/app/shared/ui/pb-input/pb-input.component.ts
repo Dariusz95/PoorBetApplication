@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   contentChild,
   DestroyRef,
   effect,
@@ -65,6 +66,7 @@ export class PbInputComponent
   invalid = signal<boolean>(false);
   value = signal<string>('');
   labelId = signal<string>('');
+  errorsId = computed(() => `${this.labelId()}-errors`);
 
   onChange = (_: any) => {};
   onTouched = () => {};

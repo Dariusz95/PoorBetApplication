@@ -25,6 +25,7 @@ export const routes: Routes = [
     children: [
       {
         path: '',
+        title: 'pageTitle.bet',
         loadComponent: () =>
           import('./features/bet/bet-page.component').then(
             (m) => m.BetPageComponent,
@@ -33,6 +34,7 @@ export const routes: Routes = [
       {
         path: RouteFragment.MyCoupons,
         canActivate: [authGuard],
+        title: 'pageTitle.myCoupons',
         loadComponent: () =>
           import('./features/coupons/pages/coupons-page/coupons-page.component').then(
             (m) => m.CouponsPageComponent,
