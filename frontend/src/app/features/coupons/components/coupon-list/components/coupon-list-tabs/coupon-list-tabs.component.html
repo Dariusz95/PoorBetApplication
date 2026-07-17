@@ -1,0 +1,15 @@
+<div class="coupon-list-tabs">
+  @for (tab of tabs(); track tab.id) {
+    <button
+      type="button"
+      class="coupon-tab"
+      [class.coupon-tab--active]="activeTab() === tab.id"
+      (click)="tabChange.emit(tab.id)"
+    >
+      @if (activeTab() === tab.id) {
+        <span class="coupon-tab__count">{{ total() }}</span>
+      }
+      {{ tab.labelKey | transloco }}
+    </button>
+  }
+</div>

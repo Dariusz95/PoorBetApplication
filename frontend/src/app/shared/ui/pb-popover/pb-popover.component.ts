@@ -3,6 +3,7 @@ import {
   Component,
   input,
   signal,
+  viewChild,
 } from '@angular/core';
 
 import {
@@ -12,6 +13,7 @@ import {
   transition,
   trigger,
 } from '@angular/animations';
+import { A11yModule } from '@angular/cdk/a11y';
 import {
   CdkOverlayOrigin,
   ConnectedPosition,
@@ -57,7 +59,13 @@ export const popoverAnimation = trigger('popoverAnimation', [
 
 @Component({
   selector: 'pb-popover',
-  imports: [OverlayModule, CommonModule, TranslocoPipe, NgTemplateOutlet],
+  imports: [
+    OverlayModule,
+    A11yModule,
+    CommonModule,
+    TranslocoPipe,
+    NgTemplateOutlet,
+  ],
   templateUrl: './pb-popover.component.html',
   styleUrl: './pb-popover.component.scss',
   standalone: true,
@@ -65,6 +73,8 @@ export const popoverAnimation = trigger('popoverAnimation', [
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PbPopoverComponent {
+  private readonly triggerOrigin = viewChild<CdkOverlayOrigin>('trigger');
+
   origin = input<CdkOverlayOrigin | undefined>();
   width = input<string>('180px');
 
@@ -80,7 +90,11 @@ export class PbPopoverComponent {
   isOpen = signal(false);
 
   toggle(): void {
-    this.isOpen.update((v) => !v);
+    if (this.isOpen()) {
+      this.close();
+    } else {
+      this.open();
+    }
   }
 
   open(): void {
@@ -89,5 +103,6 @@ export class PbPopoverComponent {
 
   close(): void {
     this.isOpen.set(false);
+    this.triggerOrigin()?.elementRef.nativeElement.focus();
   }
 }

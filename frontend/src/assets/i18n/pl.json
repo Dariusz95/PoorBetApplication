@@ -3,6 +3,12 @@
     "pl": "Polski",
     "en": "Angielski"
   },
+  "pageTitle": {
+    "bet": "PoorBet – Zakłady",
+    "myCoupons": "PoorBet – Moje kupony",
+    "login": "PoorBet – Logowanie",
+    "register": "PoorBet – Rejestracja"
+  },
   "auth": {
     "email": {
       "label": "E-mail",
@@ -45,7 +51,8 @@
     "passwordMismatch": "Hasła muszą być takie same"
   },
   "header": {
-    "wallet": "Saldo"
+    "wallet": "Saldo",
+    "balanceUpdated": "Saldo zaktualizowane: {{balance}} zł"
   },
   "bet": {
     "page": {
