@@ -24,7 +24,14 @@
   </pb-form-field>
 
   <div class="mt-8 flex flex-col gap-4">
-    <pb-button variant="primary" size="md" type="submit" testId="login-submit-button" [fullWidth]="true">
+    <pb-button
+      variant="primary"
+      size="md"
+      type="submit"
+      testId="login-submit-button"
+      [loading]="submitting()"
+      [fullWidth]="true"
+    >
       {{ "auth.login.login" | transloco }}
     </pb-button>
 
@@ -34,6 +41,7 @@
       type="button"
       testId="login-test-user-button"
       [fullWidth]="true"
+      [loading]="submitting()"
       (click)="loginAsTestUser()"
     >
       {{ "auth.login.loginAsTestUser" | transloco }}

@@ -28,7 +28,8 @@
       "confirmPasswordPlaceholder": "Confirm your password",
       "register": "Register",
       "alreadyHaveAccount": "Already have an account?",
-      "login": "Log in"
+      "login": "Log in",
+      "successToast": "Your account has been created. You can now log in."
     },
     "login": {
       "title": "Login",
@@ -39,7 +40,8 @@
       "loginAsTestUser": "Log in as test user",
       "forgotPassword": "Forgot password?",
       "dontHaveAccount": "Don't have an account yet?",
-      "register": "Register"
+      "register": "Register",
+      "invalidCredentials": "Invalid email or password."
     }
   },
   "validation": {
@@ -49,6 +51,17 @@
     "password": "Password must be at least 6 characters long",
     "confirmPassword": "Passwords must match",
     "passwordMismatch": "Passwords must match"
+  },
+  "errors": {
+    "generic": "Something went wrong. Please try again.",
+    "insufficientFunds": "Insufficient funds in your wallet.",
+    "walletNotFound": "Wallet not found for this user.",
+    "walletUnavailable": "The wallet service is temporarily unavailable.",
+    "resourceAlreadyExists": "We couldn't create your account. Check your details or log in.",
+    "resourceNotFound": "Resource not found.",
+    "validation": "Validation error.",
+    "malformedRequest": "Invalid request format.",
+    "unsupportedMediaType": "Unsupported request content type."
   },
   "header": {
     "wallet": "Balance",

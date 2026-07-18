@@ -7,7 +7,10 @@
     ></app-auth-card-header>
 
     <div pbCardBody>
-      <app-register-form (submitForm)="onSubmitForm($event)" />
+      <app-register-form
+        [submitting]="submitting()"
+        (submitForm)="onSubmitForm($event)"
+      />
     </div>
 
     <div pbCardFooter class="auth-footer">

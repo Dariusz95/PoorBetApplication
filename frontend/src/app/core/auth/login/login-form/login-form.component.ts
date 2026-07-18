@@ -1,4 +1,4 @@
-import { Component, inject, output } from '@angular/core';
+import { Component, inject, input, output } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -41,6 +41,7 @@ export class LoginFormComponent {
   readonly RoutePath = RoutePath;
   readonly IconType = ImageType;
 
+  submitting = input<boolean>(false);
   submitForm = output<LoginModel>();
 
   form: FormGroup<LoginForm>;

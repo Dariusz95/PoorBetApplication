@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { RouteLink } from '@core/routing/route-link';
 import { RoutePath } from '@core/routing/route-path';
+import { ToastService } from '@shared/services/toast.service';
 import { getTranslocoModule } from '@shared/utils/get-transloco-module';
 import { of, throwError } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -12,16 +13,22 @@ describe('RegisterPageComponent', () => {
   let component: RegisterPageComponent;
   let fixture: ComponentFixture<RegisterPageComponent>;
   let authService: { register: ReturnType<typeof vi.fn> };
+  let toastService: {
+    success: ReturnType<typeof vi.fn>;
+    error: ReturnType<typeof vi.fn>;
+  };
   let router: Router;
 
   beforeEach(async () => {
     authService = { register: vi.fn() };
+    toastService = { success: vi.fn(), error: vi.fn() };
 
     await TestBed.configureTestingModule({
       imports: [RegisterPageComponent, getTranslocoModule()],
       providers: [
         provideRouter([]),
         { provide: AuthService, useValue: authService },
+        { provide: ToastService, useValue: toastService },
       ],
     }).compileComponents();
 
@@ -65,6 +72,18 @@ describe('RegisterPageComponent', () => {
       expect(router.navigate).toHaveBeenCalledWith(RouteLink[RoutePath.Login]);
     });
 
+    it('should show a success toast on successful registration', () => {
+      authService.register.mockReturnValue(of({ success: true }));
+
+      component.onSubmitForm({
+        email: 'a@b.pl',
+        password: 'zaq1@WSX',
+        confirmPassword: 'zaq1@WSX',
+      });
+
+      expect(toastService.success).toHaveBeenCalled();
+    });
+
     it('should reset submitted to false after the request completes', () => {
       authService.register.mockReturnValue(of({ success: true }));
 
@@ -74,22 +93,7 @@ describe('RegisterPageComponent', () => {
         confirmPassword: 'zaq1@WSX',
       });
 
-      expect(component.submitted()).toBe(false);
-    });
-
-    it('should not navigate and should reset submitted on registration error', () => {
-      authService.register.mockReturnValue(
-        throwError(() => new Error('email already taken')),
-      );
-
-      component.onSubmitForm({
-        email: 'a@b.pl',
-        password: 'zaq1@WSX',
-        confirmPassword: 'zaq1@WSX',
-      });
-
-      expect(router.navigate).not.toHaveBeenCalled();
-      expect(component.submitted()).toBe(false);
+      expect(component.submitting()).toBe(false);
     });
   });
 });

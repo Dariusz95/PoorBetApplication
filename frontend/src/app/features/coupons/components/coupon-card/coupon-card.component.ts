@@ -126,14 +126,9 @@ export class CouponCardComponent {
     this.couponService
       .create(request)
       .pipe(finalize(() => this.submitting.set(false)))
-      .subscribe({
-        next: (coupon) => {
-          this.dialogService.openCouponDialog(coupon);
-          this.close();
-        },
-        error: () => {
-          this.toastService.error(this.transloco.translate('bet.coupon.error'));
-        },
+      .subscribe((response) => {
+        this.dialogService.openCouponDialog(response);
+        this.close();
       });
   }
 

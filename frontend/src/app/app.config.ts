@@ -12,6 +12,7 @@ import { provideToastr } from 'ngx-toastr';
 import { routes } from './app.routes';
 import { authErrorInterceptor } from './core/auth/interceptors/auth-error.interceptor';
 import { authTokenInterceptor } from './core/auth/interceptors/auth-token.interceptor';
+import { httpErrorInterceptor } from './core/http/interceptors/http-error.interceptor';
 import { TranslocoTitleStrategy } from './core/routing/transloco-title-strategy';
 import { TranslocoHttpLoader } from './transloco-loader';
 
@@ -20,7 +21,11 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideHttpClient(
-      withInterceptors([authTokenInterceptor, authErrorInterceptor]),
+      withInterceptors([
+        authTokenInterceptor,
+        authErrorInterceptor,
+        httpErrorInterceptor,
+      ]),
     ),
     provideAnimations(),
     provideToastr({

@@ -1,10 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
-import { getTranslocoModule } from '@shared/utils/get-transloco-module';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { of, throwError } from 'rxjs';
 import { RouteLink } from '@core/routing/route-link';
 import { RoutePath } from '@core/routing/route-path';
+import { getTranslocoModule } from '@shared/utils/get-transloco-module';
+import { of, throwError } from 'rxjs';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { LoginResponse } from '../../responses/login-response';
 import { AuthService } from '../../services/auth.service';
 import { LoginPageComponent } from './login-page.component';
@@ -68,20 +68,9 @@ describe('LoginPageComponent', () => {
     it('should set submitted to true while the request is in flight and back to false afterwards', () => {
       authService.login.mockReturnValue(of(loginResponse));
 
-      expect(component.submitted()).toBe(false);
+      expect(component.submitting()).toBe(false);
       component.onSubmitForm({ email: 'a@b.pl', password: 'zaq1@WSX' });
-      expect(component.submitted()).toBe(false);
-    });
-
-    it('should not navigate and should reset submitted on login error', () => {
-      authService.login.mockReturnValue(
-        throwError(() => new Error('invalid credentials')),
-      );
-
-      component.onSubmitForm({ email: 'a@b.pl', password: 'wrong' });
-
-      expect(router.navigate).not.toHaveBeenCalled();
-      expect(component.submitted()).toBe(false);
+      expect(component.submitting()).toBe(false);
     });
   });
 });

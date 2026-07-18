@@ -8,7 +8,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RouteLink } from '@core/routing/route-link';
 import { RoutePath } from '@core/routing/route-path';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+import { ToastService } from '@shared/services/toast.service';
 import { PbCardBodyDirective } from '@shared/ui/pb-card/directives/pb-card-body.directive';
 import { PbCardFooterDirective } from '@shared/ui/pb-card/directives/pb-card-footer.directive';
 import { PbCardHeaderDirective } from '@shared/ui/pb-card/directives/pb-card-header.directive';
@@ -43,26 +44,25 @@ import { RegisterModel } from '../types/register.model';
 export class RegisterPageComponent {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly toastService = inject(ToastService);
+  private readonly transloco = inject(TranslocoService);
 
   readonly RoutePath = RoutePath;
-  readonly submitted = signal(false);
+  readonly submitting = signal(false);
 
   onSubmitForm(event: RegisterModel): void {
-    this.submitted.set(true);
+    this.submitting.set(true);
 
     const request = this.getRegisterRequest(event);
 
     this.authService
       .register(request)
-      .pipe(finalize(() => this.submitted.set(false)))
-      .subscribe({
-        next: (response: unknown) => {
-          console.log('[REGISTER RES]: ', response);
-          this.router.navigate(RouteLink[RoutePath.Login]);
-        },
-        error: (error: unknown) => {
-          console.error('[REGISTER ERR]: ', error);
-        },
+      .pipe(finalize(() => this.submitting.set(false)))
+      .subscribe(() => {
+        this.toastService.success(
+          this.transloco.translate('auth.register.successToast'),
+        );
+        this.router.navigate(RouteLink[RoutePath.Login]);
       });
   }
 
