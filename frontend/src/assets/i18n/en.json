@@ -47,6 +47,7 @@
   "validation": {
     "required": "This field is required",
     "minlength": "This field must be at least {{minLength}} characters long",
+    "min": "This field must be at least {{min}}",
     "email": "Please enter a valid email address",
     "password": "Password must be at least 6 characters long",
     "confirmPassword": "Passwords must match",
@@ -65,7 +66,8 @@
   },
   "header": {
     "wallet": "Balance",
-    "balanceUpdated": "Balance updated: {{balance}} zł"
+    "balanceUpdated": "Balance updated: {{balance}} zł",
+    "coinAbbreviation": "BC"
   },
   "bet": {
     "page": {

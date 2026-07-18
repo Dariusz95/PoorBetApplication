@@ -17,7 +17,6 @@ export class PbImageComponent {
   ariaLabel = input<string | undefined>();
   customClass = input<string | undefined>();
 
-  ImageType = ImageType;
   ImageSize = ImageSize;
 
   sizeClasses = computed(() => {

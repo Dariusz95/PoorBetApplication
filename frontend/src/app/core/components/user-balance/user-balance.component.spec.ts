@@ -5,6 +5,7 @@ import { AuthService } from '@core/auth/services/auth.service';
 import { WalletService } from '@core/wallet/services/wallet.service';
 import { UserBalanceComponent } from './user-balance.component';
 import { beforeEach, describe, expect, it } from 'vitest';
+import { getTranslocoModule } from '@shared/utils/get-transloco-module';
 
 describe('UserBalanceComponent', () => {
   let component: UserBalanceComponent;
@@ -18,7 +19,7 @@ describe('UserBalanceComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [UserBalanceComponent],
+      imports: [UserBalanceComponent, getTranslocoModule()],
       providers: [
         { provide: AuthService, useValue: { isLoggedIn$: of(true) } },
         { provide: WalletService, useValue: walletMock },

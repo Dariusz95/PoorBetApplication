@@ -29,6 +29,7 @@
       size="md"
       type="submit"
       testId="login-submit-button"
+      [disabled]="submittingTestUser()"
       [loading]="submitting()"
       [fullWidth]="true"
     >
@@ -41,7 +42,8 @@
       type="button"
       testId="login-test-user-button"
       [fullWidth]="true"
-      [loading]="submitting()"
+      [disabled]="submitting()"
+      [loading]="submittingTestUser()"
       (click)="loginAsTestUser()"
     >
       {{ "auth.login.loginAsTestUser" | transloco }}

@@ -12,7 +12,6 @@ import { PbIconComponent } from '@shared/ui/icon/pb-icon.component';
 import { PbButtonComponent } from '@shared/ui/pb-button/pb-button.component';
 import { PbLabel } from '@shared/ui/pb-form-field/directives/pb-label';
 import { PbFormFieldComponent } from '@shared/ui/pb-form-field/pb-form-field.component';
-import { ImageType } from '@shared/ui/pb-image/image-type.model';
 import { PbInputIconDirective } from '@shared/ui/pb-input/directives/pb-input-icon.directive';
 import { PbInputComponent } from '@shared/ui/pb-input/pb-input.component';
 import { PASSWORD_REGEX } from '@shared/validators/regexes/passwordRegex';
@@ -39,9 +38,9 @@ export class LoginFormComponent {
   private readonly fb = inject(FormBuilder);
 
   readonly RoutePath = RoutePath;
-  readonly IconType = ImageType;
 
   submitting = input<boolean>(false);
+  submittingTestUser = input<boolean>(false);
   submitForm = output<LoginModel>();
 
   form: FormGroup<LoginForm>;
@@ -64,6 +63,7 @@ export class LoginFormComponent {
     const testUser: LoginModel = {
       email: 'asd@asd.pl',
       password: 'zaq1@WSX',
+      loginAsTestUser: true,
     };
 
     this.submitForm.emit(testUser);
@@ -86,6 +86,6 @@ export class LoginFormComponent {
   private toLoginModel(): LoginModel {
     const { email, password } = this.form.getRawValue();
 
-    return { email, password };
+    return { email, password, loginAsTestUser: false };
   }
 }

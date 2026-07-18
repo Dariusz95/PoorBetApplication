@@ -13,7 +13,7 @@ import { UserBalanceComponent } from "../user-balance/user-balance.component";
 
 @Component({
   selector: 'app-user-side-panel',
-  imports: [TranslocoDirective, DecimalPipe, PbSpinnerComponent, UserBalanceComponent],
+  imports: [TranslocoDirective, UserBalanceComponent],
   templateUrl: './user-side-panel.component.html',
   styleUrl: './user-side-panel.component.scss',
 })

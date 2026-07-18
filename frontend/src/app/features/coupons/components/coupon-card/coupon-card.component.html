@@ -33,7 +33,15 @@
         variant="surface"
         placeholder="0.00"
         [formControl]="couponStakeCtrl"
-      />
+      >
+        <pb-image
+          type="coin-text"
+          size="lg"
+          customClass="w-[70px]"
+          class="user-balance__coin"
+          pbInputIconRight
+        />
+      </pb-input>
     </pb-form-field>
 
     <app-coupon-summary>

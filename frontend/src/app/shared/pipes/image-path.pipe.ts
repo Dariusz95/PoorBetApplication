@@ -10,8 +10,9 @@ export class ImagePathPipe implements PipeTransform {
   }
 
   private IMAGE_MAP: Record<ImageType, string> = {
-    [ImageType.User]: 'assets/user.svg',
-    [ImageType.PlFlag]: 'assets/flags/pl.svg',
-    [ImageType.EnFlag]: 'assets/flags/gb.svg',
+    user: 'assets/user.svg',
+    'pl-flag': 'assets/flags/pl.svg',
+    'en-flag': 'assets/flags/gb.svg',
+    'coin-text': 'assets/biedaCoinText.png',
   };
 }

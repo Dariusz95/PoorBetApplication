@@ -6,6 +6,7 @@
   [class.invalid]="invalid() && touched()"
   [class.has-value]="value() !== ''"
   [class.has-icon-left]="hasIcon"
+  [class.has-icon-right]="hasIconRight"
 >
   @if (hasIcon) {
     <div class="icon icon--left">
@@ -26,6 +27,12 @@
     (focus)="onFocus()"
     (blur)="onBlur()"
   />
+
+  @if (hasIconRight) {
+    <div class="icon icon--right">
+      <ng-content select="[pbInputIconRight]"></ng-content>
+    </div>
+  }
 
   @if (variant() === "underline") {
     <div class="underline">

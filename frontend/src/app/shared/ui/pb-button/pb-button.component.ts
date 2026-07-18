@@ -13,7 +13,6 @@ import { RouteParam } from '../../../core/routing/route-param';
 import { RoutePath } from '../../../core/routing/route-path';
 import { RoutingService } from '../../../core/routing/routing.service';
 import { PbIconComponent } from '../icon/pb-icon.component';
-import { ImageType } from '../pb-image/image-type.model';
 import { PbSpinnerComponent } from '../pb-spinner/pb-spinner.component';
 import { ButtonSize, ButtonVariant } from './pb-button.model';
 
@@ -42,8 +41,6 @@ export class PbButtonComponent {
   buttonClick = output<Event>();
 
   iconTemplate = contentChild(PbIconComponent);
-
-  readonly IconType = ImageType;
 
   routePath = computed(() => {
     if (!this.routerPath()) {

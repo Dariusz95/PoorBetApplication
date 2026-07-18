@@ -11,5 +11,7 @@
     <router-outlet></router-outlet>
   </main>
 
-  <app-mobile-menu></app-mobile-menu>
+  @if (!isAuthRoute()) {
+    <app-mobile-menu></app-mobile-menu>
+  }
 </div>

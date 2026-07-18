@@ -9,6 +9,7 @@
     <div pbCardBody>
       <app-login-form
         [submitting]="submitting()"
+        [submittingTestUser]="submittingTestUser()"
         (submitForm)="onSubmitForm($event)"
       ></app-login-form>
     </div>

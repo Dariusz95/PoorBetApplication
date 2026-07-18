@@ -47,6 +47,7 @@
   "validation": {
     "required": "To pole jest wymagane",
     "minlength": "To pole musi mieć co najmniej {{minLength}} znaków",
+    "min": "Wartość musi wynosić co najmniej {{min}}",
     "email": "Proszę podać poprawny adres e-mail",
     "password": "Hasło musi mieć co najmniej 6 znaków",
     "confirmPassword": "Hasła muszą być takie same",
@@ -65,7 +66,8 @@
   },
   "header": {
     "wallet": "Saldo",
-    "balanceUpdated": "Saldo zaktualizowane: {{balance}} zł"
+    "balanceUpdated": "Saldo zaktualizowane: {{balance}} zł",
+    "coinAbbreviation": "BC"
   },
   "bet": {
     "page": {

@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { beforeEach, describe, expect, it } from 'vitest';
-import { ImageType } from './image-type.model';
 import { PbImageComponent } from './pb-image.component';
 
 describe('PbImageComponent', () => {
@@ -16,7 +15,7 @@ describe('PbImageComponent', () => {
     fixture = TestBed.createComponent(PbImageComponent);
     component = fixture.componentInstance;
 
-    fixture.componentRef.setInput('type', ImageType.User);
+    fixture.componentRef.setInput('type', 'user');
 
     fixture.detectChanges();
   });

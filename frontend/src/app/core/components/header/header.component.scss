@@ -16,7 +16,7 @@
   }
 
   &__right {
-    @apply items-center gap-3;
+    @apply items-center gap-5;
   }
 
   &__nav-list {
@@ -51,6 +51,8 @@
   }
 
   &__user {
+    @apply flex items-center gap-2;
+
     .material-icons {
       font-size: 20px;
     }
@@ -58,5 +60,22 @@
     &:hover {
       background: var(--color-surface-soft);
     }
+  }
+
+  &__balance {
+    @apply flex flex-col items-end leading-none;
+  }
+
+  &__balance-label {
+    font-size: 0.65rem;
+    color: theme("colors.app.textMuted");
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  &__balance-value {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: theme("colors.app.text");
   }
 }

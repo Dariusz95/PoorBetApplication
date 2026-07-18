@@ -25,6 +25,8 @@ import { PbCardFooterDirective } from '@shared/ui/pb-card/directives/pb-card-foo
 import { PbCardHeaderDirective } from '@shared/ui/pb-card/directives/pb-card-header.directive';
 import { PbCardComponent } from '@shared/ui/pb-card/pb-card.component';
 import { PbLabel } from '@shared/ui/pb-form-field/directives/pb-label';
+import { PbImageComponent } from '@shared/ui/pb-image/pb-image.component';
+import { PbInputIconRightDirective } from '@shared/ui/pb-input/directives/pb-input-icon-right.directive';
 import { filter, finalize } from 'rxjs';
 import { PbButtonComponent } from '../../../../shared/ui/pb-button/pb-button.component';
 import { PbFormFieldComponent } from '../../../../shared/ui/pb-form-field/pb-form-field.component';
@@ -53,6 +55,8 @@ import { CouponSummaryComponent } from '../coupon-summary/coupon-summary.compone
     CouponSummaryComponent,
     DecimalPipe,
     PbIconComponent,
+    PbInputIconRightDirective,
+    PbImageComponent,
   ],
   templateUrl: './coupon-card.component.html',
   styleUrl: './coupon-card.component.scss',

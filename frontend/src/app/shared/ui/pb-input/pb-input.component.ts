@@ -24,6 +24,7 @@ import {
   FormFieldControl,
 } from '../pb-form-field/directives/pb-form-field-control';
 import { PbInputIconDirective } from './directives/pb-input-icon.directive';
+import { PbInputIconRightDirective } from './directives/pb-input-icon-right.directive';
 
 @Component({
   selector: 'pb-input',
@@ -59,6 +60,7 @@ export class PbInputComponent
   testId = input<string | undefined>(undefined);
 
   icon = contentChild(PbInputIconDirective);
+  iconRight = contentChild(PbInputIconRightDirective);
 
   errors = signal<ErrorValueMap | null>(null);
   disabled = signal<boolean>(false);
@@ -74,6 +76,10 @@ export class PbInputComponent
 
   get hasIcon(): boolean {
     return !!this.icon();
+  }
+
+  get hasIconRight(): boolean {
+    return !!this.iconRight();
   }
 
   constructor() {

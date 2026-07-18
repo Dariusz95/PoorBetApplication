@@ -14,18 +14,18 @@ describe('ImagePathPipe', () => {
   });
 
   describe('transform method', () => {
-    it('should return user icon path for IconType.User', () => {
-      const result = pipe.transform(ImageType.User);
+    it('should return user icon path for "user"', () => {
+      const result = pipe.transform('user');
       expect(result).toBe('assets/user.svg');
     });
 
-    it('should return Polish flag icon path for IconType.PlFlag', () => {
-      const result = pipe.transform(ImageType.PlFlag);
+    it('should return Polish flag icon path for "pl-flag"', () => {
+      const result = pipe.transform('pl-flag');
       expect(result).toBe('assets/flags/pl.svg');
     });
 
-    it('should return English flag icon path for IconType.EnFlag', () => {
-      const result = pipe.transform(ImageType.EnFlag);
+    it('should return English flag icon path for "en-flag"', () => {
+      const result = pipe.transform('en-flag');
       expect(result).toBe('assets/flags/gb.svg');
     });
 
@@ -36,8 +36,8 @@ describe('ImagePathPipe', () => {
     });
 
     it('should return consistent paths on multiple calls', () => {
-      const result1 = pipe.transform(ImageType.User);
-      const result2 = pipe.transform(ImageType.User);
+      const result1 = pipe.transform('user');
+      const result2 = pipe.transform('user');
       expect(result1).toBe(result2);
     });
   });

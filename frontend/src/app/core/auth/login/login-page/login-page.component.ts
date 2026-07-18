@@ -46,15 +46,19 @@ export class LoginPageComponent {
 
   readonly RoutePath = RoutePath;
   readonly submitting = signal(false);
+  readonly submittingTestUser = signal(false);
 
   onSubmitForm(event: LoginModel): void {
-    this.submitting.set(true);
-
     const request = this.getRequest(event);
+    const submittingSignal = event.loginAsTestUser
+      ? this.submittingTestUser
+      : this.submitting;
+
+    submittingSignal.set(true);
 
     this.authService
       .login(request)
-      .pipe(finalize(() => this.submitting.set(false)))
+      .pipe(finalize(() => submittingSignal.set(false)))
       .subscribe(() => this.router.navigate(RouteLink[RoutePath.App]));
   }
 

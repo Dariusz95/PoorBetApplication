@@ -49,7 +49,11 @@ describe('LoginPageComponent', () => {
     it('should call authService.login with the submitted credentials', () => {
       authService.login.mockReturnValue(of(loginResponse));
 
-      component.onSubmitForm({ email: 'a@b.pl', password: 'zaq1@WSX' });
+      component.onSubmitForm({
+        email: 'a@b.pl',
+        password: 'zaq1@WSX',
+        loginAsTestUser: false,
+      });
 
       expect(authService.login).toHaveBeenCalledWith({
         email: 'a@b.pl',
@@ -60,7 +64,11 @@ describe('LoginPageComponent', () => {
     it('should navigate to the app on successful login', () => {
       authService.login.mockReturnValue(of(loginResponse));
 
-      component.onSubmitForm({ email: 'a@b.pl', password: 'zaq1@WSX' });
+      component.onSubmitForm({
+        email: 'a@b.pl',
+        password: 'zaq1@WSX',
+        loginAsTestUser: false,
+      });
 
       expect(router.navigate).toHaveBeenCalledWith(RouteLink[RoutePath.App]);
     });
@@ -69,7 +77,11 @@ describe('LoginPageComponent', () => {
       authService.login.mockReturnValue(of(loginResponse));
 
       expect(component.submitting()).toBe(false);
-      component.onSubmitForm({ email: 'a@b.pl', password: 'zaq1@WSX' });
+      component.onSubmitForm({
+        email: 'a@b.pl',
+        password: 'zaq1@WSX',
+        loginAsTestUser: false,
+      });
       expect(component.submitting()).toBe(false);
     });
   });
