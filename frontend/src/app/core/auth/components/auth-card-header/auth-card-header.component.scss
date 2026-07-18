@@ -1,5 +1,5 @@
 .auth-header {
-  @apply pb-6;
+  @apply pb-3 md:pb-6;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -22,7 +22,7 @@
 }
 
 .card-title {
-  @apply text-app-text font-medium;
+  @apply font-medium text-app-text;
   font-weight: 500;
   letter-spacing: -0.01em;
   text-align: center;

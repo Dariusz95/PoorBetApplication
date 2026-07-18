@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { CouponDropdownComponent } from './coupon-dropdown.component';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { ImageType } from '@shared/ui/pb-image/image-type.model';
 import { getTranslocoModule } from '@shared/utils/get-transloco-module';
 
 describe('CouponDropdownComponent', () => {
@@ -21,10 +20,6 @@ describe('CouponDropdownComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
-  });
-
-  it('should expose ImageType for use in the template', () => {
-    expect(component.ImageType.User).toBe(ImageType.User);
   });
 
   it('should render the coupon dropdown trigger icon', () => {

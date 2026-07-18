@@ -34,6 +34,7 @@ describe('LoginFormComponent', () => {
       expect(emitSpy).toHaveBeenCalledWith({
         email: 'user@example.com',
         password: 'zaq1@WSX',
+        loginAsTestUser: false,
       });
     });
 

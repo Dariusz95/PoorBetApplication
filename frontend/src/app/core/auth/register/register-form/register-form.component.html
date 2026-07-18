@@ -42,6 +42,7 @@
       size="md"
       testId="register-submit-button"
       [fullWidth]="true"
+      [loading]="submitting()"
       (buttonClick)="onSubmit()"
     >
       {{ "auth.register.register" | transloco }}

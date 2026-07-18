@@ -1,5 +1,6 @@
 package com.poorbet.authservice.exception;
 
+import com.poorbet.commons.commons.error.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,8 +10,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.time.Instant;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -18,56 +19,53 @@ public class GlobalExceptionHandler {
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(BaseException.class)
-    public ResponseEntity<ApiResponse<Void>> handleBaseException(BaseException ex, HttpServletRequest request) {
+    public ResponseEntity<ErrorResponse> handleBaseException(BaseException ex, HttpServletRequest request) {
         logger.error("Handling BaseException: {}", ex.getMessage(), ex);
 
-        ApiResponse<Void> response = ApiResponse.<Void>builder()
-                .timestamp(java.time.LocalDateTime.now())
-                .status(ex.getStatus().value())
-                .message(ex.getMessage())
-                .errorCode(ex.getErrorCode())
-                .path(request.getRequestURI())
-                .build();
+        ErrorResponse response = new ErrorResponse(
+                ex.getErrorCode(),
+                ex.getMessage(),
+                Instant.now(),
+                request.getRequestURI()
+        );
 
         return ResponseEntity.status(ex.getStatus()).body(response);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiResponse<Void>> handleValidationException(
+    public ResponseEntity<ErrorResponse> handleValidationException(
             MethodArgumentNotValidException ex, HttpServletRequest request) {
         logger.error("Handling validation exception: {}", ex.getMessage());
 
-        List<ApiResponse.ValidationError> validationErrors = ex.getBindingResult().getFieldErrors()
+        List<ErrorResponse.ValidationError> validationErrors = ex.getBindingResult().getFieldErrors()
                 .stream()
-                .map(fieldError -> ApiResponse.ValidationError.builder()
-                        .field(fieldError.getField())
-                        .message(fieldError.getDefaultMessage())
-                        .build())
-                .collect(Collectors.toList());
+                .map(fieldError -> new ErrorResponse.ValidationError(
+                        fieldError.getField(),
+                        fieldError.getDefaultMessage()
+                ))
+                .toList();
 
-        ApiResponse<Void> response = ApiResponse.<Void>builder()
-                .timestamp(java.time.LocalDateTime.now())
-                .status(HttpStatus.BAD_REQUEST.value())
-                .message("error.validation.failed")
-                .errorCode("VALIDATION_ERROR")
-                .path(request.getRequestURI())
-                .validationErrors(validationErrors)
-                .build();
+        ErrorResponse response = new ErrorResponse(
+                "VALIDATION_ERROR",
+                "Błąd walidacji danych.",
+                Instant.now(),
+                request.getRequestURI(),
+                validationErrors
+        );
 
         return ResponseEntity.badRequest().body(response);
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiResponse<Void>> handleGenericException(Exception ex, HttpServletRequest request) {
+    public ResponseEntity<ErrorResponse> handleGenericException(Exception ex, HttpServletRequest request) {
         logger.error("Handling unexpected exception", ex);
 
-        ApiResponse<Void> response = ApiResponse.<Void>builder()
-                .timestamp(java.time.LocalDateTime.now())
-                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .message("error.server.internal")
-                .errorCode("INTERNAL_SERVER_ERROR")
-                .path(request.getRequestURI())
-                .build();
+        ErrorResponse response = new ErrorResponse(
+                "INTERNAL_ERROR",
+                "Wystąpił nieoczekiwany błąd serwera.",
+                Instant.now(),
+                request.getRequestURI()
+        );
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }

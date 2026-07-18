@@ -10,6 +10,7 @@ import { AuthService } from '../../auth/services/auth.service';
 import { RoutePath } from '../../routing/route-path';
 import { CouponDropdownComponent } from '../coupon-dropdown/coupon-dropdown.component';
 import { LanguageSwitcherComponent } from '../language-switcher/language-switcher.component';
+import { UserBalanceComponent } from '../user-balance/user-balance.component';
 import { UserSidePanelComponent } from '../user-side-panel/user-side-panel.component';
 
 @Component({
@@ -21,6 +22,7 @@ import { UserSidePanelComponent } from '../user-side-panel/user-side-panel.compo
     TranslocoDirective,
     PbIconComponent,
     CouponDropdownComponent,
+    UserBalanceComponent,
     AsyncPipe,
   ],
   templateUrl: './header.component.html',

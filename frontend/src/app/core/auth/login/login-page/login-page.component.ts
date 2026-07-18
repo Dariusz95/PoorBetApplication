@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 import { RouteLink } from '@core/routing/route-link';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { PbCardBodyDirective } from '@shared/ui/pb-card/directives/pb-card-body.directive';
+import { PbCardFooterDirective } from '@shared/ui/pb-card/directives/pb-card-footer.directive';
 import { PbCardHeaderDirective } from '@shared/ui/pb-card/directives/pb-card-header.directive';
 import { finalize } from 'rxjs';
 import { PbButtonComponent } from '../../../../shared/ui/pb-button/pb-button.component';
@@ -19,7 +20,6 @@ import { LoginRequest } from '../../requests/login-request';
 import { AuthService } from '../../services/auth.service';
 import { LoginFormComponent } from '../login-form/login-form.component';
 import { LoginModel } from '../types/login.model';
-import { PbCardFooterDirective } from "@shared/ui/pb-card/directives/pb-card-footer.directive";
 
 @Component({
   selector: 'app-login-page',
@@ -35,8 +35,8 @@ import { PbCardFooterDirective } from "@shared/ui/pb-card/directives/pb-card-foo
     AuthCardHeaderComponent,
     PbCardHeaderDirective,
     PbCardBodyDirective,
-    PbCardFooterDirective
-],
+    PbCardFooterDirective,
+  ],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -45,24 +45,21 @@ export class LoginPageComponent {
   private readonly router = inject(Router);
 
   readonly RoutePath = RoutePath;
-  readonly submitted = signal(false);
+  readonly submitting = signal(false);
+  readonly submittingTestUser = signal(false);
 
   onSubmitForm(event: LoginModel): void {
-    this.submitted.set(true);
-
     const request = this.getRequest(event);
+    const submittingSignal = event.loginAsTestUser
+      ? this.submittingTestUser
+      : this.submitting;
+
+    submittingSignal.set(true);
 
     this.authService
       .login(request)
-      .pipe(finalize(() => this.submitted.set(false)))
-      .subscribe({
-        next: () => {
-          this.router.navigate(RouteLink[RoutePath.App]);
-        },
-        error: (error) => {
-          console.error('[LOGIN ERR]: ', error);
-        },
-      });
+      .pipe(finalize(() => submittingSignal.set(false)))
+      .subscribe(() => this.router.navigate(RouteLink[RoutePath.App]));
   }
 
   private getRequest(event: LoginModel): LoginRequest {

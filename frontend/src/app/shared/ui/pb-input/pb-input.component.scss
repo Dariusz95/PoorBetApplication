@@ -34,16 +34,28 @@
       padding-left: 2rem;
     }
 
+    &.has-icon-right .pb-input {
+      padding-right: 2rem;
+    }
+
     .icon {
       position: absolute;
       top: 50%;
-      left: 0;
       transform: translateY(-50%);
       display: flex;
       align-items: center;
       color: theme("colors.app.textMuted");
       pointer-events: none;
       transition: color 0.2s ease;
+      max-height: 100%;
+
+      &--left {
+        left: 0;
+      }
+
+      &--right {
+        right: 0;
+      }
     }
 
     .underline {

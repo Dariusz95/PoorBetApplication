@@ -1,5 +1,6 @@
 package com.poorbet.authservice.user.service;
 
+import com.poorbet.authservice.exception.InvalidCredentialsException;
 import com.poorbet.authservice.exception.ResourceAlreadyExistsException;
 import com.poorbet.authservice.security.JwtUtil;
 import com.poorbet.authservice.user.dto.JwtResponse;
@@ -71,10 +72,10 @@ public class UserServiceImpl implements UserService {
     public JwtResponse login(UserLoginDto loginDto) {
         User user = userRepository.findByEmail(loginDto.email())
                 .filter(User::isActive)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid credentials"));
+                .orElseThrow(() -> new InvalidCredentialsException("Nieprawidłowy adres e-mail lub hasło."));
 
         if (!passwordEncoder.matches(loginDto.password(), user.getPassword())) {
-            throw new IllegalArgumentException("Invalid credentials");
+            throw new InvalidCredentialsException("Nieprawidłowy adres e-mail lub hasło.");
         }
 
         List<String> roles = List.of(user.getRole().name());

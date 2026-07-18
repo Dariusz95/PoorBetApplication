@@ -28,7 +28,8 @@
       "confirmPasswordPlaceholder": "Potwierdź swoje hasło",
       "register": "Zarejestruj się",
       "alreadyHaveAccount": "Masz już konto?",
-      "login": "Zaloguj się"
+      "login": "Zaloguj się",
+      "successToast": "Konto zostało utworzone. Możesz się teraz zalogować."
     },
     "login": {
       "title": "Zaloguj się",
@@ -39,20 +40,34 @@
       "loginAsTestUser": "Zaloguj się jako użytkownik testowy",
       "forgotPassword": "Nie pamiętasz hasła?",
       "dontHaveAccount": "Nie masz jeszcze konta?",
-      "register": "Zarejestruj się"
+      "register": "Zarejestruj się",
+      "invalidCredentials": "Nieprawidłowy adres e-mail lub hasło."
     }
   },
   "validation": {
     "required": "To pole jest wymagane",
     "minlength": "To pole musi mieć co najmniej {{minLength}} znaków",
+    "min": "Wartość musi wynosić co najmniej {{min}}",
     "email": "Proszę podać poprawny adres e-mail",
     "password": "Hasło musi mieć co najmniej 6 znaków",
     "confirmPassword": "Hasła muszą być takie same",
     "passwordMismatch": "Hasła muszą być takie same"
   },
+  "errors": {
+    "generic": "Wystąpił błąd. Spróbuj ponownie.",
+    "insufficientFunds": "Niewystarczające środki na koncie.",
+    "walletNotFound": "Nie znaleziono portfela użytkownika.",
+    "walletUnavailable": "Usługa portfela jest chwilowo niedostępna.",
+    "resourceAlreadyExists": "Nie udało się utworzyć konta. Sprawdź dane lub zaloguj się.",
+    "resourceNotFound": "Nie znaleziono zasobu.",
+    "validation": "Błąd walidacji danych.",
+    "malformedRequest": "Nieprawidłowy format żądania.",
+    "unsupportedMediaType": "Nieobsługiwany typ zawartości żądania."
+  },
   "header": {
     "wallet": "Saldo",
-    "balanceUpdated": "Saldo zaktualizowane: {{balance}} zł"
+    "balanceUpdated": "Saldo zaktualizowane: {{balance}} zł",
+    "coinAbbreviation": "BC"
   },
   "bet": {
     "page": {

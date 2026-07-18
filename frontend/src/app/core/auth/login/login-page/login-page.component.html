@@ -7,7 +7,11 @@
     ></app-auth-card-header>
 
     <div pbCardBody>
-      <app-login-form (submitForm)="onSubmitForm($event)"></app-login-form>
+      <app-login-form
+        [submitting]="submitting()"
+        [submittingTestUser]="submittingTestUser()"
+        (submitForm)="onSubmitForm($event)"
+      ></app-login-form>
     </div>
 
     <div pbCardFooter class="auth-footer">

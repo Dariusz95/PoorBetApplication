@@ -19,8 +19,7 @@ import {
   ConnectedPosition,
   OverlayModule,
 } from '@angular/cdk/overlay';
-import { CommonModule, NgTemplateOutlet } from '@angular/common';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { CommonModule } from '@angular/common';
 
 const dropdownAnimation = trigger('dropdownAnimation', [
   state(
@@ -59,13 +58,7 @@ export const popoverAnimation = trigger('popoverAnimation', [
 
 @Component({
   selector: 'pb-popover',
-  imports: [
-    OverlayModule,
-    A11yModule,
-    CommonModule,
-    TranslocoPipe,
-    NgTemplateOutlet,
-  ],
+  imports: [OverlayModule, A11yModule, CommonModule],
   templateUrl: './pb-popover.component.html',
   styleUrl: './pb-popover.component.scss',
   standalone: true,

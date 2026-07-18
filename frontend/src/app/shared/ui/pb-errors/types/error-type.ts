@@ -2,6 +2,7 @@ export const ErrorTypes = [
   'required',
   'minlength',
   'maxlength',
+  'min',
   'pattern',
   'email',
 ] as const;

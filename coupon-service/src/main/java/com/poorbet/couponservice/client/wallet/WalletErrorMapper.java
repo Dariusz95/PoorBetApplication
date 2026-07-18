@@ -16,7 +16,7 @@ public class WalletErrorMapper {
         }
 
         return switch (code) {
-            case INSUFFICIENT_FUNDS, WALLET_NOT_FOUND -> new WalletBusinessException(err.message());
+            case INSUFFICIENT_FUNDS, WALLET_NOT_FOUND -> new WalletBusinessException(code.name(), err.message());
 
             case INTERNAL_ERROR -> new WalletTechnicalException(err.message());
 

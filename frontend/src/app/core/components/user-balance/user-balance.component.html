@@ -1,6 +1,18 @@
 @if (isLoggedIn$ | async) {
   @if (balance() !== null) {
-    {{ balance() | number: "1.2-2" }} zł
+    <span class="user-balance__amount">
+      {{ balance() | number: "1.2-2" }}
+      @if (showCoinIcon()) {
+        <pb-image
+          type="coin-text"
+          size="lg"
+          customClass="w-[70px]"
+          class="user-balance__coin"
+        />
+      } @else {
+        {{ "header.coinAbbreviation" | transloco }}
+      }
+    </span>
   } @else if (balanceLoading()) {
     <pb-spinner size="s" ariaLabel="Balance loading" />
   } @else {

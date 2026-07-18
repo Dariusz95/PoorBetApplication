@@ -1,5 +1,5 @@
 import { TranslocoPipe } from '@jsverse/transloco';
-import { MaxLengthError, MinLengthError } from './constants/error-types';
+import { MaxLengthError, MinError, MinLengthError } from './constants/error-types';
 import { ErrorType } from './types/error-type';
 import { ErrorValue, ErrorValueMap } from './types/error-value-map';
 import { FormError } from './types/form-error';
@@ -86,6 +86,12 @@ export class PbErrorsComponent {
       case 'maxlength':
         formError.params = {
           maxLength: (value as MaxLengthError).requiredLength,
+        };
+        break;
+
+      case 'min':
+        formError.params = {
+          min: (value as MinError).min,
         };
         break;
     }

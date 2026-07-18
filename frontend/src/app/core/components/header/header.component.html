@@ -17,6 +17,16 @@
           (click)="openUserPanel()"
           [attr.aria-label]="t('userPanel.open')"
         >
+          @if (isLoggedIn$ | async) {
+            <span class="app-header__balance">
+              <span class="app-header__balance-label">{{
+                t("header.wallet")
+              }}</span>
+              <span class="app-header__balance-value">
+                <app-user-balance [showCoinIcon]="true" />
+              </span>
+            </span>
+          }
           <pb-icon icon="account_circle" size="m"></pb-icon>
         </button>
       </div>

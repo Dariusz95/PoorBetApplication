@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { TranslocoService } from '@jsverse/transloco';
-import { MinLengthError } from '../constants/error-types';
+import { MinError, MinLengthError } from '../constants/error-types';
 import { ErrorType } from '../types/error-type';
 import { ErrorValue, ErrorValueMap } from '../types/error-value-map';
 
@@ -28,6 +28,12 @@ export class ValidationErrorPipe implements PipeTransform {
       case 'maxlength':
         params = {
           maxLength: (value as MinLengthError).requiredLength,
+        };
+        break;
+
+      case 'min':
+        params = {
+          min: (value as MinError).min,
         };
         break;
 

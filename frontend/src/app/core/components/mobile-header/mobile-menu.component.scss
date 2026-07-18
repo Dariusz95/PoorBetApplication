@@ -4,12 +4,13 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: theme("colors.app.surface");
+  background-color: rgb(var(--app-surface) / 0.5);
   border-top: 1px solid theme("colors.app.border");
   z-index: 1000;
   height: var(--app-footer-height);
   box-sizing: border-box;
   padding: 0 10px;
+  backdrop-filter: blur(12px);
 }
 
 .mobile-menu-list {
