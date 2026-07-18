@@ -8,6 +8,7 @@
       [class.pointer-events-none]="disabled()"
       [class.opacity-50]="disabled()"
       [attr.aria-label]="ariaLabel()"
+      [attr.data-testid]="testId() ?? null"
     >
       <ng-container *ngTemplateOutlet="buttonContent"></ng-container>
     </a>
@@ -19,6 +20,7 @@
       [ngClass]="getButtonClasses()"
       [disabled]="disabled()"
       [attr.aria-label]="ariaLabel()"
+      [attr.data-testid]="testId() ?? null"
       (click)="onClick($event)"
     >
       <ng-container *ngTemplateOutlet="buttonContent"></ng-container>

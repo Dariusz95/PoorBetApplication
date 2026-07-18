@@ -35,7 +35,7 @@ if [[ -z "$SERVICE" || -z "${CONTAINER[$SERVICE]:-}" ]]; then
   exit 1
 fi
 
-# --- wykrycie środowiska: dev (.env.dev, obok docker-compose.dev.yml) -----
+# --- wykrycie środowiska na podstawie pliku env -----
 if [[ -f "$APP_DIR/.env.dev" ]]; then
   ENV_FILE="$APP_DIR/.env.dev"
   COMPOSE_FILES=(-f "$APP_DIR/docker-compose.yml" -f "$APP_DIR/docker-compose.dev.yml")

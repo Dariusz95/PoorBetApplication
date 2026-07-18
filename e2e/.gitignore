@@ -1,0 +1,7 @@
+/node_modules
+/test-results
+/playwright-report
+/.auth
+.env.e2e.local
+.env.e2e.staging
+.env.e2e.ci

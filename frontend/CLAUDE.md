@@ -19,6 +19,17 @@ Uruchomienie pojedynczego testu:
 npx vitest run src/app/features/bet/services/bet-slip.service.spec.ts
 ```
 
+### E2E (Playwright)
+
+Testy E2E to **osobny projekt npm** w `/e2e` (repo root), nie część `frontend/` —
+patrz `e2e`/`CLAUDE.md` sekcja "E2E" w głównym `CLAUDE.md` po szczegóły
+(dwa tryby uruchamiania, struktura, zakres, `data-testid` w komponentach `pb-input`/
+`pb-button` używane przez POM).
+
+`shared/ui/pb-input` i `shared/ui/pb-button` mają wejście `testId` (`[attr.data-testid]`)
+właśnie pod E2E — ustawiaj je przy nowych polach/przyciskach w przepływach objętych
+testami E2E, żeby POM nie musiał polegać na tekstach i18n/rolach ARIA.
+
 ## Architektura
 
 Angular 21, standalone components, signals. Brak NgModules.
@@ -46,7 +57,7 @@ shared/
 
 ### Kluczowe wzorce
 
-**Routing** — dwa drzewa: `/auth/**` (guestGuard) i `/app/**`. Wszystkie feature routes ładowane lazy. `RouteFragment` zawiera URL segments, `RoutePath` — enum etykiet dla nawigacji.
+**Routing** — dwa drzewa: `/auth/**` i `/app/**`. Wszystkie feature routes ładowane lazy. `RouteFragment` zawiera URL segments, `RoutePath` — enum etykiet dla nawigacji. Uwaga: `guestGuard` (`core/auth/guards/guest.guard.ts`) istnieje, ale nie jest dziś podpięty pod żadną trasę — zalogowany użytkownik wchodzący na `/auth/login` nie jest przekierowywany na `/app`.
 
 **Stan** — BetSlipService trzyma zaznaczone zakłady jako `signal<SelectedBet[]>`, WalletService trzyma saldo. Wartości pochodne przez `computed()`. Brak globalnego store (NgRx / Akita).
 

@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { v4 as uuid } from 'uuid';
 import { PbErrorsComponent } from '../pb-errors/pb-errors.component';
 import { ErrorValueMap } from '../pb-errors/types/error-value-map';
 import { FORM_FIELD_CONTROL } from './directives/pb-form-field-control';
@@ -36,7 +37,7 @@ export class PbFormFieldComponent {
   value = signal<string>('');
   touched = signal(false);
   invalid = signal(false);
-  _labelId = crypto.randomUUID();
+  _labelId = uuid();
 
   ngAfterContentInit(): void {
     this.control().labelId?.set(this._labelId);

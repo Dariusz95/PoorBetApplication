@@ -3,6 +3,7 @@
     <pb-label> {{ "auth.email.label" | transloco }}</pb-label>
     <pb-input
       formControlName="email"
+      testId="register-email-input"
       [placeholder]="'auth.email.placeholder' | transloco"
     >
       <pb-icon icon="mail" size="m" pbInputIcon></pb-icon>
@@ -15,6 +16,7 @@
       formControlName="password"
       type="password"
       autocomplete="new-password"
+      testId="register-password-input"
       [placeholder]="'auth.register.passwordPlaceholder' | transloco"
     >
       <pb-icon icon="lock" size="m" pbInputIcon></pb-icon>
@@ -27,6 +29,7 @@
       formControlName="confirmPassword"
       type="password"
       autocomplete="new-password"
+      testId="register-confirm-password-input"
       [placeholder]="'auth.register.confirmPasswordPlaceholder' | transloco"
     >
       <pb-icon icon="lock" size="m" pbInputIcon></pb-icon>
@@ -37,6 +40,7 @@
     <pb-button
       variant="primary"
       size="md"
+      testId="register-submit-button"
       [fullWidth]="true"
       (buttonClick)="onSubmit()"
     >
