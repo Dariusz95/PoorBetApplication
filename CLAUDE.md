@@ -95,6 +95,61 @@ cd frontend && npm test
 cd frontend && npm run test:watch
 ```
 
+#### E2E (Playwright)
+Dwa tryby, zależnie od celu:
+
+```bash
+cd e2e && E2E_ENV=local npm test   # szybka iteracja: przeciw już działającemu make dev / make front-dev
+make e2e                          # z repo root: izolowany, jednorazowy stos + testy w kontenerze + teardown
+```
+
+**`make e2e`** stawia lekki, odizolowany stos (`docker-compose.e2e.yml`, osobna
+nazwa projektu Compose `poorbet-e2e`, przesunięte porty: frontend `4300`,
+gateway `8181` — może działać równolegle z `make dev`, bez konfliktu portów ani
+współdzielenia wolumenów baz), czeka aż odpowiada, buduje i uruchamia
+kontenerowy test runner (usługa `e2e`, oparta o oficjalny obraz
+`mcr.microsoft.com/playwright` — ma wbudowane wszystkie zależności systemowe
+dla headless Chromium, więc host nie musi ich mieć), a na końcu zawsze robi
+`docker compose down -v` (`scripts/run-e2e.sh`, `trap ... EXIT`, więc sprząta
+nawet gdy testy padną). Test runner łączy się z `frontend`/`gateway`
+bezpośrednio po nazwie usługi Compose (nie przez opublikowane porty hosta).
+Raport/artefakty lądują z powrotem w `e2e/playwright-report`, `e2e/test-results`.
+
+Uwaga: stawia tylko usługi potrzebne obecnemu zakresowi testów (auth) —
+`gateway`, `frontend`, `auth-service`, `user-db`, `rabbitmq`. Dodatkowy pełny
+stos obok `make dev` to realne obciążenie RAM (kolejny komplet JVM-ów +
+Postgresów) — na słabszej maszynie może zabraknąć pamięci przy obu stosach
+uruchomionych naraz.
+
+Struktura: `e2e/tests/` (testy), `e2e/pages/` (Page Object Model, lokatory przez
+`getByTestId` — komponenty `pb-input`/`pb-button` mają wejście `testId` właśnie
+po to), `e2e/support/` (klient API, generator danych testowych, odczyt zmiennych
+środowiskowych). Konto do testów wymagających zalogowania (`SETUP_USER` w
+`e2e/support/test-user.ts`, `test@test.pl`) jest seedowane automatycznie przez
+`DevTestUserSeeder` w `auth-service` (profil `dev`) — testy logują się na nie
+bezpośrednio przez API tam, gdzie potrzebują sesji (patrz
+`guarded-routes.spec.ts`), bez osobnego projektu "setup"/pliku storageState —
+przy jednym konsumencie to była zbędna warstwa pośrednia.
+
+Odkryty przy okazji, naprawiony bug: `PbFormFieldComponent` generował id
+etykiety przez `crypto.randomUUID()` — Web Crypto API dostępne wyłącznie
+w "secure context" (https:// albo wyjątek dla localhost/127.0.0.1). Kontener
+`e2e` nawiguje po `http://frontend:4200` (wewnętrzna nazwa usługi Compose),
+które Chromium nie uznaje za bezpieczny kontekst, więc formularz rzucał
+wyjątkiem w konstruktorze i strona zostawała pusta — to samo wystąpiłoby na
+produkcji pod zwykłym http:// bez TLS. Naprawione przez zamianę na pakiet
+`uuid` (`v4`), który nie ma tego ograniczenia.
+
+Zakres na razie obejmuje tylko przepływy `core/auth/` (logowanie, rejestracja,
+`authGuard`) — `features/bet`/`features/coupons` są świadomie pominięte, bo
+`match-service` generuje pule meczów cyklicznie i nie ma dev-owego endpointu
+seed/reset dla danych testowych.
+
+Odkryta przy okazji rozbieżność: `guestGuard` (`frontend/.../guards/guest.guard.ts`)
+istnieje w kodzie, ale nie jest podpięty pod żadną trasę — zalogowany użytkownik
+wchodzący na `/auth/login` dziś NIE jest przekierowywany na `/app`, mimo że ten
+plik to sugerował. Świadomie nietestowane (opisywałoby nieistniejącą funkcjonalność).
+
 ### Budowanie aplikacji
 
 ```bash

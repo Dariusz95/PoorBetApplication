@@ -3,6 +3,7 @@
     <pb-label> {{ "auth.email.label" | transloco }}</pb-label>
     <pb-input
       formControlName="email"
+      testId="login-email-input"
       [placeholder]="'auth.email.placeholder' | transloco"
     >
       <pb-icon icon="mail" size="m" pbInputIcon></pb-icon>
@@ -15,6 +16,7 @@
       formControlName="password"
       type="password"
       autocomplete="current-password"
+      testId="login-password-input"
       [placeholder]="'auth.password.placeholder' | transloco"
     >
       <pb-icon icon="lock" size="m" pbInputIcon></pb-icon>
@@ -22,7 +24,7 @@
   </pb-form-field>
 
   <div class="mt-8 flex flex-col gap-4">
-    <pb-button variant="primary" size="md" type="submit" [fullWidth]="true">
+    <pb-button variant="primary" size="md" type="submit" testId="login-submit-button" [fullWidth]="true">
       {{ "auth.login.login" | transloco }}
     </pb-button>
 
@@ -30,6 +32,7 @@
       variant="secondary"
       size="md"
       type="button"
+      testId="login-test-user-button"
       [fullWidth]="true"
       (click)="loginAsTestUser()"
     >

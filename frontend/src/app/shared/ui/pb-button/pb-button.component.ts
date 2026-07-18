@@ -37,6 +37,7 @@ export class PbButtonComponent {
   fullWidth = input<boolean>(false);
   loading = input<boolean>(false);
   ariaLabel = input<string | undefined>();
+  testId = input<string | undefined>(undefined);
 
   buttonClick = output<Event>();
 

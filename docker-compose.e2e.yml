@@ -1,0 +1,164 @@
+name: poorbet-e2e
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "${E2E_FRONTEND_PORT:-4300}:4200"
+    volumes:
+      - ./frontend:/app:cached
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    command:
+      ["ng", "serve", "--proxy-config", "src/proxy.e2e.config.json", "--host", "0.0.0.0", "--poll", "--allowed-hosts"]
+
+  gateway:
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile.dev
+    ports:
+      - "${E2E_GATEWAY_PORT:-8181}:8081"
+    volumes:
+      - ./gateway:/app
+      - ~/.m2:/root/.m2
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=75.0
+
+  auth-service:
+    build:
+      context: .
+      dockerfile: auth-service/Dockerfile.dev
+    working_dir: /app/auth-service
+    volumes:
+      - ./:/app
+      - ./.mvn:/app/.mvn
+      - ~/.m2:/root/.m2
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=75.0
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://user-db:5432/${POSTGRES_AUTH_DB}
+      - POSTGRES_USER=${POSTGRES_AUTH_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_AUTH_PASSWORD}
+      - JWT_KEY_ID=${JWT_KEY_ID}
+      - MATCH_SERVICE_CLIENT_SECRET=${MATCH_SERVICE_CLIENT_SECRET}
+      - COUPON_SERVICE_CLIENT_SECRET=${COUPON_SERVICE_CLIENT_SECRET}
+      - WEB_CORS_ALLOWEDORIGINPATTERNS=http://frontend:4200,http://localhost:${E2E_FRONTEND_PORT:-4300}
+
+  e2e:
+    build:
+      context: ./e2e
+      args:
+        E2E_UID: ${E2E_UID:-1000}
+        E2E_GID: ${E2E_GID:-1000}
+    user: "${E2E_UID:-1000}:${E2E_GID:-1000}"
+    networks:
+      - main_network
+    environment:
+      - E2E_BASE_URL=http://frontend:4200
+      - E2E_API_BASE_URL=http://gateway:8081
+    volumes:
+      - ./e2e/playwright-report:/app/playwright-report
+      - ./e2e/test-results:/app/test-results
+
+  user-db:
+    image: postgres:16
+    volumes:
+      - type: tmpfs
+        target: /var/lib/postgresql/data
+
+  odds-engine-service:
+    build:
+      context: ./odds-engine-service
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./odds-engine-service:/app
+      - ./odds-engine-service/data:/app/data
+      - ~/.m2:/root/.m2
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=75.0
+
+  match-service:
+    build:
+      context: ./match-service
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./match-service:/app
+      - ~/.m2:/root/.m2
+      - teams_data:/app/data/images
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=75.0
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://match-db:5432/${POSTGRES_MATCH_DB}
+      - POSTGRES_USER=${POSTGRES_MATCH_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_MATCH_PASSWORD}
+      - INSTANCE_ID=match-1
+      - AUTH_SERVICE_URL=${AUTH_SERVICE_URL}
+      - AUTH_SERVICE_CLIENT_ID=match-service
+      - AUTH_SERVICE_CLIENT_SECRET=${AUTH_SERVICE_CLIENT_SECRET}
+
+  coupon-service:
+    build:
+      context: ./coupon-service
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./coupon-service:/app
+      - ~/.m2:/root/.m2
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=75.0
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://coupon-db:5432/${POSTGRES_COUPON_DB}
+      - POSTGRES_USER=${POSTGRES_COUPON_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_COUPON_PASSWORD}
+
+  wallet-service:
+    build:
+      context: ./wallet-service
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./wallet-service:/app
+      - ~/.m2:/root/.m2
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=75.0
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://wallet-db:5432/${POSTGRES_WALLET_DB}
+      - POSTGRES_USER=${POSTGRES_WALLET_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_WALLET_PASSWORD}
+
+  notification-service:
+    build:
+      context: ./notification-service
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./notification-service:/app
+      - ~/.m2:/root/.m2
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=75.0
+
+  match-db:
+    image: postgres:16
+    volumes:
+      - type: tmpfs
+        target: /var/lib/postgresql/data
+
+  wallet-db:
+    image: postgres:16
+    volumes:
+      - type: tmpfs
+        target: /var/lib/postgresql/data
+
+  coupon-db:
+    image: postgres:16
+    volumes:
+      - type: tmpfs
+        target: /var/lib/postgresql/data
+
+  redis:
+    volumes:
+      - type: tmpfs
+        target: /data

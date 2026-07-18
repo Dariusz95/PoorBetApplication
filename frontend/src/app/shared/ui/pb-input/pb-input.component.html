@@ -21,6 +21,7 @@
     [value]="value()"
     [attr.aria-invalid]="invalid() && touched() ? true : null"
     [attr.aria-describedby]="invalid() && touched() ? errorsId() : null"
+    [attr.data-testid]="testId() ?? null"
     (input)="handleInput($event)"
     (focus)="onFocus()"
     (blur)="onBlur()"
