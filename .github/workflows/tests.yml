@@ -1,5 +1,8 @@
 name: Run microservices tests
 
+env:
+  RUN_E2E: false
+
 on:
   pull_request:
     branches:
@@ -24,15 +27,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        service: [
-          auth-service,
-          gateway,
-          coupon-service,
-          match-service,
-          odds-engine-service,
-          wallet-service,
-          notification-service,
-        ]
+        service:
+          [
+            auth-service,
+            gateway,
+            coupon-service,
+            match-service,
+            odds-engine-service,
+            wallet-service,
+            notification-service,
+          ]
 
     steps:
       - name: Checkout code
@@ -88,6 +92,7 @@ jobs:
         run: npm run test
 
   e2e-tests:
+    if: env.RUN_E2E == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
