@@ -6,7 +6,7 @@
   }
 
   &__label {
-    @apply text-app-text transition-colors duration-200;
+    @apply text-app-text transition-colors duration-base;
   }
 
   &.focused {

@@ -44,7 +44,7 @@
       transform: translateY(-50%);
       display: flex;
       align-items: center;
-      color: theme("colors.app.textMuted");
+      color: var(--color-text-muted);
       pointer-events: none;
       transition: color 0.2s ease;
       max-height: 100%;
@@ -62,15 +62,15 @@
       @apply absolute bottom-0 left-0 h-[2px] w-full;
 
       .base-line {
-        @apply absolute bottom-0 left-0 h-[2px] w-full bg-gray-300;
+        @apply absolute bottom-0 left-0 h-[2px] w-full bg-app-border;
       }
 
       .focus-line {
         @apply absolute bottom-0 left-0 h-[2px] w-0;
         background: linear-gradient(
           90deg,
-          theme("colors.app.primary") 0%,
-          theme("colors.app.primaryDark") 100%
+          var(--color-primary) 0%,
+          var(--color-primary-dark) 100%
         );
         transition: width 0.3s ease;
       }
@@ -82,7 +82,7 @@
 
     &.invalid {
       .underline .base-line {
-        @apply bg-red-500 dark:bg-red-300;
+        @apply bg-app-danger;
       }
       &.focused .focus-line {
         width: 100%;
@@ -91,12 +91,12 @@
   }
 
   &--surface {
-    @apply gap-2 rounded-md border border-app-border bg-app-surface px-3 py-2 transition-colors duration-200;
+    @apply gap-2 rounded-md border border-app-border bg-app-surface px-3 py-2 transition-colors duration-base;
 
     .icon {
       display: flex;
       align-items: center;
-      color: theme("colors.app.textMuted");
+      color: var(--color-text-muted);
       pointer-events: none;
       transition: color 0.2s ease;
     }
@@ -105,7 +105,7 @@
       @apply border-app-primary shadow-glow-sm;
 
       .icon {
-        color: theme("colors.app.primary");
+        color: var(--color-primary);
       }
     }
 

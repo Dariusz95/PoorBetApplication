@@ -14,6 +14,16 @@
           class="text-xs font-semibold uppercase tracking-wide text-app-text"
           >{{ "bet.liveMatchCard.live" | transloco }}</span
         >
+      } @else {
+        <span class="relative flex h-2.5 w-2.5">
+          <span
+            class="relative inline-flex h-2.5 w-2.5 rounded-full bg-app-textMuted"
+          ></span>
+        </span>
+        <span
+          class="text-xs font-semibold uppercase tracking-wide text-app-textMuted"
+          >{{ "bet.liveMatchCard.matchFinished" | transloco }}</span
+        >
       }
     </div>
 
@@ -26,13 +36,17 @@
 
       <div class="flex flex-col items-center gap-1">
         <p class="flex items-center gap-2 text-4xl font-bold">
-          <span class="text-app-accent">{{
-            liveMatch().homeScore
-          }}</span>
+          <span
+            class="score-value text-app-accent"
+            [class.score-value--changed]="homeScoreChanged()"
+            >{{ liveMatch().homeScore }}</span
+          >
           <span class="text-app-textMuted">:</span>
-          <span class="text-app-primary">{{
-            liveMatch().awayScore
-          }}</span>
+          <span
+            class="score-value text-app-primary"
+            [class.score-value--changed]="awayScoreChanged()"
+            >{{ liveMatch().awayScore }}</span
+          >
         </p>
       </div>
 

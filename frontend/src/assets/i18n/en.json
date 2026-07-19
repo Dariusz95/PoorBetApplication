@@ -7,7 +7,8 @@
     "bet": "PoorBet – Bets",
     "myCoupons": "PoorBet – My coupons",
     "login": "PoorBet – Login",
-    "register": "PoorBet – Register"
+    "register": "PoorBet – Register",
+    "ranking": "PoorBet – Ranking"
   },
   "auth": {
     "email": {
@@ -154,5 +155,9 @@
     "match": "Match",
     "matchStarted": "Match has already started",
     "matchStartedToast": "Cannot place coupon — match has already started"
+  },
+  "ranking": {
+    "title": "Ranking",
+    "inProgress": "This feature is in progress — check back soon."
   }
 }
