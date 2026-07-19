@@ -6,7 +6,7 @@
 }
 
 .fade-in {
-  animation: fadeIn 0.3s ease-out;
+  animation: fadeIn var(--duration-slow) var(--ease-standard);
 }
 
 @keyframes fadeIn {

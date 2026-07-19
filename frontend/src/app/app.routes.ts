@@ -40,6 +40,14 @@ export const routes: Routes = [
             (m) => m.CouponsPageComponent,
           ),
       },
+      {
+        path: RouteFragment.Ranking,
+        title: 'pageTitle.ranking',
+        loadComponent: () =>
+          import('./features/ranking/ranking-page/ranking-page.component').then(
+            (m) => m.RankingPageComponent,
+          ),
+      },
     ],
   },
   {

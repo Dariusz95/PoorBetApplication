@@ -1,3 +1,29 @@
 :host {
   @apply block;
 }
+
+.score-value {
+  display: inline-block;
+
+  &--changed {
+    animation: score-value-pop var(--duration-slow) var(--ease-out-back);
+  }
+}
+
+@keyframes score-value-pop {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.25);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .score-value--changed {
+    animation: none;
+  }
+}

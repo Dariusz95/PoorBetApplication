@@ -32,6 +32,17 @@ module.exports = {
         xl: "24px",
       },
 
+      transitionDuration: {
+        fast: "var(--duration-fast)",
+        base: "var(--duration-base)",
+        slow: "var(--duration-slow)",
+      },
+
+      transitionTimingFunction: {
+        standard: "var(--ease-standard)",
+        "out-back": "var(--ease-out-back)",
+      },
+
       boxShadow: {
         surface: "0 10px 30px rgba(0,0,0,0.6)",
         glow: "0 0 30px rgba(139,92,246,0.35)",

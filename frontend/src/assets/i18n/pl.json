@@ -7,7 +7,8 @@
     "bet": "PoorBet – Zakłady",
     "myCoupons": "PoorBet – Moje kupony",
     "login": "PoorBet – Logowanie",
-    "register": "PoorBet – Rejestracja"
+    "register": "PoorBet – Rejestracja",
+    "ranking": "PoorBet – Ranking"
   },
   "auth": {
     "email": {
@@ -154,5 +155,9 @@
     "match": "Mecz",
     "matchStarted": "Mecz już się rozpoczął",
     "matchStartedToast": "Nie można postawić kuponu — mecz już się rozpoczął"
+  },
+  "ranking": {
+    "title": "Ranking",
+    "inProgress": "Funkcja w trakcie prac — wróć tu wkrótce."
   }
 }

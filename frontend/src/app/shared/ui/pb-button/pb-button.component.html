@@ -3,7 +3,7 @@
     <a
       role="button"
       [routerLink]="routePath()"
-      [ngClass]="getButtonClasses()"
+      [class]="getButtonClasses()"
       [attr.aria-disabled]="disabled()"
       [class.pointer-events-none]="disabled()"
       [class.opacity-50]="disabled()"
@@ -17,7 +17,7 @@
   @default {
     <button
       [type]="type()"
-      [ngClass]="getButtonClasses()"
+      [class]="getButtonClasses()"
       [disabled]="disabled()"
       [attr.aria-label]="ariaLabel()"
       [attr.data-testid]="testId() ?? null"

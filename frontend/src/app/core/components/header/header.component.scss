@@ -3,7 +3,7 @@
   background: #00000000;
 
   height: var(--app-header-height);
-  border-bottom: 1px solid theme("colors.app.border");
+  border-bottom: 1px solid var(--color-border);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 
@@ -13,10 +13,6 @@
 
   &__left {
     @apply flex h-full items-center gap-5;
-  }
-
-  &__right {
-    @apply items-center gap-5;
   }
 
   &__nav-list {
@@ -51,7 +47,9 @@
   }
 
   &__user {
-    @apply flex items-center gap-2;
+    @apply flex items-center gap-2 rounded-full px-2 py-1;
+
+    transition: background-color var(--duration-base) var(--ease-standard);
 
     .material-icons {
       font-size: 20px;
@@ -68,7 +66,7 @@
 
   &__balance-label {
     font-size: 0.65rem;
-    color: theme("colors.app.textMuted");
+    color: var(--color-text-muted);
     text-transform: uppercase;
     letter-spacing: 0.05em;
   }
@@ -76,6 +74,6 @@
   &__balance-value {
     font-size: 0.9rem;
     font-weight: 700;
-    color: theme("colors.app.text");
+    color: var(--color-text);
   }
 }

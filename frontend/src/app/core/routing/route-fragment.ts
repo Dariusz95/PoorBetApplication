@@ -4,6 +4,7 @@ export enum RouteFragment {
   Login = 'login',
   App = 'app',
   MyCoupons = 'my-coupons',
+  Ranking = 'ranking',
   Slash = '/',
   WildCard = '**',
 }

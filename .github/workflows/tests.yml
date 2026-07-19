@@ -86,3 +86,50 @@ jobs:
 
       - name: Run tests
         run: npm run test
+
+  e2e-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      GITHUB_ACTOR: ${{ github.actor }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Maven auth for PoorBet Commons
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          server-id: github-commons
+          server-username: GITHUB_ACTOR
+          server-password: GITHUB_TOKEN
+
+      - name: Add Maven auth for PoorBet Auth Starter
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          server-id: github-auth
+          server-username: GITHUB_ACTOR
+          server-password: GITHUB_TOKEN
+          overwrite-settings: false
+
+      - name: Create .env.dev
+        run: cp .env.example .env.dev
+
+      - name: Run E2E tests
+        run: make e2e
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            e2e/playwright-report
+            e2e/test-results
+          retention-days: 7
+          if-no-files-found: ignore
