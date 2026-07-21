@@ -46,6 +46,15 @@
     @apply flex items-center gap-2;
   }
 
+  &__ranking {
+    color: var(--color-text);
+
+    &--active {
+      color: var(--color-primary);
+      border-color: var(--color-primary);
+    }
+  }
+
   &__user {
     @apply flex items-center gap-2 rounded-full px-2 py-1;
 

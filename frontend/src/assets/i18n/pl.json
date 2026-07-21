@@ -158,6 +158,23 @@
   },
   "ranking": {
     "title": "Ranking",
-    "inProgress": "Funkcja w trakcie prac — wróć tu wkrótce."
+    "loadError": "Nie udało się wczytać rankingu. Spróbuj ponownie później.",
+    "empty": "Brak wygranych kuponów do wyświetlenia.",
+    "metricOdds": "Wygrany kupon z najwyższym kursem",
+    "metricPayout": "Wygrany kupon z najwyższą wygraną",
+    "previewAria": "Zobacz szczegóły kuponu",
+    "columns": {
+      "rank": "#",
+      "player": "Gracz",
+      "odds": "Kurs",
+      "payout": "Wygrana",
+      "date": "Data",
+      "preview": "Podgląd"
+    }
+  },
+  "table": {
+    "previous": "Poprzednia",
+    "next": "Następna",
+    "page": "Strona {{page}} z {{total}}"
   }
 }

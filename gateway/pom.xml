@@ -71,6 +71,10 @@
             <groupId>com.poorbet</groupId>
             <artifactId>poorbet-auth-starter</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webflux-ui</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

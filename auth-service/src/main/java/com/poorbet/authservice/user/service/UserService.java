@@ -1,9 +1,10 @@
 package com.poorbet.authservice.user.service;
 
-import com.poorbet.authservice.user.dto.JwtResponse;
-import com.poorbet.authservice.user.dto.UserLoginDto;
-import com.poorbet.authservice.user.dto.UserRegisterDto;
-import com.poorbet.authservice.user.dto.UserResponseDto;
+import com.poorbet.authservice.user.dto.*;
+import com.poorbet.commons.commons.auth.UserBatchLookupResponse;
+
+import java.util.Set;
+import java.util.UUID;
 
 public interface UserService {
 
@@ -12,4 +13,6 @@ public interface UserService {
     boolean emailExists(String email);
 
     JwtResponse login(UserLoginDto loginDto);
+
+    UserBatchLookupResponse lookup(Set<UUID> ids);
 }

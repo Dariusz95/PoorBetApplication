@@ -1,0 +1,78 @@
+<section class="ranking-page">
+  <header class="ranking-page__header">
+    <h1 class="t-heading-lg">{{ "ranking.title" | transloco }}</h1>
+  </header>
+
+  <pb-tabs
+    [tabs]="metricTabs()"
+    [selectedTab]="activeMetric()"
+    (selectedTabChange)="onMetricChange($event)"
+  ></pb-tabs>
+
+  <pb-card>
+    <div pbCardBody>
+      @if (isLoading()) {
+        <div class="ranking-page__state">
+          <pb-spinner size="lg" />
+        </div>
+      } @else if (hasError()) {
+        <div class="ranking-page__state t-muted">
+          {{ "ranking.loadError" | transloco }}
+        </div>
+      } @else if (rows().length === 0) {
+        <div class="ranking-page__state t-muted">
+          {{ "ranking.empty" | transloco }}
+        </div>
+      } @else {
+        <pb-table
+          [data]="rows()"
+          [columns]="columns()"
+          [pageSize]="10"
+        ></pb-table>
+      }
+    </div>
+  </pb-card>
+</section>
+
+<ng-template #rankCell let-value>
+  @switch (value) {
+    @case (1) {
+      <span class="ranking-medal">🥇</span>
+    }
+    @case (2) {
+      <span class="ranking-medal">🥈</span>
+    }
+    @case (3) {
+      <span class="ranking-medal">🥉</span>
+    }
+    @default {
+      <span class="ranking-rank">#{{ value }}</span>
+    }
+  }
+</ng-template>
+
+<ng-template #playerCell let-value>
+  <span class="ranking-player__name">{{ value }}</span>
+</ng-template>
+
+<ng-template #oddsCell let-value>
+  <span class="ranking-badge ranking-badge--odds">{{ value.toFixed(2) }}x</span>
+</ng-template>
+
+<ng-template #payoutCell let-value>
+  <span class="ranking-badge ranking-badge--payout">
+    {{ value | number: "1.2-2" }}
+    {{ "header.coinAbbreviation" | transloco }}
+  </span>
+</ng-template>
+
+<ng-template #previewCell let-value>
+  <button
+    type="button"
+    class="ranking-preview-btn"
+    (click)="openPreview(value)"
+    [attr.aria-label]="'ranking.previewAria' | transloco"
+  >
+    <pb-icon icon="visibility" size="s"></pb-icon>
+  </button>
+</ng-template>

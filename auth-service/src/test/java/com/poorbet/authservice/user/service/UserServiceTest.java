@@ -9,6 +9,7 @@ import com.poorbet.authservice.user.mapper.UserMapper;
 import com.poorbet.authservice.user.model.Role;
 import com.poorbet.authservice.user.model.User;
 import com.poorbet.authservice.user.repository.UserRepository;
+import com.poorbet.commons.commons.auth.UserBatchLookupResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,6 +20,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -143,5 +146,45 @@ class UserServiceTest {
         // Then
         assertFalse(result);
         verify(userRepository).existsByEmail("nonexistent@example.com");
+    }
+
+    @Test
+    void lookup_WithExistingIds_ShouldReturnMapKeyedByUserId() {
+        // Given
+        UUID firstId = UUID.randomUUID();
+        UUID secondId = UUID.randomUUID();
+
+        User firstUser = new User();
+        firstUser.setId(firstId);
+        firstUser.setEmail("first@example.com");
+
+        User secondUser = new User();
+        secondUser.setId(secondId);
+        secondUser.setEmail("second@example.com");
+
+        Set<UUID> requestedIds = Set.of(firstId, secondId);
+        when(userRepository.findByIdIn(requestedIds)).thenReturn(List.of(firstUser, secondUser));
+
+        // When
+        UserBatchLookupResponse result = userService.lookup(requestedIds);
+
+        // Then
+        assertEquals(2, result.users().size());
+        assertEquals("first@example.com", result.users().get(firstId).getEmail());
+        assertEquals("second@example.com", result.users().get(secondId).getEmail());
+    }
+
+    @Test
+    void lookup_WithNoMatchingUsers_ShouldReturnEmptyMap() {
+        // Given
+        Set<UUID> requestedIds = Set.of(UUID.randomUUID());
+        when(userRepository.findByIdIn(requestedIds)).thenReturn(List.of());
+
+        // When
+        UserBatchLookupResponse result = userService.lookup(requestedIds);
+
+        // Then
+        assertTrue(result.users().isEmpty());
+        verify(userRepository).findByIdIn(requestedIds);
     }
 }

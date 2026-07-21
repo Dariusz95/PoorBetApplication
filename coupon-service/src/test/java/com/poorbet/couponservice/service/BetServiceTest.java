@@ -19,7 +19,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.poorbet.couponservice.client.MatchClient;
+import com.poorbet.couponservice.client.match.MatchClient;
 import com.poorbet.couponservice.dto.MatchResultMapDto;
 
 @ExtendWith(MockitoExtension.class)

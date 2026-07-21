@@ -1,4 +1,4 @@
-import { CouponTab } from "../types/coupon-tab";
+import { CouponTab } from '../types/coupon-tab';
 
 export interface TabConfig {
   id: CouponTab;

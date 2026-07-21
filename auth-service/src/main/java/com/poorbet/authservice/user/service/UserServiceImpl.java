@@ -3,14 +3,13 @@ package com.poorbet.authservice.user.service;
 import com.poorbet.authservice.exception.InvalidCredentialsException;
 import com.poorbet.authservice.exception.ResourceAlreadyExistsException;
 import com.poorbet.authservice.security.JwtUtil;
-import com.poorbet.authservice.user.dto.JwtResponse;
-import com.poorbet.authservice.user.dto.UserLoginDto;
-import com.poorbet.authservice.user.dto.UserRegisterDto;
-import com.poorbet.authservice.user.dto.UserResponseDto;
+import com.poorbet.authservice.user.dto.*;
 import com.poorbet.authservice.user.mapper.UserMapper;
 import com.poorbet.authservice.user.model.User;
 import com.poorbet.authservice.user.repository.UserRepository;
 import com.poorbet.authstarter.security.PoorbetTokenTypes;
+import com.poorbet.commons.commons.auth.UserBatchLookupResponse;
+import com.poorbet.commons.commons.auth.UserDto;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +20,11 @@ import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -92,5 +96,15 @@ public class UserServiceImpl implements UserService {
         long expiresAt = System.currentTimeMillis() + jwtUtil.getAccessTokenExpiration();
 
         return new JwtResponse(token, user.getEmail(), roles, permissions, expiresAt);
+    }
+
+    @Override
+    public UserBatchLookupResponse lookup(Set<UUID> ids) {
+        Map<UUID, UserDto> userMap = userRepository.findByIdIn(ids)
+                .stream()
+                .map(user -> new UserDto(user.getId(), user.getEmail()))
+                .collect(Collectors.toMap(UserDto::getId, Function.identity()));
+
+        return new UserBatchLookupResponse(userMap);
     }
 }

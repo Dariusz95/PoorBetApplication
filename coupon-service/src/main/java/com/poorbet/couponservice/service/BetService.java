@@ -1,6 +1,6 @@
 package com.poorbet.couponservice.service;
 
-import com.poorbet.couponservice.client.MatchClient;
+import com.poorbet.couponservice.client.match.MatchClient;
 import com.poorbet.couponservice.dto.MatchResultMapDto;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;

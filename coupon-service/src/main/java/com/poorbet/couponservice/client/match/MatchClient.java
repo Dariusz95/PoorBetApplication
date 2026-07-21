@@ -1,4 +1,4 @@
-package com.poorbet.couponservice.client;
+package com.poorbet.couponservice.client.match;
 
 import com.poorbet.couponservice.domain.BetType;
 import com.poorbet.couponservice.dto.BetSnapshotRequest;

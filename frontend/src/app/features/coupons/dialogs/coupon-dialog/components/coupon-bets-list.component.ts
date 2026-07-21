@@ -14,7 +14,10 @@ import { LiveMatchEvent } from '@features/bet/types/match.types';
     <section class="coupon__bets">
       <ul class="coupon__bets-list" role="list">
         @for (bet of bets; track bet.id) {
-          <app-coupon-bet-item [bet]="bet" [liveEvent]="liveMatches()[bet.matchId]" />
+          <app-coupon-bet-item
+            [bet]="bet"
+            [liveEvent]="liveMatches()[bet.matchId]"
+          />
         }
       </ul>
     </section>
@@ -26,5 +29,7 @@ export class CouponBetsListComponent {
 
   @Input() bets: Bet[] = [];
 
-  liveMatches = toSignal(this.liveMatchService.liveMatches$, { initialValue: {} as Record<string, LiveMatchEvent> });
+  liveMatches = toSignal(this.liveMatchService.liveMatches$, {
+    initialValue: {} as Record<string, LiveMatchEvent>,
+  });
 }

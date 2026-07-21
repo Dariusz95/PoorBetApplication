@@ -59,7 +59,7 @@ echo "==> docker compose up -d"
 # natychmiast, niezależnie od tego, czy nowe obrazy w ogóle wstają, a CD
 # fałszywie pokazywałby zielony deploy.
 # --remove-orphans sprząta kontenery serwisów usuniętych z compose files.
-"${COMPOSE[@]}" up -d --remove-orphans --wait --wait-timeout 180
+"${COMPOSE[@]}" up -d --remove-orphans --wait --wait-timeout 300
 
 echo "==> Status kontenerów"
 "${COMPOSE[@]}" ps

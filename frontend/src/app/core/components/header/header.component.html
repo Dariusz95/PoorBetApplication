@@ -8,6 +8,14 @@
       </div>
 
       <div class="app-header__right">
+        <a
+          [routerLink]="routingService.createLink(RoutePath.Ranking)"
+          routerLinkActive="app-header__ranking--active"
+          class="app-header__ranking pb-overlay-trigger hidden md:inline-flex"
+          [attr.aria-label]="t('menu.ranking')"
+        >
+          <pb-icon icon="leaderboard" size="m"></pb-icon>
+        </a>
         @if (isLoggedIn$ | async) {
           <app-coupon-dropdown class="hidden md:inline-block" />
         }

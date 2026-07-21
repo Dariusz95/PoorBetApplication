@@ -158,6 +158,23 @@
   },
   "ranking": {
     "title": "Ranking",
-    "inProgress": "This feature is in progress — check back soon."
+    "loadError": "Failed to load the ranking. Please try again later.",
+    "empty": "No winning coupons to display.",
+    "metricOdds": "Winning coupon with the highest odds",
+    "metricPayout": "Winning coupon with the highest payout",
+    "previewAria": "View coupon details",
+    "columns": {
+      "rank": "#",
+      "player": "Player",
+      "odds": "Odds",
+      "payout": "Payout",
+      "date": "Date",
+      "preview": "Preview"
+    }
+  },
+  "table": {
+    "previous": "Previous",
+    "next": "Next",
+    "page": "Page {{page}} of {{total}}"
   }
 }

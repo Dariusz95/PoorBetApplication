@@ -2,12 +2,13 @@ import { Dialog } from '@angular/cdk/dialog';
 import { Overlay } from '@angular/cdk/overlay';
 import { AsyncPipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { PbIconComponent } from '@shared/ui/icon/pb-icon.component';
 import { Observable } from 'rxjs';
 import { AuthService } from '../../auth/services/auth.service';
 import { RoutePath } from '../../routing/route-path';
+import { RoutingService } from '../../routing/routing.service';
 import { CouponDropdownComponent } from '../coupon-dropdown/coupon-dropdown.component';
 import { LanguageSwitcherComponent } from '../language-switcher/language-switcher.component';
 import { UserBalanceComponent } from '../user-balance/user-balance.component';
@@ -18,6 +19,7 @@ import { UserSidePanelComponent } from '../user-side-panel/user-side-panel.compo
   standalone: true,
   imports: [
     RouterLink,
+    RouterLinkActive,
     LanguageSwitcherComponent,
     TranslocoDirective,
     PbIconComponent,
@@ -32,6 +34,8 @@ export class HeaderComponent {
   private readonly authService = inject(AuthService);
   private readonly dialog = inject(Dialog);
   private readonly overlay = inject(Overlay);
+  
+  protected readonly routingService = inject(RoutingService);
 
   protected readonly RoutePath = RoutePath;
   protected readonly isLoggedIn$: Observable<boolean> =

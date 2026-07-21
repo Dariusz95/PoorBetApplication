@@ -123,3 +123,31 @@ db-coupon:
 
 db-wallet:
 	scripts/db-shell.sh wallet $(ARGS)
+
+# ========================
+# DB dump / restore
+# ========================
+
+db-dump-auth:
+	scripts/db-dump.sh auth $(OUT)
+
+db-dump-match:
+	scripts/db-dump.sh match $(OUT)
+
+db-dump-coupon:
+	scripts/db-dump.sh coupon $(OUT)
+
+db-dump-wallet:
+	scripts/db-dump.sh wallet $(OUT)
+
+db-restore-auth:
+	scripts/db-restore.sh auth $(FILE)
+
+db-restore-match:
+	scripts/db-restore.sh match $(FILE)
+
+db-restore-coupon:
+	scripts/db-restore.sh coupon $(FILE)
+
+db-restore-wallet:
+	scripts/db-restore.sh wallet $(FILE)

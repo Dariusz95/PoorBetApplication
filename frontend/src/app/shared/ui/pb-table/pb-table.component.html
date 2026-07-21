@@ -1,0 +1,73 @@
+<div class="pb-table__scroll">
+  <table class="pb-table">
+    <thead>
+      <tr class="pb-table__header-row">
+        @for (column of columns(); track column.key) {
+          <th
+            class="pb-table__header-cell"
+            [class.pb-table__header-cell--sortable]="column.sortable"
+            [style.width]="column.width"
+            [style.text-align]="column.align ?? 'left'"
+            (click)="onHeaderClick(column)"
+          >
+            <span class="pb-table__header-label">
+              {{ column.header }}
+              @if (column.sortable && sortState()?.key === column.key) {
+                <span class="pb-table__sort-icon">
+                  {{ sortState()?.direction === "asc" ? "▲" : "▼" }}
+                </span>
+              }
+            </span>
+          </th>
+        }
+      </tr>
+    </thead>
+    <tbody>
+      @for (row of pagedData(); track trackByRow($index, row); let i = $index) {
+        <tr class="pb-table__row">
+          @for (column of columns(); track column.key) {
+            <td
+              class="pb-table__cell"
+              [style.text-align]="column.align ?? 'left'"
+            >
+              @if (column.cellTemplate) {
+                <ng-container
+                  *ngTemplateOutlet="
+                    column.cellTemplate;
+                    context: { $implicit: row[column.key], row: row, index: i }
+                  "
+                ></ng-container>
+              } @else {
+                {{ cellValue(row, column) }}
+              }
+            </td>
+          }
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>
+
+@if (pageSize() && totalPages() > 1) {
+  <div class="pb-table__pagination">
+    <button
+      type="button"
+      class="pb-table__page-btn"
+      [disabled]="page() === 1"
+      (click)="goToPage(page() - 1)"
+    >
+      {{ "table.previous" | transloco }}
+    </button>
+    <span class="pb-table__page-indicator">
+      {{ "table.page" | transloco: { page: page(), total: totalPages() } }}
+    </span>
+    <button
+      type="button"
+      class="pb-table__page-btn"
+      [disabled]="page() === totalPages()"
+      (click)="goToPage(page() + 1)"
+    >
+      {{ "table.next" | transloco }}
+    </button>
+  </div>
+}

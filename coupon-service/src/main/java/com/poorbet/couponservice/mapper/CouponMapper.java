@@ -2,9 +2,7 @@ package com.poorbet.couponservice.mapper;
 
 import com.poorbet.couponservice.domain.Bet;
 import com.poorbet.couponservice.domain.Coupon;
-import com.poorbet.couponservice.dto.BetDto;
-import com.poorbet.couponservice.dto.CouponDetailDto;
-import com.poorbet.couponservice.dto.CouponDto;
+import com.poorbet.couponservice.dto.*;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -54,5 +52,29 @@ public class CouponMapper {
         return coupon.getBets().stream()
                 .map(Bet::getOdds)
                 .reduce(BigDecimal.ONE, BigDecimal::multiply);
+    }
+
+    public RankingCouponDto toRankingCouponDto(Coupon coupon) {
+        return new RankingCouponDto(
+                coupon.getId(),
+                coupon.getUserId(),
+                coupon.getStake(),
+                coupon.getStatus(),
+                coupon.getPotentialPayout(),
+                coupon.getCreatedAt(),
+                coupon.getTotalOdds()
+        );
+    }
+
+    public RankingCouponResponseDto toRankingCouponResponseDto(RankingCouponDto coupon, String email) {
+        return new RankingCouponResponseDto(
+                coupon.couponId(),
+                coupon.stake(),
+                email,
+                coupon.status(),
+                coupon.potentialPayout(),
+                coupon.createdAt(),
+                coupon.totalOdds()
+        );
     }
 }

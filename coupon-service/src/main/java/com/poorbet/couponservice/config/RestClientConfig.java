@@ -21,6 +21,7 @@ import java.time.Duration;
 public class RestClientConfig {
 
     private final MatchProperties matchProperties;
+    private final AuthProperties authProperties;
     private final WalletProperties walletProperties;
     private final ServiceJwtForwardingInterceptor serviceJwtForwardingInterceptor;
     private final ObjectMapper objectMapper;
@@ -30,6 +31,13 @@ public class RestClientConfig {
     @Qualifier("matchRestClient")
     public RestClient matchRestClient() {
         return builder(matchProperties.url(), matchProperties.timeout().connect(), matchProperties.timeout().read())
+                .build();
+    }
+
+    @Bean
+    @Qualifier("authServiceRestClient")
+    public RestClient authServiceRestClient() {
+        return builder(authProperties.url(), authProperties.timeout().connect(), authProperties.timeout().read())
                 .build();
     }
 
