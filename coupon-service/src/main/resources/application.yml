@@ -37,6 +37,8 @@ poorbet:
     jwk-set-uri: ${AUTH_JWKS_URI}
     unprotected-paths:
       - /actuator/health/**
+      - /api/teams/public/**
+      - /api/coupons/public/**
 
 auth:
   service:

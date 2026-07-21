@@ -1,0 +1,53 @@
+.ranking-page {
+  @apply flex flex-col gap-4 px-4 py-6;
+  margin: 0 auto;
+}
+
+.ranking-page__state {
+  @apply flex items-center justify-center;
+  padding: 2.5rem 1rem;
+}
+
+@media (max-width: 480px) {
+  .ranking-page {
+    @apply px-2 py-4;
+  }
+}
+
+.ranking-rank {
+  @apply t-body-sm t-muted;
+}
+
+.ranking-medal {
+  font-size: 1.1rem;
+}
+
+.ranking-badge {
+  @apply t-heading-xs flex items-center gap-1;
+  padding: 0.15rem 0.6rem;
+  border-radius: 9999px;
+  display: inline-flex;
+
+  &--odds {
+    background-color: var(--color-primary-soft);
+    color: var(--color-primary);
+  }
+
+  &--payout {
+    background-color: color-mix(in srgb, var(--color-success) 15%, transparent);
+    color: var(--color-success);
+  }
+}
+
+.ranking-preview-btn {
+  @apply inline-flex items-center justify-center rounded-full text-app-text;
+  width: 2rem;
+  height: 2rem;
+  transition: background-color 0.15s ease;
+
+  &:hover,
+  &:focus-visible {
+    background-color: var(--color-primary-soft);
+    color: var(--color-primary);
+  }
+}

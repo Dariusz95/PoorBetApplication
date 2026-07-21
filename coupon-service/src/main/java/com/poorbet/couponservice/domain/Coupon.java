@@ -40,6 +40,9 @@ public class Coupon {
     @Column(nullable = false)
     private BigDecimal potentialPayout;
 
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal totalOdds;
+
     @JsonManagedReference
     @OneToMany(mappedBy = "coupon", orphanRemoval = true, cascade = CascadeType.ALL)
     @Builder.Default

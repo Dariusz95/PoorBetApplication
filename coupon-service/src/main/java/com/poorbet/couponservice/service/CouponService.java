@@ -2,32 +2,31 @@ package com.poorbet.couponservice.service;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.poorbet.commons.commons.auth.UserBatchLookupRequest;
+import com.poorbet.commons.commons.auth.UserDto;
 import com.poorbet.commons.commons.pagination.PageResponse;
+import com.poorbet.couponservice.client.auth.AuthClient;
+import com.poorbet.couponservice.dto.*;
 import com.poorbet.couponservice.filter.CouponFilter;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.poorbet.commons.commons.wallet.contract.ReserveRequest;
 import com.poorbet.commons.rabbit.events.coupon.CouponCreationFailedEvent;
 import com.poorbet.commons.rabbit.events.coupon.CouponEvents;
-import com.poorbet.couponservice.client.MatchClient;
+import com.poorbet.couponservice.client.match.MatchClient;
 import com.poorbet.couponservice.client.wallet.WalletBusinessException;
 import com.poorbet.couponservice.client.wallet.WalletClient;
 import com.poorbet.couponservice.domain.Bet;
 import com.poorbet.couponservice.domain.BetStatus;
 import com.poorbet.couponservice.domain.Coupon;
 import com.poorbet.couponservice.domain.CouponStatus;
-import com.poorbet.couponservice.dto.BetSnapshotRequest;
-import com.poorbet.couponservice.dto.CouponDetailDto;
-import com.poorbet.couponservice.dto.CouponDto;
-import com.poorbet.couponservice.dto.CreateCouponDto;
-import com.poorbet.couponservice.dto.MatchBetSnapshotDto;
 import com.poorbet.couponservice.mapper.CouponMapper;
 import com.poorbet.couponservice.repository.CouponRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -43,6 +42,7 @@ public class CouponService {
     private final CouponRepository couponRepository;
     private final MatchClient matchClient;
     private final WalletClient walletClient;
+    private final AuthClient authClient;
     private final OutboxService outboxService;
     private final CouponMapper couponMapper;
 
@@ -58,7 +58,7 @@ public class CouponService {
             );
 
             List<BetSnapshotRequest> snapshotRequests = dto.getBets().stream()
-                    .map(b -> new BetSnapshotRequest(b.getMatchId(), b.getBetType()))
+                    .map(bet -> new BetSnapshotRequest(bet.getMatchId(), bet.getBetType()))
                     .toList();
 
             Map<UUID, MatchBetSnapshotDto> snapshots = matchClient.getBetSnapshots(snapshotRequests)
@@ -66,6 +66,7 @@ public class CouponService {
                     .collect(Collectors.toMap(MatchBetSnapshotDto::matchId, Function.identity()));
 
             Coupon coupon = buildCoupon(dto, userId, reservationId);
+
             dto.getBets().forEach(betDto -> {
                 MatchBetSnapshotDto snapshot = snapshots.get(betDto.getMatchId());
                 if (snapshot == null) {
@@ -88,6 +89,7 @@ public class CouponService {
                     .reduce(BigDecimal.ONE, BigDecimal::multiply);
 
             coupon.setPotentialPayout(dto.getStake().multiply(totalOdds));
+            coupon.setTotalOdds(totalOdds);
 
             return couponMapper.toDetailDto(couponRepository.save(coupon));
 
@@ -138,5 +140,48 @@ public class CouponService {
         return this.couponRepository.findById(couponId)
                 .map(couponMapper::toDetailDto)
                 .orElseThrow(() -> new EntityNotFoundException("Coupon not found"));
+    }
+
+    public PageResponse<RankingCouponResponseDto> getHighestTotalOdds() {
+        Pageable pageable = PageRequest.of(0, 20, Sort.by("totalOdds").descending());
+
+        return getRanking(pageable);
+    }
+
+    public PageResponse<RankingCouponResponseDto> getHighestPotentialPayout() {
+        Pageable pageable = PageRequest.of(0, 20, Sort.by("potentialPayout").descending());
+
+        return getRanking(pageable);
+    }
+
+    private PageResponse<RankingCouponResponseDto> getRanking(Pageable pageable) {
+        Page<RankingCouponDto> page = couponRepository.findByStatus(CouponStatus.WON, pageable)
+                .map(couponMapper::toRankingCouponDto);
+
+        List<RankingCouponDto> coupons = page.getContent();
+
+        Set<UUID> userIds = coupons.stream().map(RankingCouponDto::userId)
+                .collect(Collectors.toSet());
+
+        Map<UUID, UserDto> emails = authClient.getUsersBatch(new UserBatchLookupRequest(userIds))
+                .users();
+
+        List<RankingCouponResponseDto> result = coupons.stream()
+                .map(dto ->
+                {
+                    String email = Optional.ofNullable(emails.get(dto.userId())).map(UserDto::getEmail).orElse("User removed");
+
+                    return couponMapper.toRankingCouponResponseDto(dto, email);
+                })
+                .toList();
+
+        return new PageResponse<>(
+                result,
+                page.getNumber(),
+                page.getSize(),
+                page.getTotalElements(),
+                page.getTotalPages(),
+                page.isLast()
+        );
     }
 }

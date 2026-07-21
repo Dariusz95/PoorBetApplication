@@ -6,7 +6,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { PbIconComponent } from '@shared/ui/icon/pb-icon.component';
 import { PbButtonComponent } from '@shared/ui/pb-button/pb-button.component';
 import { EmptyCouponComponent } from '../empty-coupon/coupon-empty.component';
-import { BetTypeLabelComponent } from "../bet-type-label/bet-type-label.component";
+import { BetTypeLabelComponent } from '../bet-type-label/bet-type-label.component';
 
 const reducedMotion =
   typeof window !== 'undefined' &&
@@ -36,8 +36,8 @@ export const listItemAnimation = trigger('listItemAnimation', [
     DecimalPipe,
     PbButtonComponent,
     PbIconComponent,
-    BetTypeLabelComponent
-],
+    BetTypeLabelComponent,
+  ],
   templateUrl: './coupon-selected-bets.component.html',
   styleUrl: './coupon-selected-bets.component.scss',
   animations: [listItemAnimation],

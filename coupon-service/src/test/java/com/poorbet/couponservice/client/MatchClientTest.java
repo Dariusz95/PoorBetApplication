@@ -1,5 +1,6 @@
 package com.poorbet.couponservice.client;
 
+import com.poorbet.couponservice.client.match.MatchClient;
 import com.poorbet.couponservice.domain.BetType;
 import com.poorbet.couponservice.dto.MatchBetSnapshotDto;
 import com.poorbet.couponservice.dto.MatchResultMapDto;

@@ -59,9 +59,7 @@ describe('CouponService', () => {
         )
         .subscribe();
 
-      const req = httpMock.expectOne(
-        (r) => r.url === '/api/coupons/me',
-      );
+      const req = httpMock.expectOne((r) => r.url === '/api/coupons/me');
       expect(req.request.method).toBe('GET');
       expect(req.request.params.get('page')).toBe('1');
       expect(req.request.params.get('size')).toBe('10');
@@ -88,6 +86,57 @@ describe('CouponService', () => {
       expect(req.request.method).toBe('GET');
 
       req.flush({});
+    });
+  });
+
+  describe('getPublicCouponDetails', () => {
+    it('should GET /api/coupons/public/:id', () => {
+      service.getPublicCouponDetails('coupon-1').subscribe();
+
+      const req = httpMock.expectOne('/api/coupons/public/coupon-1');
+      expect(req.request.method).toBe('GET');
+
+      req.flush({});
+    });
+  });
+
+  describe('getHighestTotalOdds', () => {
+    it('should GET /api/coupons/public/ranking/total-odds', () => {
+      service.getHighestTotalOdds().subscribe();
+
+      const req = httpMock.expectOne('/api/coupons/public/ranking/total-odds');
+      expect(req.request.method).toBe('GET');
+
+      req.flush({
+        content: [],
+        totalElements: 0,
+        totalPages: 0,
+        size: 20,
+        number: 0,
+        first: true,
+        last: true,
+      });
+    });
+  });
+
+  describe('getHighestPayout', () => {
+    it('should GET /api/coupons/public/ranking/payout', () => {
+      service.getHighestPayout().subscribe();
+
+      const req = httpMock.expectOne(
+        '/api/coupons/public/ranking/payout',
+      );
+      expect(req.request.method).toBe('GET');
+
+      req.flush({
+        content: [],
+        totalElements: 0,
+        totalPages: 0,
+        size: 20,
+        number: 0,
+        first: true,
+        last: true,
+      });
     });
   });
 });

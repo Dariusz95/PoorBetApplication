@@ -1,6 +1,11 @@
 package com.poorbet.couponservice.service;
 
-import com.poorbet.couponservice.client.MatchClient;
+import com.poorbet.commons.commons.auth.UserBatchLookupRequest;
+import com.poorbet.commons.commons.auth.UserBatchLookupResponse;
+import com.poorbet.commons.commons.auth.UserDto;
+import com.poorbet.commons.commons.pagination.PageResponse;
+import com.poorbet.couponservice.client.auth.AuthClient;
+import com.poorbet.couponservice.client.match.MatchClient;
 import com.poorbet.couponservice.client.wallet.WalletClient;
 import com.poorbet.couponservice.domain.*;
 import com.poorbet.couponservice.dto.*;
@@ -10,22 +15,28 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -40,6 +51,9 @@ class CouponServiceTest {
 
     @Mock
     private WalletClient walletClient;
+
+    @Mock
+    private AuthClient authClient;
 
     @Mock
     private OutboxService outboxService;
@@ -245,5 +259,136 @@ class CouponServiceTest {
                 .hasMessage("MatchClient unavailable");
 
         verify(outboxService).saveEvent(any(), any());
+    }
+
+    private Coupon buildWonCoupon(UUID couponId, UUID couponUserId, BigDecimal totalOdds, BigDecimal potentialPayout) {
+        return Coupon.builder()
+                .id(couponId)
+                .userId(couponUserId)
+                .stake(VALID_STAKE)
+                .status(CouponStatus.WON)
+                .totalOdds(totalOdds)
+                .potentialPayout(potentialPayout)
+                .createdAt(OffsetDateTime.now())
+                .build();
+    }
+
+    @Test
+    @DisplayName("Should enrich ranking entries with emails fetched from AuthClient")
+    void shouldEnrichRankingWithEmailsFromAuthClient() {
+        // Arrange
+        UUID firstUserId = UUID.randomUUID();
+        UUID secondUserId = UUID.randomUUID();
+
+        Coupon firstCoupon = buildWonCoupon(UUID.randomUUID(), firstUserId, new BigDecimal("10.00"), new BigDecimal("500.00"));
+        Coupon secondCoupon = buildWonCoupon(UUID.randomUUID(), secondUserId, new BigDecimal("5.00"), new BigDecimal("250.00"));
+
+        when(couponRepository.findByStatus(eq(CouponStatus.WON), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of(firstCoupon, secondCoupon)));
+
+        when(authClient.getUsersBatch(any())).thenReturn(new UserBatchLookupResponse(Map.of(
+                firstUserId, new UserDto(firstUserId, "first@example.com"),
+                secondUserId, new UserDto(secondUserId, "second@example.com")
+        )));
+
+        // Act
+        PageResponse<RankingCouponResponseDto> result = couponService.getHighestTotalOdds();
+
+        // Assert
+        assertThat(result.content())
+                .extracting(RankingCouponResponseDto::email)
+                .containsExactly("first@example.com", "second@example.com");
+    }
+
+    @Test
+    @DisplayName("Should request pageable with descending totalOdds sort for getHighestTotalOdds")
+    void shouldRequestTotalOddsDescendingSort() {
+        // Arrange
+        when(couponRepository.findByStatus(eq(CouponStatus.WON), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of()));
+        when(authClient.getUsersBatch(any())).thenReturn(new UserBatchLookupResponse(Map.of()));
+
+        ArgumentCaptor<Pageable> pageableCaptor = ArgumentCaptor.forClass(Pageable.class);
+
+        // Act
+        couponService.getHighestTotalOdds();
+
+        // Assert
+        verify(couponRepository).findByStatus(eq(CouponStatus.WON), pageableCaptor.capture());
+        Pageable pageable = pageableCaptor.getValue();
+
+        assertThat(pageable.getPageSize()).isEqualTo(20);
+        assertThat(pageable.getSort().getOrderFor("totalOdds"))
+                .isNotNull()
+                .satisfies(order -> assertThat(order.isDescending()).isTrue());
+    }
+
+    @Test
+    @DisplayName("Should request pageable with descending potentialPayout sort for getHighestPotentialPayout")
+    void shouldRequestPotentialPayoutDescendingSort() {
+        // Arrange
+        when(couponRepository.findByStatus(eq(CouponStatus.WON), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of()));
+        when(authClient.getUsersBatch(any())).thenReturn(new UserBatchLookupResponse(Map.of()));
+
+        ArgumentCaptor<Pageable> pageableCaptor = ArgumentCaptor.forClass(Pageable.class);
+
+        // Act
+        couponService.getHighestPotentialPayout();
+
+        // Assert
+        verify(couponRepository).findByStatus(eq(CouponStatus.WON), pageableCaptor.capture());
+        Pageable pageable = pageableCaptor.getValue();
+
+        assertThat(pageable.getSort().getOrderFor("potentialPayout"))
+                .isNotNull()
+                .satisfies(order -> assertThat(order.isDescending()).isTrue());
+    }
+
+    @Test
+    @DisplayName("Should deduplicate user ids before calling AuthClient when the same user appears multiple times")
+    void shouldDeduplicateUserIdsBeforeCallingAuthClient() {
+        // Arrange
+        UUID sharedUserId = UUID.randomUUID();
+
+        Coupon firstCoupon = buildWonCoupon(UUID.randomUUID(), sharedUserId, new BigDecimal("10.00"), new BigDecimal("500.00"));
+        Coupon secondCoupon = buildWonCoupon(UUID.randomUUID(), sharedUserId, new BigDecimal("8.00"), new BigDecimal("400.00"));
+
+        when(couponRepository.findByStatus(eq(CouponStatus.WON), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of(firstCoupon, secondCoupon)));
+
+        when(authClient.getUsersBatch(any())).thenReturn(new UserBatchLookupResponse(
+                Map.of(sharedUserId, new UserDto(sharedUserId, "shared@example.com"))
+        ));
+
+        // Act
+        couponService.getHighestTotalOdds();
+
+        // Assert
+        ArgumentCaptor<UserBatchLookupRequest> requestCaptor = ArgumentCaptor.forClass(UserBatchLookupRequest.class);
+        verify(authClient).getUsersBatch(requestCaptor.capture());
+
+        assertThat(requestCaptor.getValue().ids()).containsExactly(sharedUserId);
+    }
+
+    @Test
+    @DisplayName("Should fall back to a placeholder when AuthClient has no matching user")
+    void shouldFallbackToPlaceholderWhenUserMissingFromAuthResponse() {
+        // Arrange
+        UUID couponUserId = UUID.randomUUID();
+        Coupon coupon = buildWonCoupon(UUID.randomUUID(), couponUserId, new BigDecimal("10.00"), new BigDecimal("500.00"));
+
+        when(couponRepository.findByStatus(eq(CouponStatus.WON), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of(coupon)));
+
+        when(authClient.getUsersBatch(any())).thenReturn(new UserBatchLookupResponse(Map.of()));
+
+        // Act
+        PageResponse<RankingCouponResponseDto> result = couponService.getHighestTotalOdds();
+
+        // Assert
+        assertThat(result.content())
+                .extracting(RankingCouponResponseDto::email)
+                .containsExactly("User removed");
     }
 }

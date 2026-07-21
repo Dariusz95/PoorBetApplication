@@ -30,6 +30,41 @@ spring:
           predicates:
             - Path=/api/notifications/**
 
+        - id: auth-service-docs
+          uri: http://auth-service:8080
+          predicates:
+            - Path=/v3/api-docs/auth-service
+          filters:
+            - RewritePath=/v3/api-docs/auth-service, /v3/api-docs
+
+        - id: match-service-docs
+          uri: http://match-service:8080
+          predicates:
+            - Path=/v3/api-docs/match-service
+          filters:
+            - RewritePath=/v3/api-docs/match-service, /v3/api-docs
+
+        - id: coupon-service-docs
+          uri: http://coupon-service:8080
+          predicates:
+            - Path=/v3/api-docs/coupon-service
+          filters:
+            - RewritePath=/v3/api-docs/coupon-service, /v3/api-docs
+
+        - id: wallet-service-docs
+          uri: http://wallet-service:8080
+          predicates:
+            - Path=/v3/api-docs/wallet-service
+          filters:
+            - RewritePath=/v3/api-docs/wallet-service, /v3/api-docs
+
+        - id: notification-service-docs
+          uri: http://notification-service:8080
+          predicates:
+            - Path=/v3/api-docs/notification-service
+          filters:
+            - RewritePath=/v3/api-docs/notification-service, /v3/api-docs
+
 poorbet:
   security:
     enabled: false
@@ -40,4 +75,8 @@ poorbet:
       - /api/users/register
       - /api/match-pool/**
       - /api/teams/public/**
+      - /api/coupons/public/**
       - /images/**
+      - /v3/api-docs/**
+      - /swagger-ui/**
+      - /swagger-ui.html
