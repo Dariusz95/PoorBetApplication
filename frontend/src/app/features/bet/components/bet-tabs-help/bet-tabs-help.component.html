@@ -1,0 +1,55 @@
+<ng-container *transloco="let t; prefix: 'bet.tabsHelp'">
+  <pb-card class="bet-tabs-help-card">
+    <div pbCardHeader class="bet-tabs-help__header">
+      <h3 id="bet-tabs-help-title" class="bet-tabs-help__title">
+        {{ t("title") }}
+      </h3>
+
+      <pb-button
+        size="sm"
+        type="icon"
+        variant="ghost"
+        ariaLabel="{{ t('close') }}"
+        (buttonClick)="close()"
+      >
+        <pb-icon icon="close" size="s" />
+      </pb-button>
+    </div>
+
+    <div pbCardBody class="bet-tabs-help__body">
+      <p class="bet-tabs-help__intro t-muted">{{ t("intro") }}</p>
+
+      <div class="bet-tabs-help__image-scroll">
+        <div class="bet-tabs-help__image-wrapper">
+          <img
+            class="bet-tabs-help__image"
+            src="assets/images/bet-tabs-onboarding.png"
+            alt="{{ t('imageAlt') }}"
+          />
+
+          @for (marker of markers; track marker.number) {
+            <span
+              class="bet-tabs-help__marker"
+              [style.top]="marker.top"
+              [style.left]="marker.left"
+              [attr.aria-hidden]="true"
+            >
+              {{ marker.number }}
+            </span>
+          }
+        </div>
+      </div>
+
+      <ol class="bet-tabs-help__legend">
+        @for (marker of markers; track marker.number) {
+          <li class="bet-tabs-help__legend-item">
+            <span class="bet-tabs-help__legend-number">{{
+              marker.number
+            }}</span>
+            <span>{{ t(marker.labelKey) }}</span>
+          </li>
+        }
+      </ol>
+    </div>
+  </pb-card>
+</ng-container>

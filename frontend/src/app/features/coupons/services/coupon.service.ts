@@ -9,7 +9,7 @@ import { Coupon } from '../types/coupon';
 import { CouponDetails } from '../types/coupon-details';
 import { CouponFilter } from '../types/coupon-filter';
 import { CreateCouponRequest } from '../types/create-coupon-request';
-import { RankingCoupon } from '../types/ranking-coupon';
+import { RankingResponse } from '../types/ranking-response';
 
 @Injectable({
   providedIn: 'root',
@@ -39,14 +39,14 @@ export class CouponService {
     return this.http.get<CouponDetails>(`${this.baseUrl}/public/${couponId}`);
   }
 
-  getHighestTotalOdds(): Observable<PageResponse<RankingCoupon>> {
-    return this.http.get<PageResponse<RankingCoupon>>(
+  getHighestTotalOdds(): Observable<RankingResponse> {
+    return this.http.get<RankingResponse>(
       `${this.baseUrl}/public/ranking/total-odds`,
     );
   }
 
-  getHighestPayout(): Observable<PageResponse<RankingCoupon>> {
-    return this.http.get<PageResponse<RankingCoupon>>(
+  getHighestPayout(): Observable<RankingResponse> {
+    return this.http.get<RankingResponse>(
       `${this.baseUrl}/public/ranking/payout`,
     );
   }

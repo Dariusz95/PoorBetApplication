@@ -8,6 +8,10 @@
   padding: 2.5rem 1rem;
 }
 
+.ranking-page__last-updated {
+  @apply t-body-sm;
+}
+
 @media (max-width: 480px) {
   .ranking-page {
     @apply px-2 py-4;

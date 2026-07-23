@@ -1,0 +1,7 @@
+:host {
+  @apply block;
+}
+
+.live-match-skeleton__team {
+  @apply flex flex-col items-center gap-2;
+}

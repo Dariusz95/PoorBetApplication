@@ -14,8 +14,10 @@ export class LiveMatchService {
   private liveMatchesSubject = new BehaviorSubject<
     Record<string, LiveMatchEvent>
   >({});
+  private loadingSubject = new BehaviorSubject<boolean>(true);
 
   liveMatches$ = this.liveMatchesSubject.asObservable();
+  isLoading$ = this.loadingSubject.asObservable();
 
   constructor() {
     this.listenToLiveMatches();
@@ -25,15 +27,21 @@ export class LiveMatchService {
     this.matchService
       .streamMatch()
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((event) => {
-        if (
-          [MatchEventType.Heartbeat, MatchEventType.MatchPoolFinished].includes(
-            event.eventType,
-          )
-        )
-          return;
+      .subscribe({
+        next: (event) => {
+          this.loadingSubject.next(false);
 
-        this.updateLiveMatch(event);
+          if (
+            [
+              MatchEventType.Heartbeat,
+              MatchEventType.MatchPoolFinished,
+            ].includes(event.eventType)
+          )
+            return;
+
+          this.updateLiveMatch(event);
+        },
+        error: () => this.loadingSubject.next(false),
       });
   }
 
