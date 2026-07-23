@@ -86,6 +86,7 @@ export class RankingPageComponent {
 
   readonly isLoading = signal(true);
   readonly hasError = signal(false);
+  readonly lastUpdatedAt = signal<string | null>(null);
 
   private readonly rankingCoupons = toSignal(
     toObservable(this.activeMetric).pipe(
@@ -98,7 +99,8 @@ export class RankingPageComponent {
           ? this.couponService.getHighestTotalOdds()
           : this.couponService.getHighestPayout()
         ).pipe(
-          map((page) => page.content),
+          tap((response) => this.lastUpdatedAt.set(response.lastUpdatedAt)),
+          map((response) => response.ranking.content),
           tap(() => this.isLoading.set(false)),
           catchError(() => {
             this.isLoading.set(false);
@@ -181,6 +183,11 @@ export class RankingPageComponent {
     return builder.build();
   });
 
+  readonly lastUpdatedLabel = computed(() => {
+    const value = this.lastUpdatedAt();
+    return value ? this.formatDateTime(value) : null;
+  });
+
   onMetricChange(metric: RankingMetric): void {
     this.activeMetric.set(metric);
   }
@@ -193,5 +200,12 @@ export class RankingPageComponent {
 
   private formatDate(value: string): string {
     return new Date(value).toLocaleDateString('pl-PL');
+  }
+
+  private formatDateTime(value: string): string {
+    return new Date(value).toLocaleString('pl-PL', {
+      dateStyle: 'short',
+      timeStyle: 'short',
+    });
   }
 }

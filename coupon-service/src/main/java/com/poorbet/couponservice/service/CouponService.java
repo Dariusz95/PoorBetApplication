@@ -12,6 +12,7 @@ import com.poorbet.commons.commons.pagination.PageResponse;
 import com.poorbet.couponservice.client.auth.AuthClient;
 import com.poorbet.couponservice.dto.*;
 import com.poorbet.couponservice.filter.CouponFilter;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -142,19 +143,21 @@ public class CouponService {
                 .orElseThrow(() -> new EntityNotFoundException("Coupon not found"));
     }
 
-    public PageResponse<RankingCouponResponseDto> getHighestTotalOdds() {
+    @Cacheable("ranking-total-odds")
+    public RankingResponseDto getHighestTotalOdds() {
         Pageable pageable = PageRequest.of(0, 20, Sort.by("totalOdds").descending());
 
         return getRanking(pageable);
     }
 
-    public PageResponse<RankingCouponResponseDto> getHighestPotentialPayout() {
+    @Cacheable("ranking-payout")
+    public RankingResponseDto getHighestPotentialPayout() {
         Pageable pageable = PageRequest.of(0, 20, Sort.by("potentialPayout").descending());
 
         return getRanking(pageable);
     }
 
-    private PageResponse<RankingCouponResponseDto> getRanking(Pageable pageable) {
+    private RankingResponseDto getRanking(Pageable pageable) {
         Page<RankingCouponDto> page = couponRepository.findByStatus(CouponStatus.WON, pageable)
                 .map(couponMapper::toRankingCouponDto);
 
@@ -163,8 +166,9 @@ public class CouponService {
         Set<UUID> userIds = coupons.stream().map(RankingCouponDto::userId)
                 .collect(Collectors.toSet());
 
-        Map<UUID, UserDto> emails = authClient.getUsersBatch(new UserBatchLookupRequest(userIds))
-                .users();
+        Map<UUID, UserDto> emails = userIds.isEmpty()
+                ? Map.of()
+                : authClient.getUsersBatch(new UserBatchLookupRequest(userIds)).users();
 
         List<RankingCouponResponseDto> result = coupons.stream()
                 .map(dto ->
@@ -175,7 +179,7 @@ public class CouponService {
                 })
                 .toList();
 
-        return new PageResponse<>(
+        PageResponse<RankingCouponResponseDto> ranking = new PageResponse<>(
                 result,
                 page.getNumber(),
                 page.getSize(),
@@ -183,5 +187,7 @@ public class CouponService {
                 page.getTotalPages(),
                 page.isLast()
         );
+
+        return new RankingResponseDto(ranking, OffsetDateTime.now());
     }
 }

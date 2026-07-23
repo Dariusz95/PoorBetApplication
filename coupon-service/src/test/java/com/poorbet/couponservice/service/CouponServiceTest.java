@@ -3,7 +3,6 @@ package com.poorbet.couponservice.service;
 import com.poorbet.commons.commons.auth.UserBatchLookupRequest;
 import com.poorbet.commons.commons.auth.UserBatchLookupResponse;
 import com.poorbet.commons.commons.auth.UserDto;
-import com.poorbet.commons.commons.pagination.PageResponse;
 import com.poorbet.couponservice.client.auth.AuthClient;
 import com.poorbet.couponservice.client.match.MatchClient;
 import com.poorbet.couponservice.client.wallet.WalletClient;
@@ -292,10 +291,10 @@ class CouponServiceTest {
         )));
 
         // Act
-        PageResponse<RankingCouponResponseDto> result = couponService.getHighestTotalOdds();
+        RankingResponseDto result = couponService.getHighestTotalOdds();
 
         // Assert
-        assertThat(result.content())
+        assertThat(result.ranking().content())
                 .extracting(RankingCouponResponseDto::email)
                 .containsExactly("first@example.com", "second@example.com");
     }
@@ -306,7 +305,6 @@ class CouponServiceTest {
         // Arrange
         when(couponRepository.findByStatus(eq(CouponStatus.WON), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of()));
-        when(authClient.getUsersBatch(any())).thenReturn(new UserBatchLookupResponse(Map.of()));
 
         ArgumentCaptor<Pageable> pageableCaptor = ArgumentCaptor.forClass(Pageable.class);
 
@@ -329,7 +327,6 @@ class CouponServiceTest {
         // Arrange
         when(couponRepository.findByStatus(eq(CouponStatus.WON), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of()));
-        when(authClient.getUsersBatch(any())).thenReturn(new UserBatchLookupResponse(Map.of()));
 
         ArgumentCaptor<Pageable> pageableCaptor = ArgumentCaptor.forClass(Pageable.class);
 
@@ -384,11 +381,27 @@ class CouponServiceTest {
         when(authClient.getUsersBatch(any())).thenReturn(new UserBatchLookupResponse(Map.of()));
 
         // Act
-        PageResponse<RankingCouponResponseDto> result = couponService.getHighestTotalOdds();
+        RankingResponseDto result = couponService.getHighestTotalOdds();
 
         // Assert
-        assertThat(result.content())
+        assertThat(result.ranking().content())
                 .extracting(RankingCouponResponseDto::email)
                 .containsExactly("User removed");
+    }
+
+    @Test
+    @DisplayName("Should return an empty ranking without calling AuthClient when there are no won coupons")
+    void shouldReturnEmptyRankingWithoutCallingAuthClientWhenNoWonCoupons() {
+        // Arrange
+        when(couponRepository.findByStatus(eq(CouponStatus.WON), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of()));
+
+        // Act
+        RankingResponseDto result = couponService.getHighestTotalOdds();
+
+        // Assert
+        assertThat(result.ranking().content()).isEmpty();
+        assertThat(result.lastUpdatedAt()).isNotNull();
+        verifyNoInteractions(authClient);
     }
 }

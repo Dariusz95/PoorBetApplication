@@ -1,0 +1,27 @@
+.matches-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.bet-tabs-help-trigger {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.5rem;
+}
+
+.bet-tabs-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+
+  &__tab-bar {
+    @apply relative flex gap-0 overflow-x-auto rounded-3xl border-b bg-app-surface;
+
+    border-color: var(--color-border);
+  }
+
+  &__tab {
+    @apply flex flex-1 flex-col items-center justify-center gap-2 px-2 py-1.5 md:px-4 md:py-3;
+  }
+}

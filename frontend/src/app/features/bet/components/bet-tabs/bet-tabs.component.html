@@ -1,5 +1,17 @@
 <ng-container *transloco="let t; prefix: 'bet.page'">
   <div class="bet-page-main">
+    <div class="bet-tabs-help-trigger">
+      <pb-button
+        size="sm"
+        type="icon"
+        variant="ghost"
+        ariaLabel="{{ 'bet.tabsHelp.open' | transloco }}"
+        (buttonClick)="openHelp()"
+      >
+        <pb-icon icon="help_outline" size="s" />
+      </pb-button>
+    </div>
+
     @if (tabs$ | async; as tabs) {
       <pb-tab-container
         [tabButtonContent]="tabButtonContent"
@@ -34,6 +46,27 @@
           }
         }
       </pb-tab-container>
+    } @else {
+      <div class="bet-tabs-skeleton">
+        <div class="bet-tabs-skeleton__tab-bar">
+          <div class="bet-tabs-skeleton__tab">
+            <pb-skeleton width="4.5rem" height="1rem" borderRadius="9999px" />
+          </div>
+
+          @for (placeholder of skeletonFutureTabPlaceholders; track placeholder) {
+            <div class="bet-tabs-skeleton__tab">
+              <pb-skeleton width="3.5rem" height="0.875rem" />
+              <pb-skeleton width="3rem" height="1.25rem" borderRadius="9999px" />
+            </div>
+          }
+        </div>
+
+        <div class="matches-grid">
+          @for (placeholder of skeletonCardPlaceholders; track placeholder) {
+            <app-live-match-skeleton></app-live-match-skeleton>
+          }
+        </div>
+      </div>
     }
   </div>
 </ng-container>

@@ -105,6 +105,17 @@
     },
     "poolCard": {
       "eyebrow": "Pula"
+    },
+    "tabsHelp": {
+      "open": "Jak to działa?",
+      "title": "Jak korzystać z zakładów",
+      "intro": "Krótki przewodnik po najważniejszych elementach tego widoku.",
+      "imageAlt": "Zrzut ekranu widoku zakładów z oznaczonymi elementami",
+      "close": "Zamknij",
+      "markers": {
+        "poolTiming": "Dokładny czas rozpoczęcia i odliczanie do startu tej puli meczów na żywo",
+        "placeBet": "Obstaw mecze, wybierając dostępne opcje"
+      }
     }
   },
   "user": {
@@ -158,6 +169,7 @@
   },
   "ranking": {
     "title": "Ranking",
+    "lastUpdated": "Ostatnia aktualizacja: {{ date }}",
     "loadError": "Nie udało się wczytać rankingu. Spróbuj ponownie później.",
     "empty": "Brak wygranych kuponów do wyświetlenia.",
     "metricOdds": "Wygrany kupon z najwyższym kursem",

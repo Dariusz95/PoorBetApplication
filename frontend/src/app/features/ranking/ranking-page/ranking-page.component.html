@@ -1,6 +1,11 @@
 <section class="ranking-page">
   <header class="ranking-page__header">
     <h1 class="t-heading-lg">{{ "ranking.title" | transloco }}</h1>
+    @if (lastUpdatedLabel(); as lastUpdated) {
+      <p class="ranking-page__last-updated t-muted">
+        {{ "ranking.lastUpdated" | transloco: { date: lastUpdated } }}
+      </p>
+    }
   </header>
 
   <pb-tabs

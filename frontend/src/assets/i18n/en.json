@@ -105,6 +105,17 @@
     },
     "poolCard": {
       "eyebrow": "Pool"
+    },
+    "tabsHelp": {
+      "open": "How does this work?",
+      "title": "How betting works",
+      "intro": "A quick guide to the most important elements of this view.",
+      "imageAlt": "Screenshot of the betting view with key elements marked",
+      "close": "Close",
+      "markers": {
+        "poolTiming": "The exact time and countdown until this live match pool starts",
+        "placeBet": "Bet on matches by choosing the available options"
+      }
     }
   },
   "user": {
@@ -158,6 +169,7 @@
   },
   "ranking": {
     "title": "Ranking",
+    "lastUpdated": "Last updated: {{ date }}",
     "loadError": "Failed to load the ranking. Please try again later.",
     "empty": "No winning coupons to display.",
     "metricOdds": "Winning coupon with the highest odds",

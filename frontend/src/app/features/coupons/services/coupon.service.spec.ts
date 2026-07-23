@@ -108,13 +108,16 @@ describe('CouponService', () => {
       expect(req.request.method).toBe('GET');
 
       req.flush({
-        content: [],
-        totalElements: 0,
-        totalPages: 0,
-        size: 20,
-        number: 0,
-        first: true,
-        last: true,
+        ranking: {
+          content: [],
+          totalElements: 0,
+          totalPages: 0,
+          size: 20,
+          number: 0,
+          first: true,
+          last: true,
+        },
+        lastUpdatedAt: '2026-07-22T12:00:00Z',
       });
     });
   });
@@ -129,13 +132,16 @@ describe('CouponService', () => {
       expect(req.request.method).toBe('GET');
 
       req.flush({
-        content: [],
-        totalElements: 0,
-        totalPages: 0,
-        size: 20,
-        number: 0,
-        first: true,
-        last: true,
+        ranking: {
+          content: [],
+          totalElements: 0,
+          totalPages: 0,
+          size: 20,
+          number: 0,
+          first: true,
+          last: true,
+        },
+        lastUpdatedAt: '2026-07-22T12:00:00Z',
       });
     });
   });

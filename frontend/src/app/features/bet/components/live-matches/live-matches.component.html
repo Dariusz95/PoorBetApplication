@@ -1,6 +1,12 @@
 <ng-container *transloco="let t; prefix: 'bet.liveMatches'">
   <div class="matches-section">
-    @if ((liveMatches$ | async | keyvalue)?.length === 0) {
+    @if (isLoading$ | async) {
+      <div class="matches-grid">
+        @for (placeholder of skeletonPlaceholders; track placeholder) {
+          <app-live-match-skeleton></app-live-match-skeleton>
+        }
+      </div>
+    } @else if ((liveMatches$ | async | keyvalue)?.length === 0) {
       <div class="empty-state">
         <p class="empty-state__title">{{ t("emptyTitle") }}</p>
         <p class="t-muted">
