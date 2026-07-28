@@ -65,7 +65,7 @@ make dev                  # uruchamia wszystkie usługi z hot-reload
 make match-dev            # przebudowuje i restartuje tylko match-service
 make coupon-dev           # przebudowuje i restartuje tylko coupon-service
 make front-dev            # przebudowuje i restartuje tylko frontend
-make wallet-dev           # przebudowuje i restartuje tylko wallet-service
+make account-dev          # przebudowuje i restartuje tylko account-service
 make notification-dev     # przebudowuje i restartuje tylko notification-service
 make auth-dev             # przebudowuje i restartuje tylko auth-service
 make gate-dev             # przebudowuje i restartuje tylko gateway
@@ -177,7 +177,7 @@ W trybie dev każdy serwis Java uruchamia się z agentem JDWP na dedykowanym por
 | `auth-service` | 5079 |
 | `match-service` | 5070 |
 | `coupon-service` | 5076 |
-| `wallet-service` | 5077 |
+| `account-service` | 5077 |
 | `notification-service` | 5078 |
 | `odds-engine-service` | 5090 |
 
@@ -190,7 +190,7 @@ W trybie dev bazy są dostępne bezpośrednio z hosta (np. do podpięcia DBeaver
 | `user-db` | 5432 |
 | `match-db` | 5434 |
 | `coupon-db` | 5435 |
-| `wallet-db` | 5437 |
+| `account-db` | 5437 |
 | RabbitMQ Management UI | 15672 |
 
 ## Architektura
@@ -204,7 +204,7 @@ W trybie dev bazy są dostępne bezpośrednio z hosta (np. do podpięcia DBeaver
 | `match-service`        | 8083       | Zarządzanie meczami, drużynami, symulacją spotkań i pobieraniem kursów                                   |
 | `odds-engine-service`  | 8090       | Wyliczanie kursów przy użyciu modelu ML (biblioteka Smile)                                               |
 | `coupon-service`       | 8086       | Tworzenie oraz rozliczanie kuponów                                                                       |
-| `wallet-service`       | 8087       | Zarządzanie portfelem użytkownika, rezerwacjami środków i operacjami finansowymi                         |
+| `account-service`      | 8087       | Zarządzanie kontem użytkownika: portfel, rezerwacje środków, operacje finansowe, poziom/EXP i bonusy      |
 | `notification-service` | 8088       | Powiadomienia SSE wysyłane do frontendu                                                                  |
 | `frontend`             | 4200       | Aplikacja SPA oparta o Angular                                                                           |
 
@@ -266,7 +266,7 @@ Zdarzenia definiowane są jako `EventDefinition<T>`.
 
 ### Outbox Pattern
 
-Serwisy `coupon-service` oraz `wallet-service` wykorzystują wzorzec Outbox.
+Serwisy `coupon-service` oraz `account-service` wykorzystują wzorzec Outbox.
 
 Zdarzenia domenowe zapisywane są najpierw w tabeli `outbox_event` w ramach tej samej transakcji co operacja biznesowa, a następnie publikowane do RabbitMQ.
 
@@ -274,9 +274,9 @@ Pozwala to uniknąć utraty komunikatów w przypadku błędu lub wycofania trans
 
 ### Główne przepływy zdarzeń
 
-* `USER_CREATED` → wallet-service tworzy portfel użytkownika
+* `USER_CREATED` → account-service tworzy portfel użytkownika
 * `MATCHES_FINISHED` → coupon-service rozlicza kupony
-* `COUPON_WON` / `COUPON_LOST` → wallet-service aktualizuje saldo użytkownika
+* `COUPON_WON` / `COUPON_LOST` → account-service aktualizuje saldo użytkownika
 * Zmiany salda portfela → notification-service wysyła powiadomienia SSE
 
 ## Cykl życia meczu

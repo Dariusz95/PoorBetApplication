@@ -78,8 +78,8 @@ gate-dev:
 front-dev:
 	$(COMPOSE_DEV) up -d --build frontend
 
-wallet-dev:
-	$(COMPOSE_DEV) up -d --build wallet-service
+account-dev:
+	$(COMPOSE_DEV) up -d --build account-service
 
 notification-dev:
 	$(COMPOSE_DEV) up -d --build notification-service
@@ -121,8 +121,8 @@ db-match:
 db-coupon:
 	scripts/db-shell.sh coupon $(ARGS)
 
-db-wallet:
-	scripts/db-shell.sh wallet $(ARGS)
+db-account:
+	scripts/db-shell.sh account $(ARGS)
 
 # ========================
 # DB dump / restore
@@ -137,8 +137,8 @@ db-dump-match:
 db-dump-coupon:
 	scripts/db-dump.sh coupon $(OUT)
 
-db-dump-wallet:
-	scripts/db-dump.sh wallet $(OUT)
+db-dump-account:
+	scripts/db-dump.sh account $(OUT)
 
 db-restore-auth:
 	scripts/db-restore.sh auth $(FILE)
@@ -149,5 +149,5 @@ db-restore-match:
 db-restore-coupon:
 	scripts/db-restore.sh coupon $(FILE)
 
-db-restore-wallet:
-	scripts/db-restore.sh wallet $(FILE)
+db-restore-account:
+	scripts/db-restore.sh account $(FILE)

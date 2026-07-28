@@ -65,7 +65,7 @@ match:
 
 wallet:
   service:
-    url: ${WALLET_SERVICE_URL:http://wallet-service:8080}
+    url: ${WALLET_SERVICE_URL:http://account-service:8080}
     timeout:
       connect: 2s
       read: 3s

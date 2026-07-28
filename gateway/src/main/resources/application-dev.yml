@@ -20,8 +20,8 @@ spring:
           predicates:
             - Path=/api/coupons/**
 
-        - id: wallet-service
-          uri: http://wallet-service:8080
+        - id: account-service
+          uri: http://account-service:8080
           predicates:
             - Path=/api/wallet/**
 
@@ -51,12 +51,12 @@ spring:
           filters:
             - RewritePath=/v3/api-docs/coupon-service, /v3/api-docs
 
-        - id: wallet-service-docs
-          uri: http://wallet-service:8080
+        - id: account-service-docs
+          uri: http://account-service:8080
           predicates:
-            - Path=/v3/api-docs/wallet-service
+            - Path=/v3/api-docs/account-service
           filters:
-            - RewritePath=/v3/api-docs/wallet-service, /v3/api-docs
+            - RewritePath=/v3/api-docs/account-service, /v3/api-docs
 
         - id: notification-service-docs
           uri: http://notification-service:8080

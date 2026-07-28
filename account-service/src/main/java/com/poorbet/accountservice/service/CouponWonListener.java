@@ -1,0 +1,30 @@
+package com.poorbet.accountservice.service;
+
+import com.poorbet.commons.rabbit.EventEnvelope;
+import com.poorbet.commons.rabbit.events.coupon.CouponWonEvent;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
+
+@Service
+@Slf4j
+@Validated
+@RequiredArgsConstructor
+public class CouponWonListener {
+
+    private final WalletService walletService;
+
+    @RabbitListener(queues = "${messaging.consumers.COUPON_WON.queue}")
+    public void handleUserCreated(@Valid EventEnvelope<CouponWonEvent> event) {
+        log.info("📨 [WALLET] Received eventType={} version={} source={}",
+                event.eventType(),
+                event.version(),
+                event.source());
+
+        walletService.handleCouponWon(event.payload());
+
+    }
+}

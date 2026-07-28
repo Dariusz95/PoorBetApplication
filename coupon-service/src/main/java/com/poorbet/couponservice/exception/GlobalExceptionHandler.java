@@ -38,7 +38,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(WalletTechnicalException.class)
     public ResponseEntity<ErrorResponse> handleWalletTechnicalException(
             WalletTechnicalException ex, HttpServletRequest request) {
-        logger.error("Usługa wallet-service niedostępna lub zwróciła nieoczekiwany błąd: {}", ex.getMessage());
+        logger.error("Usługa account-service niedostępna lub zwróciła nieoczekiwany błąd: {}", ex.getMessage());
 
         return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(new ErrorResponse(
                 "WALLET_UNAVAILABLE",

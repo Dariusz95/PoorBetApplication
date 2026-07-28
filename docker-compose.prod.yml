@@ -59,16 +59,16 @@ services:
       - POSTGRES_USER=${POSTGRES_COUPON_USER}
       - POSTGRES_PASSWORD=${POSTGRES_COUPON_PASSWORD}
 
-  wallet-service:
-    image: ghcr.io/dariusz95/poorbet-wallet-service:${IMAGE_TAG}
+  account-service:
+    image: ghcr.io/dariusz95/poorbet-account-service:${IMAGE_TAG}
     restart: unless-stopped
     mem_limit: 512m
     environment:
       - SPRING_PROFILES_ACTIVE=prod
       - JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=60.0
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://wallet-db:5432/${POSTGRES_WALLET_DB}
-      - POSTGRES_USER=${POSTGRES_WALLET_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_WALLET_PASSWORD}
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://account-db:5432/${POSTGRES_ACCOUNT_DB}
+      - POSTGRES_USER=${POSTGRES_ACCOUNT_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_ACCOUNT_PASSWORD}
 
   notification-service:
     image: ghcr.io/dariusz95/poorbet-notification-service:${IMAGE_TAG}
@@ -98,7 +98,7 @@ services:
     ports:
       - "127.0.0.1:5432:5432"
 
-  wallet-db:
+  account-db:
     image: postgres:16
     restart: always
     mem_limit: 512m
@@ -113,7 +113,7 @@ volumes:
     name: poorbet_prod_user_data
   match_data:
     name: poorbet_prod_match_data
-  wallet_data:
-    name: poorbet_prod_wallet_data
+  account_data:
+    name: poorbet_prod_account_data
   coupon_data:
     name: poorbet_prod_coupon_data
