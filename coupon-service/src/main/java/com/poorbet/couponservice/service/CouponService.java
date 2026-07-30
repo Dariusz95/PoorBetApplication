@@ -6,9 +6,12 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.poorbet.commons.commons.account.AccountBatchLookupRequest;
+import com.poorbet.commons.commons.account.AccountLevelDto;
 import com.poorbet.commons.commons.auth.UserBatchLookupRequest;
 import com.poorbet.commons.commons.auth.UserDto;
 import com.poorbet.commons.commons.pagination.PageResponse;
+import com.poorbet.couponservice.client.account.AccountClient;
 import com.poorbet.couponservice.client.auth.AuthClient;
 import com.poorbet.couponservice.dto.*;
 import com.poorbet.couponservice.filter.CouponFilter;
@@ -44,6 +47,7 @@ public class CouponService {
     private final MatchClient matchClient;
     private final WalletClient walletClient;
     private final AuthClient authClient;
+    private final AccountClient accountClient;
     private final OutboxService outboxService;
     private final CouponMapper couponMapper;
 
@@ -92,7 +96,9 @@ public class CouponService {
             coupon.setPotentialPayout(dto.getStake().multiply(totalOdds));
             coupon.setTotalOdds(totalOdds);
 
-            return couponMapper.toDetailDto(couponRepository.save(coupon));
+            Coupon savedCoupon = couponRepository.save(coupon);
+
+            return couponMapper.toDetailDto(savedCoupon);
 
         } catch (WalletBusinessException ex) {
             throw ex;
@@ -170,12 +176,17 @@ public class CouponService {
                 ? Map.of()
                 : authClient.getUsersBatch(new UserBatchLookupRequest(userIds)).users();
 
+        Map<UUID, AccountLevelDto> levels = userIds.isEmpty()
+                ? Map.of()
+                : accountClient.getLevelsBatch(new AccountBatchLookupRequest(userIds)).accounts();
+
         List<RankingCouponResponseDto> result = coupons.stream()
                 .map(dto ->
                 {
                     String email = Optional.ofNullable(emails.get(dto.userId())).map(UserDto::getEmail).orElse("User removed");
+                    int level = Optional.ofNullable(levels.get(dto.userId())).map(AccountLevelDto::level).orElse(1);
 
-                    return couponMapper.toRankingCouponResponseDto(dto, email);
+                    return couponMapper.toRankingCouponResponseDto(dto, email, level);
                 })
                 .toList();
 

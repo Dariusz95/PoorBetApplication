@@ -11,6 +11,8 @@ messaging:
   consumers:
     WALLET_BALANCE_CHANGED:
       queue: notification.wallet.updated.queue
+    ACCOUNT_PROGRESS_CHANGED:
+      queue: notification.account.progress-changed.queue
 
 
 poorbet:

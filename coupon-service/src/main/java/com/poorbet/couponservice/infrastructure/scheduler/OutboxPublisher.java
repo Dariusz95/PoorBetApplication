@@ -48,6 +48,7 @@ public class OutboxPublisher {
             Object payloadObject = toObject(event.getPayload(), event.getEventType());
 
             EventEnvelope<Object> envelope = new EventEnvelope<>(
+                    event.getId(),
                     event.getEventType(),
                     event.getVersion(),
                     messagingProperties.getSourceService(),

@@ -23,7 +23,7 @@ spring:
         - id: account-service
           uri: http://account-service:8080
           predicates:
-            - Path=/api/wallet/**
+            - Path=/api/account/**
 
         - id: notification-service
           uri: http://notification-service:8080

@@ -13,5 +13,6 @@ public record RankingCouponResponseDto(
         CouponStatus status,
         BigDecimal potentialPayout,
         OffsetDateTime createdAt,
-        BigDecimal totalOdds
+        BigDecimal totalOdds,
+        int level
 ) {}

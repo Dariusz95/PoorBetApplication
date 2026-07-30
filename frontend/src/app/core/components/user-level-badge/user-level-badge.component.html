@@ -1,0 +1,45 @@
+@if (isLoggedIn$ | async) {
+  @if (level(); as currentLevel) {
+    @if (!expanded()) {
+      <span class="user-level-badge">
+        {{ "wallet.levelAbbreviation" | transloco }} {{ currentLevel }}
+      </span>
+    } @else {
+      <div class="user-level-badge user-level-badge--expanded">
+        <span class="user-level-badge__level">
+          {{ "wallet.level" | transloco: { level: currentLevel } }}
+        </span>
+
+        @if (winBonusPercent(); as bonus) {
+          <span class="user-level-badge__bonus">
+            {{ "wallet.winBonus" | transloco: { percent: bonus } }}
+          </span>
+        }
+
+        <div
+          class="user-level-badge__progress-track"
+          role="progressbar"
+          aria-valuemin="0"
+          [attr.aria-valuenow]="currentExp()"
+          [attr.aria-valuemax]="requiredExpForNextLevel() ?? currentExp()"
+          [attr.aria-label]="'wallet.expProgressAria' | transloco"
+        >
+          <div
+            class="user-level-badge__progress-fill"
+            [style.width.%]="progressPercent()"
+          ></div>
+        </div>
+
+        <span class="user-level-badge__exp-label">
+          @if (requiredExpForNextLevel(); as required) {
+            {{ "wallet.exp" | transloco: { current: currentExp(), required } }}
+          } @else {
+            {{ "wallet.expMax" | transloco: { current: currentExp() } }}
+          }
+        </span>
+      </div>
+    }
+  } @else if (progressLoading()) {
+    <span class="user-level-badge user-level-badge--loading">—</span>
+  }
+}

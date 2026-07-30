@@ -5,9 +5,12 @@ import com.poorbet.commons.rabbit.events.wallet.WalletBalanceChangedEvent;
 import com.poorbet.commons.rabbit.events.wallet.WalletCreatedEvent;
 import com.poorbet.accountservice.domain.exception.InsufficientFundsException;
 import com.poorbet.accountservice.domain.exception.WalletNotFoundException;
+import com.poorbet.accountservice.domain.model.AccountProgress;
+import com.poorbet.accountservice.domain.model.LevelConfig;
 import com.poorbet.accountservice.domain.model.ReservationStatus;
 import com.poorbet.accountservice.domain.model.Wallet;
 import com.poorbet.accountservice.domain.model.WalletReservation;
+import com.poorbet.accountservice.repository.AccountProgressRepository;
 import com.poorbet.accountservice.repository.WalletRepository;
 import com.poorbet.accountservice.repository.WalletReservationRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,6 +42,10 @@ class WalletServiceTest {
     private WalletRepository walletRepository;
     @Mock
     private WalletReservationRepository walletReservationRepository;
+    @Mock
+    private AccountProgressRepository accountProgressRepository;
+    @Mock
+    private LevelConfigService levelConfigService;
     @Mock
     private OutboxService outboxService;
 
@@ -234,6 +241,10 @@ class WalletServiceTest {
         return reservation;
     }
 
+    private LevelConfig levelConfig(int level, int winBonusPercent) {
+        return new LevelConfig(level, 0L, winBonusPercent, 3);
+    }
+
     @Test
     @DisplayName("Should credit wallet and commit reservation when coupon is won")
     void shouldCreditWalletWhenCouponWon() {
@@ -241,21 +252,46 @@ class WalletServiceTest {
         UUID reservationId = UUID.randomUUID();
         WalletReservation reservation = reservationWithStatus(reservationId, ReservationStatus.RESERVED);
         Wallet wallet = walletWithBalance(new BigDecimal("50.00"));
-        CouponWonEvent event = new CouponWonEvent(UUID.randomUUID(), reservationId, userId, new BigDecimal("20.00"));
+        CouponWonEvent event = new CouponWonEvent(UUID.randomUUID(), reservationId, userId, new BigDecimal("20.00"), new BigDecimal("10.00"));
 
         when(walletReservationRepository.findById(reservationId)).thenReturn(Optional.of(reservation));
         when(walletRepository.findByUserIdForUpdate(userId)).thenReturn(Optional.of(wallet));
+        when(levelConfigService.findByCurrentExp(0L)).thenReturn(levelConfig(1, 1));
 
         // Act
         walletService.handleCouponWon(event);
 
-        // Assert
-        assertThat(wallet.getBalance()).isEqualByComparingTo("70.00");
+        // Assert: +1% bonus (level 1) on the 20.00 payout => 20.20
+        assertThat(wallet.getBalance()).isEqualByComparingTo("70.20");
         assertThat(reservation.getStatus()).isEqualTo(ReservationStatus.COMMITTED);
 
         ArgumentCaptor<WalletBalanceChangedEvent> eventCaptor = ArgumentCaptor.forClass(WalletBalanceChangedEvent.class);
         verify(outboxService).saveEvent(any(), eventCaptor.capture());
-        assertThat(eventCaptor.getValue().balance()).isEqualByComparingTo("70.00");
+        assertThat(eventCaptor.getValue().balance()).isEqualByComparingTo("70.20");
+    }
+
+    @Test
+    @DisplayName("Should apply the win bonus for the user's current level when crediting a won coupon")
+    void shouldApplyWinBonusAccordingToLevel() {
+        // Arrange
+        UUID reservationId = UUID.randomUUID();
+        WalletReservation reservation = reservationWithStatus(reservationId, ReservationStatus.RESERVED);
+        Wallet wallet = walletWithBalance(new BigDecimal("0.00"));
+        CouponWonEvent event = new CouponWonEvent(UUID.randomUUID(), reservationId, userId, new BigDecimal("100.00"), new BigDecimal("10.00"));
+        AccountProgress progress = AccountProgress.createForUser(userId);
+        progress.setCurrentExp(900L);
+        progress.setLevel(5);
+
+        when(walletReservationRepository.findById(reservationId)).thenReturn(Optional.of(reservation));
+        when(walletRepository.findByUserIdForUpdate(userId)).thenReturn(Optional.of(wallet));
+        when(accountProgressRepository.findById(userId)).thenReturn(Optional.of(progress));
+        when(levelConfigService.findByCurrentExp(900L)).thenReturn(levelConfig(5, 5));
+
+        // Act
+        walletService.handleCouponWon(event);
+
+        // Assert: +5% bonus (level 5) on the 100.00 payout => 105.00
+        assertThat(wallet.getBalance()).isEqualByComparingTo("105.00");
     }
 
     @Test
@@ -264,7 +300,7 @@ class WalletServiceTest {
         // Arrange
         UUID reservationId = UUID.randomUUID();
         WalletReservation reservation = reservationWithStatus(reservationId, ReservationStatus.COMMITTED);
-        CouponWonEvent event = new CouponWonEvent(UUID.randomUUID(), reservationId, userId, new BigDecimal("20.00"));
+        CouponWonEvent event = new CouponWonEvent(UUID.randomUUID(), reservationId, userId, new BigDecimal("20.00"), new BigDecimal("10.00"));
 
         when(walletReservationRepository.findById(reservationId)).thenReturn(Optional.of(reservation));
 
@@ -282,7 +318,7 @@ class WalletServiceTest {
         // Arrange
         UUID reservationId = UUID.randomUUID();
         WalletReservation reservation = reservationWithStatus(reservationId, ReservationStatus.RELEASED);
-        CouponWonEvent event = new CouponWonEvent(UUID.randomUUID(), reservationId, userId, new BigDecimal("20.00"));
+        CouponWonEvent event = new CouponWonEvent(UUID.randomUUID(), reservationId, userId, new BigDecimal("20.00"), new BigDecimal("10.00"));
 
         when(walletReservationRepository.findById(reservationId)).thenReturn(Optional.of(reservation));
 
@@ -300,7 +336,7 @@ class WalletServiceTest {
     void shouldThrowWhenReservationNotFound() {
         // Arrange
         UUID reservationId = UUID.randomUUID();
-        CouponWonEvent event = new CouponWonEvent(UUID.randomUUID(), reservationId, userId, new BigDecimal("20.00"));
+        CouponWonEvent event = new CouponWonEvent(UUID.randomUUID(), reservationId, userId, new BigDecimal("20.00"), new BigDecimal("10.00"));
 
         when(walletReservationRepository.findById(reservationId)).thenReturn(Optional.empty());
 
@@ -316,7 +352,7 @@ class WalletServiceTest {
         // Arrange
         UUID reservationId = UUID.randomUUID();
         WalletReservation reservation = reservationWithStatus(reservationId, ReservationStatus.RESERVED);
-        CouponWonEvent event = new CouponWonEvent(UUID.randomUUID(), reservationId, userId, new BigDecimal("20.00"));
+        CouponWonEvent event = new CouponWonEvent(UUID.randomUUID(), reservationId, userId, new BigDecimal("20.00"), new BigDecimal("10.00"));
 
         when(walletReservationRepository.findById(reservationId)).thenReturn(Optional.of(reservation));
         when(walletRepository.findByUserIdForUpdate(userId)).thenReturn(Optional.empty());

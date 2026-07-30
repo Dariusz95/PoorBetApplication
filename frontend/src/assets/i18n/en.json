@@ -70,6 +70,14 @@
     "balanceUpdated": "Balance updated: {{balance}} zł",
     "coinAbbreviation": "BC"
   },
+  "wallet": {
+    "level": "Level {{level}}",
+    "levelAbbreviation": "Lv.",
+    "exp": "{{current}} / {{required}} EXP",
+    "expMax": "{{current}} EXP (max level)",
+    "expProgressAria": "Experience progress",
+    "winBonus": "+{{percent}}% win bonus"
+  },
   "bet": {
     "page": {
       "live": "Live",

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.poorbet.commons.rabbit.EventEnvelope;
 import com.poorbet.commons.rabbit.MessagingProperties;
+import com.poorbet.commons.rabbit.events.account.AccountProgressChangedEvent;
 import com.poorbet.commons.rabbit.events.wallet.WalletBalanceChangedEvent;
 import com.poorbet.commons.rabbit.events.wallet.WalletCreatedEvent;
 import com.poorbet.accountservice.infrastructure.persistence.OutboxRepository;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Map;
 
+import static com.poorbet.commons.rabbit.events.account.AccountEvents.ACCOUNT_PROGRESS_CHANGED;
 import static com.poorbet.commons.rabbit.events.wallet.WalletEvents.WALLET_BALANCE_CHANGED;
 import static com.poorbet.commons.rabbit.events.wallet.WalletEvents.WALLET_CREATED;
 
@@ -34,7 +36,8 @@ public class OutboxPublisher {
     private final ObjectMapper objectMapper;
     private final Map<String, Class<?>> eventTypeMap = Map.of(
             WALLET_CREATED.eventType(), WalletCreatedEvent.class,
-            WALLET_BALANCE_CHANGED.eventType(), WalletBalanceChangedEvent.class
+            WALLET_BALANCE_CHANGED.eventType(), WalletBalanceChangedEvent.class,
+            ACCOUNT_PROGRESS_CHANGED.eventType(), AccountProgressChangedEvent.class
     );
 
     @Scheduled(fixedDelay = 5000)
@@ -46,6 +49,7 @@ public class OutboxPublisher {
             Object payloadObject = toObject(event.getPayload(), event.getEventType());
 
             EventEnvelope<Object> envelope = new EventEnvelope<>(
+                    event.getId(),
                     event.getEventType(),
                     event.getVersion(),
                     messagingProperties.getSourceService(),

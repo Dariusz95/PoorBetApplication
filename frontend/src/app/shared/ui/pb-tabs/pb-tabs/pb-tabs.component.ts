@@ -9,12 +9,13 @@ import {
   TemplateRef,
   viewChild,
 } from '@angular/core';
+import { TranslocoPipe } from '@jsverse/transloco';
 import { TabConfig } from '../tab-config.model';
 
 @Component({
   selector: 'pb-tabs',
   standalone: true,
-  imports: [NgTemplateOutlet],
+  imports: [NgTemplateOutlet, TranslocoPipe],
   templateUrl: './pb-tabs.component.html',
   styleUrl: './pb-tabs.component.scss',
 })

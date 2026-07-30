@@ -29,7 +29,7 @@ class UserCreatedListenerTest {
         // Arrange
         UUID userId = UUID.randomUUID();
         UserCreatedEvent payload = new UserCreatedEvent(userId);
-        EventEnvelope<UserCreatedEvent> envelope = new EventEnvelope<>("USER_CREATED", "v1", "auth-service", payload);
+        EventEnvelope<UserCreatedEvent> envelope = new EventEnvelope<>(UUID.randomUUID(), "USER_CREATED", "v1", "auth-service", payload);
 
         // Act
         userCreatedListener.handleUserCreated(envelope);

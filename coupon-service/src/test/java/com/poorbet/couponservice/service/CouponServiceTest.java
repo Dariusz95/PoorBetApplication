@@ -1,8 +1,11 @@
 package com.poorbet.couponservice.service;
 
+import com.poorbet.commons.commons.account.AccountBatchLookupResponse;
+import com.poorbet.commons.commons.account.AccountLevelDto;
 import com.poorbet.commons.commons.auth.UserBatchLookupRequest;
 import com.poorbet.commons.commons.auth.UserBatchLookupResponse;
 import com.poorbet.commons.commons.auth.UserDto;
+import com.poorbet.couponservice.client.account.AccountClient;
 import com.poorbet.couponservice.client.auth.AuthClient;
 import com.poorbet.couponservice.client.match.MatchClient;
 import com.poorbet.couponservice.client.wallet.WalletClient;
@@ -53,6 +56,9 @@ class CouponServiceTest {
 
     @Mock
     private AuthClient authClient;
+
+    @Mock
+    private AccountClient accountClient;
 
     @Mock
     private OutboxService outboxService;
@@ -289,6 +295,10 @@ class CouponServiceTest {
                 firstUserId, new UserDto(firstUserId, "first@example.com"),
                 secondUserId, new UserDto(secondUserId, "second@example.com")
         )));
+        when(accountClient.getLevelsBatch(any())).thenReturn(new AccountBatchLookupResponse(Map.of(
+                firstUserId, new AccountLevelDto(firstUserId, 3),
+                secondUserId, new AccountLevelDto(secondUserId, 7)
+        )));
 
         // Act
         RankingResponseDto result = couponService.getHighestTotalOdds();
@@ -297,6 +307,9 @@ class CouponServiceTest {
         assertThat(result.ranking().content())
                 .extracting(RankingCouponResponseDto::email)
                 .containsExactly("first@example.com", "second@example.com");
+        assertThat(result.ranking().content())
+                .extracting(RankingCouponResponseDto::level)
+                .containsExactly(3, 7);
     }
 
     @Test
@@ -357,6 +370,9 @@ class CouponServiceTest {
         when(authClient.getUsersBatch(any())).thenReturn(new UserBatchLookupResponse(
                 Map.of(sharedUserId, new UserDto(sharedUserId, "shared@example.com"))
         ));
+        when(accountClient.getLevelsBatch(any())).thenReturn(new AccountBatchLookupResponse(
+                Map.of(sharedUserId, new AccountLevelDto(sharedUserId, 2))
+        ));
 
         // Act
         couponService.getHighestTotalOdds();
@@ -379,6 +395,7 @@ class CouponServiceTest {
                 .thenReturn(new PageImpl<>(List.of(coupon)));
 
         when(authClient.getUsersBatch(any())).thenReturn(new UserBatchLookupResponse(Map.of()));
+        when(accountClient.getLevelsBatch(any())).thenReturn(new AccountBatchLookupResponse(Map.of()));
 
         // Act
         RankingResponseDto result = couponService.getHighestTotalOdds();
@@ -387,6 +404,9 @@ class CouponServiceTest {
         assertThat(result.ranking().content())
                 .extracting(RankingCouponResponseDto::email)
                 .containsExactly("User removed");
+        assertThat(result.ranking().content())
+                .extracting(RankingCouponResponseDto::level)
+                .containsExactly(1);
     }
 
     @Test
@@ -403,5 +423,6 @@ class CouponServiceTest {
         assertThat(result.ranking().content()).isEmpty();
         assertThat(result.lastUpdatedAt()).isNotNull();
         verifyNoInteractions(authClient);
+        verifyNoInteractions(accountClient);
     }
 }

@@ -6,9 +6,12 @@ import com.poorbet.commons.rabbit.events.wallet.WalletCreatedEvent;
 import com.poorbet.commons.rabbit.events.wallet.WalletEvents;
 import com.poorbet.accountservice.domain.exception.InsufficientFundsException;
 import com.poorbet.accountservice.domain.exception.WalletNotFoundException;
+import com.poorbet.accountservice.domain.model.AccountProgress;
+import com.poorbet.accountservice.domain.model.LevelConfig;
 import com.poorbet.accountservice.domain.model.ReservationStatus;
 import com.poorbet.accountservice.domain.model.Wallet;
 import com.poorbet.accountservice.domain.model.WalletReservation;
+import com.poorbet.accountservice.repository.AccountProgressRepository;
 import com.poorbet.accountservice.repository.WalletRepository;
 import com.poorbet.accountservice.repository.WalletReservationRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.UUID;
 
 @Service
@@ -26,6 +30,8 @@ public class WalletService {
 
     private final WalletRepository walletRepository;
     private final WalletReservationRepository walletReservationRepository;
+    private final AccountProgressRepository accountProgressRepository;
+    private final LevelConfigService levelConfigService;
     private final OutboxService outboxService;
 
 
@@ -65,7 +71,17 @@ public class WalletService {
         Wallet wallet = walletRepository.findByUserIdForUpdate(event.userId())
                 .orElseThrow(() -> new IllegalStateException("Wallet not found: " + event.userId()));
 
-        wallet.setBalance(wallet.getBalance().add(event.amount()));
+        long currentExp = accountProgressRepository.findById(event.userId())
+                .map(AccountProgress::getCurrentExp)
+                .orElse(0L);
+        LevelConfig levelConfig = levelConfigService.findByCurrentExp(currentExp);
+
+        BigDecimal bonusMultiplier = BigDecimal.ONE
+                .add(BigDecimal.valueOf(levelConfig.getWinBonusPercent(), 2));
+        BigDecimal finalAmount = event.amount().multiply(bonusMultiplier)
+                .setScale(2, RoundingMode.HALF_UP);
+
+        wallet.setBalance(wallet.getBalance().add(finalAmount));
 
         reservation.setStatus(ReservationStatus.COMMITTED);
 

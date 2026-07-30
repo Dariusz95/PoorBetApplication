@@ -1,7 +1,9 @@
 package com.poorbet.accountservice.controller;
 
 import com.poorbet.accountservice.domain.model.Wallet;
+import com.poorbet.accountservice.dto.AccountProgressResponse;
 import com.poorbet.accountservice.security.CurrentUserProvider;
+import com.poorbet.accountservice.service.ProgressService;
 import com.poorbet.accountservice.service.WalletService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -20,16 +22,18 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(WalletController.class)
+@WebMvcTest(AccountController.class)
 @AutoConfigureMockMvc(addFilters = false)
-@DisplayName("WalletController Web Layer Tests")
-class WalletControllerTest {
+@DisplayName("AccountController Web Layer Tests")
+class AccountControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @MockitoBean
     private WalletService walletService;
+    @MockitoBean
+    private ProgressService progressService;
     @MockitoBean
     private CurrentUserProvider currentUserProvider;
 
@@ -42,8 +46,8 @@ class WalletControllerTest {
     }
 
     @Test
-    @DisplayName("Should return the wallet of the currently authenticated user")
-    void shouldReturnCurrentUserWallet() throws Exception {
+    @DisplayName("Should return the wallet and level progress of the currently authenticated user")
+    void shouldReturnCurrentUserWalletAndProgress() throws Exception {
         // Arrange
         Wallet wallet = Wallet.builder()
                 .id(UUID.randomUUID())
@@ -51,12 +55,18 @@ class WalletControllerTest {
                 .balance(new BigDecimal("42.50"))
                 .build();
         when(walletService.getWallet(userId)).thenReturn(wallet);
+        when(progressService.getProgressView(userId))
+                .thenReturn(new AccountProgressResponse(5, 950L, 1500L, 5));
 
         // Act & Assert
-        mockMvc.perform(get("/api/wallet/me"))
+        mockMvc.perform(get("/api/account/me"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.userId").value(userId.toString()))
-                .andExpect(jsonPath("$.balance").value(42.50));
+                .andExpect(jsonPath("$.balance").value(42.50))
+                .andExpect(jsonPath("$.level").value(5))
+                .andExpect(jsonPath("$.currentExp").value(950))
+                .andExpect(jsonPath("$.requiredExpForNextLevel").value(1500))
+                .andExpect(jsonPath("$.winBonusPercent").value(5));
     }
 
     @Test
@@ -66,7 +76,7 @@ class WalletControllerTest {
         when(walletService.getWallet(userId)).thenThrow(new IllegalStateException("Wallet not found for user: " + userId));
 
         // Act & Assert
-        mockMvc.perform(get("/api/wallet/me"))
+        mockMvc.perform(get("/api/account/me"))
                 .andExpect(status().isInternalServerError());
     }
 }

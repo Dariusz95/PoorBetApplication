@@ -10,7 +10,7 @@ import {
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { CouponService } from '@features/coupons/services/coupon.service';
 import { RankingCoupon } from '@features/coupons/types/ranking-coupon';
-import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+import { TranslocoPipe } from '@jsverse/transloco';
 import { DialogService } from '@shared/services/dialog.service';
 import { PbIconComponent } from '@shared/ui/icon/pb-icon.component';
 import { PbCardComponent } from '@shared/ui/pb-card/pb-card.component';
@@ -45,10 +45,7 @@ const PAGE_SIZE = 10;
 })
 export class RankingPageComponent {
   private readonly couponService = inject(CouponService);
-  private readonly transloco = inject(TranslocoService);
   private readonly dialogService = inject(DialogService);
-
-  private readonly lang = toSignal(this.transloco.langChanges$);
 
   private readonly rankCellTpl =
     viewChild.required<TemplateRef<PbCellContext<RankingEntry, number>>>(
@@ -71,16 +68,10 @@ export class RankingPageComponent {
       'previewCell',
     );
 
-  readonly metricTabs = computed<TabConfig<RankingMetric>[]>(() => {
-    this.lang();
-    return [
-      { value: 'odds', label: this.transloco.translate('ranking.metricOdds') },
-      {
-        value: 'payout',
-        label: this.transloco.translate('ranking.metricPayout'),
-      },
-    ];
-  });
+  readonly metricTabs: TabConfig<RankingMetric>[] = [
+    { value: 'odds', label: 'ranking.metricOdds' },
+    { value: 'payout', label: 'ranking.metricPayout' },
+  ];
 
   activeMetric = signal<RankingMetric>('odds');
 
@@ -118,6 +109,7 @@ export class RankingPageComponent {
       id: coupon.couponId,
       rank: index + 1,
       email: coupon.email,
+      level: coupon.level,
       totalOdds: coupon.totalOdds,
       potentialPayout: coupon.potentialPayout,
       createdAt: coupon.createdAt,
@@ -125,43 +117,41 @@ export class RankingPageComponent {
   );
 
   columns = computed<PbColumnDef<RankingEntry>[]>(() => {
-    this.lang();
-    const t = (key: string) =>
-      this.transloco.translate(`ranking.columns.${key}`);
+    const key = (name: string) => `ranking.columns.${name}`;
 
     const builder = tableColumns<RankingEntry>()
       .add('rank', {
-        header: t('rank'),
+        header: key('rank'),
         width: '56px',
         align: 'center',
         cellTemplate: this.rankCellTpl(),
       })
       .add('email', {
-        header: t('player'),
+        header: key('player'),
         cellTemplate: this.playerCellTpl(),
       });
 
     if (this.activeMetric() === 'odds') {
       builder
         .add('totalOdds', {
-          header: t('odds'),
+          header: key('odds'),
           align: 'right',
           cellTemplate: this.oddsCellTpl(),
         })
         .add('potentialPayout', {
-          header: t('payout'),
+          header: key('payout'),
           align: 'right',
           cellTemplate: this.payoutCellTpl(),
         });
     } else {
       builder
         .add('potentialPayout', {
-          header: t('payout'),
+          header: key('payout'),
           align: 'right',
           cellTemplate: this.payoutCellTpl(),
         })
         .add('totalOdds', {
-          header: t('odds'),
+          header: key('odds'),
           align: 'right',
           formatter: (value) => `${value.toFixed(2)}x`,
         });
@@ -169,12 +159,12 @@ export class RankingPageComponent {
 
     builder
       .add('createdAt', {
-        header: t('date'),
+        header: key('date'),
         align: 'right',
         formatter: (value) => this.formatDate(value),
       })
       .add('id', {
-        header: t('preview'),
+        header: key('preview'),
         align: 'center',
         width: '64px',
         cellTemplate: this.previewCellTpl(),

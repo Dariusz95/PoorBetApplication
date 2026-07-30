@@ -12,6 +12,7 @@ import { RoutingService } from '../../routing/routing.service';
 import { CouponDropdownComponent } from '../coupon-dropdown/coupon-dropdown.component';
 import { LanguageSwitcherComponent } from '../language-switcher/language-switcher.component';
 import { UserBalanceComponent } from '../user-balance/user-balance.component';
+import { UserLevelBadgeComponent } from '../user-level-badge/user-level-badge.component';
 import { UserSidePanelComponent } from '../user-side-panel/user-side-panel.component';
 
 @Component({
@@ -25,6 +26,7 @@ import { UserSidePanelComponent } from '../user-side-panel/user-side-panel.compo
     PbIconComponent,
     CouponDropdownComponent,
     UserBalanceComponent,
+    UserLevelBadgeComponent,
     AsyncPipe,
   ],
   templateUrl: './header.component.html',
@@ -34,7 +36,7 @@ export class HeaderComponent {
   private readonly authService = inject(AuthService);
   private readonly dialog = inject(Dialog);
   private readonly overlay = inject(Overlay);
-  
+
   protected readonly routingService = inject(RoutingService);
 
   protected readonly RoutePath = RoutePath;

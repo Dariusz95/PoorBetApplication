@@ -2,12 +2,18 @@ import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { inject, Injectable, NgZone, signal } from '@angular/core';
 import { AuthService } from '@core/auth/services/auth.service';
 import { JwtAuthStateService } from '@core/auth/services/jwt-auth-state.service';
-import { WalletService } from '@core/wallet/services/wallet.service';
+import { AccountService } from '@core/account/services/account.service';
 import { TranslocoService } from '@jsverse/transloco';
 import { SseClient } from 'ngx-sse-client';
 import { filter } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { WalletBalanceEvent } from '../types/wallet.types';
+import {
+  AccountProgressEvent,
+  WalletBalanceEvent,
+} from '../types/wallet.types';
+
+const WALLET_BALANCE_CHANGED = 'wallet.balance-changed';
+const ACCOUNT_PROGRESS_CHANGED = 'account.progress-changed';
 
 @Injectable({
   providedIn: 'root',
@@ -17,7 +23,7 @@ export class LiveEventsService {
   private readonly sseClient = inject(SseClient);
   private readonly jwtAuthStateService = inject(JwtAuthStateService);
   private readonly authService = inject(AuthService);
-  private readonly walletService = inject(WalletService);
+  private readonly accountService = inject(AccountService);
   private readonly liveAnnouncer = inject(LiveAnnouncer);
   private readonly translocoService = inject(TranslocoService);
   private readonly baseUrl = `${environment.backend.baseURL}/api/notifications/stream`;
@@ -35,7 +41,6 @@ export class LiveEventsService {
         this.initialized.set(true);
         this.connectToLiveUpdates();
       });
-
   }
 
   private connectToLiveUpdates(): void {
@@ -66,28 +71,45 @@ export class LiveEventsService {
             return;
           }
 
-          const walletUpdate = JSON.parse(
-            event.data,
-          ) as Partial<WalletBalanceEvent>;
-
-          if (typeof walletUpdate.balance !== 'number') {
-            return;
+          switch (event.type) {
+            case WALLET_BALANCE_CHANGED:
+              this.handleWalletBalanceChanged(
+                JSON.parse(event.data) as WalletBalanceEvent,
+              );
+              break;
+            case ACCOUNT_PROGRESS_CHANGED:
+              this.handleAccountProgressChanged(
+                JSON.parse(event.data) as AccountProgressEvent,
+              );
+              break;
           }
-
-          const nextBalance = walletUpdate.balance;
-          this.ngZone.run(() => {
-            this.walletService.setBalance(nextBalance);
-            this.liveAnnouncer.announce(
-              this.translocoService.translate('header.balanceUpdated', {
-                balance: nextBalance,
-              }),
-              'polite',
-            );
-          });
         },
         error: (error) => {
           console.error('Wallet SSE connection error', error);
         },
       });
+  }
+
+  private handleWalletBalanceChanged(event: WalletBalanceEvent): void {
+    this.ngZone.run(() => {
+      this.accountService.setBalance(event.balance);
+      this.liveAnnouncer.announce(
+        this.translocoService.translate('header.balanceUpdated', {
+          balance: event.balance,
+        }),
+        'polite',
+      );
+    });
+  }
+
+  private handleAccountProgressChanged(event: AccountProgressEvent): void {
+    this.ngZone.run(() => {
+      this.accountService.setProgress(
+        event.level,
+        event.currentExp,
+        event.requiredExpForNextLevel,
+        event.winBonusPercent,
+      );
+    });
   }
 }
