@@ -4,6 +4,7 @@ import com.poorbet.commons.rabbit.events.coupon.CouponWonEvent;
 import com.poorbet.commons.rabbit.events.wallet.WalletBalanceChangedEvent;
 import com.poorbet.commons.rabbit.events.wallet.WalletCreatedEvent;
 import com.poorbet.commons.rabbit.events.wallet.WalletEvents;
+import com.poorbet.accountservice.dto.WalletResponse;
 import com.poorbet.accountservice.domain.exception.InsufficientFundsException;
 import com.poorbet.accountservice.domain.exception.WalletNotFoundException;
 import com.poorbet.accountservice.domain.model.AccountProgress;
@@ -44,17 +45,7 @@ public class WalletService {
             return;
         }
 
-        Wallet wallet = Wallet.builder()
-                .userId(userId)
-                .balance(BigDecimal.valueOf(100))
-                .build();
-
-        walletRepository.save(wallet);
-
-        outboxService.saveEvent(
-                WalletEvents.WALLET_CREATED,
-                new WalletCreatedEvent(userId)
-        );
+        createWallet(userId);
     }
 
     @Transactional
@@ -91,10 +82,32 @@ public class WalletService {
         );
     }
 
-    @Transactional(readOnly = true)
-    public Wallet getWallet(UUID userId) {
-        return walletRepository.findByUserId(userId)
-                .orElseThrow(() -> new IllegalStateException("Wallet not found for user: " + userId));
+    @Transactional
+    public WalletResponse getWallet(UUID userId) {
+        Wallet wallet = walletRepository.findByUserId(userId)
+                .orElseGet(() -> {
+                    log.warn("Wallet missing for userId={} on /me lookup — creating it lazily " +
+                            "as a self-healing fallback for a lost USER_CREATED event", userId);
+                    return createWallet(userId);
+                });
+
+        return new WalletResponse(wallet.getUserId(), wallet.getBalance());
+    }
+
+    private Wallet createWallet(UUID userId) {
+        Wallet wallet = Wallet.builder()
+                .userId(userId)
+                .balance(BigDecimal.valueOf(100))
+                .build();
+
+        Wallet saved = walletRepository.save(wallet);
+
+        outboxService.saveEvent(
+                WalletEvents.WALLET_CREATED,
+                new WalletCreatedEvent(userId)
+        );
+
+        return saved;
     }
 
     @Transactional

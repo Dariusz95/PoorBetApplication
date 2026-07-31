@@ -18,8 +18,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionSynchronization;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.List;
 import java.util.Map;
@@ -56,16 +54,7 @@ public class UserServiceImpl implements UserService {
 
         logger.info("User successfully registered: {}", savedUser.getEmail());
 
-        TransactionSynchronizationManager.registerSynchronization(
-                new TransactionSynchronization() {
-                    @Override
-                    public void afterCommit() {
-                        logger.info("UserCreatedEvent sent to Rabbit. userId={}", savedUser.getId());
-
-                        publisher.publishUserCreated(savedUser.getId());
-                    }
-                }
-        );
+        publisher.publishUserCreated(savedUser.getId());
 
         return userMapper.toDto(savedUser);
     }
