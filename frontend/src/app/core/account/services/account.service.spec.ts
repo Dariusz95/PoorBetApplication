@@ -86,4 +86,57 @@ describe('AccountService', () => {
       httpMock.expectNone('/api/account/me');
     });
   });
+
+  describe('reset', () => {
+    it('should clear all state so a different user logging in refetches instead of reusing stale data', () => {
+      service.ensureAccountStateLoaded();
+      httpMock.expectOne('/api/account/me').flush({
+        userId: 'user-1',
+        balance: 100,
+        level: 3,
+        currentExp: 400,
+        requiredExpForNextLevel: 500,
+        winBonusPercent: 3,
+      });
+
+      service.reset();
+
+      expect(service.balance()).toBeNull();
+      expect(service.level()).toBeNull();
+      expect(service.currentExp()).toBeNull();
+      expect(service.requiredExpForNextLevel()).toBeNull();
+      expect(service.winBonusPercent()).toBeNull();
+
+      service.ensureAccountStateLoaded();
+      httpMock.expectOne('/api/account/me').flush({
+        userId: 'user-2',
+        balance: 5,
+        level: 1,
+        currentExp: 0,
+        requiredExpForNextLevel: 100,
+        winBonusPercent: 1,
+      });
+
+      expect(service.balance()).toBe(5);
+      expect(service.level()).toBe(1);
+    });
+
+    it('should clear the loading flag even if a request is still in flight, so the next login is not blocked', () => {
+      service.ensureAccountStateLoaded();
+      expect(service.loading()).toBe(true);
+
+      service.reset();
+
+      expect(service.loading()).toBe(false);
+
+      httpMock.expectOne('/api/account/me').flush({
+        userId: 'user-1',
+        balance: 100,
+        level: 1,
+        currentExp: 0,
+        requiredExpForNextLevel: 100,
+        winBonusPercent: 1,
+      });
+    });
+  });
 });

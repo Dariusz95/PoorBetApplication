@@ -77,4 +77,13 @@ export class AccountService {
       .pipe(finalize(() => this._loading.set(false)))
       .subscribe();
   }
+
+  reset(): void {
+    this._balance.set(null);
+    this._level.set(null);
+    this._currentExp.set(null);
+    this._requiredExpForNextLevel.set(null);
+    this._winBonusPercent.set(null);
+    this._loading.set(false);
+  }
 }

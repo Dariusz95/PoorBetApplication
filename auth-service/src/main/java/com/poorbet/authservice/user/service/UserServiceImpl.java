@@ -1,6 +1,8 @@
 package com.poorbet.authservice.user.service;
 
+import com.poorbet.authservice.config.TestUserProperties;
 import com.poorbet.authservice.exception.InvalidCredentialsException;
+import com.poorbet.authservice.exception.InvalidRefreshTokenException;
 import com.poorbet.authservice.exception.ResourceAlreadyExistsException;
 import com.poorbet.authservice.security.JwtUtil;
 import com.poorbet.authservice.user.dto.*;
@@ -37,6 +39,7 @@ public class UserServiceImpl implements UserService {
     private final JwtUtil jwtUtil;
     private final AuthorizationPolicyService authorizationPolicyService;
     private final UserCreatedEventPublisher publisher;
+    private final TestUserProperties testUserProperties;
 
     @Override
     @Transactional
@@ -76,12 +79,55 @@ public class UserServiceImpl implements UserService {
     public JwtResponse login(UserLoginDto loginDto) {
         User user = userRepository.findByEmail(loginDto.email())
                 .filter(User::isActive)
-                .orElseThrow(() -> new InvalidCredentialsException("Nieprawidłowy adres e-mail lub hasło."));
+                .orElseThrow(() -> new InvalidCredentialsException("Invalid email or password."));
 
         if (!passwordEncoder.matches(loginDto.password(), user.getPassword())) {
-            throw new InvalidCredentialsException("Nieprawidłowy adres e-mail lub hasło.");
+            throw new InvalidCredentialsException("Invalid email or password.");
         }
 
+        return buildJwtResponse(user);
+    }
+
+    @Override
+    public JwtResponse loginAsTestUser() {
+        User user = userRepository.findByEmail(testUserProperties.getEmail())
+                .filter(User::isActive)
+                .orElseThrow(() -> new InvalidCredentialsException("The test account is currently unavailable."));
+
+        return buildJwtResponse(user);
+    }
+
+    @Override
+    public JwtResponse refresh(RefreshTokenRequest request) {
+        String refreshToken = request.refreshToken();
+
+        if (!jwtUtil.validateToken(refreshToken) || !jwtUtil.isRefreshToken(refreshToken)) {
+            throw new InvalidRefreshTokenException("Invalid or expired refresh token.");
+        }
+
+        String email = jwtUtil.getEmailFromToken(refreshToken);
+        User user = userRepository.findByEmail(email)
+                .filter(User::isActive)
+                .orElseThrow(() -> new InvalidRefreshTokenException("Invalid or expired refresh token."));
+
+        return buildJwtResponse(user);
+    }
+
+    @Override
+    public void logout(RefreshTokenRequest request) {
+        if (request == null || request.refreshToken() == null) {
+            return;
+        }
+
+        try {
+            String email = jwtUtil.getEmailFromToken(request.refreshToken());
+            logger.info("User logged out: {}", email);
+        } catch (Exception e) {
+            logger.debug("Logout with an unreadable refresh token — skipping email logging.");
+        }
+    }
+
+    private JwtResponse buildJwtResponse(User user) {
         List<String> roles = List.of(user.getRole().name());
         List<String> permissions = authorizationPolicyService.resolvePermissions(user.getRole());
         String token = jwtUtil.generateAccessToken(
@@ -95,7 +141,10 @@ public class UserServiceImpl implements UserService {
         );
         long expiresAt = System.currentTimeMillis() + jwtUtil.getAccessTokenExpiration();
 
-        return new JwtResponse(token, user.getEmail(), roles, permissions, expiresAt);
+        String refreshToken = jwtUtil.generateRefreshToken(user.getEmail());
+        long refreshExpiresAt = System.currentTimeMillis() + jwtUtil.getRefreshTokenExpiration();
+
+        return new JwtResponse(token, user.getEmail(), roles, permissions, expiresAt, refreshToken, refreshExpiresAt);
     }
 
     @Override

@@ -4,7 +4,6 @@ import { AuthService } from '@core/auth/services/auth.service';
 import { AccountService } from '@core/account/services/account.service';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { filter } from 'rxjs/internal/operators/filter';
-import { take } from 'rxjs/internal/operators/take';
 
 @Component({
   selector: 'app-user-level-badge',
@@ -36,7 +35,7 @@ export class UserLevelBadgeComponent {
   });
 
   constructor() {
-    this.isLoggedIn$.pipe(filter(Boolean), take(1)).subscribe(() => {
+    this.isLoggedIn$.pipe(filter(Boolean)).subscribe(() => {
       this.accountService.ensureAccountStateLoaded();
     });
   }

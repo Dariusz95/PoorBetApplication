@@ -38,6 +38,8 @@ poorbet:
     enabled: true
     issuer: ${AUTH_ISSUER_URI}
     jwk-set-uri: ${AUTH_JWKS_URI}
+    internal-audience:
+      - account-service
     unprotected-paths:
       - /actuator/health/**
 

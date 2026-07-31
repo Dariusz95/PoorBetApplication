@@ -46,6 +46,8 @@ services:
       RABBITMQ_PORT: ${RABBITMQ_PORT}
       RABBITMQ_USER: ${RABBITMQ_USER}
       RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
+      TEST_USER_EMAIL: ${TEST_USER_EMAIL}
+      TEST_USER_PASSWORD: ${TEST_USER_PASSWORD}
     networks:
       - main_network
     healthcheck:

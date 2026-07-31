@@ -44,6 +44,7 @@ describe('LoginPageComponent', () => {
       roles: ['USER'],
       expiresAt: 0,
       token: 'mock-jwt-token',
+      refreshToken: 'mock-refresh-token',
     };
 
     it('should call authService.login with the submitted credentials', () => {

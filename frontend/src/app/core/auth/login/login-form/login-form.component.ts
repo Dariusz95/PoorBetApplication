@@ -60,13 +60,7 @@ export class LoginFormComponent {
   }
 
   loginAsTestUser(): void {
-    const testUser: LoginModel = {
-      email: 'asd@asd.pl',
-      password: 'zaq1@WSX',
-      loginAsTestUser: true,
-    };
-
-    this.submitForm.emit(testUser);
+    this.submitForm.emit({ loginAsTestUser: true });
   }
 
   private createForm(): FormGroup<LoginForm> {

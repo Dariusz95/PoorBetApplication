@@ -1,4 +1,4 @@
-<form pbCardBody [formGroup]="form">
+<form pbCardBody [formGroup]="form" (ngSubmit)="onSubmit()">
   <pb-form-field>
     <pb-label> {{ "auth.email.label" | transloco }}</pb-label>
     <pb-input
@@ -41,9 +41,9 @@
       variant="primary"
       size="md"
       testId="register-submit-button"
+      type="submit"
       [fullWidth]="true"
       [loading]="submitting()"
-      (buttonClick)="onSubmit()"
     >
       {{ "auth.register.register" | transloco }}
     </pb-button>

@@ -1,11 +1,12 @@
 import { LiveAnnouncer } from '@angular/cdk/a11y';
-import { inject, Injectable, NgZone, signal } from '@angular/core';
+import { DestroyRef, inject, Injectable, NgZone, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { AccountService } from '@core/account/services/account.service';
 import { AuthService } from '@core/auth/services/auth.service';
 import { JwtAuthStateService } from '@core/auth/services/jwt-auth-state.service';
-import { AccountService } from '@core/account/services/account.service';
 import { TranslocoService } from '@jsverse/transloco';
 import { SseClient } from 'ngx-sse-client';
-import { filter } from 'rxjs';
+import { filter, Subscription } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import {
   AccountProgressEvent,
@@ -27,24 +28,46 @@ export class LiveEventsService {
   private readonly liveAnnouncer = inject(LiveAnnouncer);
   private readonly translocoService = inject(TranslocoService);
   private readonly baseUrl = `${environment.backend.baseURL}/api/notifications/stream`;
+  private readonly destroyRef = inject(DestroyRef);
 
   private initialized = signal(false);
+  private sseSubscription: Subscription | null = null;
 
   init(): void {
     if (this.initialized()) {
       return;
     }
 
+    this.initialized.set(true);
+
     this.authService.isLoggedIn$
-      .pipe(filter((loggedIn) => loggedIn))
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((loggedIn) => {
+        if (loggedIn) {
+          this.connectToLiveUpdates();
+        } else {
+          this.disconnect();
+        }
+      });
+
+    this.jwtAuthStateService.tokenRefreshed$
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
-        this.initialized.set(true);
-        this.connectToLiveUpdates();
+        if (this.sseSubscription) {
+          this.connectToLiveUpdates();
+        }
       });
   }
 
+  disconnect(): void {
+    this.sseSubscription?.unsubscribe();
+    this.sseSubscription = null;
+  }
+
   private connectToLiveUpdates(): void {
-    this.sseClient
+    this.disconnect();
+
+    this.sseSubscription = this.sseClient
       .stream(
         this.baseUrl,
         {

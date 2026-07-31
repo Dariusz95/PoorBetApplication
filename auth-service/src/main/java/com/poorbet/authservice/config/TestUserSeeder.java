@@ -11,22 +11,22 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-@Profile("dev")
+@Profile({"dev", "prod"})
 @RequiredArgsConstructor
-public class DevTestUserSeeder implements ApplicationRunner {
-
-    private static final String TEST_USER_EMAIL = "test@test.pl";
-    private static final String TEST_USER_PASSWORD = "zaq1@WSX";
+public class TestUserSeeder implements ApplicationRunner {
 
     private final UserService userService;
+    private final TestUserProperties testUserProperties;
 
     @Override
     public void run(ApplicationArguments args) {
-        if (userService.emailExists(TEST_USER_EMAIL)) {
+        String email = testUserProperties.getEmail();
+
+        if (userService.emailExists(email)) {
             return;
         }
 
-        userService.register(new UserRegisterDto(TEST_USER_EMAIL, TEST_USER_PASSWORD));
-        log.info("A test account has been created for the dev profile: {}", TEST_USER_EMAIL);
+        userService.register(new UserRegisterDto(email, testUserProperties.getPassword()));
+        log.info("A test account has been created: {}", email);
     }
 }

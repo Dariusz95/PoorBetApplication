@@ -14,12 +14,17 @@ public class JwtResponse {
     private List<String> roles;
     private List<String> permissions;
     private long expiresAt;
+    private String refreshToken;
+    private long refreshExpiresAt;
 
-    public JwtResponse(String token, String username, List<String> roles, List<String> permissions, long expiresAt) {
+    public JwtResponse(String token, String username, List<String> roles, List<String> permissions, long expiresAt,
+                        String refreshToken, long refreshExpiresAt) {
         this.token = token;
         this.username = username;
         this.roles = roles;
         this.permissions = permissions;
         this.expiresAt = expiresAt;
+        this.refreshToken = refreshToken;
+        this.refreshExpiresAt = refreshExpiresAt;
     }
 }

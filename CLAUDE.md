@@ -126,7 +126,8 @@ Struktura: `e2e/tests/` (testy), `e2e/pages/` (Page Object Model, lokatory przez
 po to), `e2e/support/` (klient API, generator danych testowych, odczyt zmiennych
 środowiskowych). Konto do testów wymagających zalogowania (`SETUP_USER` w
 `e2e/support/test-user.ts`, `test@test.pl`) jest seedowane automatycznie przez
-`DevTestUserSeeder` w `auth-service` (profil `dev`) — testy logują się na nie
+`TestUserSeeder` w `auth-service` (profile `dev` i `prod` — to samo konto działa
+też na produkcji jako szybkie demo) — testy logują się na nie
 bezpośrednio przez API tam, gdzie potrzebują sesji (patrz
 `guarded-routes.spec.ts`), bez osobnego projektu "setup"/pliku storageState —
 przy jednym konsumencie to była zbędna warstwa pośrednia.
@@ -247,11 +248,15 @@ Auth-service generuje tokeny JWT podpisywane kluczem RSA.
 
 Pozostałe mikroserwisy weryfikują tokeny przy pomocy biblioteki `poorbet-auth-starter`, konfigurowanej za pomocą właściwości `poorbet.security.*`.
 
-Komunikacja między serwisami wykorzystuje Client Credentials Flow. Każdy serwis posiada własne dane dostępowe:
+Komunikacja między serwisami wykorzystuje Client Credentials Flow. Każdy serwis czyta zarówno swoje `client-id`, jak i `client-secret`, z **własnej, dedykowanej** pary zmiennych środowiskowych (żeby uniknąć sytuacji, w której wszystkie serwisy współdzielą jedną nazwę zmiennej pod różnymi wartościami):
 
 ```text
-AUTH_SERVICE_CLIENT_ID
-AUTH_SERVICE_CLIENT_SECRET
+MATCH_SERVICE_CLIENT_ID             # id match-service jako klienta OAuth (domyślnie "match-service")
+MATCH_SERVICE_CLIENT_SECRET         # sekret match-service (czytany przez match-service oraz rejestrowany w auth-service)
+COUPON_SERVICE_CLIENT_ID            # id coupon-service jako klienta OAuth (analogicznie)
+COUPON_SERVICE_CLIENT_SECRET        # sekret coupon-service (analogicznie)
+ODDS_ENGINE_SERVICE_CLIENT_ID       # id odds-engine-service (obecnie nieużywane — serwis nie jest jeszcze zarejestrowany jako klient OAuth w auth-service)
+ODDS_ENGINE_SERVICE_CLIENT_SECRET   # sekret odds-engine-service (analogicznie nieużywany)
 ```
 
 Adnotacje `@PreAuthorize` wykorzystują stałe z klasy `PoorbetPermissions` znajdującej się w bibliotece współdzielonej.

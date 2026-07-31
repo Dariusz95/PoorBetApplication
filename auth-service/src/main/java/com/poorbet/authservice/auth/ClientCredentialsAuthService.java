@@ -6,9 +6,11 @@ import com.poorbet.authstarter.security.PoorbetTokenTypes;
 import com.poorbet.authservice.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.codec.Utf8;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.security.MessageDigest;
 import java.util.List;
 
 @Service
@@ -26,7 +28,7 @@ public class ClientCredentialsAuthService {
         }
 
         AuthClientsProperties.ClientRegistration clientRegistration = authClientsProperties.getClients().get(request.clientId());
-        if (clientRegistration == null || clientRegistration.getSecret() == null || !clientRegistration.getSecret().equals(request.clientSecret())) {
+        if (clientRegistration == null || clientRegistration.getSecret() == null || !secretsMatch(clientRegistration.getSecret(), request.clientSecret())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid client credentials");
         }
 
@@ -41,5 +43,9 @@ public class ClientCredentialsAuthService {
         );
         long expiresIn = jwtUtil.getAccessTokenExpiration() / 1000;
         return new TokenResponse(token, "Bearer", expiresIn);
+    }
+
+    private boolean secretsMatch(String registeredSecret, String providedSecret) {
+        return MessageDigest.isEqual(Utf8.encode(registeredSecret), Utf8.encode(providedSecret));
     }
 }

@@ -6,7 +6,6 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { PbImageComponent } from '@shared/ui/pb-image/pb-image.component';
 import { PbSpinnerComponent } from '@shared/ui/pb-spinner/pb-spinner.component';
 import { filter } from 'rxjs/internal/operators/filter';
-import { take } from 'rxjs/internal/operators/take';
 
 @Component({
   selector: 'app-user-balance',
@@ -29,7 +28,7 @@ export class UserBalanceComponent {
   protected readonly balanceLoading = this.accountService.loading;
 
   constructor() {
-    this.isLoggedIn$.pipe(filter(Boolean), take(1)).subscribe(() => {
+    this.isLoggedIn$.pipe(filter(Boolean)).subscribe(() => {
       this.accountService.ensureAccountStateLoaded();
     });
   }

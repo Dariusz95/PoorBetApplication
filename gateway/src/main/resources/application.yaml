@@ -83,11 +83,11 @@ springdoc:
 
 poorbet:
   security:
-    enabled: false
     jwk-set-uri: ${AUTH_JWKS_URI}
     issuer: ${AUTH_ISSUER_URI}
     unprotected-paths:
       - /api/users/login
+      - /api/users/login-test-user
       - /api/users/register
       - /api/match-pool/**
       - /api/teams/public/**
