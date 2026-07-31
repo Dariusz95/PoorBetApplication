@@ -18,6 +18,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class JwtUtil {
 
+    private static final String REFRESH_TOKEN_PURPOSE = "refresh";
+
     private final RsaKeyProvider rsaKeyProvider;
 
     @Value("${jwt.issuer:poorbet-auth-service}")
@@ -57,7 +59,7 @@ public class JwtUtil {
     }
 
     public String generateRefreshToken(String email) {
-        return generateToken(email, refreshTokenExpiration, Map.of());
+        return generateToken(email, refreshTokenExpiration, Map.of("token_purpose", REFRESH_TOKEN_PURPOSE));
     }
 
     private String generateToken(String subject, Long expiration, Map<String, Object> claims) {
@@ -85,15 +87,26 @@ public class JwtUtil {
     }
 
     public String getEmailFromToken(String token) {
-        Claims claims = Jwts.parser()
+        return parseClaims(token).getSubject();
+    }
+
+    public boolean isRefreshToken(String token) {
+        return REFRESH_TOKEN_PURPOSE.equals(parseClaims(token).get("token_purpose", String.class));
+    }
+
+    private Claims parseClaims(String token) {
+        return Jwts.parser()
                 .verifyWith(rsaKeyProvider.publicKey())
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
-        return claims.getSubject();
     }
 
     public Long getAccessTokenExpiration() {
         return accessTokenExpiration;
+    }
+
+    public Long getRefreshTokenExpiration() {
+        return refreshTokenExpiration;
     }
 }

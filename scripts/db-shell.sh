@@ -14,23 +14,23 @@ declare -A CONTAINER=(
   [auth]=user-db
   [match]=match-db
   [coupon]=coupon-db
-  [wallet]=wallet-db
+  [account]=account-db
 )
 declare -A DB_USER_KEY=(
   [auth]=POSTGRES_AUTH_USER
   [match]=POSTGRES_MATCH_USER
   [coupon]=POSTGRES_COUPON_USER
-  [wallet]=POSTGRES_WALLET_USER
+  [account]=POSTGRES_ACCOUNT_USER
 )
 declare -A DB_NAME_KEY=(
   [auth]=POSTGRES_AUTH_DB
   [match]=POSTGRES_MATCH_DB
   [coupon]=POSTGRES_COUPON_DB
-  [wallet]=POSTGRES_WALLET_DB
+  [account]=POSTGRES_ACCOUNT_DB
 )
 
 if [[ -z "$SERVICE" || -z "${CONTAINER[$SERVICE]:-}" ]]; then
-  echo "Użycie: $0 <auth|match|coupon|wallet> [dodatkowe argumenty psql, np. -c \"SELECT ...\"]" >&2
+  echo "Użycie: $0 <auth|match|coupon|account> [dodatkowe argumenty psql, np. -c \"SELECT ...\"]" >&2
   echo "Dostępne bazy: ${!CONTAINER[*]}" >&2
   exit 1
 fi
@@ -51,7 +51,7 @@ fi
 
 # `tr -d '\r'` usuwa końcówkę CR z plików .env zapisanych z zakończeniami
 # linii CRLF (Windows) — bez tego wartość zawiera niewidoczny znak `\r` i
-# psql dostaje np. rolę "wallet_user\r", która "nie istnieje".
+# psql dostaje np. rolę "account_user\r", która "nie istnieje".
 DB_USER="$(grep -E "^${DB_USER_KEY[$SERVICE]}=" "$ENV_FILE" | tail -n1 | cut -d= -f2- | tr -d '\r')"
 DB_NAME="$(grep -E "^${DB_NAME_KEY[$SERVICE]}=" "$ENV_FILE" | tail -n1 | cut -d= -f2- | tr -d '\r')"
 

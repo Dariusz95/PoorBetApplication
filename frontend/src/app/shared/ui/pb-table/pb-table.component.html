@@ -11,7 +11,7 @@
             (click)="onHeaderClick(column)"
           >
             <span class="pb-table__header-label">
-              {{ column.header }}
+              {{ column.header | transloco }}
               @if (column.sortable && sortState()?.key === column.key) {
                 <span class="pb-table__sort-icon">
                   {{ sortState()?.direction === "asc" ? "▲" : "▼" }}

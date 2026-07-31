@@ -10,7 +10,7 @@
           *ngTemplateOutlet="tabButtonContent(); context: { $implicit: tab }"
         ></ng-container>
       } @else {
-        <span class="tab-button__label">{{ tab.label }}</span>
+        <span class="tab-button__label">{{ tab.label | transloco }}</span>
       }
     </button>
   }

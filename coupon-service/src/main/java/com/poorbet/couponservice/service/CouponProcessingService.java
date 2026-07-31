@@ -72,7 +72,8 @@ public class CouponProcessingService {
                     CouponWonEvent wonEvent = new CouponWonEvent(coupon.getId(),
                             coupon.getReservationId(),
                             coupon.getUserId(),
-                            coupon.getPotentialPayout()
+                            coupon.getPotentialPayout(),
+                            coupon.getStake()
                     );
 
                     outboxService.saveEvent(CouponEvents.COUPON_WON, wonEvent);

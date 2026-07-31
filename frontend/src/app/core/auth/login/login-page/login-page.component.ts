@@ -49,23 +49,25 @@ export class LoginPageComponent {
   readonly submittingTestUser = signal(false);
 
   onSubmitForm(event: LoginModel): void {
-    const request = this.getRequest(event);
     const submittingSignal = event.loginAsTestUser
       ? this.submittingTestUser
       : this.submitting;
 
     submittingSignal.set(true);
 
-    this.authService
-      .login(request)
+    const login$ = event.loginAsTestUser
+      ? this.authService.loginAsTestUser()
+      : this.authService.login(this.getRequest(event));
+
+    login$
       .pipe(finalize(() => submittingSignal.set(false)))
       .subscribe(() => this.router.navigate(RouteLink[RoutePath.App]));
   }
 
   private getRequest(event: LoginModel): LoginRequest {
     return {
-      email: event.email,
-      password: event.password,
+      email: event.email!,
+      password: event.password!,
     };
   }
 }

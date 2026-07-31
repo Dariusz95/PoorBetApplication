@@ -8,4 +8,5 @@ export interface RankingCoupon {
   potentialPayout: number;
   createdAt: string;
   totalOdds: number;
+  level: number;
 }

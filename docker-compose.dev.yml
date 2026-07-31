@@ -105,8 +105,8 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_MATCH_PASSWORD}
       - INSTANCE_ID=match-1
       - AUTH_SERVICE_URL=${AUTH_SERVICE_URL}
-      - AUTH_SERVICE_CLIENT_ID=match-service
-      - AUTH_SERVICE_CLIENT_SECRET=${AUTH_SERVICE_CLIENT_SECRET}
+      - MATCH_SERVICE_CLIENT_ID=${MATCH_SERVICE_CLIENT_ID:-match-service}
+      - MATCH_SERVICE_CLIENT_SECRET=${MATCH_SERVICE_CLIENT_SECRET}
 
   coupon-service:
     <<: [*resource-heavy]
@@ -126,24 +126,27 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://coupon-db:5432/${POSTGRES_COUPON_DB}
       - POSTGRES_USER=${POSTGRES_COUPON_USER}
       - POSTGRES_PASSWORD=${POSTGRES_COUPON_PASSWORD}
+      - AUTH_SERVICE_URL=${AUTH_SERVICE_URL}
+      - COUPON_SERVICE_CLIENT_ID=${COUPON_SERVICE_CLIENT_ID:-coupon-service}
+      - COUPON_SERVICE_CLIENT_SECRET=${COUPON_SERVICE_CLIENT_SECRET}
 
-  wallet-service:
+  account-service:
     <<: [*resource-medium]
     build:
-      context: ./wallet-service
+      context: ./account-service
       dockerfile: Dockerfile.dev
     ports:
       - "8087:8080"
       - "5077:5077"
     volumes:
-      - ./wallet-service:/app
+      - ./account-service:/app
       - ~/.m2:/root/.m2
     environment:
       - SPRING_PROFILES_ACTIVE=dev
       - JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=75.0
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://wallet-db:5432/${POSTGRES_WALLET_DB}
-      - POSTGRES_USER=${POSTGRES_WALLET_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_WALLET_PASSWORD}
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://account-db:5432/${POSTGRES_ACCOUNT_DB}
+      - POSTGRES_USER=${POSTGRES_ACCOUNT_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_ACCOUNT_PASSWORD}
 
   notification-service:
     <<: [*resource-medium]
@@ -181,7 +184,7 @@ services:
       - "5432:5432"
     <<: [*resource-db]
 
-  wallet-db:
+  account-db:
     image: postgres:16
     ports:
       - "5437:5432"

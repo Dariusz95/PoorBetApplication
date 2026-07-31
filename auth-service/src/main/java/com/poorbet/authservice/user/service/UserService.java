@@ -14,5 +14,11 @@ public interface UserService {
 
     JwtResponse login(UserLoginDto loginDto);
 
+    JwtResponse loginAsTestUser();
+
+    JwtResponse refresh(RefreshTokenRequest request);
+
+    void logout(RefreshTokenRequest request);
+
     UserBatchLookupResponse lookup(Set<UUID> ids);
 }

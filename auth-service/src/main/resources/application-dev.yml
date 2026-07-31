@@ -65,15 +65,22 @@ oauth:
         - internal
       audiences:
         - match-service
+        - auth-service
+        - account-service
 
 poorbet:
   security:
     enabled: true
     jwk-set-uri: ${AUTH_JWKS_URI}
     issuer: ${AUTH_ISSUER_URI}
+    internal-audience:
+      - auth-service
     unprotected-paths:
       - /api/users/login
+      - /api/users/login-test-user
       - /api/users/register
+      - /api/users/refresh
+      - /api/users/logout
       - /oauth/token
       - /.well-known/jwks.json
       - /actuator/health/**

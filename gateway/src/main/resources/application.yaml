@@ -22,10 +22,10 @@ spring:
           predicates:
             - Path=/api/coupons/**
 
-        - id: wallet-service
-          uri: http://wallet-service:8080
+        - id: account-service
+          uri: http://account-service:8080
           predicates:
-            - Path=/api/wallet/**
+            - Path=/api/account/**
 
         - id: notification-service
           uri: http://notification-service:8080
@@ -53,12 +53,12 @@ spring:
           filters:
             - RewritePath=/v3/api-docs/coupon-service, /v3/api-docs
 
-        - id: wallet-service-docs
-          uri: http://wallet-service:8080
+        - id: account-service-docs
+          uri: http://account-service:8080
           predicates:
-            - Path=/v3/api-docs/wallet-service
+            - Path=/v3/api-docs/account-service
           filters:
-            - RewritePath=/v3/api-docs/wallet-service, /v3/api-docs
+            - RewritePath=/v3/api-docs/account-service, /v3/api-docs
 
         - id: notification-service-docs
           uri: http://notification-service:8080
@@ -76,18 +76,18 @@ springdoc:
         url: /v3/api-docs/match-service
       - name: coupon-service
         url: /v3/api-docs/coupon-service
-      - name: wallet-service
-        url: /v3/api-docs/wallet-service
+      - name: account-service
+        url: /v3/api-docs/account-service
       - name: notification-service
         url: /v3/api-docs/notification-service
 
 poorbet:
   security:
-    enabled: false
     jwk-set-uri: ${AUTH_JWKS_URI}
     issuer: ${AUTH_ISSUER_URI}
     unprotected-paths:
       - /api/users/login
+      - /api/users/login-test-user
       - /api/users/register
       - /api/match-pool/**
       - /api/teams/public/**

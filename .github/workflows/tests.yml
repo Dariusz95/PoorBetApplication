@@ -31,7 +31,7 @@ jobs:
             coupon-service,
             match-service,
             odds-engine-service,
-            wallet-service,
+            account-service,
             notification-service,
           ]
 

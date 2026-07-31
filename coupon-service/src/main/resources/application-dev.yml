@@ -1,6 +1,6 @@
 spring:
   application:
-    name: couponservice
+    name: coupon-service
   datasource:
     url: ${SPRING_DATASOURCE_URL}
     username: ${POSTGRES_USER}
@@ -33,8 +33,8 @@ poorbet:
 auth:
   service:
     url: ${AUTH_SERVICE_URL:http://auth-service:8080}
-    client-id: ${AUTH_SERVICE_CLIENT_ID:coupon-service}
-    client-secret: ${AUTH_SERVICE_CLIENT_SECRET:secret}
+    client-id: ${COUPON_SERVICE_CLIENT_ID:coupon-service}
+    client-secret: ${COUPON_SERVICE_CLIENT_SECRET:secret}
     timeout:
       connect: ${AUTH_SERVICE_CONNECT_TIMEOUT:2s}
       read: ${AUTH_SERVICE_READ_TIMEOUT:3s}
@@ -48,7 +48,7 @@ match:
 
 wallet:
   service:
-    url: http://wallet-service:8080
+    url: http://account-service:8080
     timeout:
       connect: 2s
       read: 3s

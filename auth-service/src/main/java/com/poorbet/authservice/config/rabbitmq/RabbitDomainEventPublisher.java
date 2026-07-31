@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class RabbitDomainEventPublisher {
@@ -16,6 +18,7 @@ public class RabbitDomainEventPublisher {
             EventDefinition<T> event, T payload, String source
     ) {
         EventEnvelope<T> envelope = new EventEnvelope<>(
+                UUID.randomUUID(),
                 event.eventType(),
                 event.version(),
                 source,

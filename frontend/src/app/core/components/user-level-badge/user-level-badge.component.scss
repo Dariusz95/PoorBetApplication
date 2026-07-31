@@ -1,0 +1,39 @@
+@use "components/badge" as badge;
+
+.user-level-badge {
+  @include badge.pb-badge-base;
+  @include badge.pb-badge-tone(var(--color-primary));
+}
+
+.user-level-badge--expanded {
+  @apply flex flex-col items-stretch gap-1;
+  background: none;
+  padding: 0;
+  border-radius: 0;
+}
+
+.user-level-badge__level {
+  @apply t-heading-xs;
+  color: var(--color-primary);
+}
+
+.user-level-badge__bonus {
+  @apply t-body-sm t-muted;
+}
+
+.user-level-badge__progress-track {
+  @apply w-full overflow-hidden rounded-full;
+  height: 0.4rem;
+  background-color: var(--color-primary-soft);
+}
+
+.user-level-badge__progress-fill {
+  height: 100%;
+  border-radius: 9999px;
+  background-color: var(--color-primary);
+  transition: width var(--duration-base) var(--ease-standard);
+}
+
+.user-level-badge__exp-label {
+  @apply t-body-sm t-muted;
+}

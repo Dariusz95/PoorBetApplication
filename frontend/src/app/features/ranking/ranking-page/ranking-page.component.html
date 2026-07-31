@@ -9,7 +9,7 @@
   </header>
 
   <pb-tabs
-    [tabs]="metricTabs()"
+    [tabs]="metricTabs"
     [selectedTab]="activeMetric()"
     (selectedTabChange)="onMetricChange($event)"
   ></pb-tabs>
@@ -56,8 +56,13 @@
   }
 </ng-template>
 
-<ng-template #playerCell let-value>
-  <span class="ranking-player__name">{{ value }}</span>
+<ng-template #playerCell let-value let-row="row">
+  <span class="ranking-player">
+    <span class="ranking-player__name">{{ value }}</span>
+    <span class="ranking-player__level">
+      {{ "wallet.levelAbbreviation" | transloco }} {{ row.level }}
+    </span>
+  </span>
 </ng-template>
 
 <ng-template #oddsCell let-value>

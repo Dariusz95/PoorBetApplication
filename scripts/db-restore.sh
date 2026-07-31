@@ -12,23 +12,23 @@ declare -A CONTAINER=(
   [auth]=user-db
   [match]=match-db
   [coupon]=coupon-db
-  [wallet]=wallet-db
+  [account]=account-db
 )
 declare -A DB_USER_KEY=(
   [auth]=POSTGRES_AUTH_USER
   [match]=POSTGRES_MATCH_USER
   [coupon]=POSTGRES_COUPON_USER
-  [wallet]=POSTGRES_WALLET_USER
+  [account]=POSTGRES_ACCOUNT_USER
 )
 declare -A DB_NAME_KEY=(
   [auth]=POSTGRES_AUTH_DB
   [match]=POSTGRES_MATCH_DB
   [coupon]=POSTGRES_COUPON_DB
-  [wallet]=POSTGRES_WALLET_DB
+  [account]=POSTGRES_ACCOUNT_DB
 )
 
 if [[ -z "$SERVICE" || -z "${CONTAINER[$SERVICE]:-}" || -z "$DUMP_FILE" ]]; then
-  echo "Użycie: $0 <auth|match|coupon|wallet> <ścieżka-do-dumpa>" >&2
+  echo "Użycie: $0 <auth|match|coupon|account> <ścieżka-do-dumpa>" >&2
   echo "Dostępne bazy: ${!CONTAINER[*]}" >&2
   exit 1
 fi

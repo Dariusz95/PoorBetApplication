@@ -4,6 +4,7 @@ import {
   provideHttpClientTesting,
 } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { AccountService } from '@core/account/services/account.service';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { LoginRequest } from '../requests/login-request';
 import { RegisterRequest } from '../requests/register-request';
@@ -15,12 +16,20 @@ describe('AuthService', () => {
   let service: AuthService;
   let httpMock: HttpTestingController;
   let jwtAuthState: any;
+  let accountService: any;
 
   beforeEach(() => {
     const jwtAuthStateSpy = {
       setToken: vi.fn(),
       clearToken: vi.fn(),
       isAuthenticated: vi.fn(),
+      setRefreshToken: vi.fn(),
+      getRefreshToken: vi.fn(),
+      clearRefreshToken: vi.fn(),
+    };
+
+    const accountServiceSpy = {
+      reset: vi.fn(),
     };
 
     TestBed.configureTestingModule({
@@ -29,12 +38,14 @@ describe('AuthService', () => {
         provideHttpClientTesting(),
         AuthService,
         { provide: JwtAuthStateService, useValue: jwtAuthStateSpy },
+        { provide: AccountService, useValue: accountServiceSpy },
       ],
     });
 
     service = TestBed.inject(AuthService);
     httpMock = TestBed.inject(HttpTestingController);
     jwtAuthState = TestBed.inject(JwtAuthStateService);
+    accountService = TestBed.inject(AccountService);
   });
 
   afterEach(() => {
@@ -93,6 +104,7 @@ describe('AuthService', () => {
         roles: ['USER'],
         expiresAt: 0,
         token: 'mock-jwt-token',
+        refreshToken: 'mock-refresh-token',
       };
 
       jwtAuthState.isAuthenticated.mockReturnValue(true);
@@ -106,7 +118,7 @@ describe('AuthService', () => {
       req.flush(loginResponse);
     });
 
-    it('should store token and update login status on successful login', () => {
+    it('should store access and refresh tokens and update login status on successful login', () => {
       const loginRequest: LoginRequest = {
         email: 'test@example.com',
         password: 'password123',
@@ -118,6 +130,7 @@ describe('AuthService', () => {
         roles: ['USER'],
         expiresAt: 0,
         token: 'mock-jwt-token',
+        refreshToken: 'mock-refresh-token',
       };
 
       jwtAuthState.isAuthenticated.mockReturnValue(true);
@@ -129,6 +142,9 @@ describe('AuthService', () => {
 
       return promise!.then(() => {
         expect(jwtAuthState.setToken).toHaveBeenCalledWith('mock-jwt-token');
+        expect(jwtAuthState.setRefreshToken).toHaveBeenCalledWith(
+          'mock-refresh-token',
+        );
       });
     });
 
@@ -144,6 +160,7 @@ describe('AuthService', () => {
         roles: ['USER'],
         expiresAt: 0,
         token: 'mock-jwt-token',
+        refreshToken: 'mock-refresh-token',
       };
 
       jwtAuthState.isAuthenticated.mockReturnValue(true);
@@ -166,7 +183,7 @@ describe('AuthService', () => {
       });
     });
 
-    it('should not store token if response lacks token', () => {
+    it('should not store tokens if response lacks token', () => {
       const loginRequest: LoginRequest = {
         email: 'test@example.com',
         password: 'password123',
@@ -181,6 +198,7 @@ describe('AuthService', () => {
 
       return promise!.then(() => {
         expect(jwtAuthState.setToken).not.toHaveBeenCalled();
+        expect(jwtAuthState.setRefreshToken).not.toHaveBeenCalled();
       });
     });
 
@@ -208,6 +226,89 @@ describe('AuthService', () => {
     });
   });
 
+  describe('refresh', () => {
+    it('should send POST request with the stored refresh token and store new tokens', () => {
+      jwtAuthState.getRefreshToken.mockReturnValue('old-refresh-token');
+      jwtAuthState.isAuthenticated.mockReturnValue(true);
+
+      const refreshResponse: LoginResponse = {
+        tokenType: 'Bearer',
+        username: 'testuser',
+        roles: ['USER'],
+        expiresAt: 0,
+        token: 'new-jwt-token',
+        refreshToken: 'new-refresh-token',
+      };
+
+      const promise = service.refresh().toPromise();
+
+      const req = httpMock.expectOne((req) => req.url.includes('/refresh'));
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual({ refreshToken: 'old-refresh-token' });
+
+      req.flush(refreshResponse);
+
+      return promise!.then(() => {
+        expect(jwtAuthState.setToken).toHaveBeenCalledWith('new-jwt-token');
+        expect(jwtAuthState.setRefreshToken).toHaveBeenCalledWith(
+          'new-refresh-token',
+        );
+      });
+    });
+
+    it('should dedupe concurrent refresh calls into a single HTTP request', () => {
+      jwtAuthState.getRefreshToken.mockReturnValue('old-refresh-token');
+      jwtAuthState.isAuthenticated.mockReturnValue(true);
+
+      const refresh$ = service.refresh();
+      expect(service.refresh()).toBe(refresh$);
+
+      refresh$.subscribe();
+      service.refresh().subscribe();
+
+      const requests = httpMock.match((req) => req.url.includes('/refresh'));
+      expect(requests.length).toBe(1);
+
+      requests[0].flush({
+        tokenType: 'Bearer',
+        username: 'testuser',
+        roles: ['USER'],
+        expiresAt: 0,
+        token: 'new-jwt-token',
+        refreshToken: 'new-refresh-token',
+      } as LoginResponse);
+    });
+
+    it('should allow a new refresh call after the previous one completed', () => {
+      jwtAuthState.getRefreshToken.mockReturnValue('old-refresh-token');
+      jwtAuthState.isAuthenticated.mockReturnValue(true);
+
+      service.refresh().subscribe();
+      httpMock
+        .expectOne((req) => req.url.includes('/refresh'))
+        .flush({
+          tokenType: 'Bearer',
+          username: 'testuser',
+          roles: ['USER'],
+          expiresAt: 0,
+          token: 'first-token',
+          refreshToken: 'first-refresh-token',
+        } as LoginResponse);
+
+      service.refresh().subscribe();
+      httpMock
+        .expectOne((req) => req.url.includes('/refresh'))
+        .flush({
+          tokenType: 'Bearer',
+          username: 'testuser',
+          roles: ['USER'],
+          expiresAt: 0,
+          token: 'second-token',
+          refreshToken: 'second-refresh-token',
+        } as LoginResponse);
+    });
+  });
+
   describe('logout', () => {
     it('should clear token and update login status', () => {
       jwtAuthState.isAuthenticated.mockReturnValue(false);
@@ -221,12 +322,23 @@ describe('AuthService', () => {
       });
 
       service.logout();
+      httpMock.expectOne((req) => req.url.includes('/logout')).flush(null);
 
       expect(emitted).toBe(true);
       expect(emittedValue).toBe(false);
       expect(jwtAuthState.clearToken).toHaveBeenCalled();
+      expect(jwtAuthState.clearRefreshToken).toHaveBeenCalled();
 
       subscription.unsubscribe();
+    });
+
+    it('should reset AccountService state so the next login always refetches fresh account data', () => {
+      jwtAuthState.isAuthenticated.mockReturnValue(false);
+
+      service.logout();
+      httpMock.expectOne((req) => req.url.includes('/logout')).flush(null);
+
+      expect(accountService.reset).toHaveBeenCalled();
     });
 
     it('should emit false on isLoggedIn$', () => {
@@ -243,11 +355,24 @@ describe('AuthService', () => {
       });
 
       service.logout();
+      httpMock.expectOne((req) => req.url.includes('/logout')).flush(null);
 
       expect(emitted).toBe(true);
       expect(emittedValue).toBe(false);
 
       subscription.unsubscribe();
+    });
+
+    it('should clear local state even if the backend logout request fails', () => {
+      jwtAuthState.isAuthenticated.mockReturnValue(false);
+
+      service.logout();
+      httpMock
+        .expectOne((req) => req.url.includes('/logout'))
+        .flush(null, { status: 500, statusText: 'Server Error' });
+
+      expect(jwtAuthState.clearToken).toHaveBeenCalled();
+      expect(jwtAuthState.clearRefreshToken).toHaveBeenCalled();
     });
   });
 

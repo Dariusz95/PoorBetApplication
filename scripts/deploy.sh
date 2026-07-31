@@ -52,14 +52,20 @@ echo "==> docker compose pull"
 "${COMPOSE[@]}" pull
 
 echo "==> docker compose up -d"
-# --wait (Compose v2.17+) czeka, aż wszystkie serwisy z healthcheckiem
-# (już zdefiniowane w docker-compose.yml, Etap 4) osiągną `healthy`, i kończy
-# się kodem != 0, jeśli któryś nie wstanie w wyznaczonym czasie. To jedyny
-# automatyczny "safety net" w tym flow — bez tego `up -d` zwraca 0
-# natychmiast, niezależnie od tego, czy nowe obrazy w ogóle wstają, a CD
-# fałszywie pokazywałby zielony deploy.
-# --remove-orphans sprząta kontenery serwisów usuniętych z compose files.
-"${COMPOSE[@]}" up -d --remove-orphans --wait --wait-timeout 300
+
+STAGE_WAIT_TIMEOUT=180
+
+echo "==> Etap 1/3: bazy danych, redis, rabbitmq"
+"${COMPOSE[@]}" up -d --remove-orphans --wait --wait-timeout "$STAGE_WAIT_TIMEOUT" \
+  user-db match-db account-db coupon-db redis rabbitmq
+
+echo "==> Etap 2/3: auth-service, odds-engine-service (najwolniejszy start)"
+"${COMPOSE[@]}" up -d --remove-orphans --wait --wait-timeout "$STAGE_WAIT_TIMEOUT" \
+  auth-service odds-engine-service
+
+echo "==> Etap 3/3: pozostałe serwisy"
+"${COMPOSE[@]}" up -d --remove-orphans --wait --wait-timeout "$STAGE_WAIT_TIMEOUT" \
+  gateway match-service coupon-service account-service notification-service frontend
 
 echo "==> Status kontenerów"
 "${COMPOSE[@]}" ps
@@ -68,10 +74,7 @@ echo "==> Porządki: usuwanie osieroconych (dangling) warstw obrazów"
 docker image prune -f
 
 echo "==> Porządki: usuwanie starszych tagów poorbet-* (inne niż aktualny IMAGE_TAG)"
-# Celowo NIE -a/-f na całym `docker image prune` (usunęłoby też obrazy
-# niezwiązane z tym projektem). Usuwamy tylko stare wersje obrazów poorbet;
-# błąd usunięcia pojedynczego obrazu (np. bo wciąż referowany) nie przerywa
-# skryptu — to tylko sprzątanie, nie krytyczny krok deployu.
+
 docker image ls --format '{{.Repository}}:{{.Tag}}' \
   | grep -E '^ghcr\.io/dariusz95/poorbet-' \
   | grep -v ":${IMAGE_TAG}$" \

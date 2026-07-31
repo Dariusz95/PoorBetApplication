@@ -51,6 +51,26 @@ describe('JwtAuthStateService', () => {
     });
   });
 
+  describe('tokenRefreshed$', () => {
+    it('should emit when a valid token is set', () => {
+      const emissions: void[] = [];
+      service.tokenRefreshed$.subscribe((value) => emissions.push(value));
+
+      service.setToken(buildToken({ sub: 'user-1', exp: futureExp }));
+
+      expect(emissions.length).toBe(1);
+    });
+
+    it('should not emit when the token being set is already expired', () => {
+      const emissions: void[] = [];
+      service.tokenRefreshed$.subscribe((value) => emissions.push(value));
+
+      service.setToken(buildToken({ sub: 'user-1', exp: pastExp }));
+
+      expect(emissions.length).toBe(0);
+    });
+  });
+
   describe('clearToken', () => {
     it('should remove the stored token', () => {
       service.setToken(buildToken({ sub: 'user-1', exp: futureExp }));
@@ -111,6 +131,35 @@ describe('JwtAuthStateService', () => {
       service.setToken(buildToken({ sub: 'user-42', exp: futureExp }));
 
       expect(service.getSubject()).toBe('user-42');
+    });
+  });
+
+  describe('setRefreshToken / getRefreshToken / clearRefreshToken', () => {
+    it('should return null when there is no refresh token', () => {
+      expect(service.getRefreshToken()).toBeNull();
+    });
+
+    it('should store a refresh token and make it retrievable', () => {
+      service.setRefreshToken('a-refresh-token');
+
+      expect(service.getRefreshToken()).toBe('a-refresh-token');
+    });
+
+    it('should remove the stored refresh token', () => {
+      service.setRefreshToken('a-refresh-token');
+
+      service.clearRefreshToken();
+
+      expect(service.getRefreshToken()).toBeNull();
+    });
+
+    it('should not affect the access token', () => {
+      service.setToken(buildToken({ sub: 'user-1', exp: futureExp }));
+      service.setRefreshToken('a-refresh-token');
+
+      service.clearRefreshToken();
+
+      expect(service.getToken()).not.toBeNull();
     });
   });
 });

@@ -66,7 +66,7 @@ public class CouponMapper {
         );
     }
 
-    public RankingCouponResponseDto toRankingCouponResponseDto(RankingCouponDto coupon, String email) {
+    public RankingCouponResponseDto toRankingCouponResponseDto(RankingCouponDto coupon, String email, int level) {
         return new RankingCouponResponseDto(
                 coupon.couponId(),
                 coupon.stake(),
@@ -74,7 +74,8 @@ public class CouponMapper {
                 coupon.status(),
                 coupon.potentialPayout(),
                 coupon.createdAt(),
-                coupon.totalOdds()
+                coupon.totalOdds(),
+                level
         );
     }
 }

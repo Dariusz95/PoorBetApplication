@@ -1,6 +1,7 @@
 package com.poorbet.authservice.user.controller;
 
 import com.poorbet.authservice.user.dto.JwtResponse;
+import com.poorbet.authservice.user.dto.RefreshTokenRequest;
 import com.poorbet.authservice.user.dto.UserLoginDto;
 import com.poorbet.authservice.user.dto.UserRegisterDto;
 import com.poorbet.authservice.user.dto.UserResponseDto;
@@ -40,5 +41,23 @@ public class UserController {
     public ResponseEntity<JwtResponse> login(@Valid @RequestBody UserLoginDto loginDto) {
         JwtResponse jwtResponse = userService.login(loginDto);
         return ResponseEntity.ok(jwtResponse);
+    }
+
+    @PostMapping("/login-test-user")
+    public ResponseEntity<JwtResponse> loginAsTestUser() {
+        JwtResponse jwtResponse = userService.loginAsTestUser();
+        return ResponseEntity.ok(jwtResponse);
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<JwtResponse> refresh(@Valid @RequestBody RefreshTokenRequest request) {
+        JwtResponse jwtResponse = userService.refresh(request);
+        return ResponseEntity.ok(jwtResponse);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(@RequestBody(required = false) RefreshTokenRequest request) {
+        userService.logout(request);
+        return ResponseEntity.noContent().build();
     }
 }

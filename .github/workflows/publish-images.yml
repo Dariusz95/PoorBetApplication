@@ -30,7 +30,7 @@ jobs:
           gateway,
           match-service,
           coupon-service,
-          wallet-service,
+          account-service,
           notification-service,
           odds-engine-service,
         ]
