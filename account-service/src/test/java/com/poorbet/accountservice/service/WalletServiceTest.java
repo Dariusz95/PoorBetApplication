@@ -3,6 +3,7 @@ package com.poorbet.accountservice.service;
 import com.poorbet.commons.rabbit.events.coupon.CouponWonEvent;
 import com.poorbet.commons.rabbit.events.wallet.WalletBalanceChangedEvent;
 import com.poorbet.commons.rabbit.events.wallet.WalletCreatedEvent;
+import com.poorbet.accountservice.dto.WalletResponse;
 import com.poorbet.accountservice.domain.exception.InsufficientFundsException;
 import com.poorbet.accountservice.domain.exception.WalletNotFoundException;
 import com.poorbet.accountservice.domain.model.AccountProgress;
@@ -106,29 +107,37 @@ class WalletServiceTest {
     // ==================== getWallet ====================
 
     @Test
-    @DisplayName("Should return wallet when found for user")
+    @DisplayName("Should return wallet DTO when found for user")
     void shouldReturnWalletWhenFound() {
         // Arrange
         Wallet wallet = walletWithBalance(BigDecimal.TEN);
         when(walletRepository.findByUserId(userId)).thenReturn(Optional.of(wallet));
 
         // Act
-        Wallet result = walletService.getWallet(userId);
+        WalletResponse result = walletService.getWallet(userId);
 
         // Assert
-        assertThat(result).isSameAs(wallet);
+        assertThat(result.userId()).isEqualTo(userId);
+        assertThat(result.balance()).isEqualByComparingTo("10");
     }
 
     @Test
-    @DisplayName("Should throw when wallet not found for user")
-    void shouldThrowWhenWalletNotFoundOnGet() {
+    @DisplayName("Should lazily create wallet with starting balance when not found for user (self-healing for lost USER_CREATED)")
+    void shouldCreateWalletLazilyWhenNotFoundOnGet() {
         // Arrange
         when(walletRepository.findByUserId(userId)).thenReturn(Optional.empty());
+        when(walletRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
-        // Act & Assert
-        assertThatThrownBy(() -> walletService.getWallet(userId))
-                .isInstanceOf(IllegalStateException.class)
-                .hasMessageContaining(userId.toString());
+        // Act
+        WalletResponse result = walletService.getWallet(userId);
+
+        // Assert
+        assertThat(result.userId()).isEqualTo(userId);
+        assertThat(result.balance()).isEqualByComparingTo("100");
+
+        ArgumentCaptor<WalletCreatedEvent> eventCaptor = ArgumentCaptor.forClass(WalletCreatedEvent.class);
+        verify(outboxService).saveEvent(any(), eventCaptor.capture());
+        assertThat(eventCaptor.getValue().userId()).isEqualTo(userId);
     }
 
     // ==================== debit ====================

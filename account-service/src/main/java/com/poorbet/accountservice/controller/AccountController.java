@@ -1,8 +1,8 @@
 package com.poorbet.accountservice.controller;
 
-import com.poorbet.accountservice.domain.model.Wallet;
 import com.poorbet.accountservice.dto.AccountProgressResponse;
 import com.poorbet.accountservice.dto.AccountResponse;
+import com.poorbet.accountservice.dto.WalletResponse;
 import com.poorbet.accountservice.security.CurrentUserProvider;
 import com.poorbet.accountservice.service.ProgressService;
 import com.poorbet.accountservice.service.WalletService;
@@ -23,12 +23,12 @@ public class AccountController {
 
     @GetMapping("/me")
     public AccountResponse me(Authentication authentication) {
-        Wallet wallet = walletService.getWallet(currentUserProvider.getUserId());
+        WalletResponse wallet = walletService.getWallet(currentUserProvider.getUserId());
         AccountProgressResponse progress = progressService.getProgressView(currentUserProvider.getUserId());
 
         return new AccountResponse(
-                wallet.getUserId(),
-                wallet.getBalance(),
+                wallet.userId(),
+                wallet.balance(),
                 progress.level(),
                 progress.currentExp(),
                 progress.requiredExpForNextLevel(),

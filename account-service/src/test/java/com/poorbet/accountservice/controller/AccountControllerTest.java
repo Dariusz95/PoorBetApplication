@@ -1,7 +1,7 @@
 package com.poorbet.accountservice.controller;
 
-import com.poorbet.accountservice.domain.model.Wallet;
 import com.poorbet.accountservice.dto.AccountProgressResponse;
+import com.poorbet.accountservice.dto.WalletResponse;
 import com.poorbet.accountservice.security.CurrentUserProvider;
 import com.poorbet.accountservice.service.ProgressService;
 import com.poorbet.accountservice.service.WalletService;
@@ -49,11 +49,7 @@ class AccountControllerTest {
     @DisplayName("Should return the wallet and level progress of the currently authenticated user")
     void shouldReturnCurrentUserWalletAndProgress() throws Exception {
         // Arrange
-        Wallet wallet = Wallet.builder()
-                .id(UUID.randomUUID())
-                .userId(userId)
-                .balance(new BigDecimal("42.50"))
-                .build();
+        WalletResponse wallet = new WalletResponse(userId, new BigDecimal("42.50"));
         when(walletService.getWallet(userId)).thenReturn(wallet);
         when(progressService.getProgressView(userId))
                 .thenReturn(new AccountProgressResponse(5, 950L, 1500L, 5));
@@ -70,10 +66,10 @@ class AccountControllerTest {
     }
 
     @Test
-    @DisplayName("Should return 500 when the user's wallet cannot be found")
-    void shouldReturn500WhenWalletMissing() throws Exception {
+    @DisplayName("Should return 500 when an unexpected error occurs while building the account view")
+    void shouldReturn500WhenWalletServiceFails() throws Exception {
         // Arrange
-        when(walletService.getWallet(userId)).thenThrow(new IllegalStateException("Wallet not found for user: " + userId));
+        when(walletService.getWallet(userId)).thenThrow(new IllegalStateException("Unexpected failure for user: " + userId));
 
         // Act & Assert
         mockMvc.perform(get("/api/account/me"))
