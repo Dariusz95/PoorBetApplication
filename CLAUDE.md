@@ -141,10 +141,21 @@ wyjątkiem w konstruktorze i strona zostawała pusta — to samo wystąpiłoby n
 produkcji pod zwykłym http:// bez TLS. Naprawione przez zamianę na pakiet
 `uuid` (`v4`), który nie ma tego ograniczenia.
 
-Zakres na razie obejmuje tylko przepływy `core/auth/` (logowanie, rejestracja,
-`authGuard`) — `features/bet`/`features/coupons` są świadomie pominięte, bo
-`match-service` generuje pule meczów cyklicznie i nie ma dev-owego endpointu
-seed/reset dla danych testowych.
+Zakres obejmuje przepływy `core/auth/` (logowanie, rejestracja, `authGuard`)
+oraz wybieranie meczy i dodawanie ich do kuponu (`e2e/tests/bet/`,
+`BetSlipService`). `match-service` generuje pule meczów cyklicznie i nie ma
+dev-owego endpointu seed/reset, więc testy wybierania meczy nie polegają na
+prawdziwych danych z backendu — mockują `/api/match-pool/future` oraz
+`/api/teams/public/*` na poziomie sieci (`page.route`, patrz
+`e2e/support/mock-matches.ts`), dzięki czemu działają deterministycznie
+i nie wymagają uruchomionego `match-service` w stosie `make e2e`. Testują
+wyłącznie stan kliencki koszyka (kliknięcie kursu → pozycja w `app-coupon-card`)
+— faktyczne postawienie kuponu (`POST /api/coupons`) zostaje poza zakresem,
+bo wymagałoby meczu istniejącego naprawdę w `match-service`/`coupon-service`.
+Lokatory na `pool-card`/`odds-button`/komponentach kuponu wcześniej nie miały
+`data-testid` — dodane analogicznie do `pb-input`/`pb-button` (`testId` na
+`OddsButtonComponent`, statyczne `data-testid` na elementach specyficznych
+dla feature'a, `data-testid` na przyciskach zakładek w `PbTabsComponent`).
 
 Odkryta przy okazji rozbieżność: `guestGuard` (`frontend/.../guards/guest.guard.ts`)
 istnieje w kodzie, ale nie jest podpięty pod żadną trasę — zalogowany użytkownik

@@ -42,6 +42,8 @@ poorbet:
     enabled: true
     issuer: ${AUTH_ISSUER_URI}
     jwk-set-uri: ${AUTH_JWKS_URI}
+    internal-audience:
+      - coupon-service
     unprotected-paths:
       - /actuator/health/**
       - /api/teams/public/**

@@ -18,6 +18,8 @@ poorbet:
   security:
     issuer: ${AUTH_ISSUER_URI}
     jwk-set-uri: ${AUTH_JWKS_URI}
+    internal-audience:
+      - notification-service
 
 management:
   endpoints:

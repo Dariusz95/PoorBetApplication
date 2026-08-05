@@ -17,12 +17,13 @@ services:
 
   gateway:
     build:
-      context: ./gateway
-      dockerfile: Dockerfile.dev
+      context: .
+      dockerfile: gateway/Dockerfile.dev
+    working_dir: /app/gateway
     ports:
       - "${E2E_GATEWAY_PORT:-8181}:8081"
     volumes:
-      - ./gateway:/app
+      - ./:/app
       - ~/.m2:/root/.m2
     environment:
       - SPRING_PROFILES_ACTIVE=dev
@@ -72,11 +73,11 @@ services:
 
   odds-engine-service:
     build:
-      context: ./odds-engine-service
-      dockerfile: Dockerfile.dev
+      context: .
+      dockerfile: odds-engine-service/Dockerfile.dev
+    working_dir: /app/odds-engine-service
     volumes:
-      - ./odds-engine-service:/app
-      - ./odds-engine-service/data:/app/data
+      - ./:/app
       - ~/.m2:/root/.m2
     environment:
       - SPRING_PROFILES_ACTIVE=dev
@@ -84,12 +85,13 @@ services:
 
   match-service:
     build:
-      context: ./match-service
-      dockerfile: Dockerfile.dev
+      context: .
+      dockerfile: match-service/Dockerfile.dev
+    working_dir: /app/match-service
     volumes:
-      - ./match-service:/app
+      - ./:/app
       - ~/.m2:/root/.m2
-      - teams_data:/app/data/images
+      - teams_data:/app/match-service/data/images
     environment:
       - SPRING_PROFILES_ACTIVE=dev
       - JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=75.0
@@ -103,10 +105,11 @@ services:
 
   coupon-service:
     build:
-      context: ./coupon-service
-      dockerfile: Dockerfile.dev
+      context: .
+      dockerfile: coupon-service/Dockerfile.dev
+    working_dir: /app/coupon-service
     volumes:
-      - ./coupon-service:/app
+      - ./:/app
       - ~/.m2:/root/.m2
     environment:
       - SPRING_PROFILES_ACTIVE=dev
@@ -120,10 +123,11 @@ services:
 
   account-service:
     build:
-      context: ./account-service
-      dockerfile: Dockerfile.dev
+      context: .
+      dockerfile: account-service/Dockerfile.dev
+    working_dir: /app/account-service
     volumes:
-      - ./account-service:/app
+      - ./:/app
       - ~/.m2:/root/.m2
     environment:
       - SPRING_PROFILES_ACTIVE=dev
@@ -134,10 +138,11 @@ services:
 
   notification-service:
     build:
-      context: ./notification-service
-      dockerfile: Dockerfile.dev
+      context: .
+      dockerfile: notification-service/Dockerfile.dev
+    working_dir: /app/notification-service
     volumes:
-      - ./notification-service:/app
+      - ./:/app
       - ~/.m2:/root/.m2
     environment:
       - SPRING_PROFILES_ACTIVE=dev

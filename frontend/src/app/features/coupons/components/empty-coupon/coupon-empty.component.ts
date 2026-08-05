@@ -5,7 +5,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
   selector: 'app-coupon-empty',
   imports: [TranslocoPipe],
   template: `
-    <div class="empty-section">
+    <div class="empty-section" data-testid="coupon-empty">
       <p class="t-heading-sm">{{ 'bet.coupon.emptyTitle' | transloco }}</p>
       <p class="t-body-sm t-muted">{{ 'bet.coupon.emptyText' | transloco }}</p>
     </div>
