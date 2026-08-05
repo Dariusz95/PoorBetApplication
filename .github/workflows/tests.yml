@@ -123,6 +123,15 @@ jobs:
       - name: Create .env.dev
         run: cp .env.example .env.dev
 
+      - name: Generate JWT RSA keys for auth-service
+        run: |
+          mkdir -p auth-service/src/main/resources/keys
+          openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 \
+            -out auth-service/src/main/resources/keys/private.pem
+          openssl rsa -pubout \
+            -in auth-service/src/main/resources/keys/private.pem \
+            -out auth-service/src/main/resources/keys/public.pem
+
       - name: Run E2E tests
         run: make e2e
 
