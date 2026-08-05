@@ -3,6 +3,7 @@
     <button
       class="tab-button"
       [class.active]="selectedTab() === tab.value"
+      [attr.data-testid]="'bet-tab-' + tab.value"
       (click)="selectTab(tab)"
     >
       @if (tabButtonContent()) {

@@ -6,6 +6,7 @@
       <li
         class="list__item pb-surface"
         [class.list__item--started]="isStarted(bet.matchStartTime)"
+        [attr.data-testid]="'coupon-item-' + bet.matchId"
         [@listItemAnimation]
       >
         <div class="flex min-w-0 flex-1 flex-col gap-6">

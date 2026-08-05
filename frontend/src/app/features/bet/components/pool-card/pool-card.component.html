@@ -5,6 +5,7 @@
         <section
           class="pool-card__match"
           [class.pool-card__match--disabled]="hasStarted()"
+          [attr.data-testid]="'pool-match-' + match.matchId"
         >
           <div class="pool-card__teams">
             <span class="pool-card__team">
@@ -58,6 +59,7 @@
               [value]="match.odds.homeWin"
               [selected]="isSelected(match.matchId, BetType.HomeWin)"
               [disabled]="hasStarted()"
+              [testId]="'match-' + match.matchId + '-home-win'"
               (oddsClick)="
                 toggleBet(match, BetType.HomeWin, match.odds.homeWin)
               "
@@ -67,6 +69,7 @@
               [value]="match.odds.draw"
               [selected]="isSelected(match.matchId, BetType.Draw)"
               [disabled]="hasStarted()"
+              [testId]="'match-' + match.matchId + '-draw'"
               (oddsClick)="toggleBet(match, BetType.Draw, match.odds.draw)"
             ></app-odds-button>
             <app-odds-button
@@ -74,6 +77,7 @@
               [value]="match.odds.awayWin"
               [selected]="isSelected(match.matchId, BetType.AwayWin)"
               [disabled]="hasStarted()"
+              [testId]="'match-' + match.matchId + '-away-win'"
               (oddsClick)="
                 toggleBet(match, BetType.AwayWin, match.odds.awayWin)
               "
