@@ -5,6 +5,7 @@ export const RoutePath = {
   App: 'APP',
   MyCoupons: 'MY_COUPONS',
   Ranking: 'RANKING',
+  CreateTeam: 'CREATE_TEAM',
 } as const;
 
 export type RoutePath = (typeof RoutePath)[keyof typeof RoutePath];

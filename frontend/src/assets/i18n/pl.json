@@ -8,7 +8,8 @@
     "myCoupons": "PoorBet – Moje kupony",
     "login": "PoorBet – Logowanie",
     "register": "PoorBet – Rejestracja",
-    "ranking": "PoorBet – Ranking"
+    "ranking": "PoorBet – Ranking",
+    "createTeam": "PoorBet – Utwórz drużynę"
   },
   "auth": {
     "email": {
@@ -48,6 +49,7 @@
   "validation": {
     "required": "To pole jest wymagane",
     "minlength": "To pole musi mieć co najmniej {{minLength}} znaków",
+    "maxlength": "To pole może mieć maksymalnie {{maxLength}} znaków",
     "min": "Wartość musi wynosić co najmniej {{min}}",
     "email": "Proszę podać poprawny adres e-mail",
     "password": "Hasło musi mieć co najmniej 6 znaków",
@@ -128,6 +130,7 @@
   },
   "user": {
     "settings": "Ustawienia",
+    "myTeam": "Moja drużyna",
     "login": "Zaloguj się",
     "register": "Zarejestruj się",
     "logout": "Wyloguj się"
@@ -196,5 +199,39 @@
     "previous": "Poprzednia",
     "next": "Następna",
     "page": "Strona {{page}} z {{total}}"
+  },
+  "team": {
+    "loading": "Wczytywanie danych drużyny…",
+    "view": {
+      "title": "Moja drużyna",
+      "subtitle": "Zarządzaj swoją drużyną i jej wizerunkiem.",
+      "noLogoAlt": "Brak logo drużyny",
+      "editButton": "Edytuj drużynę"
+    },
+    "form": {
+      "createTitle": "Utwórz drużynę",
+      "createSubtitle": "Podaj nazwę drużyny i dodaj jej logo.",
+      "editTitle": "Edytuj drużynę",
+      "editSubtitle": "Zaktualizuj nazwę lub logo swojej drużyny.",
+      "name": {
+        "label": "Nazwa drużyny",
+        "placeholder": "Podaj nazwę drużyny"
+      },
+      "logo": {
+        "label": "Logo drużyny",
+        "dropzoneTitle": "Przeciągnij i upuść logo tutaj",
+        "dropzoneHint": "lub kliknij, aby wybrać plik",
+        "hint": "PNG lub JPEG, maksymalnie 1 MB",
+        "previewAlt": "Podgląd logo drużyny",
+        "required": "Wybierz logo drużyny",
+        "change": "Zmień",
+        "remove": "Usuń"
+      },
+      "createSubmit": "Utwórz drużynę",
+      "editSubmit": "Zapisz zmiany",
+      "cancel": "Anuluj",
+      "createSuccessToast": "Drużyna została utworzona.",
+      "editSuccessToast": "Zmiany zostały zapisane."
+    }
   }
 }

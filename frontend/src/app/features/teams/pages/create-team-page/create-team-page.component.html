@@ -1,0 +1,195 @@
+<section class="flex flex-col items-center gap-4 px-4 py-6">
+  @switch (mode()) {
+    @case ('loading') {
+      <div class="flex flex-col items-center gap-3 py-20">
+        <pb-spinner size="lg"></pb-spinner>
+        <p class="t-body-sm t-muted">{{ "team.loading" | transloco }}</p>
+      </div>
+    }
+
+    @case ('view') {
+      <header class="w-full max-w-md text-center">
+        <h1 class="t-heading-lg">{{ "team.view.title" | transloco }}</h1>
+        <p class="t-muted t-body-sm mt-1">
+          {{ "team.view.subtitle" | transloco }}
+        </p>
+      </header>
+
+      <pb-card variant="highlighted" stylesCss="w-full max-w-md">
+        <div pbCardBody class="items-center text-center py-4">
+          @if (team()?.img; as img) {
+            <img
+              [src]="img"
+              [alt]="team()?.name ?? ''"
+              class="w-28 h-28 rounded-full object-cover border border-app-border shadow-glow"
+            />
+          } @else {
+            <div
+              class="w-28 h-28 rounded-full border border-dashed border-app-border flex items-center justify-center bg-app-surfaceSoft"
+            >
+              <pb-icon
+                [icon]="'shield'"
+                size="lg"
+                color="primary"
+                [attr.aria-label]="'team.view.noLogoAlt' | transloco"
+              ></pb-icon>
+            </div>
+          }
+
+          <h2 class="t-heading-lg mt-4">{{ team()?.name }}</h2>
+
+          <div class="mt-6 w-full">
+            <pb-button
+              variant="outline"
+              size="md"
+              [fullWidth]="true"
+              testId="edit-team-button"
+              (buttonClick)="startEdit()"
+            >
+              {{ "team.view.editButton" | transloco }}
+            </pb-button>
+          </div>
+        </div>
+      </pb-card>
+    }
+
+    @case ('form') {
+      <header class="w-full max-w-md">
+        <h1 class="t-heading-lg">
+          {{
+            (isEditingExisting() ? "team.form.editTitle" : "team.form.createTitle")
+              | transloco
+          }}
+        </h1>
+        <p class="t-muted t-body-sm mt-1">
+          {{
+            (isEditingExisting()
+              ? "team.form.editSubtitle"
+              : "team.form.createSubtitle") | transloco
+          }}
+        </p>
+      </header>
+
+      <pb-card stylesCss="w-full max-w-md">
+        <form pbCardBody [formGroup]="form" (ngSubmit)="onSubmit()">
+          <pb-form-field>
+            <pb-label>{{ "team.form.name.label" | transloco }}</pb-label>
+            <pb-input
+              formControlName="name"
+              testId="create-team-name-input"
+              [placeholder]="'team.form.name.placeholder' | transloco"
+            >
+              <pb-icon icon="shield" size="m" pbInputIcon></pb-icon>
+            </pb-input>
+          </pb-form-field>
+
+          <div class="mt-5">
+            <label class="t-body-sm block mb-2" for="create-team-logo-input">
+              {{ "team.form.logo.label" | transloco }}
+            </label>
+
+            <div
+              class="relative flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed p-6 text-center cursor-pointer transition-colors duration-fast"
+              [class.border-app-primary]="isDragging()"
+              [class.bg-app-primarySoft]="isDragging()"
+              [class.border-app-border]="!isDragging()"
+              role="button"
+              tabindex="0"
+              [attr.aria-label]="'team.form.logo.label' | transloco"
+              data-testid="create-team-logo-dropzone"
+              (click)="logoFileInput.click()"
+              (keydown.enter)="logoFileInput.click()"
+              (keydown.space)="$event.preventDefault(); logoFileInput.click()"
+              (dragover)="onDragOver($event)"
+              (dragleave)="onDragLeave($event)"
+              (drop)="onDrop($event)"
+            >
+              @if (logoPreviewUrl(); as previewUrl) {
+                <img
+                  [src]="previewUrl"
+                  [alt]="'team.form.logo.previewAlt' | transloco"
+                  class="w-20 h-20 rounded-full object-cover border border-app-border"
+                />
+
+                <div class="flex gap-4 mt-1">
+                  <button
+                    type="button"
+                    class="t-body-xs text-app-primary underline"
+                    (click)="$event.stopPropagation(); logoFileInput.click()"
+                  >
+                    {{ "team.form.logo.change" | transloco }}
+                  </button>
+                  <button
+                    type="button"
+                    class="t-body-xs text-app-danger underline"
+                    (click)="clearLogoSelection($event)"
+                  >
+                    {{ "team.form.logo.remove" | transloco }}
+                  </button>
+                </div>
+              } @else {
+                <pb-icon icon="cloud_upload" size="lg" color="primary"></pb-icon>
+                <p class="t-body-sm">
+                  {{ "team.form.logo.dropzoneTitle" | transloco }}
+                </p>
+                <p class="t-body-xs t-muted">
+                  {{ "team.form.logo.dropzoneHint" | transloco }}
+                </p>
+              }
+
+              <input
+                #logoFileInput
+                id="create-team-logo-input"
+                type="file"
+                accept="image/png,image/jpeg"
+                data-testid="create-team-logo-input"
+                class="hidden"
+                (click)="$event.stopPropagation()"
+                (change)="onFileSelected($event)"
+              />
+            </div>
+
+            <p class="t-body-xs t-muted mt-1">
+              {{ "team.form.logo.hint" | transloco }}
+            </p>
+
+            @if (logoError()) {
+              <p class="t-body-xs mt-1 text-app-danger">
+                {{ "team.form.logo.required" | transloco }}
+              </p>
+            }
+          </div>
+
+          <div class="mt-8 flex gap-3">
+            @if (isEditingExisting()) {
+              <pb-button
+                variant="ghost"
+                size="md"
+                type="button"
+                [fullWidth]="true"
+                (buttonClick)="cancelEdit()"
+              >
+                {{ "team.form.cancel" | transloco }}
+              </pb-button>
+            }
+
+            <pb-button
+              variant="primary"
+              size="md"
+              type="submit"
+              testId="create-team-submit-button"
+              [fullWidth]="true"
+              [loading]="submitting()"
+            >
+              {{
+                (isEditingExisting()
+                  ? "team.form.editSubmit"
+                  : "team.form.createSubmit") | transloco
+              }}
+            </pb-button>
+          </div>
+        </form>
+      </pb-card>
+    }
+  }
+</section>

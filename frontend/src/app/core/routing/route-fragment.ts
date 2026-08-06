@@ -5,6 +5,7 @@ export enum RouteFragment {
   App = 'app',
   MyCoupons = 'my-coupons',
   Ranking = 'ranking',
+  CreateTeam = 'create-team',
   Slash = '/',
   WildCard = '**',
 }

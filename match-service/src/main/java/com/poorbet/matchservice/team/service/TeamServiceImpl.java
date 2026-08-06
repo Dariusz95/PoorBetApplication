@@ -1,7 +1,10 @@
 package com.poorbet.matchservice.team.service;
 
+import com.poorbet.matchservice.team.dto.CreateTeamDto;
+import com.poorbet.matchservice.team.dto.TeamResponse;
 import com.poorbet.matchservice.team.dto.TeamShortDto;
 import com.poorbet.matchservice.team.dto.TeamStatsDto;
+import com.poorbet.matchservice.team.exception.TeamAlreadyExistsException;
 import com.poorbet.matchservice.team.exception.TeamNotFoundException;
 import com.poorbet.matchservice.team.mapper.TeamMapper;
 import com.poorbet.matchservice.team.model.Team;
@@ -10,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,6 +27,8 @@ import java.util.stream.Collectors;
 public class TeamServiceImpl implements TeamService {
     private final TeamRepository teamRepository;
     private final FileStorageService fileStorageService;
+    private final int DEFAULT_DEFENCE_POWER = 40;
+    private final int DEFAULT_ATTACK_POWER = 40;
 
     @Override
     public List<TeamStatsDto> getStatsByIds(List<UUID> ids) {
@@ -58,16 +64,35 @@ public class TeamServiceImpl implements TeamService {
         return TeamMapper.toTeamShortDto(team);
     }
 
-    @CacheEvict(value = "teams", key = "#id")
+    @CacheEvict(value = "teams", key = "#result.id")
     @Transactional
     @Override
-    public TeamShortDto updateLogo(UUID id, MultipartFile file) {
-        Team team = teamRepository.findById(id)
-                .orElseThrow(() -> new TeamNotFoundException(id));
+    public TeamShortDto updateLogo(UUID userId, MultipartFile file) {
+        Team team = teamRepository.findByUserId(userId)
+                .orElseThrow(() -> new AccessDeniedException("No access"));
 
-        String imgPath = fileStorageService.store(id, file);
+        String imgPath = fileStorageService.store(team.getId(), file);
         team.setImg(imgPath);
 
         return TeamMapper.toTeamShortDto(teamRepository.save(team));
+    }
+
+    @Override
+    public TeamResponse create(CreateTeamDto dto, UUID userId) {
+        if (teamRepository.existsByUserId(userId)) {
+            throw new TeamAlreadyExistsException();
+        }
+
+        Team team = Team.builder()
+                .name(dto.name())
+                .attackPower(DEFAULT_ATTACK_POWER)
+                .defencePower(DEFAULT_DEFENCE_POWER)
+                .userId(userId)
+                .img(null)
+                .build();
+
+        Team saved = teamRepository.save(team);
+
+        return TeamMapper.toResponse(saved);
     }
 }

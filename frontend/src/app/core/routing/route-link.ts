@@ -18,4 +18,5 @@ export const RouteLink: Record<RoutePath, RouteData[]> = {
   [RoutePath.App]: [RouteFragment.Slash, RouteFragment.App],
   [RoutePath.MyCoupons]: [RouteFragment.Slash, RouteFragment.App, RouteFragment.MyCoupons],
   [RoutePath.Ranking]: [RouteFragment.Slash, RouteFragment.App, RouteFragment.Ranking],
+  [RoutePath.CreateTeam]: [RouteFragment.Slash, RouteFragment.App, RouteFragment.CreateTeam],
 };

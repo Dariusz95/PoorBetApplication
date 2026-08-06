@@ -43,6 +43,11 @@
         <span class="side-panel__menu-label">{{ t("menu.myCoupons") }}</span>
         <span class="material-icons side-panel__menu-arrow">chevron_right</span>
       </button>
+      <button class="side-panel__menu-item" (click)="goToCreateTeam()">
+        <span class="material-icons">shield</span>
+        <span class="side-panel__menu-label">{{ t("user.myTeam") }}</span>
+        <span class="material-icons side-panel__menu-arrow">chevron_right</span>
+      </button>
       <button
         class="side-panel__menu-item side-panel__menu-item--danger"
         (click)="logout()"

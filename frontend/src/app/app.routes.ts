@@ -48,6 +48,15 @@ export const routes: Routes = [
             (m) => m.RankingPageComponent,
           ),
       },
+      {
+        path: RouteFragment.CreateTeam,
+        canActivate: [authGuard],
+        title: 'pageTitle.createTeam',
+        loadComponent: () =>
+          import('./features/teams/pages/create-team-page/create-team-page.component').then(
+            (m) => m.CreateTeamPageComponent,
+          ),
+      },
     ],
   },
   {

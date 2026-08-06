@@ -1,9 +1,14 @@
 package com.poorbet.matchservice.team.controller;
 
+import com.poorbet.matchservice.security.CurrentUserProvider;
+import com.poorbet.matchservice.team.dto.CreateTeamDto;
+import com.poorbet.matchservice.team.dto.TeamResponse;
 import com.poorbet.matchservice.team.dto.TeamShortDto;
 import com.poorbet.matchservice.team.service.TeamService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,6 +24,7 @@ import java.util.UUID;
 public class TeamController {
 
     private final TeamService teamService;
+    private final CurrentUserProvider currentUserProvider;
 
     @GetMapping("/{id}")
     public TeamShortDto getTeam(@PathVariable UUID id) {
@@ -28,11 +34,23 @@ public class TeamController {
         return team;
     }
 
-    @PatchMapping(value = "/{id}/logo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("hasRole('ADMIN')")
+    @PatchMapping(value = "/me/logo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<TeamShortDto> uploadLogo(
-            @PathVariable UUID id,
             @RequestParam("file") MultipartFile file) {
-        return ResponseEntity.ok(teamService.updateLogo(id, file));
+
+        UUID userId = currentUserProvider.getUserId();
+
+        return ResponseEntity.ok(teamService.updateLogo(userId, file));
+    }
+
+    @PostMapping()
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<TeamResponse> createTeam(@Valid @RequestBody CreateTeamDto dto) {
+        log.info("Create team with request={}", dto.toString());
+        UUID userId = currentUserProvider.getUserId();
+
+        TeamResponse response = teamService.create(dto, userId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }
