@@ -14,6 +14,7 @@ public class TeamMapper {
                 .name(team.getName())
                 .attackPower(team.getAttackPower())
                 .defencePower(team.getDefencePower())
+                .logo(toImgUrl(team.getImg()))
                 .build();
     }
 

@@ -1,9 +1,7 @@
 package com.poorbet.matchservice.team.service;
 
-import com.poorbet.matchservice.team.dto.CreateTeamDto;
-import com.poorbet.matchservice.team.dto.TeamResponse;
-import com.poorbet.matchservice.team.dto.TeamShortDto;
-import com.poorbet.matchservice.team.dto.TeamStatsDto;
+import com.poorbet.matchservice.team.dto.*;
+import jakarta.validation.Valid;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -16,7 +14,11 @@ public interface TeamService {
 
     TeamShortDto getById(UUID id);
 
-    TeamShortDto updateLogo(UUID userId, MultipartFile file);
+    TeamResponse updateLogo(UUID userId, MultipartFile file);
 
     TeamResponse create(CreateTeamDto dto, UUID userId);
+
+    TeamResponse update(@Valid UpdateTeamDto dto, UUID userId);
+
+    TeamResponse getMyTeam(UUID userId);
 }

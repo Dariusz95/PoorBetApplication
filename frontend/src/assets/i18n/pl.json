@@ -206,6 +206,8 @@
       "title": "Moja drużyna",
       "subtitle": "Zarządzaj swoją drużyną i jej wizerunkiem.",
       "noLogoAlt": "Brak logo drużyny",
+      "attackPower": "Atak",
+      "defencePower": "Obrona",
       "editButton": "Edytuj drużynę"
     },
     "form": {

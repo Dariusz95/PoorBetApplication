@@ -12,4 +12,5 @@ public class TeamResponse {
     private String name;
     private int attackPower;
     private int defencePower;
+    private String logo;
 }

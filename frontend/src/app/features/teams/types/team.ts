@@ -1,5 +1,9 @@
+import { Uuid } from "@shared/types/uuid.type";
+
 export interface Team {
-  id: string;
+  id: Uuid;
   name: string;
-  img: string | null;
+  logo: string | null;
+  attackPower: number;
+  defencePower: number;
 }

@@ -1,9 +1,6 @@
 package com.poorbet.matchservice.team.service;
 
-import com.poorbet.matchservice.team.dto.CreateTeamDto;
-import com.poorbet.matchservice.team.dto.TeamResponse;
-import com.poorbet.matchservice.team.dto.TeamShortDto;
-import com.poorbet.matchservice.team.dto.TeamStatsDto;
+import com.poorbet.matchservice.team.dto.*;
 import com.poorbet.matchservice.team.exception.TeamAlreadyExistsException;
 import com.poorbet.matchservice.team.exception.TeamNotFoundException;
 import com.poorbet.matchservice.team.mapper.TeamMapper;
@@ -67,17 +64,18 @@ public class TeamServiceImpl implements TeamService {
     @CacheEvict(value = "teams", key = "#result.id")
     @Transactional
     @Override
-    public TeamShortDto updateLogo(UUID userId, MultipartFile file) {
+    public TeamResponse updateLogo(UUID userId, MultipartFile file) {
         Team team = teamRepository.findByUserId(userId)
                 .orElseThrow(() -> new AccessDeniedException("No access"));
 
         String imgPath = fileStorageService.store(team.getId(), file);
         team.setImg(imgPath);
 
-        return TeamMapper.toTeamShortDto(teamRepository.save(team));
+        return TeamMapper.toResponse(teamRepository.save(team));
     }
 
     @Override
+    @Transactional
     public TeamResponse create(CreateTeamDto dto, UUID userId) {
         if (teamRepository.existsByUserId(userId)) {
             throw new TeamAlreadyExistsException();
@@ -94,5 +92,27 @@ public class TeamServiceImpl implements TeamService {
         Team saved = teamRepository.save(team);
 
         return TeamMapper.toResponse(saved);
+    }
+
+    @Override
+    @Transactional
+    @CacheEvict(value = "teams", key = "#result.id")
+    public TeamResponse update(UpdateTeamDto dto, UUID userId) {
+        Team team = teamRepository.findByUserId(userId)
+                .orElseThrow(() -> new TeamNotFoundException(userId));
+
+        team.setName(dto.name());
+
+        return TeamMapper.toResponse(team);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    @CacheEvict(value = "teams", key = "#result.id")
+    public TeamResponse getMyTeam(UUID userId) {
+        Team team = teamRepository.findByUserId(userId)
+                .orElseThrow(() -> new TeamNotFoundException(userId));
+
+        return TeamMapper.toResponse(team);
     }
 }

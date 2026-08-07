@@ -1,0 +1,75 @@
+<header class="w-full text-center">
+  <h1 class="t-heading-lg">{{ "team.view.title" | transloco }}</h1>
+  <p class="t-muted t-body-sm mt-1">
+    {{ "team.view.subtitle" | transloco }}
+  </p>
+</header>
+
+<pb-card variant="highlighted" stylesCss="w-full">
+  <div pbCardBody class="justify-items-center py-4 text-center">
+    @if (team().logo; as logo) {
+      <img
+        [src]="logo"
+        [alt]="team().name"
+        class="h-28 w-28 rounded-full border border-app-border object-cover shadow-glow"
+      />
+    } @else {
+      <div
+        class="flex h-28 w-28 items-center justify-center rounded-full border border-dashed border-app-border bg-app-surfaceSoft"
+      >
+        <pb-icon
+          icon="shield"
+          size="lg"
+          color="primary"
+          [attr.aria-label]="'team.view.noLogoAlt' | transloco"
+        ></pb-icon>
+      </div>
+    }
+
+    <h2 class="t-heading-lg mt-4">{{ team().name }}</h2>
+
+    <dl class="mt-6 flex w-full flex-col gap-3 text-left">
+      <div>
+        <div class="mb-1.5 flex items-center justify-between">
+          <dt class="t-body-sm">{{ "team.view.attackPower" | transloco }}</dt>
+          <dd class="t-body-sm font-semibold">{{ team().attackPower }}</dd>
+        </div>
+        <div
+          class="h-2 rounded-full bg-[color-mix(in_srgb,var(--color-primary)_16%,transparent)]"
+        >
+          <div
+            class="h-full rounded-full bg-app-primary transition-[width] duration-base ease-standard"
+            [style.width.%]="attackPercent()"
+          ></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="mb-1.5 flex items-center justify-between">
+          <dt class="t-body-sm">{{ "team.view.defencePower" | transloco }}</dt>
+          <dd class="t-body-sm font-semibold">{{ team().defencePower }}</dd>
+        </div>
+        <div
+          class="h-2 rounded-full bg-[color-mix(in_srgb,var(--color-accent)_16%,transparent)]"
+        >
+          <div
+            class="h-full rounded-full bg-app-accent transition-[width] duration-base ease-standard"
+            [style.width.%]="defencePercent()"
+          ></div>
+        </div>
+      </div>
+    </dl>
+
+    <div class="mt-6 w-full">
+      <pb-button
+        variant="outline"
+        size="md"
+        [fullWidth]="true"
+        testId="edit-team-button"
+        (buttonClick)="edit.emit()"
+      >
+        {{ "team.view.editButton" | transloco }}
+      </pb-button>
+    </div>
+  </div>
+</pb-card>

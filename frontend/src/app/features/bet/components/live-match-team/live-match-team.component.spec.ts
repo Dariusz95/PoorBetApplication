@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TeamService } from '@features/bet/services/team.service';
+import { TeamService } from '@features/teams/services/team.service';
 import { ShortTeamInfo } from '@features/bet/types/match.types';
 import { Uuid } from '@shared/types/uuid.type';
 import { of } from 'rxjs';

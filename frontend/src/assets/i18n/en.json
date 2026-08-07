@@ -206,6 +206,8 @@
       "title": "My team",
       "subtitle": "Manage your team and its look.",
       "noLogoAlt": "No team logo",
+      "attackPower": "Attack",
+      "defencePower": "Defence",
       "editButton": "Edit team"
     },
     "form": {

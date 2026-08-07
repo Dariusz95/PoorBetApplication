@@ -14,10 +14,15 @@ public class AuthorizationPolicyService {
     private final Map<Role, List<String>> permissionsByRole = new EnumMap<>(Role.class);
 
     public AuthorizationPolicyService() {
-        List<String> couponPermissions = List.of(PoorbetPermissions.COUPON_CREATE);
-        permissionsByRole.put(Role.GUEST, couponPermissions);
-        permissionsByRole.put(Role.USER, couponPermissions);
-        permissionsByRole.put(Role.ADMIN, couponPermissions);
+        permissionsByRole.put(Role.GUEST, List.of(PoorbetPermissions.COUPON_CREATE));
+        permissionsByRole.put(Role.USER,
+                List.of(
+                        PoorbetPermissions.COUPON_CREATE,
+                        PoorbetPermissions.TEAM_CREATE,
+                        PoorbetPermissions.TEAM_UPDATE,
+                        PoorbetPermissions.TEAM_READ
+                ));
+        permissionsByRole.put(Role.ADMIN, List.of(PoorbetPermissions.COUPON_CREATE));
     }
 
     public List<String> resolvePermissions(Role role) {
