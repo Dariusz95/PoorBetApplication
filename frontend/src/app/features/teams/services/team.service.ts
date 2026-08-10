@@ -5,6 +5,7 @@ import { Uuid } from '@shared/types/uuid.type';
 import { catchError, Observable, of, shareReplay } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { CreateTeamRequest } from '../types/create-team-request';
+import { PowerType } from '../types/power-type';
 import { Team } from '../types/team';
 
 interface CacheEntry<T> {
@@ -72,5 +73,9 @@ export class TeamService {
     formData.append('file', file);
 
     return this.http.patch<Team>(`${this.baseUrl}/me/logo`, formData);
+  }
+
+  increasePower(powerType: PowerType): Observable<Team> {
+    return this.http.post<Team>(`${this.baseUrl}/power`, { powerType });
   }
 }

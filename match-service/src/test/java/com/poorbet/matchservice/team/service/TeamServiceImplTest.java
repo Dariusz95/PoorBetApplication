@@ -1,6 +1,12 @@
 package com.poorbet.matchservice.team.service;
 
 import com.poorbet.matchservice.fixture.TeamFixtures;
+import com.poorbet.matchservice.team.client.wallet.WalletBusinessException;
+import com.poorbet.matchservice.team.client.wallet.WalletClient;
+import com.poorbet.matchservice.team.dto.DebitWalletRequest;
+import com.poorbet.matchservice.team.dto.IncreaseTeamPowerDto;
+import com.poorbet.matchservice.team.dto.PowerType;
+import com.poorbet.matchservice.team.dto.TeamResponse;
 import com.poorbet.matchservice.team.dto.TeamShortDto;
 import com.poorbet.matchservice.team.dto.TeamStatsDto;
 import com.poorbet.matchservice.team.exception.TeamNotFoundException;
@@ -13,9 +19,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -28,6 +36,9 @@ class TeamServiceImplTest {
 
     @Mock
     private TeamMapper teamMapper;
+
+    @Mock
+    private WalletClient walletClient;
 
     @InjectMocks
     private TeamServiceImpl teamService;
@@ -235,6 +246,76 @@ class TeamServiceImplTest {
         assertTrue(exception.getMessage().contains(TeamFixtures.INTER_MIAMI_ID.toString()));
         assertTrue(exception.getMessage().contains("not found"));
         verify(teamRepository, times(1)).findById(TeamFixtures.INTER_MIAMI_ID);
+    }
+
+    // ==================== increasePower Tests ====================
+
+    @Test
+    void increasePower_shouldIncreaseAttackPowerAndDebitWallet_whenTeamExists() {
+        // Arrange
+        UUID userId = UUID.randomUUID();
+        Team team = TeamFixtures.barcelona();
+        team.setUserId(userId);
+        int initialAttackPower = team.getAttackPower();
+
+        when(teamRepository.findByUserId(userId)).thenReturn(Optional.of(team));
+
+        // Act
+        TeamResponse result = teamService.increasePower(new IncreaseTeamPowerDto(PowerType.ATTACK), userId);
+
+        // Assert
+        assertEquals(initialAttackPower + 1, result.getAttackPower());
+        assertEquals(team.getDefencePower(), result.getDefencePower());
+        verify(walletClient, times(1)).debit(userId, new DebitWalletRequest(BigDecimal.valueOf(10)));
+    }
+
+    @Test
+    void increasePower_shouldIncreaseDefencePowerAndDebitWallet_whenTeamExists() {
+        // Arrange
+        UUID userId = UUID.randomUUID();
+        Team team = TeamFixtures.barcelona();
+        team.setUserId(userId);
+        int initialDefencePower = team.getDefencePower();
+
+        when(teamRepository.findByUserId(userId)).thenReturn(Optional.of(team));
+
+        // Act
+        TeamResponse result = teamService.increasePower(new IncreaseTeamPowerDto(PowerType.DEFENCE), userId);
+
+        // Assert
+        assertEquals(initialDefencePower + 1, result.getDefencePower());
+        assertEquals(team.getAttackPower(), result.getAttackPower());
+        verify(walletClient, times(1)).debit(userId, new DebitWalletRequest(BigDecimal.valueOf(10)));
+    }
+
+    @Test
+    void increasePower_shouldThrowTeamNotFoundException_whenTeamDoesNotExist() {
+        // Arrange
+        UUID userId = UUID.randomUUID();
+        when(teamRepository.findByUserId(userId)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(TeamNotFoundException.class,
+                () -> teamService.increasePower(new IncreaseTeamPowerDto(PowerType.ATTACK), userId));
+        verifyNoInteractions(walletClient);
+    }
+
+    @Test
+    void increasePower_shouldNotChangeTeamPower_whenWalletDebitFails() {
+        // Arrange
+        UUID userId = UUID.randomUUID();
+        Team team = TeamFixtures.barcelona();
+        team.setUserId(userId);
+        int initialAttackPower = team.getAttackPower();
+
+        when(teamRepository.findByUserId(userId)).thenReturn(Optional.of(team));
+        doThrow(new WalletBusinessException("INSUFFICIENT_FUNDS", "Not enough funds"))
+                .when(walletClient).debit(eq(userId), any(DebitWalletRequest.class));
+
+        // Act & Assert
+        assertThrows(WalletBusinessException.class,
+                () -> teamService.increasePower(new IncreaseTeamPowerDto(PowerType.ATTACK), userId));
+        assertEquals(initialAttackPower, team.getAttackPower());
     }
 }
 

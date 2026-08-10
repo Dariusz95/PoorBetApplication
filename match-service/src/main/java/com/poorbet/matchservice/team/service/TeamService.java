@@ -20,5 +20,7 @@ public interface TeamService {
 
     TeamResponse update(@Valid UpdateTeamDto dto, UUID userId);
 
+    TeamResponse increasePower(IncreaseTeamPowerDto dto, UUID userId);
+
     TeamResponse getMyTeam(UUID userId);
 }

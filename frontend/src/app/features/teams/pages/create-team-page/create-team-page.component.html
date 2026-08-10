@@ -9,7 +9,11 @@
       }
 
       @case ("view") {
-        <app-team-view [team]="team()!" (edit)="startEdit()" />
+        <app-team-view
+          [team]="team()!"
+          (edit)="startEdit()"
+          (teamUpdated)="team.set($event)"
+        />
       }
 
       @case ("form") {

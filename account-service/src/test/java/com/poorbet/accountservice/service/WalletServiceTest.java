@@ -147,7 +147,7 @@ class WalletServiceTest {
     void shouldDebitWalletSuccessfully() {
         // Arrange
         Wallet wallet = walletWithBalance(new BigDecimal("100.00"));
-        when(walletRepository.findByUserId(userId)).thenReturn(Optional.of(wallet));
+        when(walletRepository.findByUserIdForUpdate(userId)).thenReturn(Optional.of(wallet));
         when(walletRepository.save(wallet)).thenReturn(wallet);
 
         // Act
@@ -167,7 +167,7 @@ class WalletServiceTest {
     void shouldThrowWhenDebitExceedsBalance() {
         // Arrange
         Wallet wallet = walletWithBalance(new BigDecimal("10.00"));
-        when(walletRepository.findByUserId(userId)).thenReturn(Optional.of(wallet));
+        when(walletRepository.findByUserIdForUpdate(userId)).thenReturn(Optional.of(wallet));
 
         // Act & Assert
         assertThatThrownBy(() -> walletService.debit(userId, new BigDecimal("40.00")))
@@ -181,7 +181,7 @@ class WalletServiceTest {
     @DisplayName("Should throw when debiting a wallet that does not exist")
     void shouldThrowWhenDebitingMissingWallet() {
         // Arrange
-        when(walletRepository.findByUserId(userId)).thenReturn(Optional.empty());
+        when(walletRepository.findByUserIdForUpdate(userId)).thenReturn(Optional.empty());
 
         // Act & Assert
         assertThatThrownBy(() -> walletService.debit(userId, BigDecimal.TEN))

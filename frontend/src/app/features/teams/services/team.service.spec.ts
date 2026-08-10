@@ -217,4 +217,22 @@ describe('TeamService', () => {
       });
     });
   });
+
+  describe('increasePower', () => {
+    it('should POST the powerType to /api/teams/public/power', () => {
+      service.increasePower('ATTACK').subscribe();
+
+      const req = httpMock.expectOne('/api/teams/public/power');
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual({ powerType: 'ATTACK' });
+
+      req.flush({
+        id: 'team-1',
+        name: 'Lechia Gdańsk',
+        attackPower: 41,
+        defencePower: 40,
+        logo: null,
+      });
+    });
+  });
 });

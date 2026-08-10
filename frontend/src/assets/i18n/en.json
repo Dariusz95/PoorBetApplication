@@ -208,7 +208,12 @@
       "noLogoAlt": "No team logo",
       "attackPower": "Attack",
       "defencePower": "Defence",
-      "editButton": "Edit team"
+      "editButton": "Edit team",
+      "powerPricingHint": "1 power point costs 10 coins. You earn 1 coin for every match you win.",
+      "increaseAttackAriaLabel": "Increase attack for 10 coins",
+      "increaseDefenceAriaLabel": "Increase defence for 10 coins",
+      "increaseAttackSuccessToast": "Attack increased!",
+      "increaseDefenceSuccessToast": "Defence increased!"
     },
     "form": {
       "createTitle": "Create team",

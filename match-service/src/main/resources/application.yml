@@ -66,6 +66,13 @@ odds:
       connect: ${ODDS_SERVICE_CONNECT_TIMEOUT:2s}
       read: ${ODDS_SERVICE_READ_TIMEOUT:3s}
 
+wallet:
+  service:
+    url: ${WALLET_SERVICE_URL:http://account-service:8080}
+    timeout:
+      connect: ${WALLET_SERVICE_CONNECT_TIMEOUT:2s}
+      read: ${WALLET_SERVICE_READ_TIMEOUT:3s}
+
 auth:
   service:
     url: ${AUTH_SERVICE_URL:http://auth-service:8080}

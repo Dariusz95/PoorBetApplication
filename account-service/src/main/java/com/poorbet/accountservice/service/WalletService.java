@@ -112,7 +112,7 @@ public class WalletService {
 
     @Transactional
     public Wallet debit(UUID userId, BigDecimal amount) {
-        Wallet wallet = walletRepository.findByUserId(userId)
+        Wallet wallet = walletRepository.findByUserIdForUpdate(userId)
                 .orElseThrow(() -> new IllegalStateException("Wallet not found for user: " + userId));
 
         if (wallet.getBalance().compareTo(amount) < 0) {

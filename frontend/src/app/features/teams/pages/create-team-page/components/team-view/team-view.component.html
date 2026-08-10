@@ -27,12 +27,29 @@
     }
 
     <h2 class="t-heading-lg mt-4">{{ team().name }}</h2>
+    <p class="t-body-xs t-muted mt-1">
+      {{ "team.view.powerPricingHint" | transloco }}
+    </p>
 
     <dl class="mt-6 flex w-full flex-col gap-3 text-left">
       <div>
-        <div class="mb-1.5 flex items-center justify-between">
+        <div class="mb-1.5 flex items-center justify-between gap-2">
           <dt class="t-body-sm">{{ "team.view.attackPower" | transloco }}</dt>
-          <dd class="t-body-sm font-semibold">{{ team().attackPower }}</dd>
+          <div class="flex items-center gap-2">
+            <dd class="t-body-sm font-semibold">{{ team().attackPower }}</dd>
+            <pb-button
+              type="icon"
+              variant="ghost"
+              size="sm"
+              testId="increase-attack-power-button"
+              [loading]="increasingPower() === 'ATTACK'"
+              [disabled]="increasingPower() !== null"
+              [ariaLabel]="'team.view.increaseAttackAriaLabel' | transloco"
+              (buttonClick)="increasePower('ATTACK')"
+            >
+              <pb-icon icon="add" size="s"></pb-icon>
+            </pb-button>
+          </div>
         </div>
         <div
           class="h-2 rounded-full bg-[color-mix(in_srgb,var(--color-primary)_16%,transparent)]"
@@ -45,9 +62,23 @@
       </div>
 
       <div>
-        <div class="mb-1.5 flex items-center justify-between">
+        <div class="mb-1.5 flex items-center justify-between gap-2">
           <dt class="t-body-sm">{{ "team.view.defencePower" | transloco }}</dt>
-          <dd class="t-body-sm font-semibold">{{ team().defencePower }}</dd>
+          <div class="flex items-center gap-2">
+            <dd class="t-body-sm font-semibold">{{ team().defencePower }}</dd>
+            <pb-button
+              type="icon"
+              variant="ghost"
+              size="sm"
+              testId="increase-defence-power-button"
+              [loading]="increasingPower() === 'DEFENCE'"
+              [disabled]="increasingPower() !== null"
+              [ariaLabel]="'team.view.increaseDefenceAriaLabel' | transloco"
+              (buttonClick)="increasePower('DEFENCE')"
+            >
+              <pb-icon icon="add" size="s"></pb-icon>
+            </pb-button>
+          </div>
         </div>
         <div
           class="h-2 rounded-full bg-[color-mix(in_srgb,var(--color-accent)_16%,transparent)]"

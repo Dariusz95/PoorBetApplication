@@ -208,7 +208,12 @@
       "noLogoAlt": "Brak logo drużyny",
       "attackPower": "Atak",
       "defencePower": "Obrona",
-      "editButton": "Edytuj drużynę"
+      "editButton": "Edytuj drużynę",
+      "powerPricingHint": "1 punkt mocy kosztuje 10 coinów. Za każdy wygrany mecz otrzymujesz 1 coin.",
+      "increaseAttackAriaLabel": "Zwiększ atak za 10 coinów",
+      "increaseDefenceAriaLabel": "Zwiększ obronę za 10 coinów",
+      "increaseAttackSuccessToast": "Atak zwiększony!",
+      "increaseDefenceSuccessToast": "Obrona zwiększona!"
     },
     "form": {
       "createTitle": "Utwórz drużynę",

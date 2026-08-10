@@ -3,6 +3,7 @@ package com.poorbet.matchservice.team.controller;
 import com.poorbet.authstarter.security.PoorbetPermissions;
 import com.poorbet.matchservice.security.CurrentUserProvider;
 import com.poorbet.matchservice.team.dto.CreateTeamDto;
+import com.poorbet.matchservice.team.dto.IncreaseTeamPowerDto;
 import com.poorbet.matchservice.team.dto.TeamResponse;
 import com.poorbet.matchservice.team.dto.TeamShortDto;
 import com.poorbet.matchservice.team.dto.UpdateTeamDto;
@@ -64,6 +65,15 @@ public class TeamController {
         UUID userId = currentUserProvider.getUserId();
 
         TeamResponse response = teamService.update(dto, userId);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/power")
+    @PreAuthorize("hasAuthority('" + PoorbetPermissions.TEAM_UPDATE + "')")
+    public ResponseEntity<TeamResponse> increasePower(@Valid @RequestBody IncreaseTeamPowerDto dto) {
+        UUID userId = currentUserProvider.getUserId();
+
+        TeamResponse response = teamService.increasePower(dto, userId);
         return ResponseEntity.ok(response);
     }
 
