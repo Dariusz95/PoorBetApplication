@@ -197,16 +197,16 @@ describe('TeamService', () => {
       expect(req.request.body instanceof FormData).toBe(true);
       expect((req.request.body as FormData).get('file')).toBe(file);
 
-      req.flush({ id: 'team-1', name: 'Lechia Gdańsk', img: '/images/team-1.png' });
+      req.flush({ id: 'team-1', name: 'Lechia Gdańsk', logo: '/images/team-1.png' });
     });
 
-    it('should map the backend `img` field to `logo`', async () => {
+    it('should return the logo url from the response', async () => {
       const file = new File(['logo'], 'logo.png', { type: 'image/png' });
 
       const promise = firstValueFrom(service.uploadLogo(file));
 
       const req = httpMock.expectOne('/api/teams/public/me/logo');
-      req.flush({ id: 'team-1', name: 'Lechia Gdańsk', img: '/images/team-1.png' });
+      req.flush({ id: 'team-1', name: 'Lechia Gdańsk', logo: '/images/team-1.png' });
 
       const result = await promise;
 

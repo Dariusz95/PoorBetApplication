@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import java.time.Instant;
@@ -100,6 +101,18 @@ public class GlobalExceptionHandler {
                         Instant.now(),
                         request.getRequestURI(),
                         validationErrors
+                ));
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErrorResponse> handleTypeMismatch(MethodArgumentTypeMismatchException ex, HttpServletRequest request) {
+        return ResponseEntity
+                .badRequest()
+                .body(new ErrorResponse(
+                        ErrorCode.VALIDATION_ERROR.name(),
+                        "Invalid value for parameter '" + ex.getName() + "'.",
+                        Instant.now(),
+                        request.getRequestURI()
                 ));
     }
 
