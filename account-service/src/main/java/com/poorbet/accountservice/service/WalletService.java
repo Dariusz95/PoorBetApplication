@@ -131,6 +131,22 @@ public class WalletService {
     }
 
     @Transactional
+    public Wallet credit(UUID userId, BigDecimal amount) {
+        Wallet wallet = walletRepository.findByUserIdForUpdate(userId)
+                .orElseThrow(() -> new IllegalStateException("Wallet not found for user: " + userId));
+
+        wallet.setBalance(wallet.getBalance().add(amount));
+        Wallet updatedWallet = walletRepository.save(wallet);
+
+        outboxService.saveEvent(
+                WalletEvents.WALLET_BALANCE_CHANGED,
+                new WalletBalanceChangedEvent(updatedWallet.getUserId(), updatedWallet.getBalance())
+        );
+
+        return updatedWallet;
+    }
+
+    @Transactional
     public void reserve(UUID userId, BigDecimal amount, UUID reservationId) {
 
         Wallet wallet = walletRepository.findByUserIdForUpdate(userId)

@@ -188,6 +188,42 @@ class WalletServiceTest {
                 .isInstanceOf(IllegalStateException.class);
     }
 
+    // ==================== credit ====================
+
+    @Test
+    @DisplayName("Should credit wallet and publish balance changed event")
+    void shouldCreditWalletSuccessfully() {
+        // Arrange
+        Wallet wallet = walletWithBalance(new BigDecimal("10.00"));
+        when(walletRepository.findByUserIdForUpdate(userId)).thenReturn(Optional.of(wallet));
+        when(walletRepository.save(wallet)).thenReturn(wallet);
+
+        // Act
+        Wallet result = walletService.credit(userId, BigDecimal.ONE);
+
+        // Assert
+        assertThat(result.getBalance()).isEqualByComparingTo("11.00");
+
+        ArgumentCaptor<WalletBalanceChangedEvent> eventCaptor = ArgumentCaptor.forClass(WalletBalanceChangedEvent.class);
+        verify(outboxService).saveEvent(any(), eventCaptor.capture());
+        assertThat(eventCaptor.getValue().userId()).isEqualTo(userId);
+        assertThat(eventCaptor.getValue().balance()).isEqualByComparingTo("11.00");
+    }
+
+    @Test
+    @DisplayName("Should throw when crediting a wallet that does not exist")
+    void shouldThrowWhenCreditingMissingWallet() {
+        // Arrange
+        when(walletRepository.findByUserIdForUpdate(userId)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThatThrownBy(() -> walletService.credit(userId, BigDecimal.ONE))
+                .isInstanceOf(IllegalStateException.class);
+
+        verify(walletRepository, never()).save(any());
+        verifyNoInteractions(outboxService);
+    }
+
     // ==================== reserve ====================
 
     @Test

@@ -7,6 +7,7 @@ import {
   Subject,
   Subscription,
   map,
+  shareReplay,
   startWith,
   switchMap,
   tap,
@@ -34,6 +35,7 @@ export class PoolRefreshService {
     map((pools) => this.sortPoolMatchesByDateAsc(pools)),
     tap((pools) => this.scheduleNextRefreshAndRearange(pools)),
     map((pools) => this.groupPoolsById(pools)),
+    shareReplay({ bufferSize: 1, refCount: true }),
   );
 
 private sortPoolMatchesByDateAsc(pools: PoolMatch[]): PoolMatch[] {

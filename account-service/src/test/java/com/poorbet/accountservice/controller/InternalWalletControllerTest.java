@@ -3,6 +3,7 @@ package com.poorbet.accountservice.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.poorbet.commons.commons.wallet.contract.ReserveRequest;
 import com.poorbet.accountservice.domain.exception.InsufficientFundsException;
+import com.poorbet.accountservice.dto.CreditWalletRequest;
 import com.poorbet.accountservice.dto.DebitWalletRequest;
 import com.poorbet.accountservice.service.WalletService;
 import org.junit.jupiter.api.DisplayName;
@@ -76,6 +77,36 @@ class InternalWalletControllerTest {
 
         // Act & Assert
         mockMvc.perform(post("/internal/wallet/users/{userId}/debit", userId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("Should credit the wallet and return 204")
+    void shouldCreditWallet() throws Exception {
+        // Arrange
+        UUID userId = UUID.randomUUID();
+        CreditWalletRequest request = new CreditWalletRequest(BigDecimal.ONE);
+
+        // Act & Assert
+        mockMvc.perform(post("/internal/wallet/users/{userId}/credit", userId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isNoContent());
+
+        verify(walletService).credit(userId, BigDecimal.ONE);
+    }
+
+    @Test
+    @DisplayName("Should reject credit request below the minimum amount")
+    void shouldRejectCreditBelowMinimum() throws Exception {
+        // Arrange
+        UUID userId = UUID.randomUUID();
+        CreditWalletRequest request = new CreditWalletRequest(new BigDecimal("0.00"));
+
+        // Act & Assert
+        mockMvc.perform(post("/internal/wallet/users/{userId}/credit", userId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());

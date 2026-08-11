@@ -25,6 +25,15 @@ import com.poorbet.matchservice.match.match.domain.MatchStatus;
 import com.poorbet.matchservice.match.match.repository.MatchRepository;
 import com.poorbet.matchservice.match.matchpool.dto.LiveMatchEventDto;
 import com.poorbet.matchservice.infrastructure.AfterCommitHandler;
+import com.poorbet.matchservice.team.client.wallet.WalletClient;
+import com.poorbet.matchservice.team.dto.CreditWalletRequest;
+import com.poorbet.matchservice.team.model.Team;
+import com.poorbet.matchservice.team.repository.TeamRepository;
+
+import java.math.BigDecimal;
+
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("MatchFinishServiceImpl Unit Tests")
@@ -34,7 +43,13 @@ class MatchFinishServiceImplTest {
     private MatchRepository matchRepository;
 
     @Mock
+    private TeamRepository teamRepository;
+
+    @Mock
     private MatchPoolLifecycleManager lifecycleManager;
+
+    @Mock
+    private WalletClient walletClient;
 
     @Mock
     private AfterCommitHandler afterCommitHandler;
@@ -123,7 +138,7 @@ class MatchFinishServiceImplTest {
         }
 
         @Test
-        @DisplayName("Should register lifecycle callback")
+        @DisplayName("Should register lifecycle and reward callbacks")
         void shouldRegisterLifecycleCallback() {
             // Arrange
             when(matchRepository.findById(testMatchId))
@@ -135,7 +150,7 @@ class MatchFinishServiceImplTest {
             matchFinishService.finishMatch(finishEvent);
 
             // Assert
-            verify(afterCommitHandler).run(any(Runnable.class));
+            verify(afterCommitHandler, times(2)).run(any(Runnable.class));
         }
 
         @Test
@@ -153,9 +168,9 @@ class MatchFinishServiceImplTest {
             matchFinishService.finishMatch(finishEvent);
 
             // Assert
-            verify(afterCommitHandler).run(callbackCaptor.capture());
-            // The callback should trigger handleMatchFinished
-            callbackCaptor.getValue().run();
+            verify(afterCommitHandler, times(2)).run(callbackCaptor.capture());
+            // The first registered callback should trigger handleMatchFinished
+            callbackCaptor.getAllValues().get(0).run();
             verify(lifecycleManager).handleMatchFinished(testMatch);
         }
 
@@ -323,6 +338,115 @@ class MatchFinishServiceImplTest {
 
             // Assert
             verify(matchRepository, times(2)).save(any());
+        }
+    }
+
+    @Nested
+    @DisplayName("Reward Winning Team Owner")
+    class RewardWinningTeamOwner {
+
+        private Runnable captureRewardCallback() {
+            ArgumentCaptor<Runnable> callbackCaptor = ArgumentCaptor.forClass(Runnable.class);
+            verify(afterCommitHandler, times(2)).run(callbackCaptor.capture());
+            return callbackCaptor.getAllValues().get(1);
+        }
+
+        @Test
+        @DisplayName("Should credit 1 coin to the home team owner when home team wins")
+        void shouldCreditHomeTeamOwnerWhenHomeTeamWins() {
+            // Arrange
+            UUID ownerId = UUID.randomUUID();
+            Team homeTeam = Team.builder().id(testMatch.getHomeTeamId()).userId(ownerId).build();
+
+            when(matchRepository.findById(testMatchId)).thenReturn(Optional.of(testMatch));
+            when(matchRepository.save(any(Match.class))).thenAnswer(invocation -> invocation.getArgument(0));
+            when(teamRepository.findById(testMatch.getHomeTeamId())).thenReturn(Optional.of(homeTeam));
+
+            // Act — finishEvent is home 2 - away 1
+            matchFinishService.finishMatch(finishEvent);
+            captureRewardCallback().run();
+
+            // Assert
+            verify(walletClient).credit(eq(ownerId), eq(new CreditWalletRequest(BigDecimal.ONE)));
+        }
+
+        @Test
+        @DisplayName("Should credit 1 coin to the away team owner when away team wins")
+        void shouldCreditAwayTeamOwnerWhenAwayTeamWins() {
+            // Arrange
+            UUID ownerId = UUID.randomUUID();
+            Team awayTeam = Team.builder().id(testMatch.getAwayTeamId()).userId(ownerId).build();
+            LiveMatchEventDto awayWinEvent = new LiveMatchEventDto(
+                    testMatchId, testMatch.getHomeTeamId(), testMatch.getAwayTeamId(),
+                    1, 3, 90, null, "Away win"
+            );
+
+            when(matchRepository.findById(testMatchId)).thenReturn(Optional.of(testMatch));
+            when(matchRepository.save(any(Match.class))).thenAnswer(invocation -> invocation.getArgument(0));
+            when(teamRepository.findById(testMatch.getAwayTeamId())).thenReturn(Optional.of(awayTeam));
+
+            // Act
+            matchFinishService.finishMatch(awayWinEvent);
+            captureRewardCallback().run();
+
+            // Assert
+            verify(walletClient).credit(eq(ownerId), eq(new CreditWalletRequest(BigDecimal.ONE)));
+        }
+
+        @Test
+        @DisplayName("Should not credit anyone when the match ends in a draw")
+        void shouldNotCreditOnDraw() {
+            // Arrange
+            LiveMatchEventDto drawEvent = new LiveMatchEventDto(
+                    testMatchId, testMatch.getHomeTeamId(), testMatch.getAwayTeamId(),
+                    2, 2, 90, null, "Draw"
+            );
+
+            when(matchRepository.findById(testMatchId)).thenReturn(Optional.of(testMatch));
+            when(matchRepository.save(any(Match.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+            // Act
+            matchFinishService.finishMatch(drawEvent);
+            captureRewardCallback().run();
+
+            // Assert
+            verifyNoInteractions(teamRepository, walletClient);
+        }
+
+        @Test
+        @DisplayName("Should not credit anyone when the winning team has no owner (seeded team)")
+        void shouldNotCreditWhenWinningTeamHasNoOwner() {
+            // Arrange
+            Team unownedTeam = Team.builder().id(testMatch.getHomeTeamId()).userId(null).build();
+
+            when(matchRepository.findById(testMatchId)).thenReturn(Optional.of(testMatch));
+            when(matchRepository.save(any(Match.class))).thenAnswer(invocation -> invocation.getArgument(0));
+            when(teamRepository.findById(testMatch.getHomeTeamId())).thenReturn(Optional.of(unownedTeam));
+
+            // Act
+            matchFinishService.finishMatch(finishEvent);
+            captureRewardCallback().run();
+
+            // Assert
+            verifyNoInteractions(walletClient);
+        }
+
+        @Test
+        @DisplayName("Should never look up the losing team")
+        void shouldNeverLookUpLosingTeam() {
+            // Arrange
+            Team homeTeam = Team.builder().id(testMatch.getHomeTeamId()).userId(UUID.randomUUID()).build();
+
+            when(matchRepository.findById(testMatchId)).thenReturn(Optional.of(testMatch));
+            when(matchRepository.save(any(Match.class))).thenAnswer(invocation -> invocation.getArgument(0));
+            when(teamRepository.findById(testMatch.getHomeTeamId())).thenReturn(Optional.of(homeTeam));
+
+            // Act — finishEvent is home 2 - away 1
+            matchFinishService.finishMatch(finishEvent);
+            captureRewardCallback().run();
+
+            // Assert
+            verify(teamRepository, never()).findById(testMatch.getAwayTeamId());
         }
     }
 }

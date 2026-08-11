@@ -1,5 +1,6 @@
 package com.poorbet.matchservice.team.client.wallet;
 
+import com.poorbet.matchservice.team.dto.CreditWalletRequest;
 import com.poorbet.matchservice.team.dto.DebitWalletRequest;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -20,6 +21,15 @@ public class WalletClient {
         restClient
                 .post()
                 .uri("/internal/wallet/users/{userId}/debit", userId)
+                .body(request)
+                .retrieve()
+                .toBodilessEntity();
+    }
+
+    public void credit(UUID userId, CreditWalletRequest request) {
+        restClient
+                .post()
+                .uri("/internal/wallet/users/{userId}/credit", userId)
                 .body(request)
                 .retrieve()
                 .toBodilessEntity();
