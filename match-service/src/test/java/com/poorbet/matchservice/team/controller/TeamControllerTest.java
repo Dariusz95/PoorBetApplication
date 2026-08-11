@@ -1,5 +1,10 @@
 package com.poorbet.matchservice.team.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.poorbet.matchservice.security.CurrentUserProvider;
+import com.poorbet.matchservice.team.dto.IncreaseTeamPowerDto;
+import com.poorbet.matchservice.team.dto.PowerType;
+import com.poorbet.matchservice.team.dto.TeamResponse;
 import com.poorbet.matchservice.team.dto.TeamShortDto;
 import com.poorbet.matchservice.team.service.TeamService;
 import jakarta.persistence.EntityNotFoundException;
@@ -17,6 +22,7 @@ import static com.poorbet.matchservice.fixture.TeamFixtures.BARCELONA;
 import static com.poorbet.matchservice.fixture.TeamFixtures.BARCELONA_ID;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -27,11 +33,17 @@ class TeamControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @MockitoBean
     private TeamService teamService;
 
     @MockitoBean
     private CacheManager cacheManager;
+
+    @MockitoBean
+    private CurrentUserProvider currentUserProvider;
 
     @Test
     void shouldReturnTeam_whenIdExists() throws Exception {
@@ -62,5 +74,33 @@ class TeamControllerTest {
 
         mockMvc.perform(get("/api/teams/public/{id}", id))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void increasePower_shouldReturnUpdatedTeam_whenRequestValid() throws Exception {
+        UUID userId = UUID.randomUUID();
+        TeamResponse response = TeamResponse.builder()
+                .id(BARCELONA_ID)
+                .name(BARCELONA)
+                .attackPower(86)
+                .defencePower(72)
+                .build();
+
+        when(currentUserProvider.getUserId()).thenReturn(userId);
+        when(teamService.increasePower(new IncreaseTeamPowerDto(PowerType.ATTACK), userId)).thenReturn(response);
+
+        mockMvc.perform(post("/api/teams/public/power")
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(new IncreaseTeamPowerDto(PowerType.ATTACK))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.attackPower").value(86));
+    }
+
+    @Test
+    void increasePower_shouldReturn400_whenPowerTypeMissing() throws Exception {
+        mockMvc.perform(post("/api/teams/public/power")
+                        .contentType("application/json")
+                        .content("{}"))
+                .andExpect(status().isBadRequest());
     }
 }

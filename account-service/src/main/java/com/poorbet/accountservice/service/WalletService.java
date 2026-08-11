@@ -112,7 +112,7 @@ public class WalletService {
 
     @Transactional
     public Wallet debit(UUID userId, BigDecimal amount) {
-        Wallet wallet = walletRepository.findByUserId(userId)
+        Wallet wallet = walletRepository.findByUserIdForUpdate(userId)
                 .orElseThrow(() -> new IllegalStateException("Wallet not found for user: " + userId));
 
         if (wallet.getBalance().compareTo(amount) < 0) {
@@ -120,6 +120,22 @@ public class WalletService {
         }
 
         wallet.setBalance(wallet.getBalance().subtract(amount));
+        Wallet updatedWallet = walletRepository.save(wallet);
+
+        outboxService.saveEvent(
+                WalletEvents.WALLET_BALANCE_CHANGED,
+                new WalletBalanceChangedEvent(updatedWallet.getUserId(), updatedWallet.getBalance())
+        );
+
+        return updatedWallet;
+    }
+
+    @Transactional
+    public Wallet credit(UUID userId, BigDecimal amount) {
+        Wallet wallet = walletRepository.findByUserIdForUpdate(userId)
+                .orElseThrow(() -> new IllegalStateException("Wallet not found for user: " + userId));
+
+        wallet.setBalance(wallet.getBalance().add(amount));
         Wallet updatedWallet = walletRepository.save(wallet);
 
         outboxService.saveEvent(

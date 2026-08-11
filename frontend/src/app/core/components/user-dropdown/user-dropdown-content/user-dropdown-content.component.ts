@@ -38,6 +38,13 @@ export class UserDropdownContentComponent {
       action: () => console.log('settings clicked'),
     },
     {
+      value: 'createTeam',
+      labelKey: 'user.createTeam',
+      icon: 'shield',
+      visible: (isLoggedIn) => isLoggedIn,
+      action: () => this.routingService.navigateTo(RoutePath.CreateTeam),
+    },
+    {
       value: 'login',
       labelKey: 'user.login',
       icon: 'login',

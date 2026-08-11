@@ -6,9 +6,9 @@ import { BET_TYPE_TO_OPTION } from '@shared/types/bet-option';
 import { BetType } from '@shared/types/bet-type';
 import { Uuid } from '@shared/types/uuid.type';
 import { PbCardComponent } from '@shared/ui/pb-card/pb-card.component';
+import { TeamService } from '@features/teams/services/team.service';
 import { combineLatest, map, of, switchMap } from 'rxjs';
 import { BetSlipService } from '../../services/bet-slip.service';
-import { TeamService } from '../../services/team.service';
 import { MatchDto, PoolMatch, ShortTeamInfo } from '../../types/match.types';
 import { OddsButtonComponent } from '../odds-button/odds-button.component';
 

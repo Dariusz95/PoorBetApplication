@@ -8,7 +8,8 @@
     "myCoupons": "PoorBet – My coupons",
     "login": "PoorBet – Login",
     "register": "PoorBet – Register",
-    "ranking": "PoorBet – Ranking"
+    "ranking": "PoorBet – Ranking",
+    "createTeam": "PoorBet – Create team"
   },
   "auth": {
     "email": {
@@ -48,6 +49,7 @@
   "validation": {
     "required": "This field is required",
     "minlength": "This field must be at least {{minLength}} characters long",
+    "maxlength": "This field can be at most {{maxLength}} characters long",
     "min": "This field must be at least {{min}}",
     "email": "Please enter a valid email address",
     "password": "Password must be at least 6 characters long",
@@ -128,6 +130,7 @@
   },
   "user": {
     "settings": "Settings",
+    "myTeam": "My team",
     "login": "Log in",
     "register": "Register",
     "logout": "Log out"
@@ -196,5 +199,46 @@
     "previous": "Previous",
     "next": "Next",
     "page": "Page {{page}} of {{total}}"
+  },
+  "team": {
+    "loading": "Loading your team…",
+    "view": {
+      "title": "My team",
+      "subtitle": "Manage your team and its look.",
+      "noLogoAlt": "No team logo",
+      "attackPower": "Attack",
+      "defencePower": "Defence",
+      "editButton": "Edit team",
+      "powerPricingHint": "1 power point costs 10 coins. You earn 1 coin for every match you win.",
+      "increaseAttackAriaLabel": "Increase attack for 10 coins",
+      "increaseDefenceAriaLabel": "Increase defence for 10 coins",
+      "increaseAttackSuccessToast": "Attack increased!",
+      "increaseDefenceSuccessToast": "Defence increased!"
+    },
+    "form": {
+      "createTitle": "Create team",
+      "createSubtitle": "Enter your team's name and add its logo.",
+      "editTitle": "Edit team",
+      "editSubtitle": "Update your team's name or logo.",
+      "name": {
+        "label": "Team name",
+        "placeholder": "Enter team name"
+      },
+      "logo": {
+        "label": "Team logo",
+        "dropzoneTitle": "Drag and drop a logo here",
+        "dropzoneHint": "or click to choose a file",
+        "hint": "PNG or JPEG, up to 1 MB",
+        "previewAlt": "Team logo preview",
+        "required": "Select a team logo",
+        "change": "Change",
+        "remove": "Remove"
+      },
+      "createSubmit": "Create team",
+      "editSubmit": "Save changes",
+      "cancel": "Cancel",
+      "createSuccessToast": "Team has been created.",
+      "editSuccessToast": "Changes have been saved."
+    }
   }
 }

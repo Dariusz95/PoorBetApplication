@@ -1,0 +1,84 @@
+<header class="w-full max-w-[600px]">
+  <h1 class="t-heading-lg">
+    {{
+      (isEditingExisting() ? "team.form.editTitle" : "team.form.createTitle")
+        | transloco
+    }}
+  </h1>
+  <p class="t-muted t-body-sm mt-1">
+    {{
+      (isEditingExisting()
+        ? "team.form.editSubtitle"
+        : "team.form.createSubtitle"
+      ) | transloco
+    }}
+  </p>
+</header>
+
+<pb-card stylesCss="w-full max-w-[600px]">
+  <form pbCardBody [formGroup]="form" (ngSubmit)="onSubmit()">
+    <pb-form-field>
+      <pb-label>{{ "team.form.name.label" | transloco }}</pb-label>
+      <pb-input
+        formControlName="name"
+        testId="create-team-name-input"
+        [placeholder]="'team.form.name.placeholder' | transloco"
+      >
+        <pb-icon icon="shield" size="m" pbInputIcon></pb-icon>
+      </pb-input>
+    </pb-form-field>
+
+    <div class="mt-5">
+      <label class="t-body-sm mb-2 block" for="create-team-logo-input">
+        {{ "team.form.logo.label" | transloco }}
+      </label>
+
+      <app-team-logo-dropzone
+        [previewUrl]="logoPreviewUrl()"
+        [error]="logoError()"
+        (fileSelected)="onLogoFileSelected($event)"
+        (cleared)="onLogoCleared()"
+      />
+
+      <p class="t-body-xs t-muted mt-1">
+        {{ "team.form.logo.hint" | transloco }}
+      </p>
+
+      @if (logoError()) {
+        <p class="t-body-xs mt-1 text-app-danger">
+          {{ "team.form.logo.required" | transloco }}
+        </p>
+      }
+    </div>
+
+    <div class="mt-8 flex gap-3">
+      @if (isEditingExisting()) {
+        <pb-button
+          variant="ghost"
+          size="md"
+          type="button"
+          [fullWidth]="true"
+          (buttonClick)="cancel.emit()"
+        >
+          {{ "team.form.cancel" | transloco }}
+        </pb-button>
+      }
+
+      <pb-button
+        variant="primary"
+        size="md"
+        type="submit"
+        testId="create-team-submit-button"
+        [fullWidth]="true"
+        [loading]="submitting()"
+      >
+        {{
+          (isEditingExisting()
+            ? "team.form.editSubmit"
+            : "team.form.createSubmit"
+          ) | transloco
+        }}
+      </pb-button>
+    </div>
+  </form>
+</pb-card>

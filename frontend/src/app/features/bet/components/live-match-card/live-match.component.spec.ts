@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TeamService } from '@features/bet/services/team.service';
+import { TeamService } from '@features/teams/services/team.service';
 import {
   LiveMatchEvent,
   MatchEventType,

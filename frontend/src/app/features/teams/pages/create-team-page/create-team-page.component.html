@@ -1,0 +1,29 @@
+<section class="flex flex-col items-center gap-4 px-4 py-6">
+  <div class="w-full max-w-[600px]">
+    @switch (mode()) {
+      @case ("loading") {
+        <div class="flex flex-col items-center gap-3 py-20">
+          <pb-spinner size="lg"></pb-spinner>
+          <p class="t-body-sm t-muted">{{ "team.loading" | transloco }}</p>
+        </div>
+      }
+
+      @case ("view") {
+        <app-team-view
+          [team]="team()!"
+          (edit)="startEdit()"
+          (teamUpdated)="team.set($event)"
+        />
+      }
+
+      @case ("form") {
+        <app-team-form
+          [team]="team()"
+          [submitting]="submitting()"
+          (save)="handleSave($event)"
+          (cancel)="handleCancel()"
+        />
+      }
+    }
+  </div>
+</section>

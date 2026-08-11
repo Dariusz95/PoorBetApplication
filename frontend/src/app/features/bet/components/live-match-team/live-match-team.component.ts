@@ -7,9 +7,9 @@ import {
   OnInit,
   signal,
 } from '@angular/core';
+import { TeamService } from '@features/teams/services/team.service';
 import { Uuid } from '@shared/types/uuid.type';
 import { Observable } from 'rxjs';
-import { TeamService } from '../../services/team.service';
 import { ShortTeamInfo } from '../../types/match.types';
 
 @Component({

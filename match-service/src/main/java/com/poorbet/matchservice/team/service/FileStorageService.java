@@ -42,19 +42,19 @@ public class FileStorageService {
 
             return filename;
         } catch (IOException e) {
-            throw new UncheckedIOException("Nie udało się zapisać pliku logo drużyny", e);
+            throw new UncheckedIOException("Failed to save team logo file", e);
         }
     }
 
     private void validateFile(MultipartFile file) {
         if (file == null || file.isEmpty()) {
-            throw new IllegalArgumentException("Plik jest pusty");
+            throw new IllegalArgumentException("The file is empty");
         }
         if (!ALLOWED_TYPES.contains(file.getContentType())) {
-            throw new IllegalArgumentException("Dozwolone formaty: PNG, JPEG");
+            throw new IllegalArgumentException("Allowed formats: PNG, JPEG");
         }
         if (file.getSize() > MAX_SIZE_BYTES) {
-            throw new IllegalArgumentException("Maksymalny rozmiar pliku to 1 MB");
+            throw new IllegalArgumentException("The maximum file size is 1 MB");
         }
     }
 

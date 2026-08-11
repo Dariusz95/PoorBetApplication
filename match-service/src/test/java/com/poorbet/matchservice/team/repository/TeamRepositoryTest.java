@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.cache.CacheManager;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -38,6 +39,8 @@ class TeamRepositoryTest {
     private CacheManager cacheManager;
     @Autowired
     private TeamRepository teamRepository;
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     @DynamicPropertySource
     static void registerPgProperties(DynamicPropertyRegistry registry) {
@@ -52,6 +55,7 @@ class TeamRepositoryTest {
     @BeforeEach
     void setUp() {
         teamRepository.deleteAll();
+        teamRepository.flush();
         initializeTestData();
     }
 
@@ -64,7 +68,11 @@ class TeamRepositoryTest {
                 TeamFixtures.barcelona(),
                 TeamFixtures.psg()
         );
-        teamRepository.saveAll(teams);
+
+        teams.forEach(team -> jdbcTemplate.update(
+                "INSERT INTO teams (id, name, img, attack_power, defence_power, user_id) VALUES (?, ?, ?, ?, ?, ?)",
+                team.getId(), team.getName(), team.getImg(), team.getAttackPower(), team.getDefencePower(), team.getUserId()
+        ));
     }
 
     @Test
@@ -200,10 +208,10 @@ class TeamRepositoryTest {
 
     @Test
     void save_shouldPersistNewTeam() {
-        // Arrange
-        UUID newTeamId = UUID.randomUUID();
+        // Arrange — no manually-assigned id, mirroring how TeamServiceImpl.create()
+        // actually builds a Team, so save() takes the persist() path instead of
+        // merge() (see initializeTestData() above for why that distinction matters).
         Team newTeam = Team.builder()
-                .id(newTeamId)
                 .name("Arsenal")
                 .img("arsenal.png")
                 .attackPower(79)
@@ -215,9 +223,9 @@ class TeamRepositoryTest {
 
         // Assert
         assertNotNull(savedTeam);
-        assertEquals(newTeamId, savedTeam.getId());
+        assertNotNull(savedTeam.getId());
         assertEquals("Arsenal", savedTeam.getName());
-        assertTrue(teamRepository.existsById(newTeamId));
+        assertTrue(teamRepository.existsById(savedTeam.getId()));
     }
 
     @Test

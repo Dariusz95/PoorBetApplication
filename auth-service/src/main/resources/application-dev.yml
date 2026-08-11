@@ -59,6 +59,7 @@ oauth:
         - internal
       audiences:
         - odds-engine-service
+        - account-service
     coupon-service:
       secret: ${COUPON_SERVICE_CLIENT_SECRET:secret}
       permissions:

@@ -1,6 +1,7 @@
 package com.poorbet.accountservice.controller;
 
 import com.poorbet.commons.commons.wallet.contract.ReserveRequest;
+import com.poorbet.accountservice.dto.CreditWalletRequest;
 import com.poorbet.accountservice.dto.DebitWalletRequest;
 import com.poorbet.accountservice.service.WalletService;
 import jakarta.validation.Valid;
@@ -21,6 +22,12 @@ public class InternalWalletController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void debit(@PathVariable UUID userId, @RequestBody @Valid DebitWalletRequest request) {
         walletService.debit(userId, request.amount());
+    }
+
+    @PostMapping("/users/{userId}/credit")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void credit(@PathVariable UUID userId, @RequestBody @Valid CreditWalletRequest request) {
+        walletService.credit(userId, request.amount());
     }
 
     @PostMapping("/users/{userId}/reserve")

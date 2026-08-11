@@ -1,5 +1,6 @@
 package com.poorbet.matchservice.team.mapper;
 
+import com.poorbet.matchservice.team.dto.TeamResponse;
 import com.poorbet.matchservice.team.dto.TeamShortDto;
 import com.poorbet.matchservice.team.dto.TeamStatsDto;
 import com.poorbet.matchservice.team.model.Team;
@@ -7,7 +8,17 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class TeamMapper {
-    public TeamStatsDto toDto(Team team){
+    public static TeamResponse toResponse(Team team) {
+        return TeamResponse.builder()
+                .id(team.getId())
+                .name(team.getName())
+                .attackPower(team.getAttackPower())
+                .defencePower(team.getDefencePower())
+                .logo(toImgUrl(team.getImg()))
+                .build();
+    }
+
+    public TeamStatsDto toDto(Team team) {
         return new TeamStatsDto(
                 team.getId(),
                 team.getName(),
@@ -16,7 +27,7 @@ public class TeamMapper {
         );
     }
 
-    public static TeamShortDto toTeamShortDto(Team team){
+    public static TeamShortDto toTeamShortDto(Team team) {
         return new TeamShortDto(
                 team.getId(),
                 team.getName(),
@@ -24,8 +35,6 @@ public class TeamMapper {
         );
     }
 
-    // img w bazie to sama nazwa pliku (np. "ac-pierogi.png") — prefiks ścieżki serwującej
-    // pliki statyczne (StaticResourceConfig) doklejamy tu, w jednym miejscu, przy budowaniu DTO
     private static String toImgUrl(String img) {
         return img != null ? "/images/" + img : null;
     }

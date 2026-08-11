@@ -65,4 +65,9 @@ export class UserSidePanelComponent {
     this.routingService.navigateTo(RoutePath.MyCoupons);
     this.dialogRef.close();
   }
+
+  goToCreateTeam(): void {
+    this.routingService.navigateTo(RoutePath.CreateTeam);
+    this.dialogRef.close();
+  }
 }
