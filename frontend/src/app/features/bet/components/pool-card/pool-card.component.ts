@@ -2,10 +2,12 @@ import { SlicePipe } from '@angular/common';
 import { Component, inject, input, signal } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { TranslocoDirective } from '@jsverse/transloco';
-import { BET_TYPE_TO_OPTION } from '@shared/types/bet-option';
+import { BET_TYPE_TO_OPTION, BetOption } from '@shared/types/bet-option';
 import { BetType } from '@shared/types/bet-type';
 import { Uuid } from '@shared/types/uuid.type';
+import { PbButtonComponent } from '@shared/ui/pb-button/pb-button.component';
 import { PbCardComponent } from '@shared/ui/pb-card/pb-card.component';
+import { PbIconComponent } from '@shared/ui/icon/pb-icon.component';
 import { TeamService } from '@features/teams/services/team.service';
 import { combineLatest, map, of, switchMap } from 'rxjs';
 import { BetSlipService } from '../../services/bet-slip.service';
@@ -24,7 +26,9 @@ type TeamSide = 'home' | 'away';
   imports: [
     SlicePipe,
     OddsButtonComponent,
+    PbButtonComponent,
     PbCardComponent,
+    PbIconComponent,
     TranslocoDirective,
   ],
   templateUrl: './pool-card.component.html',
@@ -37,6 +41,7 @@ export class PoolCardComponent {
   private readonly betSlipService = inject(BetSlipService);
 
   readonly BetType = BetType;
+  readonly BetOption = BetOption;
 
   readonly teamDetailsMap = toSignal(
     toObservable(this.pool).pipe(
@@ -73,9 +78,22 @@ export class PoolCardComponent {
   markImgError(matchId: Uuid, side: TeamSide): void {
     this.imgErrors.update((errors) => {
       const current = errors[matchId] ?? { home: false, away: false };
-      
+
       return { ...errors, [matchId]: { ...current, [side]: true } };
     });
+  }
+
+  private readonly expandedGoalMarkets = signal<Record<Uuid, boolean>>({});
+
+  isGoalMarketsExpanded(matchId: Uuid): boolean {
+    return this.expandedGoalMarkets()[matchId] ?? false;
+  }
+
+  toggleGoalMarkets(matchId: Uuid): void {
+    this.expandedGoalMarkets.update((expanded) => ({
+      ...expanded,
+      [matchId]: !expanded[matchId],
+    }));
   }
 
   toggleBet(match: MatchDto, betType: BetType, odds: number): void {

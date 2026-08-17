@@ -63,7 +63,11 @@ class InternalOddsControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.homeWinProbability").value(0.45f))
                 .andExpect(jsonPath("$.drawProbability").value(0.28f))
-                .andExpect(jsonPath("$.awayWinProbability").value(0.27f));
+                .andExpect(jsonPath("$.awayWinProbability").value(0.27f))
+                .andExpect(jsonPath("$.over2_5Probability").value(0.55f))
+                .andExpect(jsonPath("$.under2_5Probability").value(0.45f))
+                .andExpect(jsonPath("$.over3_5Probability").value(0.30f))
+                .andExpect(jsonPath("$.under3_5Probability").value(0.70f));
 
         verify(oddsService).predictOdds(
                 request.homeTeamAttack(),

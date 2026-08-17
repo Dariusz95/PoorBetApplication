@@ -6,7 +6,6 @@ import com.poorbet.odds_engine_service.oddsservice.dto.OddsResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import smile.classification.LogisticRegression;
 
 import java.io.ObjectInputStream;
 import java.nio.file.Files;
@@ -17,7 +16,7 @@ import java.nio.file.Path;
 @RequiredArgsConstructor
 public class SmileOddsModel implements OddsModel {
 
-    private LogisticRegression model;
+    private TrainedModelBundle models;
     private final ModelProperties modelProperties;
 
     public void loadModel() {
@@ -34,7 +33,7 @@ public class SmileOddsModel implements OddsModel {
                              Files.newInputStream(path)
                      )) {
 
-            this.model = (LogisticRegression) ois.readObject();
+            this.models = (TrainedModelBundle) ois.readObject();
 
         } catch (Exception e) {
             throw new IllegalStateException(
@@ -52,7 +51,7 @@ public class SmileOddsModel implements OddsModel {
             int awayDefense
     ) {
 
-        if (model == null) {
+        if (models == null) {
             throw new IllegalStateException("Model not loaded");
         }
 
@@ -63,14 +62,23 @@ public class SmileOddsModel implements OddsModel {
                 awayDefense
         };
 
-        double[] probs = new double[3];
+        double[] resultProbs = new double[3];
+        models.matchResultModel().predict(features, resultProbs);
 
-        model.predict(features, probs);
+        double[] over2_5Probs = new double[2];
+        models.over2_5Model().predict(features, over2_5Probs);
+
+        double[] over3_5Probs = new double[2];
+        models.over3_5Model().predict(features, over3_5Probs);
 
         return new OddsResponseDto(
-                (float) probs[0],
-                (float) probs[1],
-                (float) probs[2]
+                (float) resultProbs[0],
+                (float) resultProbs[1],
+                (float) resultProbs[2],
+                (float) over2_5Probs[1],
+                (float) over2_5Probs[0],
+                (float) over3_5Probs[1],
+                (float) over3_5Probs[0]
         );
     }
 }

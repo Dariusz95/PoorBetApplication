@@ -8,6 +8,10 @@ public record OddsDto(
         UUID id,
         BigDecimal homeWin,
         BigDecimal draw,
-        BigDecimal awayWin
-        ) {
+        BigDecimal awayWin,
+        BigDecimal over2_5,
+        BigDecimal under2_5,
+        BigDecimal over3_5,
+        BigDecimal under3_5
+) {
 }

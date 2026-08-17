@@ -32,7 +32,7 @@ class OddsServiceImplTest {
 
     @Test
     void shouldDelegatePredictOddsToModel() {
-        OddsResponseDto odds = new OddsResponseDto(0.5f, 0.3f, 0.2f);
+        OddsResponseDto odds = new OddsResponseDto(0.5f, 0.3f, 0.2f, 0.55f, 0.45f, 0.3f, 0.7f);
 
         when(oddsModel.predict(70, 60, 65, 55))
                 .thenReturn(odds);
@@ -47,7 +47,7 @@ class OddsServiceImplTest {
     void shouldReturnBatchWithSingleMatch() {
         UUID matchId = UUID.randomUUID();
         MatchDto match = new MatchDto(matchId, 70, 60, 65, 55);
-        OddsResponseDto odds = new OddsResponseDto(0.4f, 0.3f, 0.3f);
+        OddsResponseDto odds = new OddsResponseDto(0.4f, 0.3f, 0.3f, 0.5f, 0.5f, 0.25f, 0.75f);
 
         when(oddsModel.predict(anyInt(), anyInt(), anyInt(), anyInt()))
                 .thenReturn(odds);
@@ -66,7 +66,7 @@ class OddsServiceImplTest {
         MatchDto m2 = new MatchDto(UUID.randomUUID(), 80, 70, 60, 50);
 
         when(oddsModel.predict(anyInt(), anyInt(), anyInt(), anyInt()))
-                .thenReturn(new OddsResponseDto(0.5f, 0.3f, 0.2f));
+                .thenReturn(new OddsResponseDto(0.5f, 0.3f, 0.2f, 0.55f, 0.45f, 0.3f, 0.7f));
 
         List<BatchOddsResponse> result =
                 oddsService.predictBatch(List.of(m1, m2));

@@ -47,13 +47,7 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public List<TeamStatsDto> findRandomTeams(Integer count) {
-        List<TeamStatsDto> teams = teamRepository.findRandomTeams(count);
-
-        if (teams.size() < count) {
-            throw new IllegalStateException("Not enough teams in database");
-        }
-
-        return teams;
+        return teamRepository.findRandomTeams(count);
     }
 
     @Cacheable(value = "teams", key = "#id")

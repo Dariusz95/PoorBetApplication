@@ -84,7 +84,7 @@ class TeamServiceImplTest {
     }
 
     @Test
-    void findRandomTeams_shouldThrowException_whenLessThanRequestedTeamsInDatabase() {
+    void findRandomTeams_shouldReturnFewerTeams_whenLessThanRequestedInDatabase() {
         // Arrange
         int requestedCount = 5;
         List<TeamStatsDto> availableTeams = List.of(
@@ -94,8 +94,11 @@ class TeamServiceImplTest {
 
         when(teamRepository.findRandomTeams(requestedCount)).thenReturn(availableTeams);
 
-        // Act & Assert
-        assertThrows(IllegalStateException.class, () -> teamService.findRandomTeams(requestedCount));
+        // Act
+        List<TeamStatsDto> result = teamService.findRandomTeams(requestedCount);
+
+        // Assert
+        assertEquals(availableTeams, result);
         verify(teamRepository, times(1)).findRandomTeams(requestedCount);
     }
 
@@ -105,8 +108,11 @@ class TeamServiceImplTest {
         int count = 3;
         when(teamRepository.findRandomTeams(count)).thenReturn(new ArrayList<>());
 
-        // Act & Assert
-        assertThrows(IllegalStateException.class, () -> teamService.findRandomTeams(count));
+        // Act
+        List<TeamStatsDto> result = teamService.findRandomTeams(count);
+
+        // Assert
+        assertTrue(result.isEmpty());
         verify(teamRepository, times(1)).findRandomTeams(count);
     }
 

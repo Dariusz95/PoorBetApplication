@@ -1,0 +1,5 @@
+ALTER TABLE match_odds
+    ADD COLUMN over_2_5 NUMERIC(10,2),
+    ADD COLUMN under_2_5 NUMERIC(10,2),
+    ADD COLUMN over_3_5 NUMERIC(10,2),
+    ADD COLUMN under_3_5 NUMERIC(10,2);

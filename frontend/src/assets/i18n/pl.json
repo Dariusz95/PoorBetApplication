@@ -114,7 +114,9 @@
       "loginRequired": "Zaloguj się, aby postawić kupon"
     },
     "poolCard": {
-      "eyebrow": "Pula"
+      "eyebrow": "Pula",
+      "showMore": "Pokaż więcej",
+      "showLess": "Pokaż mniej"
     },
     "tabsHelp": {
       "open": "Jak to działa?",
@@ -175,6 +177,7 @@
     "finalScore": "Wynik końcowy",
     "close": "Zamknij",
     "match": "Mecz",
+    "goals": "Gole",
     "matchStarted": "Mecz już się rozpoczął",
     "matchStartedToast": "Nie można postawić kuponu — mecz już się rozpoczął"
   },
