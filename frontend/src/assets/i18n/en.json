@@ -114,7 +114,9 @@
       "loginRequired": "Log in to place a coupon"
     },
     "poolCard": {
-      "eyebrow": "Pool"
+      "eyebrow": "Pool",
+      "showMore": "Show more",
+      "showLess": "Show less"
     },
     "tabsHelp": {
       "open": "How does this work?",
@@ -175,6 +177,7 @@
     "finalScore": "Final score",
     "close": "Close",
     "match": "Match",
+    "goals": "Goals",
     "matchStarted": "Match has already started",
     "matchStartedToast": "Cannot place coupon — match has already started"
   },

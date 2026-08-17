@@ -32,4 +32,16 @@ public class Odds {
 
     @Column(name = "away_win")
     private BigDecimal awayWin;
+
+    @Column(name = "over_2_5")
+    private BigDecimal over25;
+
+    @Column(name = "under_2_5")
+    private BigDecimal under25;
+
+    @Column(name = "over_3_5")
+    private BigDecimal over35;
+
+    @Column(name = "under_3_5")
+    private BigDecimal under35;
 }

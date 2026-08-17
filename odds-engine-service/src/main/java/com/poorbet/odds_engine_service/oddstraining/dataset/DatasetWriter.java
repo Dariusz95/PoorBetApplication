@@ -37,7 +37,9 @@ public class DatasetWriter {
                     "home_defence",
                     "away_attack",
                     "away_defence",
-                    "result"));
+                    "result",
+                    "home_goals",
+                    "away_goals"));
             writer.newLine();
 
             for (MatchRecord record : records) {
@@ -46,7 +48,9 @@ public class DatasetWriter {
                         String.valueOf(record.getHomeDefence()),
                         String.valueOf(record.getAwayAttack()),
                         String.valueOf(record.getAwayDefence()),
-                        record.getResult()));
+                        record.getResult(),
+                        String.valueOf(record.getHomeGoals()),
+                        String.valueOf(record.getAwayGoals())));
                 writer.newLine();
             }
 

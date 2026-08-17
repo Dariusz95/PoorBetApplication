@@ -83,6 +83,76 @@
               "
             ></app-odds-button>
           </div>
+
+          <div class="mt-2.5 grid grid-cols-2 gap-2.5">
+            <app-odds-button
+              [label]="BetOption.Under2_5"
+              [value]="match.odds.under2_5"
+              [selected]="isSelected(match.matchId, BetType.Under2_5)"
+              [disabled]="hasStarted()"
+              [testId]="'match-' + match.matchId + '-under-2-5'"
+              (oddsClick)="
+                toggleBet(match, BetType.Under2_5, match.odds.under2_5)
+              "
+            ></app-odds-button>
+            <app-odds-button
+              [label]="BetOption.Over2_5"
+              [value]="match.odds.over2_5"
+              [selected]="isSelected(match.matchId, BetType.Over2_5)"
+              [disabled]="hasStarted()"
+              [testId]="'match-' + match.matchId + '-over-2-5'"
+              (oddsClick)="
+                toggleBet(match, BetType.Over2_5, match.odds.over2_5)
+              "
+            ></app-odds-button>
+          </div>
+
+          @if (isGoalMarketsExpanded(match.matchId)) {
+            <div class="mt-2.5 grid grid-cols-2 gap-2.5">
+              <app-odds-button
+                [label]="BetOption.Under3_5"
+                [value]="match.odds.under3_5"
+                [selected]="isSelected(match.matchId, BetType.Under3_5)"
+                [disabled]="hasStarted()"
+                [testId]="'match-' + match.matchId + '-under-3-5'"
+                (oddsClick)="
+                  toggleBet(match, BetType.Under3_5, match.odds.under3_5)
+                "
+              ></app-odds-button>
+              <app-odds-button
+                [label]="BetOption.Over3_5"
+                [value]="match.odds.over3_5"
+                [selected]="isSelected(match.matchId, BetType.Over3_5)"
+                [disabled]="hasStarted()"
+                [testId]="'match-' + match.matchId + '-over-3-5'"
+                (oddsClick)="
+                  toggleBet(match, BetType.Over3_5, match.odds.over3_5)
+                "
+              ></app-odds-button>
+            </div>
+          }
+
+          <pb-button
+            variant="ghost"
+            size="sm"
+            [fullWidth]="true"
+            [testId]="'match-' + match.matchId + '-toggle-goal-markets'"
+            (buttonClick)="toggleGoalMarkets(match.matchId)"
+          >
+            <pb-icon
+              [icon]="
+                isGoalMarketsExpanded(match.matchId)
+                  ? 'expand_less'
+                  : 'expand_more'
+              "
+              size="s"
+            ></pb-icon>
+            {{
+              isGoalMarketsExpanded(match.matchId)
+                ? t("showLess")
+                : t("showMore")
+            }}
+          </pb-button>
         </section>
       }
     </div>

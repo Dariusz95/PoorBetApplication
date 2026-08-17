@@ -48,6 +48,8 @@ public class TrainingService {
 
             double[][] x = new double[rows.size()][4];
             int[] y = new int[rows.size()];
+            int[] yOver2_5 = new int[rows.size()];
+            int[] yOver3_5 = new int[rows.size()];
 
             for (int i = 0; i < rows.size(); i++) {
 
@@ -66,12 +68,22 @@ public class TrainingService {
                         Double.parseDouble(row.get("away_defence"));
 
                 y[i] = mapResult(row.get("result"));
+
+                int totalGoals = Integer.parseInt(row.get("home_goals")) + Integer.parseInt(row.get("away_goals"));
+                yOver2_5[i] = totalGoals > 2 ? 1 : 0;
+                yOver3_5[i] = totalGoals > 3 ? 1 : 0;
             }
 
-            LogisticRegression model =
+            LogisticRegression matchResultModel =
                     LogisticRegression.fit(x, y);
 
-            saveModel(model);
+            LogisticRegression over2_5Model =
+                    LogisticRegression.fit(x, yOver2_5);
+
+            LogisticRegression over3_5Model =
+                    LogisticRegression.fit(x, yOver3_5);
+
+            saveModel(new TrainedModelBundle(matchResultModel, over2_5Model, over3_5Model));
 
             log.info("Model trained successfully");
 
@@ -81,7 +93,7 @@ public class TrainingService {
         }
     }
 
-    private void saveModel(LogisticRegression model) {
+    private void saveModel(TrainedModelBundle model) {
 
         Path modelPath = modelProperties.getPath();
 

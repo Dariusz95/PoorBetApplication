@@ -24,6 +24,10 @@ export interface OddsDto {
   homeWin: number;
   draw: number;
   awayWin: number;
+  over2_5: number;
+  under2_5: number;
+  over3_5: number;
+  under3_5: number;
 }
 
 export interface MatchDto {

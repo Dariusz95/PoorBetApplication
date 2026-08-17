@@ -86,7 +86,7 @@ messaging:
   source-service: match-service
 
 match-pool:
-  matches-per-pool: 5
+  matches-per-pool: 3
   pools-in-advance: 5
   pool-interval-minutes: 3
   schedule-rate-ms: 60000

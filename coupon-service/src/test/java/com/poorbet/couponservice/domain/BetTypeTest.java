@@ -266,4 +266,87 @@ class BetTypeTest {
         assertThat(BetType.DRAW.mapToStatus(result, 0, 0)).isEqualTo(BetStatus.WON);
         assertThat(BetType.AWAY_WIN.mapToStatus(result, 0, 0)).isEqualTo(BetStatus.LOST);
     }
+
+    @ParameterizedTest
+    @CsvSource({
+            "3, 0, WON",
+            "1, 2, WON",
+            "2, 1, WON",
+            "0, 0, LOST",
+            "1, 1, LOST",
+            "1, 0, LOST",
+    })
+    @DisplayName("Should correctly map OVER_2_5 status based on total goals")
+    void shouldCorrectlyMapOver25Status(int homeGoals, int awayGoals, String expectedStatus) {
+        MatchResultEventDto result = new MatchResultEventDto(
+                java.util.UUID.randomUUID(), homeGoals, awayGoals);
+
+        BetStatus status = BetType.OVER_2_5.mapToStatus(result, homeGoals, awayGoals);
+
+        assertThat(status).isEqualTo(BetStatus.valueOf(expectedStatus));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "0, 0, WON",
+            "1, 1, WON",
+            "1, 0, WON",
+            "3, 0, LOST",
+            "1, 2, LOST",
+            "2, 1, LOST",
+    })
+    @DisplayName("Should correctly map UNDER_2_5 status based on total goals")
+    void shouldCorrectlyMapUnder25Status(int homeGoals, int awayGoals, String expectedStatus) {
+        MatchResultEventDto result = new MatchResultEventDto(
+                java.util.UUID.randomUUID(), homeGoals, awayGoals);
+
+        BetStatus status = BetType.UNDER_2_5.mapToStatus(result, homeGoals, awayGoals);
+
+        assertThat(status).isEqualTo(BetStatus.valueOf(expectedStatus));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "4, 0, WON",
+            "2, 2, WON",
+            "3, 1, WON",
+            "2, 1, LOST",
+            "1, 1, LOST",
+            "0, 0, LOST",
+    })
+    @DisplayName("Should correctly map OVER_3_5 status based on total goals")
+    void shouldCorrectlyMapOver35Status(int homeGoals, int awayGoals, String expectedStatus) {
+        MatchResultEventDto result = new MatchResultEventDto(
+                java.util.UUID.randomUUID(), homeGoals, awayGoals);
+
+        BetStatus status = BetType.OVER_3_5.mapToStatus(result, homeGoals, awayGoals);
+
+        assertThat(status).isEqualTo(BetStatus.valueOf(expectedStatus));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "2, 1, WON",
+            "1, 1, WON",
+            "0, 0, WON",
+            "4, 0, LOST",
+            "2, 2, LOST",
+            "3, 1, LOST",
+    })
+    @DisplayName("Should correctly map UNDER_3_5 status based on total goals")
+    void shouldCorrectlyMapUnder35Status(int homeGoals, int awayGoals, String expectedStatus) {
+        MatchResultEventDto result = new MatchResultEventDto(
+                java.util.UUID.randomUUID(), homeGoals, awayGoals);
+
+        BetStatus status = BetType.UNDER_3_5.mapToStatus(result, homeGoals, awayGoals);
+
+        assertThat(status).isEqualTo(BetStatus.valueOf(expectedStatus));
+    }
+
+    @Test
+    @DisplayName("Should return PENDING for goal-market bet types when result is null")
+    void shouldReturnPendingForGoalMarketsWhenResultIsNull() {
+        assertThat(BetType.OVER_2_5.mapToStatus(null, 0, 0)).isEqualTo(BetStatus.PENDING);
+        assertThat(BetType.UNDER_3_5.mapToStatus(null, 0, 0)).isEqualTo(BetStatus.PENDING);
+    }
 }

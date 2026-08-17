@@ -34,6 +34,13 @@ public class MatchPoolMapper {
     }
 
     private OddsDto toOddsDto(Odds odds){
-        return new OddsDto(odds.getId(), odds.getHomeWin(), odds.getDraw(), odds.getAwayWin());
+        return new OddsDto(odds.getId(),
+                odds.getHomeWin(),
+                odds.getDraw(),
+                odds.getAwayWin(),
+                odds.getOver25(),
+                odds.getUnder25(),
+                odds.getOver35(),
+                odds.getUnder35());
     }
 }

@@ -90,7 +90,7 @@ public class MatchPoolSchedulingServiceImpl implements MatchPoolSchedulingServic
 
             List<TeamStatsDto> teams;
             try {
-                teams = teamService.findRandomTeams(4);
+                teams = teamService.findRandomTeams(properties.getMatchesPerPool() * 2);
             } catch (Exception ex) {
                 log.error("Cannot fetch teams", ex);
                 break;
@@ -131,11 +131,10 @@ public class MatchPoolSchedulingServiceImpl implements MatchPoolSchedulingServic
     private void addMatchesToPool(List<TeamStatsDto> teams, MatchPool pool) {
 
         if (teams.size() % 2 != 0) {
-            throw new IllegalArgumentException("Number of teams must be even");
+            teams.removeLast();
         }
 
         Collections.shuffle(teams);
-
 
         List<PreMatchDto> preMatches = getPreMatches(teams);
 
@@ -208,25 +207,34 @@ public class MatchPoolSchedulingServiceImpl implements MatchPoolSchedulingServic
     }
 
     private Odds calculateOdds(WinProbabilityDto dto) {
-        BigDecimal sum = BigDecimal.valueOf(1.0);
-
-        BigDecimal homeOdd = sum
-                .divide(BigDecimal.valueOf(dto.homeWinProbability()), 10, RoundingMode.HALF_UP)
-                .setScale(2, RoundingMode.HALF_UP);
-
-        BigDecimal drawOdd = sum
-                .divide(BigDecimal.valueOf(dto.drawProbability()), 10, RoundingMode.HALF_UP)
-                .setScale(2, RoundingMode.HALF_UP);
-
-        BigDecimal awayOdd = sum
-                .divide(BigDecimal.valueOf(dto.awayWinProbability()), 10, RoundingMode.HALF_UP)
-                .setScale(2, RoundingMode.HALF_UP);
-
         return Odds.builder()
-                .homeWin(homeOdd)
-                .draw(drawOdd)
-                .awayWin(awayOdd)
+                .homeWin(probabilityToOdd(dto.homeWinProbability()))
+                .draw(probabilityToOdd(dto.drawProbability()))
+                .awayWin(probabilityToOdd(dto.awayWinProbability()))
+                .over25(probabilityToOdd(dto.over2_5Probability()))
+                .under25(probabilityToOdd(dto.under2_5Probability()))
+                .over35(probabilityToOdd(dto.over3_5Probability()))
+                .under35(probabilityToOdd(dto.under3_5Probability()))
                 .build();
+    }
+
+    private BigDecimal probabilityToOdd(double probability) {
+        int CALCULATION_SCALE = 10;
+        int ODDS_SCALE = 2;
+
+        if (probability <= 0 || probability > 1) {
+            throw new IllegalArgumentException(
+                    "Probability must be greater than 0 and less than or equal to 1"
+            );
+        }
+
+        return BigDecimal.ONE
+                .divide(
+                        BigDecimal.valueOf(probability),
+                        CALCULATION_SCALE,
+                        RoundingMode.HALF_UP
+                )
+                .setScale(ODDS_SCALE, RoundingMode.HALF_UP);
     }
 }
 

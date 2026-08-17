@@ -13,4 +13,6 @@ public class MatchRecord {
     private int awayAttack;
     private int awayDefence;
     private String result;
+    private int homeGoals;
+    private int awayGoals;
 }

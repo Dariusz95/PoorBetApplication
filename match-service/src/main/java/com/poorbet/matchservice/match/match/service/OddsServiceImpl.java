@@ -1,9 +1,7 @@
 package com.poorbet.matchservice.match.match.service;
 
+import com.poorbet.matchservice.match.match.domain.Odds;
 import com.poorbet.matchservice.match.match.domain.OddsType;
-import com.poorbet.matchservice.match.match.projections.AwayWin;
-import com.poorbet.matchservice.match.match.projections.Draw;
-import com.poorbet.matchservice.match.match.projections.HomeWin;
 import com.poorbet.matchservice.match.match.repository.OddsRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,10 +18,18 @@ public class OddsServiceImpl implements OddsService {
 
     @Override
     public Optional<BigDecimal> getOdds(UUID matchId, OddsType type) {
+        return oddsRepository.findByMatchId(matchId).map(odds -> extract(odds, type));
+    }
+
+    private BigDecimal extract(Odds odds, OddsType type) {
         return switch (type) {
-            case HOME_WIN -> oddsRepository.findHomeWinByMatchId(matchId).map(HomeWin::getHomeWin);
-            case DRAW -> oddsRepository.findDrawByMatchId(matchId).map(Draw::getDraw);
-            case AWAY_WIN -> oddsRepository.findAwayWinByMatchId(matchId).map(AwayWin::getAwayWin);
+            case HOME_WIN -> odds.getHomeWin();
+            case DRAW -> odds.getDraw();
+            case AWAY_WIN -> odds.getAwayWin();
+            case OVER_2_5 -> odds.getOver25();
+            case UNDER_2_5 -> odds.getUnder25();
+            case OVER_3_5 -> odds.getOver35();
+            case UNDER_3_5 -> odds.getUnder35();
         };
     }
 }

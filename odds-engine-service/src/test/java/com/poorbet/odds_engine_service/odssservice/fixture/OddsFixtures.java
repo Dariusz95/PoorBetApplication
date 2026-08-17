@@ -27,7 +27,7 @@ public class OddsFixtures {
     }
 
     public static OddsResponseDto homeAdvantageOdds() {
-        return new OddsResponseDto(0.45f, 0.28f, 0.27f);
+        return new OddsResponseDto(0.45f, 0.28f, 0.27f, 0.55f, 0.45f, 0.30f, 0.70f);
     }
 
     public static BatchPredictionRequest singleMatchBatch() {

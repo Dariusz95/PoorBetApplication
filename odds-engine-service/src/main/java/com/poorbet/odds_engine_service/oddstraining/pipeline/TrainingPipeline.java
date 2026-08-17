@@ -46,7 +46,9 @@ public class TrainingPipeline {
                             data.home().defencePower(),
                             data.away().attackPower(),
                             data.away().defencePower(),
-                            getResult(result.homeGoals(), result.awayGoals())
+                            getResult(result.homeGoals(), result.awayGoals()),
+                            result.homeGoals(),
+                            result.awayGoals()
                     );
                 })
                 .toList();
