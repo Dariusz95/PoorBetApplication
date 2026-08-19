@@ -10,9 +10,8 @@ describe('LoginFormComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [LoginFormComponent, getTranslocoModule()]
-    })
-    .compileComponents();
+      imports: [LoginFormComponent, getTranslocoModule()],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(LoginFormComponent);
     component = fixture.componentInstance;
@@ -28,7 +27,10 @@ describe('LoginFormComponent', () => {
       const emitSpy = vi.fn();
       component.submitForm.subscribe(emitSpy);
 
-      component.form.setValue({ email: 'user@example.com', password: 'zaq1@WSX' });
+      component.form.setValue({
+        email: 'user@example.com',
+        password: 'zaq1@WSX',
+      });
       component.onSubmit();
 
       expect(emitSpy).toHaveBeenCalledWith({
@@ -58,6 +60,69 @@ describe('LoginFormComponent', () => {
 
       expect(emitSpy).not.toHaveBeenCalled();
       expect(component.form.invalid).toBe(true);
+    });
+  });
+
+  describe('password visibility toggle', () => {
+    it('should be hidden by default', () => {
+      expect(component.showPassword()).toBe(false);
+      expect(component.passwordFieldType()).toBe('password');
+    });
+
+    it('should switch to text after calling togglePasswordVisibility', () => {
+      component.togglePasswordVisibility();
+
+      expect(component.showPassword()).toBe(true);
+      expect(component.passwordFieldType()).toBe('text');
+    });
+
+    it('should switch back to password when toggled twice', () => {
+      component.togglePasswordVisibility();
+      component.togglePasswordVisibility();
+
+      expect(component.showPassword()).toBe(false);
+      expect(component.passwordFieldType()).toBe('password');
+    });
+
+    it('should toggle the rendered input type when the toggle button is clicked', () => {
+      const input: HTMLInputElement = fixture.nativeElement.querySelector(
+        '[data-testid="login-password-input"]',
+      );
+      const toggleButton: HTMLButtonElement =
+        fixture.nativeElement.querySelector(
+          '[data-testid="login-password-toggle-button"]',
+        );
+
+      expect(input.type).toBe('password');
+
+      toggleButton.click();
+      fixture.detectChanges();
+
+      expect(input.type).toBe('text');
+    });
+  });
+
+  describe('loginAsTestUser', () => {
+    it('should emit submitForm with loginAsTestUser set to true', () => {
+      const emitSpy = vi.fn();
+      component.submitForm.subscribe(emitSpy);
+
+      component.loginAsTestUser();
+
+      expect(emitSpy).toHaveBeenCalledWith({ loginAsTestUser: true });
+    });
+
+    it('should emit when the test-user button is clicked', () => {
+      const emitSpy = vi.fn();
+      component.submitForm.subscribe(emitSpy);
+
+      const testUserButton: HTMLButtonElement =
+        fixture.nativeElement.querySelector(
+          '[data-testid="login-test-user-button"]',
+        );
+      testUserButton.click();
+
+      expect(emitSpy).toHaveBeenCalledWith({ loginAsTestUser: true });
     });
   });
 });

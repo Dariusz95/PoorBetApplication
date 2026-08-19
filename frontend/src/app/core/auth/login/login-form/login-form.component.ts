@@ -1,4 +1,11 @@
-import { Component, inject, input, output } from '@angular/core';
+import {
+  Component,
+  computed,
+  inject,
+  input,
+  output,
+  signal,
+} from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -13,6 +20,7 @@ import { PbButtonComponent } from '@shared/ui/pb-button/pb-button.component';
 import { PbLabel } from '@shared/ui/pb-form-field/directives/pb-label';
 import { PbFormFieldComponent } from '@shared/ui/pb-form-field/pb-form-field.component';
 import { PbInputIconDirective } from '@shared/ui/pb-input/directives/pb-input-icon.directive';
+import { PbInputIconRightDirective } from '@shared/ui/pb-input/directives/pb-input-icon-right.directive';
 import { PbInputComponent } from '@shared/ui/pb-input/pb-input.component';
 import { PASSWORD_REGEX } from '@shared/validators/regexes/passwordRegex';
 import { LoginForm } from '../types/login-form';
@@ -29,6 +37,7 @@ import { LoginModel } from '../types/login.model';
     PbInputComponent,
     PbButtonComponent,
     PbInputIconDirective,
+    PbInputIconRightDirective,
     PbIconComponent,
   ],
   templateUrl: './login-form.component.html',
@@ -45,8 +54,17 @@ export class LoginFormComponent {
 
   form: FormGroup<LoginForm>;
 
+  showPassword = signal(false);
+  passwordFieldType = computed(() =>
+    this.showPassword() ? 'text' : 'password',
+  );
+
   constructor() {
     this.form = this.createForm();
+  }
+
+  togglePasswordVisibility(): void {
+    this.showPassword.update((visible) => !visible);
   }
 
   onSubmit(): void {

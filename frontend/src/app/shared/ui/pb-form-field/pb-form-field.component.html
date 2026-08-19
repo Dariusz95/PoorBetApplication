@@ -13,7 +13,7 @@
     <ng-content></ng-content>
   </div>
 
-  @if (touched() && invalid()) {
+  @if (showErrors() && touched() && invalid()) {
     <pb-errors [errors]="errors()" [id]="_labelId + '-errors'"></pb-errors>
   }
 </div>

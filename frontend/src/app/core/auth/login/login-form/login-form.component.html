@@ -14,16 +14,31 @@
     <pb-label> {{ "auth.password.label" | transloco }}</pb-label>
     <pb-input
       formControlName="password"
-      type="password"
+      [type]="passwordFieldType()"
       autocomplete="current-password"
       testId="login-password-input"
       [placeholder]="'auth.password.placeholder' | transloco"
     >
       <pb-icon icon="lock" size="m" pbInputIcon></pb-icon>
+      <button
+        type="button"
+        pbInputIconRight
+        data-testid="login-password-toggle-button"
+        [attr.aria-label]="
+          (showPassword() ? 'auth.password.hide' : 'auth.password.show')
+            | transloco
+        "
+        (click)="togglePasswordVisibility()"
+      >
+        <pb-icon
+          [icon]="showPassword() ? 'visibility' : 'visibility_off'"
+          size="m"
+        ></pb-icon>
+      </button>
     </pb-input>
   </pb-form-field>
 
-  <div class="mt-8 flex flex-col gap-4">
+  <div class="login-form__actions flex flex-col gap-4">
     <pb-button
       variant="primary"
       size="md"
@@ -36,17 +51,25 @@
       {{ "auth.login.login" | transloco }}
     </pb-button>
 
+    <div class="login-form__divider">
+      <span>{{ "auth.login.orDivider" | transloco }}</span>
+    </div>
+
     <pb-button
-      variant="secondary"
+      variant="outline"
       size="md"
       type="button"
       testId="login-test-user-button"
       [fullWidth]="true"
       [disabled]="submitting()"
       [loading]="submittingTestUser()"
-      (click)="loginAsTestUser()"
+      (buttonClick)="loginAsTestUser()"
     >
+      <pb-icon icon="science" size="m"></pb-icon>
       {{ "auth.login.loginAsTestUser" | transloco }}
     </pb-button>
+    <p class="login-form__test-user-hint">
+      {{ "auth.login.testUserHint" | transloco }}
+    </p>
   </div>
 </form>

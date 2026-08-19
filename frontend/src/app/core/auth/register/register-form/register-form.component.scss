@@ -1,0 +1,19 @@
+.password-requirements {
+  @apply flex flex-col gap-1 text-xs;
+  margin: -0.5rem 0 1rem;
+  padding: 0;
+  list-style: none;
+
+  &__item {
+    @apply flex items-center gap-1.5 text-app-danger;
+    transition: color 0.15s ease;
+
+    &--met {
+      @apply text-app-success;
+    }
+  }
+
+  &__icon {
+    font-size: 16px;
+  }
+}

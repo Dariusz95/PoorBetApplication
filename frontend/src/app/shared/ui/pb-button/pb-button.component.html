@@ -30,26 +30,18 @@
 
 <ng-template #buttonContent>
   <span class="pb-button__content">
-    @if (type() === "icon") {
-      @if (loading()) {
-        <pb-spinner size="s" />
-      } @else {
-        <ng-content select="pb-icon"></ng-content>
-      }
+    @if (loading()) {
+      <pb-spinner size="s" />
     } @else {
-      <span class="pb-button__content">
-        @if (loading()) {
-          <pb-spinner size="s" />
-        } @else {
-          <ng-content select="pb-icon"></ng-content>
-        }
+      <ng-content select="pb-icon"></ng-content>
+    }
 
-        <span
-          class="pb-button__text"
-          [class.pb-button__text--loading]="loading()"
-        >
-          <ng-content></ng-content>
-        </span>
+    @if (type() !== "icon") {
+      <span
+        class="pb-button__text"
+        [class.pb-button__text--loading]="loading()"
+      >
+        <ng-content></ng-content>
       </span>
     }
   </span>

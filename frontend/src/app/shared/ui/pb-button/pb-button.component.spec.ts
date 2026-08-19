@@ -1,6 +1,8 @@
+import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { RoutingService } from '../../../core/routing/routing.service';
+import { PbIconComponent } from '../icon/pb-icon.component';
 import { PbButtonComponent } from './pb-button.component';
 import { ButtonSize, ButtonVariant } from './pb-button.model';
 
@@ -153,6 +155,37 @@ describe('PbButtonComponent', () => {
     it('should be disabled when disabled input is true', () => {
       vi.spyOn(component, 'disabled' as any).mockReturnValue(true);
       expect(component.disabled()).toBe(true);
+    });
+  });
+
+  describe('Icon projection alongside text', () => {
+    @Component({
+      standalone: true,
+      imports: [PbButtonComponent, PbIconComponent],
+      template: `
+        <pb-button type="button">
+          <pb-icon icon="science" />
+          Log in as test user
+        </pb-button>
+      `,
+    })
+    class HostComponent {}
+
+    it('should render both the projected icon and the text for a non-icon-type button', async () => {
+      const routingServiceSpy = { createLink: vi.fn() };
+
+      TestBed.resetTestingModule();
+      await TestBed.configureTestingModule({
+        imports: [HostComponent],
+        providers: [{ provide: RoutingService, useValue: routingServiceSpy }],
+      }).compileComponents();
+
+      const hostFixture = TestBed.createComponent(HostComponent);
+      hostFixture.detectChanges();
+
+      const nativeElement: HTMLElement = hostFixture.nativeElement;
+      expect(nativeElement.querySelector('pb-icon')).not.toBeNull();
+      expect(nativeElement.textContent).toContain('Log in as test user');
     });
   });
 
