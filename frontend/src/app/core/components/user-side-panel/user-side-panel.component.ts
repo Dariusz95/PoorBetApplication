@@ -1,13 +1,16 @@
 import { DialogRef } from '@angular/cdk/dialog';
 import { DecimalPipe } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { AuthService } from '@core/auth/services/auth.service';
 import { JwtAuthStateService } from '@core/auth/services/jwt-auth-state.service';
 import { RoutePath } from '@core/routing/route-path';
 import { RoutingService } from '@core/routing/routing.service';
+import { RouteLink } from '@core/routing/route-link';
 import { AccountService } from '@core/account/services/account.service';
+import { Router } from '@angular/router';
 import { TranslocoDirective } from '@jsverse/transloco';
+import { finalize } from 'rxjs';
 import { PbSpinnerComponent } from '@shared/ui/pb-spinner/pb-spinner.component';
 import { UserBalanceComponent } from '../user-balance/user-balance.component';
 import { UserLevelBadgeComponent } from '../user-level-badge/user-level-badge.component';
@@ -24,10 +27,13 @@ export class UserSidePanelComponent {
   private readonly jwtAuthState = inject(JwtAuthStateService);
   private readonly accountService = inject(AccountService);
   private readonly routingService = inject(RoutingService);
+  private readonly router = inject(Router);
 
   readonly isLoggedIn = toSignal(this.authService.isLoggedIn$, {
     initialValue: false,
   });
+
+  readonly submittingTestUser = signal(false);
   readonly balance = this.accountService.balance;
   readonly balanceLoading = this.accountService.loading;
   readonly userEmail = this.jwtAuthState.getSubject();
@@ -59,6 +65,18 @@ export class UserSidePanelComponent {
   register(): void {
     this.routingService.navigateTo(RoutePath.Register);
     this.dialogRef.close();
+  }
+
+  loginAsTestUser(): void {
+    this.submittingTestUser.set(true);
+
+    this.authService
+      .loginAsTestUser()
+      .pipe(finalize(() => this.submittingTestUser.set(false)))
+      .subscribe(() => {
+        this.router.navigate(RouteLink[RoutePath.App]);
+        this.dialogRef.close();
+      });
   }
 
   goToCoupons(): void {

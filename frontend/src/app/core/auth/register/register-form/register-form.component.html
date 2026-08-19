@@ -10,29 +10,78 @@
     </pb-input>
   </pb-form-field>
 
-  <pb-form-field>
+  <pb-form-field [showErrors]="false">
     <pb-label> {{ "auth.register.password" | transloco }}</pb-label>
     <pb-input
       formControlName="password"
-      type="password"
+      [type]="passwordFieldType()"
       autocomplete="new-password"
       testId="register-password-input"
       [placeholder]="'auth.register.passwordPlaceholder' | transloco"
     >
       <pb-icon icon="lock" size="m" pbInputIcon></pb-icon>
+      <button
+        type="button"
+        pbInputIconRight
+        data-testid="register-password-toggle-button"
+        [attr.aria-label]="
+          (showPassword() ? 'auth.password.hide' : 'auth.password.show')
+            | transloco
+        "
+        (click)="togglePasswordVisibility()"
+      >
+        <pb-icon
+          [icon]="showPassword() ? 'visibility' : 'visibility_off'"
+          size="m"
+        ></pb-icon>
+      </button>
     </pb-input>
   </pb-form-field>
+
+  @if (passwordTouched() && !passwordValid()) {
+    <ul
+      class="password-requirements"
+      data-testid="register-password-requirements"
+    >
+      @for (requirement of passwordRequirements(); track requirement.labelKey) {
+        <li
+          class="password-requirements__item"
+          [class.password-requirements__item--met]="requirement.met"
+        >
+          <span class="material-icons password-requirements__icon">{{
+            requirement.met ? "check_circle" : "cancel"
+          }}</span>
+          {{ requirement.labelKey | transloco }}
+        </li>
+      }
+    </ul>
+  }
 
   <pb-form-field>
     <pb-label> {{ "auth.register.confirmPassword" | transloco }}</pb-label>
     <pb-input
       formControlName="confirmPassword"
-      type="password"
+      [type]="confirmPasswordFieldType()"
       autocomplete="new-password"
       testId="register-confirm-password-input"
       [placeholder]="'auth.register.confirmPasswordPlaceholder' | transloco"
     >
       <pb-icon icon="lock" size="m" pbInputIcon></pb-icon>
+      <button
+        type="button"
+        pbInputIconRight
+        data-testid="register-confirm-password-toggle-button"
+        [attr.aria-label]="
+          (showConfirmPassword() ? 'auth.password.hide' : 'auth.password.show')
+            | transloco
+        "
+        (click)="toggleConfirmPasswordVisibility()"
+      >
+        <pb-icon
+          [icon]="showConfirmPassword() ? 'visibility' : 'visibility_off'"
+          size="m"
+        ></pb-icon>
+      </button>
     </pb-input>
   </pb-form-field>
 

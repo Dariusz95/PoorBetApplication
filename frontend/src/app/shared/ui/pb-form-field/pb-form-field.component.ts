@@ -5,6 +5,7 @@ import {
   contentChild,
   DestroyRef,
   inject,
+  input,
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -30,6 +31,8 @@ export class PbFormFieldComponent {
   control = contentChild.required(FORM_FIELD_CONTROL);
 
   labelRef = contentChild(PbLabel);
+
+  showErrors = input<boolean>(true);
 
   disabled = signal(false);
   focused = signal(false);

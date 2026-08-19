@@ -1,1 +1,21 @@
+.login-form__actions {
+  margin-top: 3rem;
+}
 
+.login-form__divider {
+  @apply relative flex items-center justify-center text-xs text-app-textMuted;
+
+  &::before,
+  &::after {
+    content: "";
+    @apply h-px flex-1 bg-app-border;
+  }
+
+  span {
+    @apply px-3 uppercase tracking-wide;
+  }
+}
+
+.login-form__test-user-hint {
+  @apply text-center text-xs text-app-textMuted;
+}

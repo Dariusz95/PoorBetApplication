@@ -5,6 +5,22 @@
 .input-container {
   @apply relative flex items-center;
 
+  .icon ::ng-deep button {
+    pointer-events: auto;
+    cursor: pointer;
+    display: flex;
+    background: none;
+    border: none;
+    padding: 0;
+    color: inherit;
+
+    &:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+      border-radius: 2px;
+    }
+  }
+
   .pb-input {
     @apply w-full flex-1 border-none bg-transparent text-base;
 

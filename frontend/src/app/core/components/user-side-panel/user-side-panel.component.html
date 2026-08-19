@@ -68,6 +68,23 @@
       <button class="side-panel__auth-btn" (click)="register()">
         {{ t("user.register") }}
       </button>
+
+      <div class="side-panel__auth-divider">
+        <span>{{ t("user.orDivider") }}</span>
+      </div>
+
+      <button
+        class="side-panel__auth-btn side-panel__auth-btn--test"
+        data-testid="side-panel-test-user-button"
+        [disabled]="submittingTestUser()"
+        (click)="loginAsTestUser()"
+      >
+        <span class="material-icons">science</span>
+        {{ t("user.loginAsTestUser") }}
+      </button>
+      <p class="side-panel__auth-test-user-hint">
+        {{ t("user.testUserHint") }}
+      </p>
     </div>
   }
 </div>
