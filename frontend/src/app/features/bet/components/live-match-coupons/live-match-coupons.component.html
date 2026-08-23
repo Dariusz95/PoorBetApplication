@@ -1,0 +1,29 @@
+@if (coupons().length > 0) {
+  <div class="live-match-coupons">
+    <p class="live-match-coupons__title">
+      {{ "bet.liveMatchCard.activeCoupons" | transloco }}
+    </p>
+    <ul class="live-match-coupons__list">
+      @for (activeCoupon of coupons(); track activeCoupon.couponId) {
+        <li>
+          <button
+            type="button"
+            class="live-match-coupons__button"
+            (click)="openCoupon(activeCoupon.couponId)"
+            [attr.aria-label]="'bet.liveMatchCard.viewCouponAria' | transloco"
+          >
+            <pb-icon icon="confirmation_number" size="s" color="primary" />
+            <span>{{ activeCoupon.totalOdds | number: "1.2-2" }}x</span>
+            <span class="live-match-coupons__button-win">{{
+              "bet.liveMatchCard.potentialWin"
+                | transloco
+                  : {
+                      amount: (activeCoupon.potentialPayout | number: "1.2-2"),
+                    }
+            }}</span>
+          </button>
+        </li>
+      }
+    </ul>
+  </div>
+}

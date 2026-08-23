@@ -6,9 +6,12 @@ import { BET_TYPE_TO_OPTION, BetOption } from '@shared/types/bet-option';
 import { BetType } from '@shared/types/bet-type';
 import { Uuid } from '@shared/types/uuid.type';
 import { PbButtonComponent } from '@shared/ui/pb-button/pb-button.component';
-import { PbCardComponent } from '@shared/ui/pb-card/pb-card.component';
 import { PbIconComponent } from '@shared/ui/icon/pb-icon.component';
 import { TeamService } from '@features/teams/services/team.service';
+import {
+  getTeamAvatarColorClass,
+  getTeamInitials,
+} from '@shared/utils/team-avatar.util';
 import { combineLatest, map, of, switchMap } from 'rxjs';
 import { BetSlipService } from '../../services/bet-slip.service';
 import { MatchDto, PoolMatch, ShortTeamInfo } from '../../types/match.types';
@@ -27,7 +30,6 @@ type TeamSide = 'home' | 'away';
     SlicePipe,
     OddsButtonComponent,
     PbButtonComponent,
-    PbCardComponent,
     PbIconComponent,
     TranslocoDirective,
   ],
@@ -119,5 +121,13 @@ export class PoolCardComponent {
 
   hasStarted(): boolean {
     return new Date(this.pool().scheduledStartTime).getTime() <= Date.now();
+  }
+
+  protected teamInitials(name: string): string {
+    return getTeamInitials(name);
+  }
+
+  protected avatarColorClass(teamId: Uuid): string {
+    return getTeamAvatarColorClass(teamId);
   }
 }

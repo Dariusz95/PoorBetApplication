@@ -5,7 +5,9 @@
     @for (bet of betSlipService.selectedBets(); track bet.matchId) {
       <li
         class="list__item pb-surface"
-        [class.list__item--started]="isStarted(bet.matchStartTime)"
+        [class.list__item--started]="
+          betSlipService.isStarted(bet.matchStartTime)
+        "
         [attr.data-testid]="'coupon-item-' + bet.matchId"
         [@listItemAnimation]
       >
@@ -21,7 +23,7 @@
                 {{ bet.odds | number: "1.2-2" }}
               </span>
             </p>
-            @if (isStarted(bet.matchStartTime)) {
+            @if (betSlipService.isStarted(bet.matchStartTime)) {
               <p class="list__item-warning">
                 {{ "coupon.matchStarted" | transloco }}
               </p>

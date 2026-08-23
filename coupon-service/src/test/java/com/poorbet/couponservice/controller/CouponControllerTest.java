@@ -7,6 +7,7 @@ import com.poorbet.couponservice.domain.Coupon;
 import com.poorbet.couponservice.domain.CouponStatus;
 import com.poorbet.couponservice.dto.BetDto;
 import com.poorbet.couponservice.dto.CouponDetailDto;
+import com.poorbet.couponservice.dto.CouponLiveViewDto;
 import com.poorbet.couponservice.dto.CreateBetDto;
 import com.poorbet.couponservice.dto.CreateCouponDto;
 import com.poorbet.couponservice.security.CurrentUserProvider;
@@ -14,6 +15,7 @@ import com.poorbet.couponservice.service.CouponService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -25,10 +27,14 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.*;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.comparesEqualTo;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -317,5 +323,60 @@ class CouponControllerTest {
                         .contentType(MediaType.TEXT_PLAIN)
                         .content(objectMapper.writeValueAsString(validCreateCouponDto)))
                 .andExpect(status().isUnsupportedMediaType());
+    }
+
+    @Test
+    @DisplayName("Should return live coupon views for the given match ids")
+    void shouldReturnLiveCouponViewsForGivenMatchIds() throws Exception {
+        // Arrange
+        UUID userId = UUID.randomUUID();
+        UUID matchId = UUID.randomUUID();
+        when(currentUserProvider.getUserId()).thenReturn(userId);
+
+        CouponLiveViewDto view = new CouponLiveViewDto(
+                UUID.randomUUID(), matchId, new BigDecimal("3.50"), new BigDecimal("35.00")
+        );
+        when(couponService.getLiveCouponViews(eq(userId), anyList())).thenReturn(List.of(view));
+
+        // Act & Assert
+        mockMvc.perform(get(COUPONS_ENDPOINT + "/me/live")
+                        .param("matchIds", matchId.toString()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].matchId", equalTo(matchId.toString())))
+                .andExpect(jsonPath("$[0].totalOdds", comparesEqualTo(3.50)));
+    }
+
+    @Test
+    @DisplayName("Should split a comma-separated matchIds query param into multiple ids")
+    void shouldSplitCommaSeparatedMatchIdsIntoMultipleIds() throws Exception {
+        // Arrange
+        UUID userId = UUID.randomUUID();
+        UUID matchIdA = UUID.randomUUID();
+        UUID matchIdB = UUID.randomUUID();
+        when(currentUserProvider.getUserId()).thenReturn(userId);
+        when(couponService.getLiveCouponViews(eq(userId), anyList())).thenReturn(List.of());
+
+        // Act
+        mockMvc.perform(get(COUPONS_ENDPOINT + "/me/live")
+                        .param("matchIds", matchIdA + "," + matchIdB))
+                .andExpect(status().isOk());
+
+        // Assert
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<List<UUID>> matchIdsCaptor = ArgumentCaptor.forClass(List.class);
+        verify(couponService).getLiveCouponViews(eq(userId), matchIdsCaptor.capture());
+        assertThat(matchIdsCaptor.getValue()).containsExactly(matchIdA, matchIdB);
+    }
+
+    @Test
+    @DisplayName("Should pass an empty match id list through when none is provided")
+    void shouldPassEmptyMatchIdsThrough_whenNoneProvided() throws Exception {
+        // Arrange
+        when(couponService.getLiveCouponViews(any(UUID.class), eq(null))).thenReturn(List.of());
+
+        // Act & Assert
+        mockMvc.perform(get(COUPONS_ENDPOINT + "/me/live"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(0)));
     }
 }

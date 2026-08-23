@@ -7,25 +7,16 @@ import {
 } from '@angular/animations';
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { CommonModule } from '@angular/common';
-import {
-  Component,
-  computed,
-  DestroyRef,
-  effect,
-  inject,
-  signal,
-} from '@angular/core';
+import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { filter } from 'rxjs';
-import { BetStatus } from '@features/coupons/types/bet-status';
-import { CouponStatus } from '@features/coupons/types/coupon-status';
-import { CouponService } from '@features/coupons/services/coupon.service';
 import { CouponSummaryComponent } from '@features/coupons/components/coupon-summary/coupon-summary.component';
+import { CouponService } from '@features/coupons/services/coupon.service';
+import { BetStatus } from '@features/coupons/types/bet-status';
 import { CouponDetails } from '@features/coupons/types/coupon-details';
-import { LiveMatchService } from '@features/bet/services/live-match.service';
-import { MatchEventType } from '@features/bet/types/match.types';
+import { CouponStatus } from '@features/coupons/types/coupon-status';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { PbIconComponent } from '@shared/ui/icon/pb-icon.component';
+import { filter } from 'rxjs';
 import { PbButtonComponent } from '../../../../shared/ui/pb-button/pb-button.component';
 import { PbCardBodyDirective } from '../../../../shared/ui/pb-card/directives/pb-card-body.directive';
 import { PbCardHeaderDirective } from '../../../../shared/ui/pb-card/directives/pb-card-header.directive';
@@ -81,7 +72,6 @@ const dialogAnimation = trigger('dialogAnimation', [
 export class PbCouponDialogComponent {
   private readonly dialogRef = inject(DialogRef<void>);
   private readonly couponService = inject(CouponService);
-  private readonly liveMatchService = inject(LiveMatchService);
   private readonly destroyRef = inject(DestroyRef);
 
   private readonly reducedMotion =
@@ -121,25 +111,7 @@ export class PbCouponDialogComponent {
       )
       .subscribe(() => this.closeCoupon());
 
-    this.liveMatchService.liveMatches$
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((liveMatches) => {
-        const couponMatchIds = new Set(
-          this.coupon().bets.map((b) => b.matchId),
-        );
-        const hasEndedMatch = Object.values(liveMatches).some(
-          (event) =>
-            couponMatchIds.has(event.id) &&
-            event.eventType === MatchEventType.MatchEnded,
-        );
-
-        if (hasEndedMatch) {
-          this.couponService
-            .getCouponDetails(this.coupon().id)
-            .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe((fresh) => this.coupon.set(fresh));
-        }
-      });
+    this.refreshCouponAfterMatchEnd();
   }
 
   closeCoupon(): void {
@@ -153,5 +125,14 @@ export class PbCouponDialogComponent {
     if (event.toState === 'closing') {
       this.dialogRef.close();
     }
+  }
+
+  private refreshCouponAfterMatchEnd(): void {
+    const matchIds = this.coupon().bets.map((b) => b.matchId);
+
+    this.couponService
+      .watchSettlement(this.coupon().id, matchIds)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((fresh) => this.coupon.set(fresh));
   }
 }

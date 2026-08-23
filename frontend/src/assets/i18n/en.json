@@ -105,7 +105,12 @@
     "liveMatchCard": {
       "live": "LIVE",
       "matchFinished": "Match finished",
-      "matchInProgress": "Match in progress"
+      "matchInProgress": "Match in progress",
+      "firstHalf": "1st half",
+      "secondHalf": "2nd half",
+      "viewCouponAria": "View details of the coupon covering this match",
+      "potentialWin": "win {{ amount }}",
+      "activeCoupons": "Active coupons"
     },
     "coupon": {
       "eyebrow": "Your coupon",
@@ -114,6 +119,9 @@
       "emptyText": "Click odds in a match to add it to the coupon on the right.",
       "oddsLabel": "Odds",
       "removeAria": "Remove event from coupon",
+      "menuAria": "More coupon options",
+      "clearAll": "Clear coupon",
+      "removeInvalid": "Remove outdated events",
       "totalOdds": "Total odds",
       "amount": "Amount",
       "submit": "Place coupon",

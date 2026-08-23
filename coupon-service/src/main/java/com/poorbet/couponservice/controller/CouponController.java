@@ -52,4 +52,9 @@ public class CouponController {
     public ResponseEntity<CouponDetailDto> getCouponDetails(@PathVariable UUID couponId) {
         return ResponseEntity.ok(couponService.getCouponDetails(couponId));
     }
+
+    @GetMapping("/me/live")
+    public List<CouponLiveViewDto> getMyLiveCoupons(@RequestParam(required = false) List<UUID> matchIds) {
+        return couponService.getLiveCouponViews(currentUserProvider.getUserId(), matchIds);
+    }
 }

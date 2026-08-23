@@ -1,10 +1,10 @@
 :host {
-  @apply flex flex-col items-center gap-2 text-center;
+  @apply block min-w-0;
 }
 
 .live-match-team {
   &__logo-wrapper {
-    @apply flex h-16 w-16 items-center justify-center overflow-hidden rounded-full;
+    @apply flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-lg;
   }
 
   &__logo {
@@ -12,10 +12,10 @@
   }
 
   &__logo-fallback {
-    @apply text-xl font-bold text-app-textMuted;
+    @apply text-sm font-bold text-white;
   }
 
   &__team-name {
-    @apply line-clamp-2 text-sm font-medium text-app-text;
+    @apply min-w-0 text-base font-medium text-app-text;
   }
 }

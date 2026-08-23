@@ -9,6 +9,10 @@ import {
 } from '@angular/core';
 import { TeamService } from '@features/teams/services/team.service';
 import { Uuid } from '@shared/types/uuid.type';
+import {
+  getTeamAvatarColorClass,
+  getTeamInitials,
+} from '@shared/utils/team-avatar.util';
 import { Observable } from 'rxjs';
 import { ShortTeamInfo } from '../../types/match.types';
 
@@ -23,11 +27,20 @@ export class LiveMatchTeamComponent implements OnInit {
   private readonly teamService = inject(TeamService);
 
   teamId = input.required<Uuid>();
+  align = input<'start' | 'end'>('start');
 
   team$!: Observable<ShortTeamInfo>;
   imgError = signal(false);
 
   ngOnInit(): void {
     this.team$ = this.teamService.getDetails(this.teamId());
+  }
+
+  protected initials(name: string): string {
+    return getTeamInitials(name);
+  }
+
+  protected avatarColorClass(): string {
+    return getTeamAvatarColorClass(this.teamId());
   }
 }

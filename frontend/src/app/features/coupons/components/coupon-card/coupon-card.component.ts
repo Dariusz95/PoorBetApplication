@@ -33,6 +33,7 @@ import { PbFormFieldComponent } from '../../../../shared/ui/pb-form-field/pb-for
 import { PbInputComponent } from '../../../../shared/ui/pb-input/pb-input.component';
 import { BetSlipService } from '../../../bet/services/bet-slip.service';
 import { CreateCouponRequest } from '../../types/create-coupon-request';
+import { CouponMenuComponent } from '../coupon-menu/coupon-menu.component';
 import { CouponSelectedBetsComponent } from '../coupon-selected-bets/coupon-selected-bets.component';
 import { CouponSummaryComponent } from '../coupon-summary/coupon-summary.component';
 
@@ -57,6 +58,7 @@ import { CouponSummaryComponent } from '../coupon-summary/coupon-summary.compone
     PbIconComponent,
     PbInputIconRightDirective,
     PbImageComponent,
+    CouponMenuComponent,
   ],
   templateUrl: './coupon-card.component.html',
   styleUrl: './coupon-card.component.scss',
@@ -115,7 +117,7 @@ export class CouponCardComponent {
 
     const startedBet = this.betSlipService
       .selectedBets()
-      .find((bet) => new Date(bet.matchStartTime).getTime() <= Date.now());
+      .find((bet) => this.betSlipService.isStarted(bet.matchStartTime));
 
     if (startedBet) {
       this.toastService.error(

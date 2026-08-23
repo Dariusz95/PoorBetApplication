@@ -1,23 +1,29 @@
 <pb-card class="bet-coupon" data-testid="coupon-card">
   <div pbCardHeader class="bet-coupon__header">
-    <span class="bet-coupon__badge" data-testid="coupon-count">
-      {{ betSlipService.selectedCount() }}
-    </span>
-    <div class="bet-coupon__title">
-      <pb-icon icon="confirmation_number" size="s" color="primary" />
-      <p class="t-eyebrow">{{ "bet.coupon.eyebrow" | transloco }}</p>
+    <div class="flex gap-4">
+      <span class="bet-coupon__badge" data-testid="coupon-count">
+        {{ betSlipService.selectedCount() }}
+      </span>
+      <div class="bet-coupon__title">
+        <pb-icon icon="confirmation_number" size="s" color="primary" />
+        <p class="t-eyebrow">{{ "bet.coupon.eyebrow" | transloco }}</p>
+      </div>
     </div>
 
-    @if (dialogRef) {
-      <button
-        type="button"
-        class="bet-coupon__close"
-        (click)="close()"
-        [attr.aria-label]="'bet.coupon.close' | transloco"
-      >
-        <pb-icon icon="keyboard_arrow_down" size="m" />
-      </button>
-    }
+    <div class="flex items-center gap-2">
+      <app-coupon-menu />
+
+      @if (dialogRef) {
+        <button
+          type="button"
+          class="bet-coupon__close"
+          (click)="close()"
+          [attr.aria-label]="'bet.coupon.close' | transloco"
+        >
+          <pb-icon icon="keyboard_arrow_down" size="m" />
+        </button>
+      }
+    </div>
   </div>
 
   <div pbCardBody class="bg-app-gradient">
@@ -51,9 +57,12 @@
       <span slot="odds-value">{{
         betSlipService.totalOdds() | number: "1.2-2"
       }}</span>
-      <span slot="win-value">{{
-        betSlipService.potentialWin(couponStakeCtrl.value) | number: "1.2-2"
-      }}</span>
+      <span slot="win-value"
+        >{{
+          betSlipService.potentialWin(couponStakeCtrl.value) | number: "1.2-2"
+        }}
+        {{ "header.coinAbbreviation" | transloco }}</span
+      >
     </app-coupon-summary>
 
     <pb-button
