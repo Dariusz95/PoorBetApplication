@@ -154,7 +154,7 @@ describe('CouponService', () => {
 
       // match-a ends first - match-b hasn't resolved yet, coupon stays OPEN
       liveMatches$.next({ 'match-a': matchEndedEvent('match-a') });
-      vi.advanceTimersByTime(2000);
+      vi.advanceTimersByTime(3000);
       httpMock
         .expectOne('/api/coupons/coupon-1')
         .flush({ id: 'coupon-1', status: CouponStatus.Open });
@@ -167,7 +167,7 @@ describe('CouponService', () => {
         'match-a': matchEndedEvent('match-a'),
         'match-b': matchEndedEvent('match-b'),
       });
-      vi.advanceTimersByTime(2000);
+      vi.advanceTimersByTime(3000);
       httpMock
         .expectOne('/api/coupons/coupon-1')
         .flush({ id: 'coupon-1', status: CouponStatus.Won });
