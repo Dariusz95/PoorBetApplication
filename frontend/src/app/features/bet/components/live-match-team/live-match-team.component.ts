@@ -27,7 +27,6 @@ export class LiveMatchTeamComponent implements OnInit {
   private readonly teamService = inject(TeamService);
 
   teamId = input.required<Uuid>();
-  align = input<'start' | 'end'>('start');
 
   team$!: Observable<ShortTeamInfo>;
   imgError = signal(false);
