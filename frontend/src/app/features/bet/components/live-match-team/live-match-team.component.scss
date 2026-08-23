@@ -16,6 +16,10 @@
   }
 
   &__team-name {
-    @apply min-w-0 text-base font-medium text-app-text;
+    @apply w-full min-w-0 text-sm font-medium text-app-text md:text-base;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
