@@ -1,0 +1,32 @@
+@if (betSlipService.selectedCount() > 0) {
+  <pb-popover #couponMenu width="220px">
+    <button
+      type="button"
+      class="coupon-menu__trigger"
+      popoverTrigger
+      [attr.aria-label]="'bet.coupon.menuAria' | transloco"
+    >
+      <pb-icon icon="more_vert" size="m" />
+    </button>
+    <div popoverContent class="coupon-menu__content">
+      <button
+        type="button"
+        class="coupon-menu__item"
+        (click)="betSlipService.clearSelections(); couponMenu.close()"
+      >
+        <pb-icon icon="delete_sweep" size="s" color="danger" />
+        <span>{{ "bet.coupon.clearAll" | transloco }}</span>
+      </button>
+      @if (betSlipService.hasStartedSelections()) {
+        <button
+          type="button"
+          class="coupon-menu__item"
+          (click)="betSlipService.removeStartedSelections(); couponMenu.close()"
+        >
+          <pb-icon icon="event_busy" size="s" color="warning" />
+          <span>{{ "bet.coupon.removeInvalid" | transloco }}</span>
+        </button>
+      }
+    </div>
+  </pb-popover>
+}

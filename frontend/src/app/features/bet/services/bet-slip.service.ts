@@ -69,4 +69,20 @@ export class BetSlipService {
   clearSelections(): void {
     this._selectedBets.set([]);
   }
+
+  isStarted(matchStartTime: string): boolean {
+    return new Date(matchStartTime).getTime() <= Date.now();
+  }
+
+  hasStartedSelections(): boolean {
+    return this._selectedBets().some((bet) =>
+      this.isStarted(bet.matchStartTime),
+    );
+  }
+
+  removeStartedSelections(): void {
+    this._selectedBets.update((currentBets) =>
+      currentBets.filter((bet) => !this.isStarted(bet.matchStartTime)),
+    );
+  }
 }

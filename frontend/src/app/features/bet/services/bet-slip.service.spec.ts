@@ -64,4 +64,48 @@ describe('BetSlipService', () => {
     ]);
     expect(service.totalOdds()).toBe(3.25);
   });
+
+  describe('isStarted', () => {
+    it('should return true when the match start time is in the past', () => {
+      const past = new Date(Date.now() - 60_000).toISOString();
+
+      expect(service.isStarted(past)).toBe(true);
+    });
+
+    it('should return false when the match start time is in the future', () => {
+      const future = new Date(Date.now() + 60_000).toISOString();
+
+      expect(service.isStarted(future)).toBe(false);
+    });
+  });
+
+  describe('removeStartedSelections', () => {
+    it('should only remove selections whose match has already started', () => {
+      const started: SelectedBet = {
+        matchId: '550e8400-e29b-41d4-a716-446655440000' as Uuid,
+        matchLabel: 'A vs B',
+        betType: BetType.HomeWin,
+        optionLabel: BetOption.HomeWin,
+        odds: 1.8,
+        matchStartTime: new Date(Date.now() - 60_000).toISOString(),
+      };
+      const upcoming: SelectedBet = {
+        matchId: '550e8400-e29b-41d4-a716-446655440001' as Uuid,
+        matchLabel: 'C vs D',
+        betType: BetType.HomeWin,
+        optionLabel: BetOption.HomeWin,
+        odds: 2.1,
+        matchStartTime: new Date(Date.now() + 60_000).toISOString(),
+      };
+
+      service.toggleSelection(started);
+      service.toggleSelection(upcoming);
+      expect(service.hasStartedSelections()).toBe(true);
+
+      service.removeStartedSelections();
+
+      expect(service.selectedBets()).toEqual([upcoming]);
+      expect(service.hasStartedSelections()).toBe(false);
+    });
+  });
 });

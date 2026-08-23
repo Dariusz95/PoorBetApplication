@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, Input } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { LiveMatchService } from '@features/bet/services/live-match.service';
+import { LiveMatchEvent } from '@features/bet/types/match.types';
 import { Bet } from '@features/coupons/types/bet';
 import { CouponBetItemComponent } from './coupon-bet-item.component';
-import { LiveMatchEvent } from '@features/bet/types/match.types';
 
 @Component({
   selector: 'app-coupon-bets-list',
@@ -13,7 +13,7 @@ import { LiveMatchEvent } from '@features/bet/types/match.types';
   template: `
     <section class="coupon__bets">
       <ul class="coupon__bets-list" role="list">
-        @for (bet of bets; track bet.id) {
+        @for (bet of bets(); track bet.id) {
           <app-coupon-bet-item
             [bet]="bet"
             [liveEvent]="liveMatches()[bet.matchId]"
@@ -27,9 +27,9 @@ import { LiveMatchEvent } from '@features/bet/types/match.types';
 export class CouponBetsListComponent {
   private readonly liveMatchService = inject(LiveMatchService);
 
-  @Input() bets: Bet[] = [];
+  readonly bets = input<Bet[]>([]);
 
-  liveMatches = toSignal(this.liveMatchService.liveMatches$, {
+  readonly liveMatches = toSignal(this.liveMatchService.liveMatches$, {
     initialValue: {} as Record<string, LiveMatchEvent>,
   });
 }

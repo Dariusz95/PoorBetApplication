@@ -21,18 +21,4 @@ describe('CouponSelectedBetsComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
-
-  describe('isStarted', () => {
-    it('should return true when the match start time is in the past', () => {
-      const past = new Date(Date.now() - 60_000).toISOString();
-
-      expect(component.isStarted(past)).toBe(true);
-    });
-
-    it('should return false when the match start time is in the future', () => {
-      const future = new Date(Date.now() + 60_000).toISOString();
-
-      expect(component.isStarted(future)).toBe(false);
-    });
-  });
 });

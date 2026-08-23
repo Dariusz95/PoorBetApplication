@@ -20,6 +20,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import com.poorbet.commons.commons.wallet.contract.ReserveRequest;
 import com.poorbet.commons.rabbit.events.coupon.CouponCreationFailedEvent;
@@ -147,6 +148,15 @@ public class CouponService {
         return this.couponRepository.findById(couponId)
                 .map(couponMapper::toDetailDto)
                 .orElseThrow(() -> new EntityNotFoundException("Coupon not found"));
+    }
+
+    @Transactional(readOnly = true)
+    public List<CouponLiveViewDto> getLiveCouponViews(UUID userId, List<UUID> matchIds) {
+        if (CollectionUtils.isEmpty(matchIds)) {
+            return List.of();
+        }
+
+        return couponRepository.findLiveViewsByUserAndMatchIds(userId, CouponStatus.OPEN, matchIds);
     }
 
     @Cacheable("ranking-total-odds")

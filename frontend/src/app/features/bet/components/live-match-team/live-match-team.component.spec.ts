@@ -48,7 +48,7 @@ describe('LiveMatchTeamComponent', () => {
     expect(img.src).toBe(mockTeam.img);
   });
 
-  it('should fall back to the team initial when the logo fails to load', () => {
+  it('should fall back to the team initials when the logo fails to load', () => {
     const img: HTMLImageElement = fixture.nativeElement.querySelector(
       '.live-match-team__logo',
     );
@@ -59,6 +59,6 @@ describe('LiveMatchTeamComponent', () => {
     const fallback = fixture.nativeElement.querySelector(
       '.live-match-team__logo-fallback',
     );
-    expect(fallback?.textContent).toBe(mockTeam.name.charAt(0));
+    expect(fallback?.textContent).toBe('TF');
   });
 });

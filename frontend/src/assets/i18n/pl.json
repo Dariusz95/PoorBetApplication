@@ -105,7 +105,12 @@
     "liveMatchCard": {
       "live": "LIVE",
       "matchFinished": "Koniec meczu",
-      "matchInProgress": "Mecz trwa"
+      "matchInProgress": "Mecz trwa",
+      "firstHalf": "1. połowa",
+      "secondHalf": "2. połowa",
+      "viewCouponAria": "Zobacz szczegóły kuponu z tym meczem",
+      "potentialWin": "wygrana {{ amount }}",
+      "activeCoupons": "Aktywne kupony"
     },
     "coupon": {
       "eyebrow": "Twój kupon",
@@ -114,6 +119,9 @@
       "emptyText": "Kliknij kurs przy meczu, aby dodać go do kuponu po prawej stronie.",
       "oddsLabel": "Kurs",
       "removeAria": "Usuń zdarzenie z kuponu",
+      "menuAria": "Więcej opcji kuponu",
+      "clearAll": "Wyczyść kupon",
+      "removeInvalid": "Usuń nieaktualne zdarzenia",
       "totalOdds": "Łączny kurs",
       "amount": "Kwota",
       "submit": "Postaw kupon",

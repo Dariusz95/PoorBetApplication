@@ -44,8 +44,4 @@ export const listItemAnimation = trigger('listItemAnimation', [
 })
 export class CouponSelectedBetsComponent {
   protected readonly betSlipService = inject(BetSlipService);
-
-  isStarted(matchStartTime: string): boolean {
-    return new Date(matchStartTime).getTime() <= Date.now();
-  }
 }

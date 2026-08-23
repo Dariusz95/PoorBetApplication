@@ -1,0 +1,14 @@
+@use "components/menu" as menu;
+@use "components/icon-button" as icon-button;
+
+.coupon-menu__trigger {
+  @include icon-button.pb-circular-icon-button;
+}
+
+.coupon-menu__content {
+  @apply flex flex-col p-1;
+}
+
+.coupon-menu__item {
+  @include menu.pb-menu-item-base;
+}

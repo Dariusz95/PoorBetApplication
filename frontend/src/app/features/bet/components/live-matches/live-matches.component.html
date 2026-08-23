@@ -16,7 +16,10 @@
     } @else {
       <div class="matches-grid">
         @for (entry of liveMatches$ | async | keyvalue; track entry.key) {
-          <app-live-match-card [liveMatch]="entry.value"></app-live-match-card>
+          <app-live-match-card
+            [liveMatch]="entry.value"
+            [coupons]="couponsByMatchId().get(entry.key) ?? []"
+          ></app-live-match-card>
         }
       </div>
     }

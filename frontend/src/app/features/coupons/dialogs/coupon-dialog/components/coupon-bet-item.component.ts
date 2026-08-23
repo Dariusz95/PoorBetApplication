@@ -69,32 +69,32 @@ import { BetStatus } from '@features/coupons/types/bet-status';
   styleUrl: './coupon-bet-item.component.scss',
 })
 export class CouponBetItemComponent {
-  bet = input.required<Bet>();
-  liveEvent = input<LiveMatchEvent | undefined>();
+  readonly bet = input.required<Bet>();
+  readonly liveEvent = input<LiveMatchEvent | undefined>();
 
-  isLive = computed(() => {
-    const e = this.liveEvent();
+  readonly isLive = computed(() => {
+    const event = this.liveEvent();
 
-    return !!e && e.eventType !== MatchEventType.MatchEnded;
+    return !!event && event.eventType !== MatchEventType.MatchEnded;
   });
 
-  isEnded = computed(() => {
-    const e = this.liveEvent();
+  readonly isEnded = computed(() => {
+    const event = this.liveEvent();
 
-    return !!e && e.eventType === MatchEventType.MatchEnded;
+    return !!event && event.eventType === MatchEventType.MatchEnded;
   });
 
-  hasStoredResult = computed(() => {
-    const b = this.bet();
+  readonly hasStoredResult = computed(() => {
+    const bet = this.bet();
     return (
-      b.homeGoals !== null &&
-      b.homeGoals !== undefined &&
-      b.awayGoals !== null &&
-      b.awayGoals !== undefined
+      bet.homeGoals !== null &&
+      bet.homeGoals !== undefined &&
+      bet.awayGoals !== null &&
+      bet.awayGoals !== undefined
     );
   });
 
-  statusIcon = computed(() => {
+  readonly statusIcon = computed(() => {
     switch (this.bet().status) {
       case BetStatus.Won:
         return 'check_circle';
