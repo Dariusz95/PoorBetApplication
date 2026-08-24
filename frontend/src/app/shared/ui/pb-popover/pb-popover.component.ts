@@ -70,6 +70,7 @@ export class PbPopoverComponent {
 
   origin = input<CdkOverlayOrigin | undefined>();
   width = input<string>('180px');
+  ariaLabel = input<string | undefined>();
 
   positions = input<ConnectedPosition[]>([
     {

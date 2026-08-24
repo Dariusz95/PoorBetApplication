@@ -8,7 +8,21 @@
             [class.pb-table__header-cell--sortable]="column.sortable"
             [style.width]="column.width"
             [style.text-align]="column.align ?? 'left'"
+            scope="col"
+            [attr.tabindex]="column.sortable ? 0 : null"
+            [attr.role]="column.sortable ? 'button' : null"
+            [attr.aria-sort]="
+              column.sortable && sortState()?.key === column.key
+                ? sortState()?.direction === 'asc'
+                  ? 'ascending'
+                  : 'descending'
+                : column.sortable
+                  ? 'none'
+                  : null
+            "
             (click)="onHeaderClick(column)"
+            (keydown.enter)="onHeaderClick(column)"
+            (keydown.space)="$event.preventDefault(); onHeaderClick(column)"
           >
             <span class="pb-table__header-label">
               {{ column.header | transloco }}
@@ -58,7 +72,7 @@
     >
       {{ "table.previous" | transloco }}
     </button>
-    <span class="pb-table__page-indicator">
+    <span class="pb-table__page-indicator" aria-live="polite">
       {{ "table.page" | transloco: { page: page(), total: totalPages() } }}
     </span>
     <button

@@ -1,4 +1,4 @@
-<pb-popover>
+<pb-popover [ariaLabel]="'a11y.openLanguageMenu' | transloco">
   <div class="pb-overlay-trigger" popoverTrigger>
     @if (imageType()) {
       <pb-image [type]="imageType()!" size="md"></pb-image>

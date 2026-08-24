@@ -2,6 +2,7 @@ import { Dialog } from '@angular/cdk/dialog';
 import { Overlay } from '@angular/cdk/overlay';
 import { Injectable, inject } from '@angular/core';
 import { CouponDetails } from '@features/coupons/types/coupon-details';
+import { TranslocoService } from '@jsverse/transloco';
 import { BetTabsHelpComponent } from '../../features/bet/components/bet-tabs-help/bet-tabs-help.component';
 import { CouponCardComponent } from '../../features/coupons/components/coupon-card/coupon-card.component';
 import { PbCouponDialogComponent } from '../../features/coupons/dialogs/coupon-dialog/coupon-dialog.component';
@@ -12,6 +13,7 @@ import { PbCouponDialogComponent } from '../../features/coupons/dialogs/coupon-d
 export class DialogService {
   private readonly dialog = inject(Dialog);
   private readonly overlay = inject(Overlay);
+  private readonly translocoService = inject(TranslocoService);
 
   openCouponDialog(couponData: CouponDetails): void {
     this.dialog.open<PbCouponDialogComponent, CouponDetails>(
@@ -34,6 +36,7 @@ export class DialogService {
       panelClass: 'coupon-mobile-sheet',
       hasBackdrop: true,
       backdropClass: 'coupon-mobile-sheet-backdrop',
+      ariaLabel: this.translocoService.translate('bet.coupon.eyebrow'),
     });
   }
 

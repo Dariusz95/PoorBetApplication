@@ -1,8 +1,7 @@
 @switch (type()) {
   @case ("link") {
     <a
-      role="button"
-      [routerLink]="routePath()"
+      [routerLink]="disabled() || loading() ? null : routePath()"
       [class]="getButtonClasses()"
       [attr.aria-disabled]="disabled()"
       [class.pointer-events-none]="disabled()"
@@ -20,6 +19,7 @@
       [class]="getButtonClasses()"
       [disabled]="disabled()"
       [attr.aria-label]="ariaLabel()"
+      [attr.aria-pressed]="ariaPressed()"
       [attr.data-testid]="testId() ?? null"
       (click)="onClick($event)"
     >

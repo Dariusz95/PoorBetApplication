@@ -3,6 +3,12 @@
     "pl": "Polish",
     "en": "English"
   },
+  "a11y": {
+    "skipToContent": "Skip to main content",
+    "openCoupons": "Open coupon list",
+    "openLanguageMenu": "Change language",
+    "currentLanguageSelected": "Currently selected language"
+  },
   "pageTitle": {
     "bet": "PoorBet – Bets",
     "myCoupons": "PoorBet – My coupons",
@@ -83,7 +89,8 @@
   "header": {
     "wallet": "Balance",
     "balanceUpdated": "Balance updated: {{balance}} zł",
-    "coinAbbreviation": "BC"
+    "coinAbbreviation": "BC",
+    "mobileNav": "Mobile navigation"
   },
   "wallet": {
     "level": "Level {{level}}",
@@ -168,7 +175,8 @@
   },
   "userPanel": {
     "open": "Open user panel",
-    "guest": "Not logged in"
+    "guest": "Not logged in",
+    "title": "User panel"
   },
   "myCoupons": {
     "title": "My coupons",

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CouponListComponent } from '@features/coupons/components/coupon-list/coupon-list.component';
+import { TranslocoPipe } from '@jsverse/transloco';
 import { PbIconComponent } from '@shared/ui/icon/pb-icon.component';
 import { PbPopoverComponent } from '@shared/ui/pb-popover/pb-popover.component';
 
@@ -11,6 +12,7 @@ import { PbPopoverComponent } from '@shared/ui/pb-popover/pb-popover.component';
     CouponListComponent,
     PbPopoverComponent,
     PbIconComponent,
+    TranslocoPipe,
   ],
   templateUrl: './coupon-dropdown.component.html',
   styleUrls: ['./coupon-dropdown.component.scss'],

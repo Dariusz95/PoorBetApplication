@@ -20,6 +20,8 @@
     [type]="type()"
     [placeholder]="placeholder()"
     [value]="value()"
+    [attr.autocomplete]="autocomplete() ?? null"
+    [attr.aria-required]="required() ? true : null"
     [attr.aria-invalid]="invalid() && touched() ? true : null"
     [attr.aria-describedby]="invalid() && touched() ? errorsId() : null"
     [attr.data-testid]="testId() ?? null"

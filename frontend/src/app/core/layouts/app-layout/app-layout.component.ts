@@ -1,6 +1,7 @@
 import { Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import { TranslocoPipe } from '@jsverse/transloco';
 import { filter, map, startWith } from 'rxjs';
 import { HeaderComponent } from '../../components/header/header.component';
 import { MobileMenuComponent } from '../../components/mobile-header/mobile-menu.component';
@@ -8,7 +9,7 @@ import { RouteFragment } from '../../routing/route-fragment';
 
 @Component({
   selector: 'app-layout',
-  imports: [RouterOutlet, HeaderComponent, MobileMenuComponent],
+  imports: [RouterOutlet, HeaderComponent, MobileMenuComponent, TranslocoPipe],
   templateUrl: './app-layout.component.html',
   styleUrls: ['./app-layout.component.scss'],
 })

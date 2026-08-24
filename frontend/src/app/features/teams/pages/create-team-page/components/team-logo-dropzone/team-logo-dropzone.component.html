@@ -1,5 +1,5 @@
 <div
-  class="relative flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed p-6 text-center cursor-pointer transition-colors duration-fast"
+  class="relative flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed p-6 text-center transition-colors duration-fast"
   [class.border-app-primary]="isDragging()"
   [class.bg-app-primarySoft]="isDragging()"
   [class.border-app-danger]="error() && !isDragging()"
@@ -7,6 +7,8 @@
   role="button"
   tabindex="0"
   [attr.aria-label]="'team.form.logo.label' | transloco"
+  [attr.aria-invalid]="error() ? true : null"
+  [attr.aria-describedby]="error() ? 'team-logo-dropzone-error' : null"
   data-testid="create-team-logo-dropzone"
   (click)="logoFileInput.click()"
   (keydown.enter)="logoFileInput.click()"
@@ -19,10 +21,10 @@
     <img
       [src]="previewUrl"
       [alt]="'team.form.logo.previewAlt' | transloco"
-      class="w-20 h-20 rounded-full object-cover border border-app-border"
+      class="h-20 w-20 rounded-full border border-app-border object-cover"
     />
 
-    <div class="flex gap-4 mt-1">
+    <div class="mt-1 flex gap-4">
       <button
         type="button"
         class="t-body-xs text-app-primary underline"

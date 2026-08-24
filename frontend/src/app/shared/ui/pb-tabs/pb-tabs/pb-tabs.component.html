@@ -1,9 +1,13 @@
-<div class="tabs-container" #tabsContainer>
+<div class="tabs-container" #tabsContainer role="tablist">
   @for (tab of tabs(); track tab) {
     <button
       class="tab-button"
       [class.active]="selectedTab() === tab.value"
       [attr.data-testid]="'bet-tab-' + tab.value"
+      role="tab"
+      [id]="'pb-tab-' + tab.value"
+      [attr.aria-selected]="selectedTab() === tab.value"
+      [attr.aria-controls]="hasPanels() ? 'pb-tabpanel-' + tab.value : null"
       (click)="selectTab(tab)"
     >
       @if (tabButtonContent()) {

@@ -25,6 +25,7 @@ export class PbTabsComponent<T> {
   tabButtonContent = input<TemplateRef<{ $implicit: TabConfig<T> }> | null>(
     null,
   );
+  hasPanels = input<boolean>(false);
 
   selectedTabChange = output<T>();
 

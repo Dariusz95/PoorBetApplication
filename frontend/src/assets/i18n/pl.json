@@ -3,6 +3,12 @@
     "pl": "Polski",
     "en": "Angielski"
   },
+  "a11y": {
+    "skipToContent": "Przejdź do treści głównej",
+    "openCoupons": "Otwórz listę kuponów",
+    "openLanguageMenu": "Zmień język",
+    "currentLanguageSelected": "Aktualnie wybrany język"
+  },
   "pageTitle": {
     "bet": "PoorBet – Zakłady",
     "myCoupons": "PoorBet – Moje kupony",
@@ -83,7 +89,8 @@
   "header": {
     "wallet": "Saldo",
     "balanceUpdated": "Saldo zaktualizowane: {{balance}} zł",
-    "coinAbbreviation": "BC"
+    "coinAbbreviation": "BC",
+    "mobileNav": "Nawigacja mobilna"
   },
   "wallet": {
     "level": "Poziom {{level}}",
@@ -168,7 +175,8 @@
   },
   "userPanel": {
     "open": "Otwórz panel użytkownika",
-    "guest": "Niezalogowany"
+    "guest": "Niezalogowany",
+    "title": "Panel użytkownika"
   },
   "myCoupons": {
     "title": "Moje kupony",

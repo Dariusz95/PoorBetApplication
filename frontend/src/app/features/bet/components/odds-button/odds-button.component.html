@@ -4,6 +4,7 @@
   [fullWidth]="true"
   [disabled]="disabled()"
   [ariaLabel]="'Typ ' + label() + ' z kursem ' + value()"
+  [ariaPressed]="selected()"
   [testId]="testId()"
   (buttonClick)="oddsClick.emit()"
 >
