@@ -16,6 +16,7 @@ import {
   ControlValueAccessor,
   NG_VALUE_ACCESSOR,
   NgControl,
+  Validators,
 } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { ErrorValueMap } from '../pb-errors/types/error-value-map';
@@ -58,6 +59,7 @@ export class PbInputComponent
   type = input<string>('text');
   variant = input<'underline' | 'surface'>('underline');
   testId = input<string | undefined>(undefined);
+  autocomplete = input<string | undefined>(undefined);
 
   icon = contentChild(PbInputIconDirective);
   iconRight = contentChild(PbInputIconRightDirective);
@@ -67,6 +69,7 @@ export class PbInputComponent
   focused = signal<boolean>(false);
   touched = signal<boolean>(false);
   invalid = signal<boolean>(false);
+  required = signal<boolean>(false);
   value = signal<string>('');
   labelId = signal<string>('');
   errorsId = computed(() => `${this.labelId()}-errors`);
@@ -114,6 +117,7 @@ export class PbInputComponent
 
     this.touched.set(control.touched);
     this.disabled.set(control.disabled);
+    this.required.set(control.hasValidator(Validators.required));
     this.setErrors(control.errors as ErrorValueMap | null);
   }
 

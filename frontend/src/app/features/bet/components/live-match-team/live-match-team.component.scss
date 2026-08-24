@@ -8,7 +8,7 @@
   }
 
   &__logo {
-    @apply h-full w-full object-cover;
+    @apply h-full w-full object-contain;
   }
 
   &__logo-fallback {

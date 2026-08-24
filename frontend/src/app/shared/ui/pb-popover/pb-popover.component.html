@@ -6,6 +6,7 @@
   role="button"
   tabindex="0"
   [attr.aria-expanded]="isOpen()"
+  [attr.aria-label]="ariaLabel()"
   aria-haspopup="true"
   (click)="toggle()"
   (keydown.enter)="toggle()"

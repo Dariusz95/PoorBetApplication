@@ -1,6 +1,6 @@
 import { Component, computed, inject, viewChild } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { TranslocoService } from '@jsverse/transloco';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { PbImageComponent } from '@shared/ui/pb-image/pb-image.component';
 import { PbPopoverComponent } from '@shared/ui/pb-popover/pb-popover.component';
 import { IMAGE_MAP } from './consts/image-map';
@@ -8,7 +8,12 @@ import { LanguageContentComponent } from './language-content/language-content.co
 
 @Component({
   selector: 'app-language-switcher',
-  imports: [PbPopoverComponent, PbImageComponent, LanguageContentComponent],
+  imports: [
+    PbPopoverComponent,
+    PbImageComponent,
+    LanguageContentComponent,
+    TranslocoPipe,
+  ],
   templateUrl: './language-switcher.component.html',
   styleUrls: ['./language-switcher.component.scss'],
 })

@@ -1,4 +1,7 @@
-<nav class="mobile-bottom-menu" aria-label="Nawigacja mobilna">
+<nav
+  class="mobile-bottom-menu"
+  [attr.aria-label]="'header.mobileNav' | transloco"
+>
   <ul class="mobile-menu-list">
     @for (item of menuItems(); track item.link) {
       <li class="mobile-menu-item">
@@ -6,6 +9,8 @@
           [routerLink]="item.link"
           routerLinkActive="mobile-menu-link--active"
           [routerLinkActiveOptions]="{ exact: item.link === '/app' }"
+          #rla="routerLinkActive"
+          [attr.aria-current]="rla.isActive ? 'page' : null"
           class="mobile-menu-link"
         >
           <span class="material-icons">{{ item.iconName }}</span>

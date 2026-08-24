@@ -1,10 +1,15 @@
-<div class="language-list">
-  @for (lang of languages(); track lang.code) {
+<div class="language-list" role="menu">
+  @for (lang of languages(); track lang.code; let i = $index) {
     <button
+      #menuItem
       type="button"
+      role="menuitemradio"
       class="language-item"
       [class.language-item--active]="lang.code === activeLang()"
+      [attr.aria-checked]="lang.code === activeLang()"
+      [attr.tabindex]="lang.code === activeLang() ? 0 : -1"
       (click)="setLang(lang.code)"
+      (keydown)="onKeydown($event, i)"
     >
       @if (lang.imageType) {
         <pb-image [type]="lang.imageType" size="md"></pb-image>

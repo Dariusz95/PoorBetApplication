@@ -3,7 +3,7 @@ import { Overlay } from '@angular/cdk/overlay';
 import { AsyncPipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { TranslocoDirective } from '@jsverse/transloco';
+import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
 import { PbIconComponent } from '@shared/ui/icon/pb-icon.component';
 import { Observable } from 'rxjs';
 import { AuthService } from '../../auth/services/auth.service';
@@ -36,6 +36,7 @@ export class HeaderComponent {
   private readonly authService = inject(AuthService);
   private readonly dialog = inject(Dialog);
   private readonly overlay = inject(Overlay);
+  private readonly translocoService = inject(TranslocoService);
 
   protected readonly routingService = inject(RoutingService);
 
@@ -52,6 +53,7 @@ export class HeaderComponent {
       panelClass: 'user-side-panel',
       hasBackdrop: true,
       backdropClass: 'user-side-panel-backdrop',
+      ariaLabel: this.translocoService.translate('userPanel.title'),
     });
   }
 }

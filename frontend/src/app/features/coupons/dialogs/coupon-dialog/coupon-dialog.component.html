@@ -64,9 +64,10 @@
         <span slot="odds-value">
           {{ coupon().totalOdds | number: "1.2-2" }}
         </span>
-        <span slot="win-value">{{
-          coupon().potentialPayout | number: "1.2-2"
-        }}</span>
+        <span slot="win-value"
+          >{{ coupon().potentialPayout | number: "1.2-2" }}
+          {{ "header.coinAbbreviation" | transloco }}</span
+        >
       </app-coupon-summary>
     </section>
   </div>

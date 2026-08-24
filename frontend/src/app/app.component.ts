@@ -27,6 +27,7 @@ export class AppComponent {
     this.initLiveEvents();
     this.initTranslations();
     this.initRouterEvents();
+    this.initHtmlLangSync();
   }
 
   private initLiveEvents(): void {
@@ -50,6 +51,14 @@ export class AppComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.titleStrategy.updateTitle(this.router.routerState.snapshot);
+      });
+  }
+
+  private initHtmlLangSync(): void {
+    this.translocoService.langChanges$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((lang) => {
+        document.documentElement.lang = lang;
       });
   }
 }
