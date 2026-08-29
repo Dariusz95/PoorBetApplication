@@ -1,5 +1,4 @@
 .ranking-page {
-  // Mobile-first: ciaśniejszy padding na telefonie, luźniejszy od `sm`.
   @apply flex flex-col gap-4 px-2 py-4 sm:px-4 sm:py-6;
   margin: 0 auto;
 }

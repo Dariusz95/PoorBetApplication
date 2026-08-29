@@ -39,10 +39,8 @@ public class OutboxEvent {
 
     private Instant sentAt;
 
-    // Number of failed publish attempts so far (column added in V7, NOT NULL DEFAULT 0).
     @Column(nullable = false)
     private int retryCount;
 
-    // Earliest time the next publish attempt may happen; null means "ready now".
     private Instant nextRetryAt;
 }

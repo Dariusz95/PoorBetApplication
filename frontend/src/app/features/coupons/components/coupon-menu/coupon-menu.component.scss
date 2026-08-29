@@ -5,8 +5,6 @@
   @include icon-button.pb-circular-icon-button;
 }
 
-// `.coupon-menu__content` (flex flex-col p-1) was a one-line @apply wrapper —
-// moved to the template.
 .coupon-menu__item {
   @include menu.pb-menu-item-base;
 }

@@ -26,7 +26,6 @@ import static com.poorbet.commons.rabbit.events.account.AccountEvents.ACCOUNT_PR
 import static com.poorbet.commons.rabbit.events.wallet.WalletEvents.WALLET_BALANCE_CHANGED;
 import static com.poorbet.commons.rabbit.events.wallet.WalletEvents.WALLET_CREATED;
 
-
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -80,11 +79,6 @@ public class OutboxPublisher {
         event.setNextRetryAt(null);
     }
 
-    /**
-     * On a failed publish: bump the attempt counter. Once the configured budget is spent the event
-     * goes to DEAD_LETTER (terminal, never picked up again); otherwise it stays FAILED with a
-     * next_retry_at set by exponential backoff, so findPendingForUpdate skips it until then.
-     */
     private void markForRetry(OutboxEvent event, Exception cause) {
         int attempts = event.getRetryCount() + 1;
         event.setRetryCount(attempts);
@@ -103,14 +97,12 @@ public class OutboxPublisher {
         }
     }
 
-    /** Exponential backoff: initialBackoff * 2^(attempts-1), capped at maxBackoff. */
     private Duration backoffFor(int attempts) {
         OutboxProperties.Retry retry = outboxProperties.getRetry();
         long multiplier = 1L << Math.min(attempts - 1, 32);
         Duration backoff = retry.getInitialBackoff().multipliedBy(multiplier);
         return backoff.compareTo(retry.getMaxBackoff()) > 0 ? retry.getMaxBackoff() : backoff;
     }
-
 
     private Object toObject(String payload, String eventType) {
         try {
