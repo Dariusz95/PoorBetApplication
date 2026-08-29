@@ -85,6 +85,14 @@ auth:
 messaging:
   source-service: match-service
 
+outbox:
+  retry:
+    max-attempts: 10
+    initial-backoff: 1m
+    max-backoff: 1h
+  cleanup:
+    retention: 7d
+
 match-pool:
   matches-per-pool: 3
   pools-in-advance: 5

@@ -60,10 +60,6 @@
 
     transition: background-color var(--duration-base) var(--ease-standard);
 
-    .material-icons {
-      font-size: 20px;
-    }
-
     &:hover {
       background: var(--color-surface-soft);
     }

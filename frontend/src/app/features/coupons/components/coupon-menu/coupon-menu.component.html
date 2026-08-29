@@ -1,4 +1,4 @@
-@if (betSlipService.selectedCount() > 0) {
+@if (betSlipStore.selectedCount() > 0) {
   <pb-popover #couponMenu width="220px">
     <button
       type="button"
@@ -8,20 +8,20 @@
     >
       <pb-icon icon="more_vert" size="m" />
     </button>
-    <div popoverContent class="coupon-menu__content">
+    <div popoverContent class="flex flex-col p-1">
       <button
         type="button"
         class="coupon-menu__item"
-        (click)="betSlipService.clearSelections(); couponMenu.close()"
+        (click)="betSlipStore.clearSelections(); couponMenu.close()"
       >
         <pb-icon icon="delete_sweep" size="s" color="danger" />
         <span>{{ "bet.coupon.clearAll" | transloco }}</span>
       </button>
-      @if (betSlipService.hasStartedSelections()) {
+      @if (betSlipStore.hasStartedSelections()) {
         <button
           type="button"
           class="coupon-menu__item"
-          (click)="betSlipService.removeStartedSelections(); couponMenu.close()"
+          (click)="betSlipStore.removeStartedSelections(); couponMenu.close()"
         >
           <pb-icon icon="event_busy" size="s" color="warning" />
           <span>{{ "bet.coupon.removeInvalid" | transloco }}</span>

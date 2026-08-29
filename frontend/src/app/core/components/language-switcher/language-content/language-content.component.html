@@ -1,4 +1,4 @@
-<div class="language-list" role="menu">
+<div class="flex flex-col p-1" role="menu">
   @for (lang of languages(); track lang.code; let i = $index) {
     <button
       #menuItem
@@ -14,7 +14,7 @@
       @if (lang.imageType) {
         <pb-image [type]="lang.imageType" size="md"></pb-image>
       }
-      <span class="language-item__label">{{ lang.labelKey | transloco }}</span>
+      <span class="capitalize">{{ lang.labelKey | transloco }}</span>
     </button>
   }
 </div>

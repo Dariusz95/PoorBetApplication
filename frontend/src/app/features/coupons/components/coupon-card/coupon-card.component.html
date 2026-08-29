@@ -2,7 +2,7 @@
   <div pbCardHeader class="bet-coupon__header">
     <div class="flex gap-4">
       <span class="bet-coupon__badge" data-testid="coupon-count">
-        {{ betSlipService.selectedCount() }}
+        {{ betSlipStore.selectedCount() }}
       </span>
       <div class="bet-coupon__title">
         <pb-icon icon="confirmation_number" size="s" color="primary" />
@@ -55,11 +55,11 @@
         couponStakeCtrl.value || 0 | number: "1.2-2"
       }}</span>
       <span slot="odds-value">{{
-        betSlipService.totalOdds() | number: "1.2-2"
+        betSlipStore.totalOdds() | number: "1.2-2"
       }}</span>
       <span slot="win-value"
         >{{
-          betSlipService.potentialWin(couponStakeCtrl.value) | number: "1.2-2"
+          betSlipStore.potentialWin(couponStakeCtrl.value) | number: "1.2-2"
         }}
         {{ "header.coinAbbreviation" | transloco }}</span
       >
@@ -67,7 +67,7 @@
 
     <pb-button
       [fullWidth]="true"
-      [disabled]="!isLoggedIn() || betSlipService.selectedCount() === 0"
+      [disabled]="!isLoggedIn() || betSlipStore.selectedCount() === 0"
       [loading]="submitting()"
       (buttonClick)="submitCoupon()"
     >

@@ -13,6 +13,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
@@ -25,6 +27,7 @@ public class OutboxPublisher {
     private final RabbitTemplate rabbitTemplate;
     private final MessagingProperties messagingProperties;
     private final ObjectMapper objectMapper;
+    private final OutboxProperties outboxProperties;
 
     private final Map<String, Class<?>> eventTypeMap = Map.of(
             MatchEvents.MATCH_FINISHED.eventType(), MatchesFinishedEvent.class
@@ -52,25 +55,61 @@ public class OutboxPublisher {
                         event.getRoutingKey(),
                         envelope
                 );
-                event.setStatus(OutboxEventStatus.SENT);
+                markSent(event);
             } catch (Exception e) {
-                log.error("Nie udało się opublikować eventu outbox {}", event.getId(), e);
-                event.setStatus(OutboxEventStatus.FAILED);
+                markForRetry(event, e);
             }
         }
 
         outboxRepository.saveAll(events);
     }
 
+    private void markSent(OutboxEvent event) {
+        event.setStatus(OutboxEventStatus.SENT);
+        event.setSentAt(Instant.now());
+        event.setNextRetryAt(null);
+    }
+
+    /**
+     * On a failed publish: bump the attempt counter. Once the configured budget is spent the event
+     * goes to DEAD_LETTER (terminal, never picked up again); otherwise it stays FAILED with a
+     * next_retry_at set by exponential backoff, so findPendingForUpdate skips it until then.
+     */
+    private void markForRetry(OutboxEvent event, Exception cause) {
+        int attempts = event.getRetryCount() + 1;
+        event.setRetryCount(attempts);
+
+        if (attempts >= outboxProperties.getRetry().getMaxAttempts()) {
+            event.setStatus(OutboxEventStatus.DEAD_LETTER);
+            event.setNextRetryAt(null);
+            log.error("Outbox event {} moved to DEAD_LETTER after {} failed attempts",
+                    event.getId(), attempts, cause);
+        } else {
+            Instant nextRetryAt = Instant.now().plus(backoffFor(attempts));
+            event.setStatus(OutboxEventStatus.FAILED);
+            event.setNextRetryAt(nextRetryAt);
+            log.warn("Failed to publish outbox event {} (attempt {}), next retry at {}",
+                    event.getId(), attempts, nextRetryAt, cause);
+        }
+    }
+
+    /** Exponential backoff: initialBackoff * 2^(attempts-1), capped at maxBackoff. */
+    private Duration backoffFor(int attempts) {
+        OutboxProperties.Retry retry = outboxProperties.getRetry();
+        long multiplier = 1L << Math.min(attempts - 1, 32);
+        Duration backoff = retry.getInitialBackoff().multipliedBy(multiplier);
+        return backoff.compareTo(retry.getMaxBackoff()) > 0 ? retry.getMaxBackoff() : backoff;
+    }
+
     private Object deserialize(String payload, String eventType) {
         try {
             Class<?> clazz = eventTypeMap.get(eventType);
             if (clazz == null) {
-                throw new RuntimeException("Nieznany eventType: " + eventType);
+                throw new RuntimeException("Unknown eventType: " + eventType);
             }
             return objectMapper.readValue(payload, clazz);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("Nie udało się zdeserializować payloadu", e);
+            throw new RuntimeException("Failed to deserialize payload", e);
         }
     }
 }

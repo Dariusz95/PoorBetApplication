@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { BetSlipService } from '@features/bet/services/bet-slip.service';
+import { BetSlipStore } from '@features/bet/services/bet-slip.store';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { PbIconComponent } from '@shared/ui/icon/pb-icon.component';
 import { PbPopoverComponent } from '@shared/ui/pb-popover/pb-popover.component';
@@ -11,5 +11,5 @@ import { PbPopoverComponent } from '@shared/ui/pb-popover/pb-popover.component';
   styleUrl: './coupon-menu.component.scss',
 })
 export class CouponMenuComponent {
-  protected readonly betSlipService = inject(BetSlipService);
+  protected readonly betSlipStore = inject(BetSlipStore);
 }

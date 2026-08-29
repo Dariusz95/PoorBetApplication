@@ -1,13 +1,11 @@
-@if (betSlipService.selectedCount() === 0) {
+@if (betSlipStore.selectedCount() === 0) {
   <app-coupon-empty />
 } @else {
   <ul class="list" role="list">
-    @for (bet of betSlipService.selectedBets(); track bet.matchId) {
+    @for (bet of betSlipStore.selectedBets(); track bet.matchId) {
       <li
         class="list__item pb-surface"
-        [class.list__item--started]="
-          betSlipService.isStarted(bet.matchStartTime)
-        "
+        [class.list__item--started]="betSlipStore.isStarted(bet.matchStartTime)"
         [attr.data-testid]="'coupon-item-' + bet.matchId"
         [@listItemAnimation]
       >
@@ -23,7 +21,7 @@
                 {{ bet.odds | number: "1.2-2" }}
               </span>
             </p>
-            @if (betSlipService.isStarted(bet.matchStartTime)) {
+            @if (betSlipStore.isStarted(bet.matchStartTime)) {
               <p class="list__item-warning">
                 {{ "coupon.matchStarted" | transloco }}
               </p>
@@ -35,7 +33,7 @@
           type="icon"
           variant="ghost"
           [ariaLabel]="'bet.coupon.removeAria' | transloco"
-          (buttonClick)="betSlipService.removeSelection(bet.matchId)"
+          (buttonClick)="betSlipStore.removeSelection(bet.matchId)"
         >
           <pb-icon icon="close" size="s" />
         </pb-button>

@@ -13,7 +13,7 @@ import {
   getTeamInitials,
 } from '@shared/utils/team-avatar.util';
 import { combineLatest, map, of, switchMap } from 'rxjs';
-import { BetSlipService } from '../../services/bet-slip.service';
+import { BetSlipStore } from '../../services/bet-slip.store';
 import { MatchDto, PoolMatch, ShortTeamInfo } from '../../types/match.types';
 import { OddsButtonComponent } from '../odds-button/odds-button.component';
 
@@ -40,7 +40,7 @@ export class PoolCardComponent {
   pool = input.required<PoolMatch>();
 
   private readonly teamService = inject(TeamService);
-  private readonly betSlipService = inject(BetSlipService);
+  private readonly betSlipStore = inject(BetSlipStore);
 
   readonly BetType = BetType;
   readonly BetOption = BetOption;
@@ -105,7 +105,7 @@ export class PoolCardComponent {
     const home = details?.home.name ?? match.homeTeamId;
     const away = details?.away.name ?? match.awayTeamId;
 
-    this.betSlipService.toggleSelection({
+    this.betSlipStore.toggleSelection({
       matchId: match.matchId,
       matchLabel: `${home} vs ${away}`,
       betType,
@@ -116,7 +116,7 @@ export class PoolCardComponent {
   }
 
   isSelected(matchId: Uuid, betType: BetType): boolean {
-    return this.betSlipService.isSelected(matchId, betType);
+    return this.betSlipStore.isSelected(matchId, betType);
   }
 
   hasStarted(): boolean {
