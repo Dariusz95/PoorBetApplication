@@ -2,7 +2,6 @@
 @use "utilities/media" as media;
 
 .coupon-bar {
-  // Mobile-first: widoczny domyślnie, chowany od breakpointu `md` w górę.
   display: flex;
   position: fixed;
   left: 0;

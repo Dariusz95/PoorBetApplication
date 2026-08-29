@@ -1,7 +1,6 @@
 @use "utilities/media" as media;
 
 .mobile-bottom-menu {
-  // Mobile-first: dolna nawigacja widoczna domyślnie, chowana od `md` w górę.
   display: block;
   position: fixed;
   bottom: 0;

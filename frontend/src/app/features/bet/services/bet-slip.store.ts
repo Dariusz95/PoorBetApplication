@@ -10,15 +10,6 @@ import { BetType } from '@shared/types/bet-type';
 import { Uuid } from '@shared/types/uuid.type';
 import { SelectedBet } from '../types/bet-slip.types';
 
-// NgRx SignalStore = sformalizowany wzorzec, który ten serwis i tak realizował
-// ręcznie (prywatny `signal`, `computed`, `update`). Stan trzymamy jako jawnie
-// otypowaną tablicę `SelectedBet[]` — na jeden mecz przypada dokładnie jeden
-// zakład (klucz `matchId`), a kolekcja jest na tyle mała, że nie potrzebuje
-// `withEntities`/`entityMap`.
-//
-// Wewnętrzny slice nazywa się `_selectedBets`; na zewnątrz wystawiamy go jako
-// jawnie otypowany `computed<SelectedBet[]>` (`selectedBets`), żeby typ elementu
-// nie zależał od inferencji `withState`.
 interface BetSlipState {
   _selectedBets: SelectedBet[];
 }
@@ -27,7 +18,6 @@ const initialState: BetSlipState = {
   _selectedBets: [],
 };
 
-/** Czy mecz danego zakładu już się rozpoczął (kurs stał się nieaktualny). */
 function isMatchStarted(matchStartTime: string): boolean {
   return new Date(matchStartTime).getTime() <= Date.now();
 }
@@ -50,7 +40,6 @@ export const BetSlipStore = signalStore(
         const current = bets().find((entry) => entry.matchId === bet.matchId);
 
         if (current?.betType === bet.betType) {
-          // Ten sam kurs kliknięty ponownie -> zdejmij.
           patchState(store, {
             _selectedBets: bets().filter(
               (entry) => entry.matchId !== bet.matchId,
@@ -59,7 +48,6 @@ export const BetSlipStore = signalStore(
           return;
         }
 
-        // Nowy zakład albo inny kurs tego samego meczu -> dodaj lub podmień.
         patchState(store, {
           _selectedBets: current
             ? bets().map((entry) =>

@@ -25,9 +25,6 @@ module.exports = {
         },
       },
 
-      // Wszystkie wartości designu żyją raz — w src/styles/_tokens.scss (CSS
-      // custom properties). Poniższe klucze tylko je re-eksportują przez var(),
-      // więc zmiana motywu = edycja jednego pliku.
       borderRadius: {
         sm: "var(--radius-sm)",
         md: "var(--radius-md)",
