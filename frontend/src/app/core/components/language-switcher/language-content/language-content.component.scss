@@ -1,9 +1,5 @@
 @use "components/menu" as menu;
 
-.language-list {
-  @apply flex flex-col p-1;
-}
-
 .language-item {
   @include menu.pb-menu-item-base;
 
@@ -11,8 +7,4 @@
     background: var(--color-surface-soft);
     font-weight: 600;
   }
-}
-
-.language-item__label {
-  @apply capitalize;
 }

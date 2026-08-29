@@ -46,7 +46,7 @@
           }
         </div>
       } @else {
-        <div class="coupon-items">
+        <div class="flex flex-col gap-3">
           @for (coupon of coupons(); track coupon.id) {
             <app-coupon-list-item
               [coupon]="coupon"

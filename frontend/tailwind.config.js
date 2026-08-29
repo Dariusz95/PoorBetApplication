@@ -25,11 +25,14 @@ module.exports = {
         },
       },
 
+      // Wszystkie wartości designu żyją raz — w src/styles/_tokens.scss (CSS
+      // custom properties). Poniższe klucze tylko je re-eksportują przez var(),
+      // więc zmiana motywu = edycja jednego pliku.
       borderRadius: {
-        sm: "4px",
-        md: "8px",
-        lg: "16px",
-        xl: "24px",
+        sm: "var(--radius-sm)",
+        md: "var(--radius-md)",
+        lg: "var(--radius-lg)",
+        xl: "var(--radius-xl)",
       },
 
       transitionDuration: {
@@ -44,9 +47,9 @@ module.exports = {
       },
 
       boxShadow: {
-        surface: "0 10px 30px rgba(0,0,0,0.6)",
-        glow: "0 0 30px rgba(139,92,246,0.35)",
-        elevated: "0 20px 50px rgba(0,0,0,0.7)",
+        surface: "var(--shadow-surface)",
+        glow: "var(--shadow-glow)",
+        elevated: "var(--shadow-elevated)",
         "glow-sm": "var(--shadow-glow-sm)",
         "glow-lg": "var(--shadow-glow-lg)",
         "accent-glow": "var(--shadow-accent-glow)",
@@ -55,11 +58,7 @@ module.exports = {
       },
 
       backgroundImage: {
-        "app-gradient": `
-          radial-gradient(circle at 100% 0%, rgba(139,92,246,0.25) 0%, transparent 45%),
-          radial-gradient(circle at 0% 100%, rgba(59,130,246,0.15) 0%, transparent 50%),
-          linear-gradient(180deg, #151922 0%, #0e1117 100%)
-        `,
+        "app-gradient": "var(--gradient-app)",
       },
 
       fontFamily: {

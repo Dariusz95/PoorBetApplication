@@ -43,6 +43,14 @@ poorbet:
     unprotected-paths:
       - /actuator/health/**
 
+outbox:
+  retry:
+    max-attempts: 10
+    initial-backoff: 1m
+    max-backoff: 1h
+  cleanup:
+    retention: 7d
+
 messaging:
   source-service: account-service
 

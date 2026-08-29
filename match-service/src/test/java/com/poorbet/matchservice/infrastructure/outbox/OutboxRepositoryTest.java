@@ -67,18 +67,38 @@ class OutboxRepositoryTest {
     }
 
     @Test
-    void findPendingForUpdate_shouldReturnOnlyNewEvents() {
+    void findPendingForUpdate_shouldReturnNewAndDueFailedEvents() {
         // Arrange
         OutboxEvent newEvent = buildEvent(OutboxEventStatus.NEW, Instant.now());
         OutboxEvent sentEvent = buildEvent(OutboxEventStatus.SENT, Instant.now());
-        OutboxEvent failedEvent = buildEvent(OutboxEventStatus.FAILED, Instant.now());
-        outboxRepository.saveAll(List.of(newEvent, sentEvent, failedEvent));
+        OutboxEvent failedDue = buildEvent(OutboxEventStatus.FAILED, Instant.now());
+        OutboxEvent deadLetter = buildEvent(OutboxEventStatus.DEAD_LETTER, Instant.now());
+        outboxRepository.saveAll(List.of(newEvent, sentEvent, failedDue, deadLetter));
 
         // Act
         List<OutboxEvent> pending = outboxRepository.findPendingForUpdate();
 
         // Assert
-        assertThat(pending).extracting(OutboxEvent::getId).containsExactly(newEvent.getId());
+        assertThat(pending).extracting(OutboxEvent::getId)
+                .containsExactlyInAnyOrder(newEvent.getId(), failedDue.getId());
+    }
+
+    @Test
+    void findPendingForUpdate_shouldSkipFailedEventsStillInBackoff() {
+        // Arrange
+        OutboxEvent notDueYet = buildEvent(OutboxEventStatus.FAILED, Instant.now());
+        notDueYet.setNextRetryAt(Instant.now().plus(10, ChronoUnit.MINUTES));
+
+        OutboxEvent dueAgain = buildEvent(OutboxEventStatus.FAILED, Instant.now());
+        dueAgain.setNextRetryAt(Instant.now().minus(1, ChronoUnit.MINUTES));
+
+        outboxRepository.saveAll(List.of(notDueYet, dueAgain));
+
+        // Act
+        List<OutboxEvent> pending = outboxRepository.findPendingForUpdate();
+
+        // Assert
+        assertThat(pending).extracting(OutboxEvent::getId).containsExactly(dueAgain.getId());
     }
 
     @Test
@@ -98,7 +118,7 @@ class OutboxRepositoryTest {
     }
 
     @Test
-    void findPendingForUpdate_shouldReturnEmpty_whenNoNewEvents() {
+    void findPendingForUpdate_shouldReturnEmpty_whenNoPendingEvents() {
         // Arrange
         outboxRepository.save(buildEvent(OutboxEventStatus.SENT, Instant.now()));
 
@@ -107,5 +127,30 @@ class OutboxRepositoryTest {
 
         // Assert
         assertThat(pending).isEmpty();
+    }
+
+    @Test
+    void deleteSentBefore_shouldRemoveOnlyOldSentEvents() {
+        // Arrange
+        Instant now = Instant.now();
+
+        OutboxEvent oldSent = buildEvent(OutboxEventStatus.SENT, now.minus(30, ChronoUnit.DAYS));
+        oldSent.setSentAt(now.minus(20, ChronoUnit.DAYS));
+
+        OutboxEvent recentSent = buildEvent(OutboxEventStatus.SENT, now.minus(1, ChronoUnit.DAYS));
+        recentSent.setSentAt(now.minus(1, ChronoUnit.DAYS));
+
+        OutboxEvent oldButNew = buildEvent(OutboxEventStatus.NEW, now.minus(30, ChronoUnit.DAYS));
+        OutboxEvent oldDeadLetter = buildEvent(OutboxEventStatus.DEAD_LETTER, now.minus(30, ChronoUnit.DAYS));
+
+        outboxRepository.saveAll(List.of(oldSent, recentSent, oldButNew, oldDeadLetter));
+
+        // Act
+        int removed = outboxRepository.deleteSentBefore(now.minus(7, ChronoUnit.DAYS));
+
+        // Assert
+        assertThat(removed).isEqualTo(1);
+        assertThat(outboxRepository.findAll()).extracting(OutboxEvent::getId)
+                .containsExactlyInAnyOrder(recentSent.getId(), oldButNew.getId(), oldDeadLetter.getId());
     }
 }

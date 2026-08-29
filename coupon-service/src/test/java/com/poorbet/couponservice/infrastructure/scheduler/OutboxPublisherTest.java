@@ -1,11 +1,11 @@
-package com.poorbet.accountservice.infrastructure.scheduler;
+package com.poorbet.couponservice.infrastructure.scheduler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.poorbet.commons.rabbit.EventEnvelope;
 import com.poorbet.commons.rabbit.MessagingProperties;
-import com.poorbet.accountservice.infrastructure.persistence.OutboxRepository;
-import com.poorbet.accountservice.infrastructure.persistence.entity.OutboxEvent;
-import com.poorbet.accountservice.infrastructure.persistence.entity.OutboxEventStatus;
+import com.poorbet.couponservice.infrastructure.persistence.OutboxRepository;
+import com.poorbet.couponservice.infrastructure.persistence.entity.OutboxEvent;
+import com.poorbet.couponservice.infrastructure.persistence.entity.OutboxEventStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,7 +22,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
-import static com.poorbet.commons.rabbit.events.wallet.WalletEvents.WALLET_CREATED;
+import static com.poorbet.commons.rabbit.events.coupon.CouponEvents.COUPON_LOST;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -49,17 +49,17 @@ class OutboxPublisherTest {
     @InjectMocks
     private OutboxPublisher outboxPublisher;
 
-    private OutboxEvent walletCreatedEvent;
+    private OutboxEvent couponLostEvent;
 
     @BeforeEach
     void setUp() {
-        walletCreatedEvent = OutboxEvent.builder()
+        couponLostEvent = OutboxEvent.builder()
                 .id(UUID.randomUUID())
-                .exchange(WALLET_CREATED.exchange())
-                .routingKey(WALLET_CREATED.routingKey())
-                .eventType(WALLET_CREATED.eventType())
-                .version(WALLET_CREATED.version())
-                .payload("{\"userId\":\"" + UUID.randomUUID() + "\"}")
+                .exchange(COUPON_LOST.exchange())
+                .routingKey(COUPON_LOST.routingKey())
+                .eventType(COUPON_LOST.eventType())
+                .version(COUPON_LOST.version())
+                .payload("{\"id\":\"" + UUID.randomUUID() + "\"}")
                 .status(OutboxEventStatus.NEW)
                 .createdAt(Instant.now())
                 .build();
@@ -69,49 +69,49 @@ class OutboxPublisherTest {
     @DisplayName("Should publish pending events to RabbitMQ and mark them as SENT")
     void shouldPublishPendingEventsSuccessfully() {
         // Arrange
-        when(outboxRepository.findPendingForUpdate()).thenReturn(List.of(walletCreatedEvent));
-        when(messagingProperties.getSourceService()).thenReturn("account-service");
+        when(outboxRepository.findPendingForUpdate()).thenReturn(List.of(couponLostEvent));
+        when(messagingProperties.getSourceService()).thenReturn("coupon-service");
 
         // Act
         outboxPublisher.publishEvents();
 
         // Assert
         ArgumentCaptor<EventEnvelope> envelopeCaptor = ArgumentCaptor.forClass(EventEnvelope.class);
-        verify(rabbitTemplate).convertAndSend(eq(WALLET_CREATED.exchange()), eq(WALLET_CREATED.routingKey()), envelopeCaptor.capture());
-        assertThat(envelopeCaptor.getValue().eventType()).isEqualTo(WALLET_CREATED.eventType());
-        assertThat(envelopeCaptor.getValue().source()).isEqualTo("account-service");
+        verify(rabbitTemplate).convertAndSend(eq(COUPON_LOST.exchange()), eq(COUPON_LOST.routingKey()), envelopeCaptor.capture());
+        assertThat(envelopeCaptor.getValue().eventType()).isEqualTo(COUPON_LOST.eventType());
+        assertThat(envelopeCaptor.getValue().source()).isEqualTo("coupon-service");
 
-        assertThat(walletCreatedEvent.getStatus()).isEqualTo(OutboxEventStatus.SENT);
-        assertThat(walletCreatedEvent.getSentAt()).isNotNull();
-        assertThat(walletCreatedEvent.getNextRetryAt()).isNull();
-        verify(outboxRepository).saveAll(List.of(walletCreatedEvent));
+        assertThat(couponLostEvent.getStatus()).isEqualTo(OutboxEventStatus.SENT);
+        assertThat(couponLostEvent.getSentAt()).isNotNull();
+        assertThat(couponLostEvent.getNextRetryAt()).isNull();
+        verify(outboxRepository).saveAll(List.of(couponLostEvent));
     }
 
     @Test
     @DisplayName("Should mark event as FAILED and schedule a retry when publishing to RabbitMQ throws")
     void shouldMarkEventAsFailedWhenPublishingThrows() {
         // Arrange
-        when(outboxRepository.findPendingForUpdate()).thenReturn(List.of(walletCreatedEvent));
-        when(messagingProperties.getSourceService()).thenReturn("account-service");
+        when(outboxRepository.findPendingForUpdate()).thenReturn(List.of(couponLostEvent));
+        when(messagingProperties.getSourceService()).thenReturn("coupon-service");
         doThrowOnSend();
 
         // Act
         outboxPublisher.publishEvents();
 
         // Assert
-        assertThat(walletCreatedEvent.getStatus()).isEqualTo(OutboxEventStatus.FAILED);
-        assertThat(walletCreatedEvent.getRetryCount()).isEqualTo(1);
-        assertThat(walletCreatedEvent.getNextRetryAt()).isAfter(Instant.now());
-        verify(outboxRepository).saveAll(List.of(walletCreatedEvent));
+        assertThat(couponLostEvent.getStatus()).isEqualTo(OutboxEventStatus.FAILED);
+        assertThat(couponLostEvent.getRetryCount()).isEqualTo(1);
+        assertThat(couponLostEvent.getNextRetryAt()).isAfter(Instant.now());
+        verify(outboxRepository).saveAll(List.of(couponLostEvent));
     }
 
     @Test
     @DisplayName("Should grow the retry delay exponentially with the attempt count")
     void shouldBackOffExponentially() {
         // Arrange: this is the 3rd attempt -> initialBackoff (1m) * 2^2 = 4 minutes
-        walletCreatedEvent.setRetryCount(2);
-        when(outboxRepository.findPendingForUpdate()).thenReturn(List.of(walletCreatedEvent));
-        when(messagingProperties.getSourceService()).thenReturn("account-service");
+        couponLostEvent.setRetryCount(2);
+        when(outboxRepository.findPendingForUpdate()).thenReturn(List.of(couponLostEvent));
+        when(messagingProperties.getSourceService()).thenReturn("coupon-service");
         doThrowOnSend();
 
         Instant before = Instant.now();
@@ -120,8 +120,8 @@ class OutboxPublisherTest {
         outboxPublisher.publishEvents();
 
         // Assert
-        assertThat(walletCreatedEvent.getRetryCount()).isEqualTo(3);
-        Duration delay = Duration.between(before, walletCreatedEvent.getNextRetryAt());
+        assertThat(couponLostEvent.getRetryCount()).isEqualTo(3);
+        Duration delay = Duration.between(before, couponLostEvent.getNextRetryAt());
         assertThat(delay).isBetween(Duration.ofMinutes(3), Duration.ofMinutes(5));
     }
 
@@ -129,19 +129,19 @@ class OutboxPublisherTest {
     @DisplayName("Should move event to DEAD_LETTER once the retry budget is exhausted")
     void shouldMoveToDeadLetterWhenRetryBudgetExhausted() {
         // Arrange: default maxAttempts is 10, so the 10th attempt is terminal
-        walletCreatedEvent.setRetryCount(9);
-        when(outboxRepository.findPendingForUpdate()).thenReturn(List.of(walletCreatedEvent));
-        when(messagingProperties.getSourceService()).thenReturn("account-service");
+        couponLostEvent.setRetryCount(9);
+        when(outboxRepository.findPendingForUpdate()).thenReturn(List.of(couponLostEvent));
+        when(messagingProperties.getSourceService()).thenReturn("coupon-service");
         doThrowOnSend();
 
         // Act
         outboxPublisher.publishEvents();
 
         // Assert
-        assertThat(walletCreatedEvent.getStatus()).isEqualTo(OutboxEventStatus.DEAD_LETTER);
-        assertThat(walletCreatedEvent.getRetryCount()).isEqualTo(10);
-        assertThat(walletCreatedEvent.getNextRetryAt()).isNull();
-        verify(outboxRepository).saveAll(List.of(walletCreatedEvent));
+        assertThat(couponLostEvent.getStatus()).isEqualTo(OutboxEventStatus.DEAD_LETTER);
+        assertThat(couponLostEvent.getRetryCount()).isEqualTo(10);
+        assertThat(couponLostEvent.getNextRetryAt()).isNull();
+        verify(outboxRepository).saveAll(List.of(couponLostEvent));
     }
 
     private void doThrowOnSend() {
@@ -155,8 +155,8 @@ class OutboxPublisherTest {
         // Arrange
         OutboxEvent unknownEvent = OutboxEvent.builder()
                 .id(UUID.randomUUID())
-                .exchange("wallet.exchange")
-                .routingKey("wallet.unknown")
+                .exchange("coupon.exchange")
+                .routingKey("coupon.unknown")
                 .eventType("UNKNOWN_EVENT")
                 .version("v1")
                 .payload("{}")

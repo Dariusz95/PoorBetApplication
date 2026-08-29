@@ -1,7 +1,7 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { DecimalPipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { BetSlipService } from '@features/bet/services/bet-slip.service';
+import { BetSlipStore } from '@features/bet/services/bet-slip.store';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { PbIconComponent } from '@shared/ui/icon/pb-icon.component';
 import { PbButtonComponent } from '@shared/ui/pb-button/pb-button.component';
@@ -43,5 +43,5 @@ export const listItemAnimation = trigger('listItemAnimation', [
   animations: [listItemAnimation],
 })
 export class CouponSelectedBetsComponent {
-  protected readonly betSlipService = inject(BetSlipService);
+  protected readonly betSlipStore = inject(BetSlipStore);
 }

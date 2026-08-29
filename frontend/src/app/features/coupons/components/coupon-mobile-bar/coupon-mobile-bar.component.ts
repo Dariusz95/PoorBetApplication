@@ -3,7 +3,7 @@ import { Component, inject } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { DialogService } from '@shared/services/dialog.service';
 import { PbIconComponent } from '@shared/ui/icon/pb-icon.component';
-import { BetSlipService } from '../../../bet/services/bet-slip.service';
+import { BetSlipStore } from '../../../bet/services/bet-slip.store';
 
 @Component({
   selector: 'app-coupon-mobile-bar',
@@ -12,7 +12,7 @@ import { BetSlipService } from '../../../bet/services/bet-slip.service';
   styleUrl: './coupon-mobile-bar.component.scss',
 })
 export class CouponMobileBarComponent {
-  protected readonly betSlipService = inject(BetSlipService);
+  protected readonly betSlipStore = inject(BetSlipStore);
   private readonly dialogService = inject(DialogService);
 
   openSheet(): void {

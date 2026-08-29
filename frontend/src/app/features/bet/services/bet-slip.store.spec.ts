@@ -3,15 +3,15 @@ import { BetOption } from '@shared/types/bet-option';
 import { BetType } from '@shared/types/bet-type';
 import { Uuid } from '@shared/types/uuid.type';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { BetSlipService } from './bet-slip.service';
+import { BetSlipStore } from './bet-slip.store';
 import { SelectedBet } from '../types/bet-slip.types';
 
-describe('BetSlipService', () => {
-  let service: BetSlipService;
+describe('BetSlipStore', () => {
+  let store: InstanceType<typeof BetSlipStore>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(BetSlipService);
+    store = TestBed.inject(BetSlipStore);
   });
 
   it('should add and remove the same selection on toggle', () => {
@@ -24,17 +24,17 @@ describe('BetSlipService', () => {
       matchStartTime: '2026-07-01T18:00:00Z',
     };
 
-    service.toggleSelection(bet);
-    expect(service.selectedBets()).toEqual([bet]);
-    expect(service.isSelected(bet.matchId, BetType.HomeWin)).toBe(true);
+    store.toggleSelection(bet);
+    expect(store.selectedBets()).toEqual([bet]);
+    expect(store.isSelected(bet.matchId, BetType.HomeWin)).toBe(true);
 
-    service.toggleSelection(bet);
-    expect(service.selectedBets()).toEqual([]);
-    expect(service.isSelected(bet.matchId, BetType.HomeWin)).toBe(false);
+    store.toggleSelection(bet);
+    expect(store.selectedBets()).toEqual([]);
+    expect(store.isSelected(bet.matchId, BetType.HomeWin)).toBe(false);
   });
 
   it('should replace selection for the same match with a different option', () => {
-    service.toggleSelection({
+    store.toggleSelection({
       matchId: '550e8400-e29b-41d4-a716-446655440000' as Uuid,
       matchLabel: 'A vs B',
       betType: BetType.HomeWin,
@@ -43,7 +43,7 @@ describe('BetSlipService', () => {
       matchStartTime: '2026-07-01T18:00:00Z',
     });
 
-    service.toggleSelection({
+    store.toggleSelection({
       matchId: '550e8400-e29b-41d4-a716-446655440000' as Uuid,
       matchLabel: 'A vs B',
       betType: BetType.Draw,
@@ -52,7 +52,7 @@ describe('BetSlipService', () => {
       matchStartTime: '2026-07-01T18:00:00Z',
     });
 
-    expect(service.selectedBets()).toEqual([
+    expect(store.selectedBets()).toEqual([
       {
         matchId: '550e8400-e29b-41d4-a716-446655440000' as Uuid,
         matchLabel: 'A vs B',
@@ -62,20 +62,20 @@ describe('BetSlipService', () => {
         matchStartTime: '2026-07-01T18:00:00Z',
       },
     ]);
-    expect(service.totalOdds()).toBe(3.25);
+    expect(store.totalOdds()).toBe(3.25);
   });
 
   describe('isStarted', () => {
     it('should return true when the match start time is in the past', () => {
       const past = new Date(Date.now() - 60_000).toISOString();
 
-      expect(service.isStarted(past)).toBe(true);
+      expect(store.isStarted(past)).toBe(true);
     });
 
     it('should return false when the match start time is in the future', () => {
       const future = new Date(Date.now() + 60_000).toISOString();
 
-      expect(service.isStarted(future)).toBe(false);
+      expect(store.isStarted(future)).toBe(false);
     });
   });
 
@@ -98,14 +98,14 @@ describe('BetSlipService', () => {
         matchStartTime: new Date(Date.now() + 60_000).toISOString(),
       };
 
-      service.toggleSelection(started);
-      service.toggleSelection(upcoming);
-      expect(service.hasStartedSelections()).toBe(true);
+      store.toggleSelection(started);
+      store.toggleSelection(upcoming);
+      expect(store.hasStartedSelections()).toBe(true);
 
-      service.removeStartedSelections();
+      store.removeStartedSelections();
 
-      expect(service.selectedBets()).toEqual([upcoming]);
-      expect(service.hasStartedSelections()).toBe(false);
+      expect(store.selectedBets()).toEqual([upcoming]);
+      expect(store.hasStartedSelections()).toBe(false);
     });
   });
 });

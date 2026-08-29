@@ -1,12 +1,16 @@
+@use "utilities/media" as media;
+
 :host {
   display: block;
 }
 
 .coupon-bet {
+  // Mobile-first: kolumna domyślnie, wiersz od `sm` w górę.
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
   justify-content: space-between;
-  gap: var(--space-3);
+  gap: var(--space-2);
   padding: var(--space-3);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
@@ -55,7 +59,8 @@
 
   &__right {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    align-self: flex-end;
     align-items: flex-end;
     gap: var(--space-2);
     flex-shrink: 0;
@@ -148,15 +153,15 @@
   }
 }
 
-@media (max-width: 640px) {
+@include media.up("sm") {
   .coupon-bet {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: var(--space-2);
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-3);
 
     &__right {
-      align-self: flex-end;
-      flex-direction: row;
+      flex-direction: column;
+      align-self: auto;
     }
   }
 }

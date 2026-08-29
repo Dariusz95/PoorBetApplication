@@ -14,6 +14,7 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -39,6 +40,8 @@ class OutboxPublisherTest {
     private MessagingProperties messagingProperties;
     @Spy
     private ObjectMapper objectMapper = new ObjectMapper().findAndRegisterModules();
+    @Spy
+    private OutboxProperties outboxProperties = new OutboxProperties();
 
     @InjectMocks
     private OutboxPublisher outboxPublisher;
@@ -76,11 +79,13 @@ class OutboxPublisherTest {
         assertThat(envelopeCaptor.getValue().source()).isEqualTo("match-service");
 
         assertThat(matchFinishedEvent.getStatus()).isEqualTo(OutboxEventStatus.SENT);
+        assertThat(matchFinishedEvent.getSentAt()).isNotNull();
+        assertThat(matchFinishedEvent.getNextRetryAt()).isNull();
         verify(outboxRepository).saveAll(List.of(matchFinishedEvent));
     }
 
     @Test
-    @DisplayName("Should mark event as FAILED when publishing to RabbitMQ throws")
+    @DisplayName("Should mark event as FAILED and schedule a retry when publishing to RabbitMQ throws")
     void shouldMarkEventAsFailedWhenPublishingThrows() {
         // Arrange
         when(outboxRepository.findPendingForUpdate()).thenReturn(List.of(matchFinishedEvent));
@@ -93,6 +98,49 @@ class OutboxPublisherTest {
 
         // Assert
         assertThat(matchFinishedEvent.getStatus()).isEqualTo(OutboxEventStatus.FAILED);
+        assertThat(matchFinishedEvent.getRetryCount()).isEqualTo(1);
+        assertThat(matchFinishedEvent.getNextRetryAt()).isAfter(Instant.now());
+        verify(outboxRepository).saveAll(List.of(matchFinishedEvent));
+    }
+
+    @Test
+    @DisplayName("Should grow the retry delay exponentially with the attempt count")
+    void shouldBackOffExponentially() {
+        // Arrange: this is the 3rd attempt -> initialBackoff (1m) * 2^2 = 4 minutes
+        matchFinishedEvent.setRetryCount(2);
+        when(outboxRepository.findPendingForUpdate()).thenReturn(List.of(matchFinishedEvent));
+        when(messagingProperties.getSourceService()).thenReturn("match-service");
+        org.mockito.Mockito.doThrow(new org.springframework.amqp.AmqpException("broker unavailable"))
+                .when(rabbitTemplate).convertAndSend(any(String.class), any(String.class), any(Object.class));
+
+        Instant before = Instant.now();
+
+        // Act
+        outboxPublisher.publishEvents();
+
+        // Assert
+        assertThat(matchFinishedEvent.getRetryCount()).isEqualTo(3);
+        Duration delay = Duration.between(before, matchFinishedEvent.getNextRetryAt());
+        assertThat(delay).isBetween(Duration.ofMinutes(3), Duration.ofMinutes(5));
+    }
+
+    @Test
+    @DisplayName("Should move event to DEAD_LETTER once the retry budget is exhausted")
+    void shouldMoveToDeadLetterWhenRetryBudgetExhausted() {
+        // Arrange: default maxAttempts is 10, so the 10th attempt is terminal
+        matchFinishedEvent.setRetryCount(9);
+        when(outboxRepository.findPendingForUpdate()).thenReturn(List.of(matchFinishedEvent));
+        when(messagingProperties.getSourceService()).thenReturn("match-service");
+        org.mockito.Mockito.doThrow(new org.springframework.amqp.AmqpException("broker unavailable"))
+                .when(rabbitTemplate).convertAndSend(any(String.class), any(String.class), any(Object.class));
+
+        // Act
+        outboxPublisher.publishEvents();
+
+        // Assert
+        assertThat(matchFinishedEvent.getStatus()).isEqualTo(OutboxEventStatus.DEAD_LETTER);
+        assertThat(matchFinishedEvent.getRetryCount()).isEqualTo(10);
+        assertThat(matchFinishedEvent.getNextRetryAt()).isNull();
         verify(outboxRepository).saveAll(List.of(matchFinishedEvent));
     }
 
@@ -115,7 +163,7 @@ class OutboxPublisherTest {
         // Act & Assert
         assertThatThrownBy(() -> outboxPublisher.publishEvents())
                 .isInstanceOf(RuntimeException.class)
-                .hasMessageContaining("Nieznany eventType");
+                .hasMessageContaining("Unknown eventType");
 
         verify(outboxRepository, never()).saveAll(any());
     }

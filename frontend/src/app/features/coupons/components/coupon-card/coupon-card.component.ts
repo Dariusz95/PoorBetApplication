@@ -31,7 +31,7 @@ import { filter, finalize } from 'rxjs';
 import { PbButtonComponent } from '../../../../shared/ui/pb-button/pb-button.component';
 import { PbFormFieldComponent } from '../../../../shared/ui/pb-form-field/pb-form-field.component';
 import { PbInputComponent } from '../../../../shared/ui/pb-input/pb-input.component';
-import { BetSlipService } from '../../../bet/services/bet-slip.service';
+import { BetSlipStore } from '../../../bet/services/bet-slip.store';
 import { CreateCouponRequest } from '../../types/create-coupon-request';
 import { CouponMenuComponent } from '../coupon-menu/coupon-menu.component';
 import { CouponSelectedBetsComponent } from '../coupon-selected-bets/coupon-selected-bets.component';
@@ -65,7 +65,7 @@ import { CouponSummaryComponent } from '../coupon-summary/coupon-summary.compone
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CouponCardComponent {
-  protected readonly betSlipService = inject(BetSlipService);
+  protected readonly betSlipStore = inject(BetSlipStore);
   protected readonly couponService = inject(CouponService);
   protected readonly dialogService = inject(DialogService);
   protected readonly toastService = inject(ToastService);
@@ -115,9 +115,9 @@ export class CouponCardComponent {
       return;
     }
 
-    const startedBet = this.betSlipService
+    const startedBet = this.betSlipStore
       .selectedBets()
-      .find((bet) => this.betSlipService.isStarted(bet.matchStartTime));
+      .find((bet) => this.betSlipStore.isStarted(bet.matchStartTime));
 
     if (startedBet) {
       this.toastService.error(
@@ -141,7 +141,7 @@ export class CouponCardComponent {
   private mapToRequest(): CreateCouponRequest {
     return {
       stake: this.couponStakeCtrl.value!,
-      bets: this.betSlipService.selectedBets().map((bet) => ({
+      bets: this.betSlipStore.selectedBets().map((bet) => ({
         matchId: bet.matchId,
         betType: bet.betType,
       })),

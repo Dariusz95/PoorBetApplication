@@ -13,6 +13,6 @@ import { BetTabsComponent } from './components/bet-tabs/bet-tabs.component';
     TranslocoDirective,
   ],
   templateUrl: './bet-page.component.html',
-  styleUrl: './bet-page.component.scss',
+  host: { class: 'block h-full' },
 })
 export class BetPageComponent {}

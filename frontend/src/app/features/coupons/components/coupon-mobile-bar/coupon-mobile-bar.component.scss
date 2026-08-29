@@ -1,7 +1,9 @@
 @use "components/badge" as badge;
+@use "utilities/media" as media;
 
 .coupon-bar {
-  display: none;
+  // Mobile-first: widoczny domyślnie, chowany od breakpointu `md` w górę.
+  display: flex;
   position: fixed;
   left: 0;
   right: 0;
@@ -86,8 +88,8 @@
   }
 }
 
-@media (max-width: 767.98px) {
+@include media.up("md") {
   .coupon-bar {
-    display: flex;
+    display: none;
   }
 }

@@ -3,7 +3,7 @@
     <p class="live-match-coupons__title">
       {{ "bet.liveMatchCard.activeCoupons" | transloco }}
     </p>
-    <ul class="live-match-coupons__list">
+    <ul class="flex flex-wrap gap-2">
       @for (activeCoupon of coupons(); track activeCoupon.couponId) {
         <li>
           <button

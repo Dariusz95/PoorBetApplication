@@ -16,10 +16,6 @@
   color: var(--color-text-muted);
 }
 
-.live-match-coupons__list {
-  @apply flex flex-wrap gap-2;
-}
-
 .live-match-coupons__button {
   @include badge.pb-badge-base(0.5rem, 0.25rem);
   @apply border transition-colors;

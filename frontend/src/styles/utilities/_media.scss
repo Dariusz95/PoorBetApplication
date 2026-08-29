@@ -1,0 +1,34 @@
+@use "sass:map";
+
+// Mobile-first media queries.
+//
+// Wartości = domyślne breakpointy Tailwinda (`screens`). Projekt nie nadpisuje
+// `theme.screens` w tailwind.config.js, więc trzymamy je tu w jednym miejscu —
+// warianty `sm:` / `md:` / `lg:` / `xl:` w szablonach odpowiadają dokładnie tym
+// liczbom. Gdyby kiedyś w konfiguracji Tailwinda pojawił się nadpisany
+// breakpoint, trzeba go zmienić także tutaj.
+//
+// Świadomie udostępniamy tylko `up()` — cały projekt jest mobile-first, więc
+// zapytania `max-width` (desktop-first) nie powinny powstawać.
+//
+// Użycie:
+//   @use "utilities/media" as media;
+//   .foo { display: block; }
+//   @include media.up("md") { .foo { display: none; } }
+
+$screens: (
+  "sm": 640px,
+  "md": 768px,
+  "lg": 1024px,
+  "xl": 1280px,
+);
+
+@mixin up($screen) {
+  @if not map.has-key($screens, $screen) {
+    @error "Nieznany breakpoint '#{$screen}'. Dostępne: #{map.keys($screens)}.";
+  }
+
+  @media (min-width: map.get($screens, $screen)) {
+    @content;
+  }
+}
