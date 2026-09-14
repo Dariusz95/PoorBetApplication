@@ -5,6 +5,20 @@ on:
     branches:
       - main
   workflow_call:
+    inputs:
+      services:
+        description: >-
+          JSON array of backend services to test, np. '["match-service"]'.
+          '' (domyślnie) => pełna macierz (ścieżka pull_request).
+          '[]' => job pominięty.
+        type: string
+        required: false
+        default: ''
+      frontend:
+        description: "'true'/'false' — czy uruchomić frontend-test."
+        type: string
+        required: false
+        default: 'true'
 
 concurrency:
   group: tests-${{ github.ref }}
@@ -16,6 +30,7 @@ permissions:
 
 jobs:
   test:
+    if: ${{ inputs.services != '[]' }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
@@ -24,16 +39,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        service:
-          [
-            auth-service,
-            gateway,
-            coupon-service,
-            match-service,
-            odds-engine-service,
-            account-service,
-            notification-service,
-          ]
+        service: ${{ fromJSON(inputs.services != '' && inputs.services || '["auth-service","gateway","coupon-service","match-service","odds-engine-service","account-service","notification-service"]') }}
 
     steps:
       - name: Checkout code
@@ -64,6 +70,7 @@ jobs:
         run: mvn --batch-mode --no-transfer-progress clean test
 
   frontend-test:
+    if: ${{ github.event_name == 'pull_request' || inputs.frontend == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -89,6 +96,7 @@ jobs:
         run: npm run test
 
   e2e-tests:
+    if: ${{ github.event_name == 'pull_request' || inputs.services != '[]' || inputs.frontend == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
     continue-on-error: true

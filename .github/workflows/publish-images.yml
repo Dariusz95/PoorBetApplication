@@ -4,6 +4,15 @@ on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag obrazów do opublikowania, np. v0.1.27'
+        required: true
+      force:
+        description: 'Wymuś przebudowę: lista serwisów po przecinku albo "all" (np. po zmianie w poorbet-commons)'
+        required: false
+        default: ''
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -13,27 +22,126 @@ permissions:
   contents: read
   packages: write
 
+env:
+  REPO: ghcr.io/dariusz95/poorbet
+
 jobs:
+  # Dla każdego serwisu liczy src-hash = hash tego, co wchodzi do obrazu
+  # (drzewo katalogu serwisu + root pom.xml; frontend: samo drzewo frontend/).
+  # Obraz z tagiem src-<hash> już w GHCR  -> nic nie budujemy, tylko przypinamy
+  # tag wydania. Brak                     -> build + push (tag wydania i src-<hash>).
+  detect:
+    runs-on: ubuntu-latest
+    outputs:
+      tag:            ${{ steps.calc.outputs.tag }}
+      build_services: ${{ steps.calc.outputs.build_services }}  # [{"service","hash"}] backendu do zbudowania
+      frontend_hash:  ${{ steps.calc.outputs.frontend_hash }}   # hash frontendu do zbudowania, albo ''
+      retag:          ${{ steps.calc.outputs.retag }}           # "svc:hash svc:hash ..." — obrazy tylko do przypięcia tagu
+      test_services:  ${{ steps.calc.outputs.test_services }}   # ["svc",...] backendu do przetestowania
+      test_frontend:  ${{ steps.calc.outputs.test_frontend }}   # 'true' | 'false'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Policz src-hash i sprawdź co jest już w GHCR
+        id: calc
+        run: |
+          set -euo pipefail
+          UNITS="auth-service gateway match-service coupon-service account-service notification-service odds-engine-service frontend"
+
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            TAG="${{ github.event.inputs.tag }}"
+            FORCE=",${{ github.event.inputs.force }},"
+          else
+            TAG="${GITHUB_REF_NAME}"
+            FORCE=",,"
+          fi
+
+          POM="$(git rev-parse "HEAD:pom.xml")"
+
+          FRONT_HASH=''
+          RETAG=''
+          build_pairs=''   # "svc|hash svc|hash ..."
+          test_names=''
+          TEST_FRONT='false'
+
+          for u in $UNITS; do
+            if [ "$u" = "frontend" ]; then
+              h="$(git rev-parse "HEAD:frontend" | cut -c1-16)"
+            else
+              h="$(printf '%s%s' "$(git rev-parse "HEAD:$u")" "$POM" | sha1sum | cut -c1-16)"
+            fi
+
+            need=1
+            if docker buildx imagetools inspect "${REPO}-${u}:src-${h}" >/dev/null 2>&1; then need=0; fi
+            case "$FORCE" in *",all,"*|*",${u},"*) need=1 ;; esac
+
+            if [ "$need" = 0 ]; then
+              RETAG="$RETAG ${u}:${h}"
+              echo "  $u  src-$h  -> retag (już w GHCR)"
+            elif [ "$u" = "frontend" ]; then
+              FRONT_HASH="$h"; TEST_FRONT='true'
+              echo "  $u  src-$h  -> build"
+            else
+              build_pairs="$build_pairs ${u}|${h}"
+              test_names="$test_names ${u}"
+              echo "  $u  src-$h  -> build"
+            fi
+          done
+
+          # JSON bez jq — nazwy [a-z-], hashe hex, bez escapowania.
+          BUILD_SVC='['; first=1
+          for p in $build_pairs; do
+            [ "$first" = 1 ] && first=0 || BUILD_SVC="$BUILD_SVC,"
+            BUILD_SVC="$BUILD_SVC{\"service\":\"${p%|*}\",\"hash\":\"${p#*|}\"}"
+          done
+          BUILD_SVC="$BUILD_SVC]"
+
+          TEST_SVC='['; first=1
+          for s in $test_names; do
+            [ "$first" = 1 ] && first=0 || TEST_SVC="$TEST_SVC,"
+            TEST_SVC="$TEST_SVC\"$s\""
+          done
+          TEST_SVC="$TEST_SVC]"
+
+          RETAG="$(echo $RETAG)"
+          {
+            echo "tag=$TAG"
+            echo "build_services=$BUILD_SVC"
+            echo "frontend_hash=$FRONT_HASH"
+            echo "retag=$RETAG"
+            echo "test_services=$TEST_SVC"
+            echo "test_frontend=$TEST_FRONT"
+          } >> "$GITHUB_OUTPUT"
+
   test:
+    needs: detect
+    if: ${{ needs.detect.outputs.test_services != '[]' || needs.detect.outputs.test_frontend == 'true' }}
     uses: ./.github/workflows/tests.yml
     secrets: inherit
+    with:
+      services: ${{ needs.detect.outputs.test_services }}
+      frontend: ${{ needs.detect.outputs.test_frontend }}
 
-  publish-services:
-    needs: test
+  build-services:
+    needs: [detect, test]
+    if: ${{ needs.detect.outputs.build_services != '[]' }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     strategy:
       fail-fast: false
       matrix:
-        service: [
-          auth-service,
-          gateway,
-          match-service,
-          coupon-service,
-          account-service,
-          notification-service,
-          odds-engine-service,
-        ]
+        include: ${{ fromJSON(needs.detect.outputs.build_services) }}
 
     steps:
       - name: Checkout code
@@ -55,13 +163,18 @@ jobs:
           context: .
           file: ${{ matrix.service }}/Dockerfile
           push: true
-          tags: ghcr.io/dariusz95/poorbet-${{ matrix.service }}:${{ github.ref_name }}
+          tags: |
+            ${{ env.REPO }}-${{ matrix.service }}:${{ needs.detect.outputs.tag }}
+            ${{ env.REPO }}-${{ matrix.service }}:src-${{ matrix.hash }}
+          cache-from: type=gha,scope=${{ matrix.service }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.service }}
           secrets: |
             github_actor=${{ github.actor }}
             github_token=${{ secrets.GITHUB_TOKEN }}
 
-  publish-frontend:
-    needs: test
+  build-frontend:
+    needs: [detect, test]
+    if: ${{ needs.detect.outputs.frontend_hash != '' }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -85,11 +198,57 @@ jobs:
           context: ./frontend
           file: frontend/Dockerfile
           push: true
-          tags: ghcr.io/dariusz95/poorbet-frontend:${{ github.ref_name }}
+          tags: |
+            ${{ env.REPO }}-frontend:${{ needs.detect.outputs.tag }}
+            ${{ env.REPO }}-frontend:src-${{ needs.detect.outputs.frontend_hash }}
+          cache-from: type=gha,scope=frontend
+          cache-to: type=gha,mode=max,scope=frontend
+
+  # Obrazy bez zmian: przypinamy tag wydania do istniejącego src-<hash>
+  # (operacja w rejestrze, bez pobierania/wypychania warstw).
+  retag:
+    needs: detect
+    if: ${{ needs.detect.outputs.retag != '' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Przypnij ${{ needs.detect.outputs.tag }} do niezmienionych obrazów
+        run: |
+          set -euo pipefail
+          for pair in ${{ needs.detect.outputs.retag }}; do
+            u="${pair%%:*}"; h="${pair#*:}"
+            src="${REPO}-${u}:src-${h}"
+            dst="${REPO}-${u}:${{ needs.detect.outputs.tag }}"
+            echo "== $src -> $dst"
+            docker buildx imagetools create --tag "$dst" "$src"
+          done
 
   deploy:
     name: Deploy na VPS
-    needs: [publish-services, publish-frontend]
+    needs: [detect, test, build-services, build-frontend, retag]
+    # always() + jawne sprawdzenia, bo build-*/retag/test bywają legalnie `skipped`.
+    # test == skipped znaczy "nic nie budujemy" (np. zmiana tylko w compose) —
+    # wtedy też wdrażamy, żeby VPS dostał świeży docker-compose*.yml.
+    if: >-
+      ${{ always()
+          && needs.detect.result == 'success'
+          && (needs.test.result == 'success' || needs.test.result == 'skipped')
+          && needs.build-services.result != 'failure'
+          && needs.build-services.result != 'cancelled'
+          && needs.build-frontend.result != 'failure'
+          && needs.build-frontend.result != 'cancelled'
+          && needs.retag.result != 'failure'
+          && needs.retag.result != 'cancelled' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -130,4 +289,4 @@ jobs:
         run: |
           ssh -p "${{ secrets.DEPLOY_SSH_PORT }}" \
             "${{ secrets.DEPLOY_SSH_USER }}@${{ secrets.DEPLOY_HOST }}" \
-            "chmod +x ${{ secrets.DEPLOY_APP_DIR }}/scripts/deploy.sh && IMAGE_TAG=${{ github.ref_name }} ${{ secrets.DEPLOY_APP_DIR }}/scripts/deploy.sh"
+            "chmod +x ${{ secrets.DEPLOY_APP_DIR }}/scripts/deploy.sh && IMAGE_TAG=${{ needs.detect.outputs.tag }} ${{ secrets.DEPLOY_APP_DIR }}/scripts/deploy.sh"

@@ -235,12 +235,20 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      border-style: dashed;
+      border-color: theme("colors.app.primary");
       background: transparent;
-      color: theme("colors.app.textMuted");
+      color: theme("colors.app.primary");
 
       .material-icons {
         font-size: 18px;
+      }
+
+      &:hover:not(:disabled) {
+        background: color-mix(
+          in srgb,
+          theme("colors.app.primary") 8%,
+          transparent
+        );
       }
 
       &:disabled {
