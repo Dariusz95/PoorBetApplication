@@ -52,6 +52,31 @@ Biblioteki `poorbet-commons` i `poorbet-auth-starter` są publikowane w GitHub P
 
 W Dockerze zależności są pobierane podczas budowania obrazu — token musi być dostępny jako argument budowania lub wolumen `~/.m2`.
 
+## Wydania (CI/CD)
+
+Wydanie = `scripts/release.sh` (albo `git tag vX.Y.Z && git push origin vX.Y.Z`).
+Push tagu `v*` odpala `.github/workflows/publish-images.yml`. Buduje się **tylko to,
+co realnie zmieniło zawartość obrazu** — decyduje o tym hash treści, nie ścieżki:
+
+- job `detect` dla każdego serwisu liczy `src-<hash>` = skrót z `git rev-parse HEAD:<serwis>`
+  (drzewo katalogu, zawiera też jego `Dockerfile`) + `git rev-parse HEAD:pom.xml`
+  (parent POM — wpływa na wszystkie). Frontend: samo `HEAD:frontend`.
+- jeśli `ghcr.io/.../poorbet-<serwis>:src-<hash>` **już jest w GHCR** → nic nie budujemy,
+  job `retag` przypina tag wydania do istniejącego obrazu (`docker buildx imagetools
+  create` — operacja w rejestrze). Jeśli **nie ma** → `build-services` / `build-frontend`
+  buduje i pushuje oba tagi: `:vX.Y.Z` i `:src-<hash>`.
+- testy (`tests.yml`) lecą tylko dla serwisów, które faktycznie się budują.
+- `deploy` uruchamia `scripts/deploy.sh` z `IMAGE_TAG=<tag>`; `docker-compose.prod.yml`
+  ma jeden `${IMAGE_TAG}` i komplet 8 obrazów pod tym tagiem, a `docker compose up -d`
+  odtwarza tylko kontenery z nowym digestem (przetagowane mają ten sam digest, więc
+  zostają nietknięte).
+
+Konsekwencje: zmiana w `<serwis>/**` → tylko ten serwis; zmiana w root `pom.xml` →
+wszystkie; zmiana tylko w `docker-compose*.yml` / `README` → **zero buildów**, sam
+redeploy. Zmiana w `poorbet-commons` / `poorbet-auth-starter` (osobne repo,
+`0.0.1-SNAPSHOT`) nie rusza plików tutaj ani hasha — użyj `workflow_dispatch`
+(inputy: `tag`, `force` = lista serwisów albo `all`).
+
 ## Przegląd projektu
 
 PoorBetApplication to platforma do obstawiania wydarzeń sportowych zbudowana w architekturze mikroserwisowej. Backend wykorzystuje Java 21 oraz Spring Boot 3.4.1, natomiast frontend został napisany w Angular 21. Wszystkie usługi uruchamiane są w Dockerze przy użyciu Docker Compose.

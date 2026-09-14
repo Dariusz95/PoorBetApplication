@@ -131,7 +131,7 @@ services:
       - COUPON_SERVICE_CLIENT_SECRET=${COUPON_SERVICE_CLIENT_SECRET}
 
   account-service:
-    <<: [*resource-medium]
+    <<: [*resource-heavy]
     build:
       context: ./account-service
       dockerfile: Dockerfile.dev
